@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>BlockDuel 9×9 — демо</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c232d; --line:#2a323d;
+    --ink:#e7edf3; --muted:#8b97a6;
+    --p0:#ff9d42; --p0d:#b3661f; --p0glow:rgba(255,157,66,.35);
+    --p1:#36d6e7; --p1d:#1c8794; --p1glow:rgba(54,214,231,.35);
+    --good:#37d67a; --bad:#ef5e6b;
+    --cell:#10151c; --cellline:#222c37;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #1a2330 0%, transparent 55%),
+      radial-gradient(900px 500px at -10% 110%, #181f29 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink); font-family:"Bricolage Grotesque",system-ui,sans-serif;
+    min-height:100vh; display:flex; justify-content:center; padding:18px;
+  }
+  .wrap{width:100%; max-width:560px}
+  header{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px}
+  h1{font-size:26px; font-weight:800; letter-spacing:-.5px; margin:0}
+  h1 b{color:var(--p0)} h1 i{font-style:normal; color:var(--p1)}
+  .tag{font-family:"DM Mono",monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px}
+
+  .scoreboard{display:grid; grid-template-columns:1fr auto 1fr; gap:10px; margin-bottom:14px}
+  .pcard{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px 12px; transition:.2s}
+  .pcard.active{box-shadow:0 0 0 2px currentColor, 0 8px 30px -10px currentColor}
+  .pcard.p0{color:var(--p0)} .pcard.p1{color:var(--p1)}
+  .pname{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; gap:6px}
+  .pscore{font-family:"DM Mono",monospace; font-size:34px; line-height:1; color:var(--ink); margin-top:2px}
+  .pcombo{font-family:"DM Mono",monospace; font-size:11px; color:var(--muted); height:14px}
+  .turnpill{align-self:center; font-family:"DM Mono",monospace; font-size:10px; color:var(--muted); text-align:center; line-height:1.4}
+
+  .boardwrap{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:10px; box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+  #board{display:grid; grid-template-columns:repeat(9,1fr); gap:3px; aspect-ratio:1/1; touch-action:manipulation}
+  .c{background:var(--cell); border:1px solid var(--cellline); border-radius:5px; position:relative; transition:background .08s, box-shadow .08s}
+  /* толстые разделители боксов 3×3 */
+  .c[data-col="2"],.c[data-col="5"]{margin-right:3px}
+  .c[data-row="2"],.c[data-row="5"]{margin-bottom:3px}
+  .c.f0{background:linear-gradient(160deg,var(--p0),var(--p0d)); border-color:transparent; box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+  .c.f1{background:linear-gradient(160deg,var(--p1),var(--p1d)); border-color:transparent; box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+  .c.ghostok{background:var(--p0glow); border-color:var(--p0); box-shadow:0 0 8px var(--p0glow)}
+  .c.ghostbad{background:rgba(239,94,107,.18); border-color:var(--bad)}
+  .c.flash{animation:flash .45s ease}
+  @keyframes flash{0%{box-shadow:0 0 0 0 #fff,0 0 22px #fff; background:#fff}100%{box-shadow:none}}
+
+  .overlay{position:absolute; inset:0; background:rgba(10,13,18,.86); backdrop-filter:blur(3px);
+    border-radius:18px; display:none; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; z-index:5}
+  .overlay.show{display:flex}
+  .overlay .res{font-size:30px; font-weight:800}
+  .overlay .sub{color:var(--muted); font-family:"DM Mono",monospace; font-size:13px}
+
+  .hands{display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px}
+  .handrow{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:8px 10px}
+  .handhdr{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:6px; display:flex; justify-content:space-between}
+  .handpieces{display:flex; gap:10px; flex-wrap:wrap; min-height:46px}
+  .piece{display:grid; gap:2px; padding:5px; border-radius:9px; cursor:pointer; border:1.5px solid transparent; background:var(--panel2); transition:.12s}
+  .piece[data-dead="1"]{opacity:.35}
+  .piece.sel{border-color:var(--p0); box-shadow:0 0 0 3px var(--p0glow)}
+  .piece .pc{width:13px;height:13px;border-radius:3px;background:transparent}
+  .piece.h0 .pc.on{background:linear-gradient(160deg,var(--p0),var(--p0d))}
+  .piece.h1{cursor:default}
+  .piece.h1 .pc.on{background:linear-gradient(160deg,var(--p1),var(--p1d))}
+
+  .controls{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center}
+  button{font-family:inherit; font-weight:700; color:var(--ink); background:var(--panel2);
+    border:1px solid var(--line); border-radius:10px; padding:9px 13px; cursor:pointer; font-size:13px; transition:.12s}
+  button:hover:not(:disabled){border-color:var(--muted); transform:translateY(-1px)}
+  button:disabled{opacity:.35; cursor:not-allowed}
+  button.primary{background:linear-gradient(160deg,var(--p0),var(--p0d)); border:none; color:#1a1206}
+  .seg{display:inline-flex; background:var(--panel2); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+  .seg button{border:none; border-radius:0; background:transparent; padding:9px 12px}
+  .seg button.on{background:var(--p1); color:#04222a}
+  .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px}
+  .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-right:2px}
+  .toggle{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); cursor:pointer; user-select:none}
+  .toggle input{accent-color:var(--p0)}
+  .status{margin-top:10px; min-height:18px; font-family:"DM Mono",monospace; font-size:12px; color:var(--muted)}
+  .float{position:absolute; font-family:"DM Mono",monospace; font-weight:600; pointer-events:none; animation:rise .9s ease forwards; z-index:6}
+  @keyframes rise{0%{opacity:0;transform:translateY(6px) scale(.8)}20%{opacity:1}100%{opacity:0;transform:translateY(-26px) scale(1.1)}}
+  footer{margin-top:14px; color:var(--muted); font-size:11px; font-family:"DM Mono",monospace; text-align:center; line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><b>BLOCK</b><i>DUEL</i> 9×9</h1>
+    <span class="tag">demo · ts core</span>
+  </header>
+
+  <div class="scoreboard">
+    <div class="pcard p0 active" id="card0">
+      <div class="pname">● Ты</div>
+      <div class="pscore" id="score0">0</div>
+      <div class="pcombo" id="combo0"></div>
+    </div>
+    <div class="turnpill" id="turnpill">ход<br>игрока</div>
+    <div class="pcard p1" id="card1">
+      <div class="pname" style="justify-content:flex-end">Бот ●</div>
+      <div class="pscore" id="score1" style="text-align:right">0</div>
+      <div class="pcombo" id="combo1" style="text-align:right"></div>
+    </div>
+  </div>
+
+  <div class="boardwrap">
+    <div id="board"></div>
+    <div class="overlay" id="overlay">
+      <div class="res" id="resTitle"></div>
+      <div class="sub" id="resSub"></div>
+      <button class="primary" id="againBtn" style="margin-top:10px">Реванш</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="rotBtn">↻ Повернуть</button>
+    <button id="flipBtn">⇄ Отразить</button>
+    <button id="clearSelBtn">✕ Снять выбор</button>
+  </div>
+
+  <div class="hands">
+    <div class="handrow">
+      <div class="handhdr"><span style="color:var(--p0)">Твоя рука</span><span id="handHint">выбери фигуру → кликни по полю</span></div>
+      <div class="handpieces" id="hand0"></div>
+    </div>
+    <div class="handrow">
+      <div class="handhdr"><span style="color:var(--p1)">Рука бота</span><span>наблюдай</span></div>
+      <div class="handpieces" id="hand1"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Бот:</span>
+    <div class="seg" id="levelSeg">
+      <button data-lvl="easy">Тупой</button>
+      <button data-lvl="medium" class="on">Умный</button>
+      <button data-lvl="hard">Сложный</button>
+    </div>
+    <button id="newBtn">⟳ Новая игра</button>
+  </div>
+  <div class="row">
+    <span class="lbl">Матч:</span>
+    <label class="toggle"><input type="checkbox" id="optRot" checked> Повороты</label>
+    <label class="toggle"><input type="checkbox" id="optFlip" checked> Отражения</label>
+  </div>
+
+  <div class="status" id="status">Поле 9×9 · очищай строки, столбцы и квадраты 3×3 · очки за очистку своим ходом.</div>
+
+  <footer>
+    Демо соревновательного блок-пазла. Свой 7-bag у каждого · общая доска · партия до тупика.<br>
+    Логика — на TypeScript, отделена от UI.
+  </footer>
+</div>
+
+<script>
+/**
+ * BlockDuel 9x9 — игровое ядро (чистое, детерминированное, без зависимостей от UI).
+ * Демоверсия. Тот же модуль предназначен к переиспользованию на клиенте и сервере.
+ */
+// ─────────────────────────────────────────────────────────────
+// Типы
+// ─────────────────────────────────────────────────────────────
+const SIZE = 9;
+const DEFAULT_CONFIG = {
+    handSize: 3,
+    rotationEnabled: true,
+    flipEnabled: true,
+    sharedBag: false,
+    comboEnabled: true,
+    comboCap: 10,
+    comboStep: 0.1,
+    perfectClearBonus: 15,
+};
+// ─────────────────────────────────────────────────────────────
+// PRNG (детерминированный) — mulberry32
+// ─────────────────────────────────────────────────────────────
+function makeRng(seed) {
+    let a = seed >>> 0;
+    return function () {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+function shuffle(arr, rng) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+// ─────────────────────────────────────────────────────────────
+// Фигуры (тетромино) — базовые офсеты
+// ─────────────────────────────────────────────────────────────
+const BASE_SHAPES = {
+    I: [[0, 0], [0, 1], [0, 2], [0, 3]],
+    O: [[0, 0], [0, 1], [1, 0], [1, 1]],
+    T: [[0, 0], [0, 1], [0, 2], [1, 1]],
+    S: [[0, 1], [0, 2], [1, 0], [1, 1]],
+    Z: [[0, 0], [0, 1], [1, 1], [1, 2]],
+    J: [[0, 0], [1, 0], [1, 1], [1, 2]],
+    L: [[0, 2], [1, 0], [1, 1], [1, 2]],
+};
+const ALL_TYPES = ["I", "O", "T", "S", "Z", "J", "L"];
+function normalize(cells) {
+    const minR = Math.min(...cells.map((c) => c[0]));
+    const minC = Math.min(...cells.map((c) => c[1]));
+    return cells
+        .map(([r, c]) => [r - minR, c - minC])
+        .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+}
+function rotate90(cells) {
+    // (r,c) -> (c, -r)
+    return normalize(cells.map(([r, c]) => [c, -r]));
+}
+function flipH(cells) {
+    return normalize(cells.map(([r, c]) => [r, -c]));
+}
+function key(cells) {
+    return cells.map(([r, c]) => `${r},${c}`).join("|");
+}
+/** Все уникальные ориентации фигуры при заданных настройках. */
+function orientations(type, rotationEnabled, flipEnabled) {
+    const seen = new Set();
+    const result = [];
+    let bases = [normalize(BASE_SHAPES[type])];
+    if (flipEnabled)
+        bases.push(flipH(BASE_SHAPES[type]));
+    for (const base of bases) {
+        let cur = base;
+        const rots = rotationEnabled ? 4 : 1;
+        for (let i = 0; i < rots; i++) {
+            const k = key(cur);
+            if (!seen.has(k)) {
+                seen.add(k);
+                result.push(cur);
+            }
+            cur = rotate90(cur);
+        }
+    }
+    return result;
+}
+// ─────────────────────────────────────────────────────────────
+// Мешок (7-bag)
+// ─────────────────────────────────────────────────────────────
+class Bag {
+    constructor(seed) {
+        this.queue = [];
+        this.counter = 0;
+        this.rng = makeRng(seed);
+    }
+    next() {
+        if (this.queue.length === 0) {
+            this.queue = shuffle(ALL_TYPES, this.rng);
+        }
+        return this.queue.shift();
+    }
+    draw() {
+        const type = this.next();
+        return {
+            id: `p${this.counter++}`,
+            type,
+            cells: normalize(BASE_SHAPES[type]),
+        };
+    }
+}
+// ─────────────────────────────────────────────────────────────
+// Доска
+// ─────────────────────────────────────────────────────────────
+function emptyBoard() {
+    return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => ({ filled: false, owner: null })));
+}
+function cloneBoard(b) {
+    return b.map((row) => row.map((c) => ({ ...c })));
+}
+function canPlace(board, cells, r, c) {
+    for (const [dr, dc] of cells) {
+        const rr = r + dr, cc = c + dc;
+        if (rr < 0 || rr >= SIZE || cc < 0 || cc >= SIZE)
+            return false;
+        if (board[rr][cc].filled)
+            return false;
+    }
+    return true;
+}
+function place(board, cells, r, c, owner) {
+    for (const [dr, dc] of cells) {
+        board[r + dr][c + dc] = { filled: true, owner };
+    }
+}
+function findClears(board) {
+    const rows = [];
+    const cols = [];
+    const boxes = [];
+    for (let r = 0; r < SIZE; r++) {
+        if (board[r].every((c) => c.filled))
+            rows.push(r);
+    }
+    for (let c = 0; c < SIZE; c++) {
+        let full = true;
+        for (let r = 0; r < SIZE; r++)
+            if (!board[r][c].filled) {
+                full = false;
+                break;
+            }
+        if (full)
+            cols.push(c);
+    }
+    for (let b = 0; b < SIZE; b++) {
+        const br = Math.floor(b / 3) * 3, bc = (b % 3) * 3;
+        let full = true;
+        for (let r = 0; r < 3 && full; r++)
+            for (let c = 0; c < 3; c++)
+                if (!board[br + r][bc + c].filled) {
+                    full = false;
+                    break;
+                }
+        if (full)
+            boxes.push(b);
+    }
+    const set = new Set();
+    const add = (r, c) => set.add(`${r},${c}`);
+    for (const r of rows)
+        for (let c = 0; c < SIZE; c++)
+            add(r, c);
+    for (const c of cols)
+        for (let r = 0; r < SIZE; r++)
+            add(r, c);
+    for (const b of boxes) {
+        const br = Math.floor(b / 3) * 3, bc = (b % 3) * 3;
+        for (let r = 0; r < 3; r++)
+            for (let c = 0; c < 3; c++)
+                add(br + r, bc + c);
+    }
+    const cleared = [...set].map((s) => s.split(",").map(Number));
+    return { count: rows.length + cols.length + boxes.length, cleared, rows, cols, boxes };
+}
+function applyClears(board, cleared) {
+    for (const [r, c] of cleared)
+        board[r][c] = { filled: false, owner: null };
+}
+function isPerfectClear(board) {
+    for (let r = 0; r < SIZE; r++)
+        for (let c = 0; c < SIZE; c++)
+            if (board[r][c].filled)
+                return false;
+    return true;
+}
+// ─────────────────────────────────────────────────────────────
+// Очки
+// ─────────────────────────────────────────────────────────────
+function scoreForMove(N, comboCounter, perfect, cfg) {
+    if (N === 0)
+        return 0;
+    const base = (N * (N + 1)) / 2;
+    const mult = cfg.comboEnabled
+        ? 1 + cfg.comboStep * Math.min(comboCounter, cfg.comboCap)
+        : 1;
+    const bonus = perfect ? cfg.perfectClearBonus : 0;
+    return Math.round(base * mult) + bonus;
+}
+function enumerateMoves(board, hand, cfg) {
+    const moves = [];
+    for (const piece of hand) {
+        for (const oriented of orientations(piece.type, cfg.rotationEnabled, cfg.flipEnabled)) {
+            const maxR = Math.max(...oriented.map((x) => x[0]));
+            const maxC = Math.max(...oriented.map((x) => x[1]));
+            for (let r = 0; r + maxR < SIZE; r++) {
+                for (let c = 0; c + maxC < SIZE; c++) {
+                    if (canPlace(board, oriented, r, c)) {
+                        moves.push({ pieceId: piece.id, type: piece.type, cells: oriented, r, c });
+                    }
+                }
+            }
+        }
+    }
+    return moves;
+}
+function hasAnyMove(board, hand, cfg) {
+    for (const piece of hand) {
+        for (const oriented of orientations(piece.type, cfg.rotationEnabled, cfg.flipEnabled)) {
+            const maxR = Math.max(...oriented.map((x) => x[0]));
+            const maxC = Math.max(...oriented.map((x) => x[1]));
+            for (let r = 0; r + maxR < SIZE; r++)
+                for (let c = 0; c + maxC < SIZE; c++)
+                    if (canPlace(board, oriented, r, c))
+                        return true;
+        }
+    }
+    return false;
+}
+function countHoles(board) {
+    // пустая клетка считается «дырой», если со всех 4 сторон заблокирована (край или filled)
+    let holes = 0;
+    for (let r = 0; r < SIZE; r++)
+        for (let c = 0; c < SIZE; c++) {
+            if (board[r][c].filled)
+                continue;
+            const blocked = (r === 0 || board[r - 1][c].filled) &&
+                (r === SIZE - 1 || board[r + 1][c].filled) &&
+                (c === 0 || board[r][c - 1].filled) &&
+                (c === SIZE - 1 || board[r][c + 1].filled);
+            if (blocked)
+                holes++;
+        }
+    return holes;
+}
+function nearLines(board) {
+    // строки/столбцы/боксы, которым не хватает 1–2 клеток => заготовки
+    let score = 0;
+    const credit = (missing) => (missing === 1 ? 3 : missing === 2 ? 1 : 0);
+    for (let r = 0; r < SIZE; r++) {
+        let filled = 0;
+        for (let c = 0; c < SIZE; c++)
+            if (board[r][c].filled)
+                filled++;
+        score += credit(SIZE - filled);
+    }
+    for (let c = 0; c < SIZE; c++) {
+        let filled = 0;
+        for (let r = 0; r < SIZE; r++)
+            if (board[r][c].filled)
+                filled++;
+        score += credit(SIZE - filled);
+    }
+    for (let b = 0; b < SIZE; b++) {
+        const br = Math.floor(b / 3) * 3, bc = (b % 3) * 3;
+        let filled = 0;
+        for (let r = 0; r < 3; r++)
+            for (let c = 0; c < 3; c++)
+                if (board[br + r][bc + c].filled)
+                    filled++;
+        score += credit(9 - filled);
+    }
+    return score;
+}
+function evaluate(board) {
+    return 1.0 * nearLines(board) - 4.0 * countHoles(board);
+}
+/** Симулирует ход и возвращает {board, clears, perfect}. */
+function simulate(board, move, owner) {
+    const b = cloneBoard(board);
+    place(b, move.cells, move.r, move.c, owner);
+    const clears = findClears(b);
+    applyClears(b, clears.cleared);
+    return { board: b, clears, perfect: isPerfectClear(b) };
+}
+function chooseBotMove(board, hand, level, cfg, rng) {
+    const moves = enumerateMoves(board, hand, cfg);
+    if (moves.length === 0)
+        return null;
+    if (level === "easy") {
+        // в 30% случаев берёт очевидную очистку, иначе случайный ход
+        if (rng() < 0.3) {
+            const scoring = moves.filter((m) => simulate(board, m, 1).clears.count > 0);
+            if (scoring.length)
+                return scoring[Math.floor(rng() * scoring.length)];
+        }
+        return moves[Math.floor(rng() * moves.length)];
+    }
+    // medium / hard — оценка позиции
+    let best = null;
+    let bestScore = -Infinity;
+    for (const m of moves) {
+        const sim = simulate(board, m, 1);
+        const gain = scoreForMove(sim.clears.count, 0, sim.perfect, cfg);
+        let s = gain * 10 + evaluate(sim.board);
+        if (level === "hard") {
+            // штраф за «дырки» сильнее + лёгкий учёт того, что мы дарим сопернику почти-готовые линии
+            s = gain * 12 + evaluate(sim.board) - 0.5 * nearLines(sim.board) * 0; // hook под денай
+            s = gain * 12 + 1.2 * nearLines(sim.board) - 5.0 * countHoles(sim.board);
+        }
+        s += (rng() - 0.5) * 0.01; // микрошум для разнообразия
+        if (s > bestScore) {
+            bestScore = s;
+            best = m;
+        }
+    }
+    return best;
+}
+
+</script>
+<script>
+// ─────────────────────────────────────────────────────────────
+// UI / контроллер игры (использует функции ядра выше)
+// ─────────────────────────────────────────────────────────────
+const $ = (id) => document.getElementById(id);
+const boardEl = $("board");
+
+let S = null; // состояние игры
+
+function newGame() {
+  const cfg = {
+    ...DEFAULT_CONFIG,
+    rotationEnabled: $("optRot").checked,
+    flipEnabled: $("optFlip").checked,
+  };
+  const seedBase = (Math.random() * 1e9) | 0;
+  S = {
+    cfg,
+    board: emptyBoard(),
+    bags: [new Bag(seedBase ^ 0xABCD), new Bag(seedBase ^ 0x1234)],
+    botRng: makeRng(seedBase ^ 0x9999),
+    players: [ {score:0, combo:0, hand:[]}, {score:0, combo:0, hand:[]} ],
+    current: 0,
+    status: "playing",
+    botLevel: document.querySelector("#levelSeg button.on").dataset.lvl,
+    sel: null, // {pieceId, cells}
+  };
+  for (let p = 0; p < 2; p++) refill(p);
+  $("overlay").classList.remove("show");
+  setStatus("Твой ход. Выбери фигуру и поставь на поле.");
+  renderAll();
+  maybeBotTurn();
+}
+
+function refill(p) {
+  while (S.players[p].hand.length < S.cfg.handSize) {
+    S.players[p].hand.push(S.bags[p].draw());
+  }
+}
+
+// ── рендер доски ──
+function buildBoard() {
+  boardEl.innerHTML = "";
+  for (let r = 0; r < SIZE; r++)
+    for (let c = 0; c < SIZE; c++) {
+      const d = document.createElement("div");
+      d.className = "c"; d.dataset.row = r; d.dataset.col = c;
+      d.addEventListener("pointerenter", () => onHover(r, c));
+      d.addEventListener("pointerleave", clearGhost);
+      d.addEventListener("click", () => onPlace(r, c));
+      boardEl.appendChild(d);
+    }
+}
+const cellAt = (r, c) => boardEl.children[r * SIZE + c];
+
+function renderBoard() {
+  for (let r = 0; r < SIZE; r++)
+    for (let c = 0; c < SIZE; c++) {
+      const el = cellAt(r, c), cell = S.board[r][c];
+      el.className = "c";
+      if (cell.filled) el.classList.add("f" + cell.owner);
+    }
+}
+
+// ── рендер руки ──
+function pieceMini(piece, handIdx, selected) {
+  const cells = piece.cells;
+  const maxR = Math.max(...cells.map(x=>x[0])), maxC = Math.max(...cells.map(x=>x[1]));
+  const set = new Set(cells.map(([r,c])=>r+","+c));
+  const el = document.createElement("div");
+  el.className = "piece h" + handIdx + (selected ? " sel" : "");
+  el.style.gridTemplateColumns = `repeat(${maxC+1}, 13px)`;
+  for (let r=0;r<=maxR;r++) for (let c=0;c<=maxC;c++){
+    const pc=document.createElement("div");
+    pc.className="pc"+(set.has(r+","+c)?" on":"");
+    el.appendChild(pc);
+  }
+  return el;
+}
+
+function renderHands() {
+  for (let p=0;p<2;p++){
+    const host=$("hand"+p); host.innerHTML="";
+    for (const piece of S.players[p].hand){
+      const isSel = p===0 && S.sel && S.sel.pieceId===piece.id;
+      const el=pieceMini(p===0 && isSel ? {...piece, cells:S.sel.cells} : piece, p, isSel);
+      if (p===0){
+        // подсветка фигур, которые уже некуда поставить
+        const dead = !canPlaceAnywhere(piece);
+        if (dead) el.dataset.dead="1";
+        el.addEventListener("click", ()=>selectPiece(piece));
+      }
+      host.appendChild(el);
+    }
+  }
+}
+
+function canPlaceAnywhere(piece){
+  return hasAnyMove(S.board, [piece], S.cfg);
+}
+
+function renderScores(){
+  $("score0").textContent=S.players[0].score;
+  $("score1").textContent=S.players[1].score;
+  $("combo0").textContent=S.players[0].combo>1?("комбо ×"+S.players[0].combo):"";
+  $("combo1").textContent=S.players[1].combo>1?("комбо ×"+S.players[1].combo):"";
+  $("card0").classList.toggle("active", S.current===0 && S.status==="playing");
+  $("card1").classList.toggle("active", S.current===1 && S.status==="playing");
+  $("turnpill").innerHTML = S.status!=="playing" ? "игра<br>окончена" : (S.current===0?"ход<br>игрока":"ход<br>бота");
+}
+
+function renderControls(){
+  const human = S.current===0 && S.status==="playing";
+  const hasSel = !!S.sel;
+  $("rotBtn").disabled = !(human && hasSel && S.cfg.rotationEnabled);
+  $("flipBtn").disabled = !(human && hasSel && S.cfg.flipEnabled);
+  $("clearSelBtn").disabled = !hasSel;
+}
+
+function renderAll(){ renderBoard(); renderHands(); renderScores(); renderControls(); }
+
+// ── выбор/трансформация фигуры ──
+function selectPiece(piece){
+  if (S.current!==0 || S.status!=="playing") return;
+  S.sel = { pieceId:piece.id, cells:normalize(piece.cells) };
+  renderHands(); renderControls();
+}
+function rotateSel(){ if(S.sel){ S.sel.cells = rotate90(S.sel.cells); renderHands(); clearGhost(); } }
+function flipSel(){ if(S.sel){ S.sel.cells = flipH(S.sel.cells); renderHands(); clearGhost(); } }
+function clearSel(){ S.sel=null; renderHands(); renderControls(); clearGhost(); }
+
+// ── призрак и установка ──
+function onHover(r,c){
+  if(!S.sel || S.current!==0 || S.status!=="playing") return;
+  const ok = canPlace(S.board, S.sel.cells, r, c);
+  clearGhost();
+  for(const [dr,dc] of S.sel.cells){
+    const rr=r+dr, cc=c+dc;
+    if(rr<SIZE && cc<SIZE){
+      const el=cellAt(rr,cc);
+      if(!el.classList.contains("f0")&&!el.classList.contains("f1"))
+        el.classList.add(ok?"ghostok":"ghostbad");
+    }
+  }
+}
+function clearGhost(){
+  boardEl.querySelectorAll(".ghostok,.ghostbad").forEach(e=>e.classList.remove("ghostok","ghostbad"));
+}
+
+function onPlace(r,c){
+  if(!S.sel || S.current!==0 || S.status!=="playing") return;
+  if(!canPlace(S.board, S.sel.cells, r, c)){ setStatus("Сюда не помещается."); return; }
+  doMove(0, {pieceId:S.sel.pieceId, cells:S.sel.cells, r, c});
+}
+
+// ── общий обработчик хода ──
+function doMove(p, mv){
+  place(S.board, mv.cells, mv.r, mv.c, p);
+  // убрать фигуру из руки
+  const hand=S.players[p].hand;
+  const idx=hand.findIndex(x=>x.id===mv.pieceId);
+  if(idx>=0) hand.splice(idx,1);
+  if(p===0) S.sel=null;
+
+  const clears = findClears(S.board);
+  renderBoard();
+
+  if(clears.count>0){
+    const perfect = (function(){ const b=cloneBoard(S.board); applyClears(b, clears.cleared); return isPerfectClear(b); })();
+    const pts = scoreForMove(clears.count, S.players[p].combo, perfect, S.cfg);
+    S.players[p].score += pts;
+    S.players[p].combo += 1;
+    flashCells(clears.cleared);
+    floatScore(mv, "+"+pts+(clears.count>1?" ×"+clears.count:"")+(perfect?" PERFECT!":""), p);
+    setTimeout(()=>{ applyClears(S.board, clears.cleared); renderBoard(); }, 260);
+    setStatus((p===0?"Ты":"Бот")+" очистил "+clears.count+(clears.count===1?" линию":" линии")+" (+"+pts+").");
+  } else {
+    S.players[p].combo = 0;
+  }
+
+  refill(p);
+  renderHands(); renderScores();
+  // передать ход
+  S.current = 1 - p;
+  renderScores(); renderControls();
+  setTimeout(checkTurnOrEnd, clears.count>0 ? 320 : 60);
+}
+
+function checkTurnOrEnd(){
+  const p=S.current;
+  if(!hasAnyMove(S.board, S.players[p].hand, S.cfg)){
+    return endGame();
+  }
+  if(p===0){
+    setStatus("Твой ход.");
+    renderControls();
+  } else {
+    maybeBotTurn();
+  }
+}
+
+function maybeBotTurn(){
+  if(S.current!==1 || S.status!=="playing") return;
+  setStatus("Бот думает…");
+  const delay = 420 + Math.random()*500;
+  setTimeout(()=>{
+    if(S.status!=="playing") return;
+    const mv = chooseBotMove(S.board, S.players[1].hand, S.botLevel, S.cfg, S.botRng);
+    if(!mv){ return endGame(); }
+    doMove(1, mv);
+  }, delay);
+}
+
+function endGame(){
+  S.status="over";
+  renderScores(); renderControls(); clearGhost();
+  const a=S.players[0].score, b=S.players[1].score;
+  const ov=$("overlay"); ov.classList.add("show");
+  if(a>b){ $("resTitle").textContent="Победа 🏆"; $("resTitle").style.color="var(--p0)"; }
+  else if(b>a){ $("resTitle").textContent="Бот победил"; $("resTitle").style.color="var(--p1)"; }
+  else { $("resTitle").textContent="Ничья"; $("resTitle").style.color="var(--ink)"; }
+  $("resSub").textContent = "Счёт "+a+" : "+b+" · ходы кончились";
+  setStatus("Игра окончена. Счёт "+a+" : "+b+".");
+}
+
+// ── эффекты ──
+function flashCells(cells){
+  for(const [r,c] of cells){ const el=cellAt(r,c); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),460); }
+}
+function floatScore(mv, text, p){
+  const wrap=document.querySelector(".boardwrap");
+  const anchor=cellAt(mv.r+(mv.cells[0][0]||0), mv.c+(mv.cells[0][1]||0));
+  const br=wrap.getBoundingClientRect(), cr=anchor.getBoundingClientRect();
+  const f=document.createElement("div"); f.className="float"; f.textContent=text;
+  f.style.color = p===0 ? "var(--p0)" : "var(--p1)";
+  f.style.left=(cr.left-br.left+cr.width/2-14)+"px"; f.style.top=(cr.top-br.top-6)+"px";
+  wrap.appendChild(f); setTimeout(()=>f.remove(),900);
+}
+function setStatus(t){ $("status").textContent=t; }
+
+// ── события UI ──
+$("rotBtn").onclick=rotateSel;
+$("flipBtn").onclick=flipSel;
+$("clearSelBtn").onclick=clearSel;
+$("newBtn").onclick=newGame;
+$("againBtn").onclick=newGame;
+$("levelSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{ $("levelSeg").querySelectorAll("button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); if(S) S.botLevel=b.dataset.lvl; };
+});
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="r"||e.key==="R") rotateSel();
+  if(e.key==="f"||e.key==="F") flipSel();
+  if(e.key==="Escape") clearSel();
+});
+
+buildBoard();
+newGame();
+</script>
+</body>
+</html>
