@@ -1,3 +1,4 @@
+import { CartoonPony } from "./CartoonPony";
 import type { ThemeId } from "../themes";
 
 interface Props {
@@ -8,49 +9,20 @@ interface Props {
 export function Mascot({ theme, size = 140 }: Props) {
   switch (theme) {
     case "candy":
-      return <CandyPony size={size} />;
+      return (
+        <CartoonPony
+          body="#ff9ecb"
+          mane={["#ff6b8a", "#ffd166", "#7fe7df"]}
+          accent="#b89cff"
+          size={size}
+          className="mascot mascot-pony"
+        />
+      );
     case "night":
       return <NightShade size={size} />;
     default:
       return <NeutralRobot size={size} />;
   }
-}
-
-// ─── Candy: пони с радужной гривой и рогом ───────────────────────────────
-function CandyPony({ size }: { size: number }) {
-  return (
-    <svg viewBox="0 0 120 120" width={size} height={size} className="mascot mascot-pony">
-      {/* копыта */}
-      <rect x="36" y="86" width="8" height="18" rx="3" fill="#7f5b9c" />
-      <rect x="50" y="86" width="8" height="18" rx="3" fill="#7f5b9c" />
-      <rect x="64" y="86" width="8" height="18" rx="3" fill="#7f5b9c" />
-      <rect x="78" y="86" width="8" height="18" rx="3" fill="#7f5b9c" />
-      {/* тело */}
-      <ellipse cx="60" cy="72" rx="32" ry="20" fill="#ff9ecb" />
-      {/* шея + голова */}
-      <path d="M 82 72 Q 96 58 90 38 Q 88 30 78 32 Q 72 40 78 50 Q 76 62 76 70 Z" fill="#ff9ecb" />
-      <ellipse cx="90" cy="42" rx="13" ry="13" fill="#ff9ecb" />
-      {/* ушко */}
-      <polygon points="84,32 87,24 92,32" fill="#ff9ecb" />
-      {/* рог */}
-      <polygon points="88,28 90,10 92,28" fill="#ffd166" stroke="#fff" strokeWidth="0.5" />
-      {/* глаз */}
-      <ellipse cx="93" cy="44" rx="2.6" ry="3" fill="#fff" />
-      <circle cx="93.5" cy="44.5" r="1.5" fill="#6b3b78" />
-      {/* щёчка */}
-      <circle cx="98" cy="50" r="2.5" fill="#ff6b8a" opacity="0.6" />
-      {/* грива — радуга */}
-      <path d="M 78 40 Q 66 32 72 22 Q 80 26 82 36 Z" fill="#ff6b8a" />
-      <path d="M 74 46 Q 60 42 66 30 Q 76 32 76 44 Z" fill="#ffd166" />
-      <path d="M 70 54 Q 56 54 60 42 Q 72 44 72 52 Z" fill="#7fe7df" />
-      <path d="M 66 62 Q 52 64 58 54 Q 68 56 68 62 Z" fill="#b89cff" />
-      {/* хвост */}
-      <path d="M 28 72 Q 14 68 18 82 Q 22 88 30 84 Q 28 78 28 72 Z" fill="#ff6b8a" />
-      <path d="M 28 78 Q 16 82 22 92 Q 28 92 32 86 Z" fill="#7fe7df" />
-      {/* искра рядом с рогом */}
-      <polygon points="100,18 102,22 106,24 102,26 100,30 98,26 94,24 98,22" fill="#fff" opacity="0.85" />
-    </svg>
-  );
 }
 
 // ─── Neutral: киберробот с янтарным сканером ─────────────────────────────
