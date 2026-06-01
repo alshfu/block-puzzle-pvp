@@ -116,6 +116,7 @@ type Action =
       over: boolean;
       statusMsg: string;
       result: MatchResult | null;
+      boardAfter: Board;
     }
   | { type: "TIMER_TICK"; dec: number }
   | { type: "DISMISS_POPUP"; id: number }
@@ -171,6 +172,7 @@ function reducer(s: State, a: Action): State {
     case "FINALIZE":
       return {
         ...s,
+        board: a.boardAfter,
         flash: null,
         animating: false,
         current: a.over ? s.current : a.next,
@@ -457,6 +459,7 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
         over: true,
         statusMsg: "Игра окончена",
         result: { winner, scores },
+        boardAfter,
       });
       clearSavedGame();
       // Финальные fx
@@ -490,6 +493,7 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
       over: false,
       statusMsg: nextStatus,
       result: null,
+      boardAfter,
     });
 
     // Автосохранение текущего состояния после хода.
