@@ -20,6 +20,7 @@ import { SKINS_BY_ID, type SkinDef } from "./shop/skins";
 import { AchievementsScreen } from "./screens/AchievementsScreen";
 import { DailyScreen } from "./screens/DailyScreen";
 import { MenuScreen, type GameMode } from "./screens/MenuScreen";
+import { LeaderboardScreen } from "./screens/LeaderboardScreen";
 import { OnlineGameScreen } from "./screens/OnlineGameScreen";
 import { OnlineMenuScreen } from "./screens/OnlineMenuScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
@@ -70,7 +71,8 @@ type Screen =
   | "online-game"
   | "shop"
   | "daily"
-  | "tutorial";
+  | "tutorial"
+  | "leaderboard";
 
 function loadTheme(): ThemeId {
   try {
@@ -475,10 +477,14 @@ export function App() {
             onBack={() => setScreen("profile")}
           />
         )}
+        {screen === "leaderboard" && (
+          <LeaderboardScreen myId={profile.id} onBack={() => setScreen("online-menu")} />
+        )}
         {screen === "online-menu" && (
           <OnlineMenuScreen
             profile={{ id: profile.id, nick: profile.nick, avatar: profile.avatar }}
             onBack={() => setScreen("menu")}
+            onOpenLeaderboard={() => setScreen("leaderboard")}
             onMatched={(roomId, opponent) => {
               setOnlineMatch({ roomId, opponent });
               setScreen("online-game");

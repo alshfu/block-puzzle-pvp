@@ -1,5 +1,7 @@
 import PartySocket from "partysocket";
 import type {
+  LeaderboardClient2Server,
+  LeaderboardServer2Client,
   LobbyClient2Server,
   LobbyServer2Client,
   OnlineProfile,
@@ -14,7 +16,7 @@ import type {
 export const PARTY_HOST: string =
   (import.meta.env.VITE_PARTY_HOST as string | undefined) ?? "localhost:1999";
 
-function makeSocket(party: "lobby" | "room", room: string): PartySocket {
+function makeSocket(party: "lobby" | "room" | "leaderboard", room: string): PartySocket {
   return new PartySocket({
     host: PARTY_HOST,
     party,
@@ -82,6 +84,36 @@ export function openRoom(roomId: string, handlers: RoomHandlers): RoomConnection
       return;
     }
     handlers.onMessage(m);
+  });
+  ws.addEventListener("close", () => handlers.onClose?.());
+  return {
+    send: (msg) => ws.send(JSON.stringify(msg)),
+    close: () => ws.close(),
+  };
+}
+
+// ─── Leaderboard client ──────────────────────────────────────────────────
+
+export interface LeaderboardHandlers {
+  onSnapshot: (data: Extract<LeaderboardServer2Client, { type: "snapshot" }>) => void;
+  onClose?: () => void;
+}
+
+export interface LeaderboardConnection {
+  send: (msg: LeaderboardClient2Server) => void;
+  close: () => void;
+}
+
+export function openLeaderboard(handlers: LeaderboardHandlers): LeaderboardConnection {
+  const ws = makeSocket("leaderboard", "main");
+  ws.addEventListener("message", (e) => {
+    let m: LeaderboardServer2Client;
+    try {
+      m = JSON.parse(String(e.data));
+    } catch {
+      return;
+    }
+    if (m.type === "snapshot") handlers.onSnapshot(m);
   });
   ws.addEventListener("close", () => handlers.onClose?.());
   return {

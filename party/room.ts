@@ -19,6 +19,7 @@ import {
   type RuleConfig,
 } from "../src/core";
 import type {
+  LeaderboardMatchReport,
   MatchSeed,
   OnlineGameState,
   OnlinePlayerView,
@@ -341,11 +342,31 @@ export default class RoomServer implements Party.Server {
       s.status = "over";
       s.result = { winner, scores, reason: "deadlock" };
       this.stopTimer();
+      this.reportToLeaderboard(winner);
     } else {
       this.resetTurnDeadline();
     }
 
     this.broadcastState(idx, gained, perfect);
+  }
+
+  private reportToLeaderboard(winner: 0 | 1 | -1): void {
+    const s = this.state;
+    if (!s) return;
+    const report: LeaderboardMatchReport = {
+      participants: [
+        { id: s.players[0].profile.id, nick: s.players[0].profile.nick, avatar: s.players[0].profile.avatar },
+        { id: s.players[1].profile.id, nick: s.players[1].profile.nick, avatar: s.players[1].profile.avatar },
+      ],
+      winner,
+    };
+    // POST в singleton leaderboard party. Fire-and-forget.
+    const lb = this.room.context.parties.leaderboard.get("main");
+    lb.fetch({
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(report),
+    }).catch(() => {});
   }
 
   private endMatch(sender: Party.Connection, reason: "resign" | "timeout"): void {
@@ -361,6 +382,7 @@ export default class RoomServer implements Party.Server {
       reason,
     };
     this.stopTimer();
+    this.reportToLeaderboard(winner);
     this.broadcastState();
   }
 

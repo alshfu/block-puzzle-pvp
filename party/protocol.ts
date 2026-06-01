@@ -85,3 +85,31 @@ export interface MatchSeed {
   participants: [OnlineProfile, OnlineProfile];       // order = индексы 0/1
   botLevel?: BotLevel;                                // зарезервировано
 }
+
+// ─── Leaderboard ────────────────────────────────────────────────────────
+
+export interface LeaderboardEntry {
+  id: string;
+  nick: string;
+  avatar: string;
+  elo: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  /** ms epoch последнего матча. */
+  updatedAt: number;
+}
+
+/** Внутренний RPC от room → leaderboard. */
+export interface LeaderboardMatchReport {
+  participants: [OnlineProfile, OnlineProfile];
+  /** 0 / 1 — индекс победителя в `participants`; -1 — ничья. */
+  winner: 0 | 1 | -1;
+}
+
+export type LeaderboardClient2Server =
+  | { type: "subscribe"; myId: string | null }
+  | { type: "ping" };
+
+export type LeaderboardServer2Client =
+  | { type: "snapshot"; top: LeaderboardEntry[]; you?: LeaderboardEntry; yourRank?: number; totalPlayers: number };

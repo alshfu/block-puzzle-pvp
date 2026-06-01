@@ -4,7 +4,8 @@
   "main": "party/lobby.ts",
   "parties": {
     "lobby": "party/lobby.ts",
-    "room": "party/room.ts"
+    "room": "party/room.ts",
+    "leaderboard": "party/leaderboard.ts"
   },
   "compatibilityDate": "2024-09-25"
 }

@@ -9,11 +9,12 @@ interface Props {
   onMatched: (roomId: string, opponent: OnlineProfile) => void;
   /** Lobby ответил bot_fallback — никого нет, играем с ботом локально. */
   onBotFallback: () => void;
+  onOpenLeaderboard: () => void;
 }
 
 type Phase = "idle" | "connecting" | "queued" | "error";
 
-export function OnlineMenuScreen({ profile, onBack, onMatched, onBotFallback }: Props) {
+export function OnlineMenuScreen({ profile, onBack, onMatched, onBotFallback, onOpenLeaderboard }: Props) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [position, setPosition] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -115,12 +116,18 @@ export function OnlineMenuScreen({ profile, onBack, onMatched, onBotFallback }: 
         </section>
 
         <section className="setup-sec">
+          <button className="sec-btn ach-link" onClick={onOpenLeaderboard}>
+            📈 Лидерборд →
+          </button>
+        </section>
+
+        <section className="setup-sec">
           <div className="sec-cap">Как это работает</div>
           <div className="ach-card">
             <div className="ach-ico">⚡</div>
             <div className="ach-text">
               <div className="ach-title">Server-authoritative</div>
-              <div className="ach-desc">ходы валидируются на сервере, синхронизация через WebSocket. Без таймера — играем спокойно.</div>
+              <div className="ach-desc">ходы валидируются на сервере (PartyKit на Cloudflare). Таймер хода — 60с, рейтинг ELO обновляется автоматически после каждого матча.</div>
             </div>
           </div>
         </section>
