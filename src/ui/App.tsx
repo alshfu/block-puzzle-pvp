@@ -13,6 +13,8 @@ import {
 } from "./storage/achievements";
 import { GameScreen } from "./screens/GameScreen";
 import type { OnlineProfile } from "../../party/protocol";
+import { observeAuthUser, type AuthUser } from "./auth/auth";
+import { pullCloud, pushCloud, type CloudSnapshot } from "./auth/sync";
 import { applyMatchToDaily, type DailyMatchContext } from "./daily/engine";
 import { SKINS_BY_ID, type SkinDef } from "./shop/skins";
 import { AchievementsScreen } from "./screens/AchievementsScreen";
@@ -102,7 +104,10 @@ export function App() {
   const [wallet, setWallet] = useState<Wallet>(loadWallet);
   const [playerSkins, setPlayerSkins] = useState<PlayerSkins>(loadPlayerSkins);
   const [daily, setDaily] = useState<DailyState>(loadDaily);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const wasRematchRef = useRef(false);
+  const pushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initialPulledRef = useRef(false);
   const prevBestStreakRef = useRef(loadStats().bestWinStreak);
 
   useEffect(() => {
@@ -142,6 +147,55 @@ export function App() {
   useEffect(() => {
     setDaily(loadDaily());
   }, []);
+
+  // Auth observer + pull cloud snapshot при логине.
+  useEffect(() => {
+    const unsub = observeAuthUser((u) => {
+      setAuthUser(u);
+      initialPulledRef.current = false;
+      if (u) {
+        pullCloud(u.uid)
+          .then((snap) => {
+            if (snap) {
+              if (snap.profile) setProfile(snap.profile);
+              if (snap.stats) setStats(snap.stats);
+              if (snap.wallet) setWallet(snap.wallet);
+              if (snap.achievements) setAchievements(snap.achievements);
+              if (snap.skins) setPlayerSkins(snap.skins);
+              // daily не тянем — он привязан к дате локального устройства.
+            }
+            initialPulledRef.current = true;
+          })
+          .catch(() => {
+            initialPulledRef.current = true;
+          });
+      } else {
+        initialPulledRef.current = true;
+      }
+    });
+    return unsub;
+  }, []);
+
+  // Debounced push в cloud при изменении прогресса.
+  useEffect(() => {
+    if (!authUser || !initialPulledRef.current) return;
+    if (pushTimerRef.current) clearTimeout(pushTimerRef.current);
+    pushTimerRef.current = setTimeout(() => {
+      const snap: CloudSnapshot = {
+        profile,
+        stats,
+        wallet,
+        achievements,
+        skins: playerSkins,
+      };
+      pushCloud(authUser.uid, snap).catch(() => {
+        /* silent — не блокируем UX */
+      });
+    }, 1500);
+    return () => {
+      if (pushTimerRef.current) clearTimeout(pushTimerRef.current);
+    };
+  }, [authUser, profile, stats, wallet, achievements, playerSkins]);
 
   useEffect(() => {
     saveSettings(settings);
@@ -449,6 +503,7 @@ export function App() {
             setTheme={setTheme}
             settings={settings}
             setSettings={setSettings}
+            authUser={authUser}
             onBack={() => setScreen("menu")}
           />
         )}

@@ -1,4 +1,9 @@
+import { useState } from "react";
 import type { BotLevel } from "../../core";
+import type { AuthUser } from "../auth/auth";
+import { signInWithGoogle, signOut as authSignOut } from "../auth/auth";
+import { isAuthEnabled } from "../auth/firebase";
+import { Button } from "../components/Button";
 import { Segment } from "../components/Segment";
 import { ThemeSwitch } from "../components/ThemeSwitch";
 import { Toggle } from "../components/Toggle";
@@ -11,10 +16,35 @@ interface Props {
   setTheme: (t: ThemeId) => void;
   settings: AppSettings;
   setSettings: (s: AppSettings) => void;
+  authUser: AuthUser | null;
   onBack: () => void;
 }
 
-export function SettingsScreen({ theme, setTheme, settings, setSettings, onBack }: Props) {
+export function SettingsScreen({ theme, setTheme, settings, setSettings, authUser, onBack }: Props) {
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const authEnabled = isAuthEnabled();
+
+  async function handleSignIn() {
+    setAuthBusy(true);
+    setAuthError(null);
+    try {
+      await signInWithGoogle();
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setAuthBusy(false);
+    }
+  }
+
+  async function handleSignOut() {
+    setAuthBusy(true);
+    try {
+      await authSignOut();
+    } finally {
+      setAuthBusy(false);
+    }
+  }
   const upd = <K extends keyof AppSettings>(k: K, v: AppSettings[K]) =>
     setSettings({ ...settings, [k]: v });
   const updCfg = <K extends keyof AppSettings["defaultCfg"]>(
@@ -32,6 +62,35 @@ export function SettingsScreen({ theme, setTheme, settings, setSettings, onBack 
       </div>
 
       <div className="setup-body">
+        {authEnabled && (
+          <section className="setup-sec">
+            <div className="sec-cap">Аккаунт</div>
+            {authUser ? (
+              <div className="auth-card">
+                {authUser.photoURL && <img className="auth-avatar" src={authUser.photoURL} alt="" />}
+                <div className="auth-text">
+                  <div className="auth-name">{authUser.displayName ?? "Пользователь Google"}</div>
+                  <div className="auth-email">{authUser.email ?? authUser.uid}</div>
+                  <div className="auth-sync">синхронизация прогресса включена</div>
+                </div>
+                <button className="resume-btn" onClick={handleSignOut} disabled={authBusy}>
+                  Выйти
+                </button>
+              </div>
+            ) : (
+              <>
+                <Button kind="primary" className="start-btn" onClick={handleSignIn} disabled={authBusy}>
+                  {authBusy ? "Подключение…" : "Войти через Google"}
+                </Button>
+                <div className="status-bar">
+                  Вход синхронизирует профиль, статистику, монеты, ачивки и скины между устройствами.
+                </div>
+                {authError && <div className="status-bar danger">Ошибка: {authError}</div>}
+              </>
+            )}
+          </section>
+        )}
+
         <section className="setup-sec">
           <div className="sec-cap">Тема</div>
           <ThemeSwitch theme={theme} setTheme={setTheme} />

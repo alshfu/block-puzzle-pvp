@@ -9,4 +9,14 @@ export default defineConfig(({ command }) => ({
     port: 5173,
     open: false,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          firebase: ["firebase/app", "firebase/auth", "firebase/firestore"],
+          react: ["react", "react-dom"],
+        },
+      },
+    },
+  },
 }));
