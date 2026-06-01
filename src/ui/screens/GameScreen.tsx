@@ -27,6 +27,7 @@ interface Props {
   savedGame: SavedGame | null;
   onExit: () => void;
   onMatchOver: (outcome: MatchOutcome) => void;
+  onRematch: () => void;
 }
 
 interface DragState {
@@ -49,6 +50,7 @@ export function GameScreen({
   savedGame,
   onExit,
   onMatchOver,
+  onRematch,
 }: Props) {
   const names = useMemo<[string, string]>(() => {
     if (mode === "hotseat") return ["Игрок 1", "Игрок 2"];
@@ -366,8 +368,13 @@ export function GameScreen({
       <ResultOverlay
         result={state.result}
         names={names}
+        breakdown={{
+          base: state.baseScoreP0,
+          combo: state.comboBonusP0,
+          perfect: state.perfectBonusP0,
+        }}
         xp={xp}
-        onRematch={game.restart}
+        onRematch={() => { onRematch(); game.restart(); }}
         onMenu={onExit}
       />
 
@@ -375,6 +382,7 @@ export function GameScreen({
         <PauseOverlay
           onResume={() => setPausedLocal(false)}
           onRestart={() => {
+            onRematch();
             game.restart();
             setPausedLocal(false);
           }}

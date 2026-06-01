@@ -1,9 +1,18 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type { BotLevel, RuleConfig } from "../core";
+import { processMatchAchievements, streakXpBonus } from "./achievements/engine";
+import type { AchievementDef } from "./achievements/definitions";
 import { setSoundEnabled, setVibrateEnabled } from "./audio";
 import { setMusicEnabled, setMusicTheme } from "./music";
 import { ThemeBackdrop } from "./components/ThemeBackdrop";
+import { ToastStack } from "./components/ToastStack";
+import {
+  loadAchievements,
+  saveAchievements,
+  type PlayerAchievements,
+} from "./storage/achievements";
 import { GameScreen } from "./screens/GameScreen";
+import { AchievementsScreen } from "./screens/AchievementsScreen";
 import { MenuScreen, type GameMode } from "./screens/MenuScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
@@ -35,7 +44,7 @@ import {
 } from "./storage/stats";
 import { isThemeId, THEMES, THEME_STORAGE_KEY, type ThemeId } from "./themes";
 
-type Screen = "menu" | "setup" | "game" | "profile" | "settings";
+type Screen = "menu" | "setup" | "game" | "profile" | "settings" | "achievements";
 
 function loadTheme(): ThemeId {
   try {
@@ -63,6 +72,9 @@ export function App() {
 
   const [savedGame, setSavedGame] = useState<SavedGame | null>(loadSavedGame);
   const [restoring, setRestoring] = useState(false);
+  const [achievements, setAchievements] = useState<PlayerAchievements>(loadAchievements);
+  const [toasts, setToasts] = useState<AchievementDef[]>([]);
+  const wasRematchRef = useRef(false);
 
   useEffect(() => {
     try {
@@ -80,6 +92,10 @@ export function App() {
   useEffect(() => {
     saveStats(stats);
   }, [stats]);
+
+  useEffect(() => {
+    saveAchievements(achievements);
+  }, [achievements]);
 
   useEffect(() => {
     saveSettings(settings);
@@ -115,6 +131,7 @@ export function App() {
     setBotLevel(settings.defaultBotLevel);
     setBotLevelB(settings.defaultBotLevel);
     setBlitz(settings.defaultBlitz);
+    wasRematchRef.current = false;
     setScreen("setup");
   };
 
@@ -135,14 +152,45 @@ export function App() {
   };
 
   const handleMatchOver = (outcome: MatchOutcome) => {
-    setStats((prev) => applyMatchToStats(prev, outcome));
-    // XP: победа +50, ничья +25, поражение +10, плюс по 1 за очистку.
-    const xpGain =
+    const nextStats = applyMatchToStats(stats, outcome);
+    // rematch streak: засчитываем продление, только если предыдущий выход был через «Реванш».
+    nextStats.rematchStreak = wasRematchRef.current ? nextStats.rematchStreak + 1 : 1;
+    setStats(nextStats);
+
+    // Базовый XP: победа +50 / ничья +25 / поражение +10 + 1 за каждую очистку.
+    const matchXp =
       (outcome.winner === 0 ? 50 : outcome.winner === -1 ? 25 : 10) +
       outcome.totalClearsThisMatch;
-    setProfile((prev) => ({ ...prev, xp: prev.xp + xpGain }));
-    // savedGame убирается из storage самим useGame; обновим локальный кэш.
+    const streakBonus = streakXpBonus(nextStats.currentWinStreak);
+
+    // Ачивки
+    const { next, unlocked } = processMatchAchievements(achievements, {
+      winner: outcome.winner,
+      myScore: outcome.myScore,
+      totalClearsThisMatch: outcome.totalClearsThisMatch,
+      maxMultiClearThisMatch: outcome.maxMultiClearThisMatch,
+      bestComboThisMatch: outcome.bestComboThisMatch,
+      hadPerfectClear: outcome.hadPerfectClear,
+      mode,
+      botLevel: mode === "bot" ? botLevel : null,
+      statsAfter: nextStats,
+      winStreak: nextStats.currentWinStreak,
+      rematchStreak: nextStats.rematchStreak,
+    });
+    setAchievements(next);
+
+    const achXp = unlocked.reduce((sum, a) => sum + a.rewardXp, 0);
+    setProfile((p) => ({ ...p, xp: p.xp + matchXp + streakBonus + achXp }));
+
+    if (unlocked.length > 0) {
+      setToasts((cur) => [...cur, ...unlocked]);
+    }
+
     setSavedGame(null);
+  };
+
+  const dismissToast = (id: string) => {
+    setToasts((cur) => cur.filter((a) => a.id !== id));
   };
 
   const handleExitGame = () => {
@@ -202,6 +250,7 @@ export function App() {
             savedGame={restoring ? savedGame : null}
             onExit={handleExitGame}
             onMatchOver={handleMatchOver}
+            onRematch={() => { wasRematchRef.current = true; }}
           />
         )}
         {screen === "profile" && (
@@ -213,7 +262,14 @@ export function App() {
               setScreen("menu");
             }}
             onResetStats={handleResetStats}
+            onOpenAchievements={() => setScreen("achievements")}
             onBack={() => setScreen("menu")}
+          />
+        )}
+        {screen === "achievements" && (
+          <AchievementsScreen
+            achievements={achievements}
+            onBack={() => setScreen("profile")}
           />
         )}
         {screen === "settings" && (
@@ -226,6 +282,7 @@ export function App() {
           />
         )}
       </div>
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }

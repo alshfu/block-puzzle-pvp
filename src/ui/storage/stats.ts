@@ -10,6 +10,9 @@ export interface Stats {
   bestScore: number;
   totalClears: number;
   maxMultiClear: number;
+  currentWinStreak: number;
+  bestWinStreak: number;
+  rematchStreak: number; // партий подряд через «Реванш»
 }
 
 export const DEFAULT_STATS: Stats = {
@@ -20,6 +23,9 @@ export const DEFAULT_STATS: Stats = {
   bestScore: 0,
   totalClears: 0,
   maxMultiClear: 0,
+  currentWinStreak: 0,
+  bestWinStreak: 0,
+  rematchStreak: 0,
 };
 
 export function loadStats(): Stats {
@@ -31,16 +37,21 @@ export function saveStats(s: Stats): void {
 }
 
 export interface MatchOutcome {
-  // perspective игрока 0 (человек). Для hot-seat 1v1 учитываем общие итоги
-  // (любой выигрыш считается победой одного из живых игроков).
   winner: 0 | 1 | -1;
   scores: [number, number];
-  myScore: number; // лучший достигнутый счёт человеком в этой партии
+  myScore: number;
   totalClearsThisMatch: number;
   maxMultiClearThisMatch: number;
+  bestComboThisMatch: number;
+  hadPerfectClear: boolean;
+  // breakdown очков игрока 0
+  baseScore: number;       // сумма N·(N+1)/2 по всем очисткам
+  comboBonus: number;      // сколько добавили комбо-множители (round(base·mult)−base)
+  perfectBonus: number;    // сумма +perfectClearBonus
 }
 
 export function applyMatchToStats(prev: Stats, m: MatchOutcome): Stats {
+  const winStreak = m.winner === 0 ? prev.currentWinStreak + 1 : 0;
   return {
     games: prev.games + 1,
     wins: prev.wins + (m.winner === 0 ? 1 : 0),
@@ -49,5 +60,8 @@ export function applyMatchToStats(prev: Stats, m: MatchOutcome): Stats {
     bestScore: Math.max(prev.bestScore, m.myScore),
     totalClears: prev.totalClears + m.totalClearsThisMatch,
     maxMultiClear: Math.max(prev.maxMultiClear, m.maxMultiClearThisMatch),
+    currentWinStreak: winStreak,
+    bestWinStreak: Math.max(prev.bestWinStreak, winStreak),
+    rematchStreak: prev.rematchStreak, // обновляется в App при rematch/non-rematch
   };
 }

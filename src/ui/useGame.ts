@@ -88,6 +88,11 @@ interface State {
   shake: number;
   totalClears: number;
   maxMultiClear: number;
+  bestCombo: number;        // максимум combo, достигнутый игроком 0 в этой партии
+  hadPerfectClear: boolean; // был ли хоть один perfect (любым игроком)
+  baseScoreP0: number;      // breakdown очков игрока 0
+  comboBonusP0: number;
+  perfectBonusP0: number;
 }
 
 type Action =
@@ -108,6 +113,10 @@ type Action =
       popup: ScorePopup | null;
       clearedCount: number;
       statusMsg: string;
+      perfect: boolean;
+      baseAddP0: number;     // вклад в base score игрока 0 (0 если ход бота)
+      comboAddP0: number;
+      perfectAddP0: number;
     }
   | {
       type: "FINALIZE";
@@ -155,6 +164,9 @@ function reducer(s: State, a: Action): State {
       } else {
         ownerP.combo = 0;
       }
+      const ownerComboNow = ownerP.combo; // обновлённое значение после ход выше
+      const newBestCombo =
+        a.owner === 0 ? Math.max(s.bestCombo, ownerComboNow) : s.bestCombo;
       return {
         ...s,
         board: a.newBoard,
@@ -167,6 +179,11 @@ function reducer(s: State, a: Action): State {
         statusMsg: a.statusMsg,
         totalClears: s.totalClears + a.clearedCount,
         maxMultiClear: Math.max(s.maxMultiClear, a.clearedCount),
+        bestCombo: newBestCombo,
+        hadPerfectClear: s.hadPerfectClear || a.perfect,
+        baseScoreP0: s.baseScoreP0 + a.baseAddP0,
+        comboBonusP0: s.comboBonusP0 + a.comboAddP0,
+        perfectBonusP0: s.perfectBonusP0 + a.perfectAddP0,
       };
     }
     case "FINALIZE":
@@ -262,6 +279,11 @@ function freshInit(session: GameSession, seed: number): InitPack {
       shake: 0,
       totalClears: 0,
       maxMultiClear: 0,
+      bestCombo: 0,
+      hadPerfectClear: false,
+      baseScoreP0: 0,
+      comboBonusP0: 0,
+      perfectBonusP0: 0,
     },
     bags,
     botRng: makeRng(seed + 7),
@@ -304,6 +326,11 @@ function restoreInit(session: GameSession, saved: SavedGame): InitPack {
       shake: 0,
       totalClears: saved.totalClears,
       maxMultiClear: saved.maxMultiClear,
+      bestCombo: 0,
+      hadPerfectClear: false,
+      baseScoreP0: 0,
+      comboBonusP0: 0,
+      perfectBonusP0: 0,
     },
     bags,
     botRng,
@@ -382,10 +409,24 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
     let gained = 0;
     let perfect = false;
     let statusMsg: string;
+    let baseAddP0 = 0;
+    let comboAddP0 = 0;
+    let perfectAddP0 = 0;
     if (clears.count > 0) {
       const filledAfter = countFilled(newBoard) - clears.cleared.length;
       perfect = filledAfter === 0;
       gained = scoreForMove(clears.count, s.players[owner].combo, perfect, cfg);
+      // breakdown компоненты: base = N(N+1)/2, combo = round(base·mult) − base
+      const baseRaw = (clears.count * (clears.count + 1)) / 2;
+      const mult = cfg.comboEnabled
+        ? 1 + cfg.comboStep * Math.min(s.players[owner].combo, cfg.comboCap)
+        : 1;
+      const baseWithCombo = Math.round(baseRaw * mult);
+      if (owner === 0) {
+        baseAddP0 = baseRaw;
+        comboAddP0 = baseWithCombo - baseRaw;
+        perfectAddP0 = perfect ? cfg.perfectClearBonus : 0;
+      }
       cleared = new Set(clears.cleared.map(([r, c]) => `${r},${c}`));
       const id = POPUP_ID++;
       const text =
@@ -434,6 +475,10 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
       popup,
       clearedCount: clears.count,
       statusMsg,
+      perfect,
+      baseAddP0,
+      comboAddP0,
+      perfectAddP0,
     });
 
     const delay = clears.count > 0 ? 430 : 150;
@@ -480,6 +525,11 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
           myScore: s.players[0].score,
           totalClearsThisMatch: s.totalClears,
           maxMultiClearThisMatch: s.maxMultiClear,
+          bestComboThisMatch: s.bestCombo,
+          hadPerfectClear: s.hadPerfectClear,
+          baseScore: s.baseScoreP0,
+          comboBonus: s.comboBonusP0,
+          perfectBonus: s.perfectBonusP0,
         });
       }
       return;

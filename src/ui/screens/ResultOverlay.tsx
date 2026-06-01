@@ -1,19 +1,26 @@
 import { Button } from "../components/Button";
 
 export interface MatchResult {
-  winner: 0 | 1 | -1; // -1 = draw
+  winner: 0 | 1 | -1;
   scores: [number, number];
+}
+
+export interface ScoreBreakdown {
+  base: number;
+  combo: number;
+  perfect: number;
 }
 
 interface Props {
   result: MatchResult | null;
   names: [string, string];
+  breakdown?: ScoreBreakdown;
   xp: number;
   onRematch: () => void;
   onMenu: () => void;
 }
 
-export function ResultOverlay({ result, names, xp, onRematch, onMenu }: Props) {
+export function ResultOverlay({ result, names, breakdown, xp, onRematch, onMenu }: Props) {
   if (!result) return null;
   const { winner, scores } = result;
   let title: string;
@@ -49,6 +56,26 @@ export function ResultOverlay({ result, names, xp, onRematch, onMenu }: Props) {
             <b>{scores[1]}</b>
           </div>
         </div>
+        {breakdown && (breakdown.base > 0 || breakdown.combo > 0 || breakdown.perfect > 0) && (
+          <div className="breakdown">
+            <div className="bd-row">
+              <span>База</span>
+              <b>{breakdown.base}</b>
+            </div>
+            {breakdown.combo > 0 && (
+              <div className="bd-row">
+                <span>Комбо</span>
+                <b>+{breakdown.combo}</b>
+              </div>
+            )}
+            {breakdown.perfect > 0 && (
+              <div className="bd-row">
+                <span>Perfect</span>
+                <b>+{breakdown.perfect}</b>
+              </div>
+            )}
+          </div>
+        )}
         <div className="result-xp">
           <span>+{xp} XP</span>
           <div className="xp-bar">

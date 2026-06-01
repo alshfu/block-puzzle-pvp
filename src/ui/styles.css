@@ -388,6 +388,63 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .resume-btn.primary { background: linear-gradient(135deg, var(--p0), var(--p0d)); color: #1a1206; border-color: transparent; }
 [data-kind="light"] .resume-btn.primary { color: #fff; }
 
+/* ---------- score breakdown в ResultOverlay ---------- */
+.breakdown {
+  width: 100%; display: flex; flex-direction: column; gap: 4px;
+  padding: 8px 12px; border-radius: var(--btn-r);
+  background: var(--panel2); border: 1px solid var(--line);
+}
+.bd-row { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--font-mono); font-size: 12px; }
+.bd-row span { color: var(--muted); }
+.bd-row b { color: var(--ink); font-weight: 500; }
+
+/* ---------- ачивки ---------- */
+.ach-list { display: flex; flex-direction: column; gap: 8px; }
+.ach-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--panel2); border: 1px solid var(--line); border-radius: var(--btn-r);
+  padding: 10px 12px; opacity: 0.55; transition: .15s;
+}
+.ach-card.unlocked { opacity: 1; border-color: var(--p0); box-shadow: 0 0 0 1px var(--p0) inset; }
+.ach-card.hidden { opacity: 0.4; }
+.ach-ico { font-size: 26px; width: 36px; text-align: center; }
+.ach-text { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ach-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.ach-desc { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); line-height: 1.35; }
+.ach-progress { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+.ach-bar { flex: 1; height: 6px; border-radius: 999px; background: var(--panel); overflow: hidden; border: 1px solid var(--line); }
+.ach-fill { height: 100%; background: linear-gradient(90deg, var(--p0), var(--p1)); }
+.ach-num { font-family: var(--font-mono); font-size: 10px; color: var(--muted); white-space: nowrap; }
+.ach-xp { font-family: var(--font-mono); font-size: 12px; color: var(--good); font-weight: 700; white-space: nowrap; }
+.ach-card:not(.unlocked) .ach-xp { color: var(--muted); }
+
+.sec-btn.ach-link { text-align: left; padding-left: 16px; font-size: 14px; min-height: 48px; }
+
+/* ---------- toasts ---------- */
+.toast-stack {
+  position: fixed; z-index: 80;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  width: calc(100% - 32px); max-width: 380px;
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--panel); border: 1px solid var(--p0);
+  border-radius: var(--card-r); padding: 10px 14px;
+  box-shadow: 0 12px 32px -12px var(--p0), 0 0 0 1px var(--p0) inset;
+  animation: toastIn .35s ease-out, toastOut .35s ease-in 3.6s both;
+  cursor: pointer;
+}
+.toast-ico { font-size: 28px; }
+.toast-text { display: flex; flex-direction: column; gap: 2px; line-height: 1.2; }
+.toast-title { font-weight: 700; font-size: 13px; color: var(--ink); }
+.toast-desc { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+@keyframes toastIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toastOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100%); opacity: 0; } }
+
 /* ---------- confetti (perfect clear) ---------- */
 .confetti-burst {
   position: absolute; inset: 0; pointer-events: none; z-index: 30; overflow: hidden;

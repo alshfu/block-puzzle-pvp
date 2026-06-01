@@ -8,12 +8,13 @@ interface Props {
   stats: Stats;
   onSave: (p: Profile) => void;
   onResetStats: () => void;
+  onOpenAchievements: () => void;
   onBack: () => void;
 }
 
 const AVATARS = ["🙂", "😎", "🦊", "🐱", "🦄", "🐉", "🤖", "👾", "🧙", "🥷", "👑", "🌟"];
 
-export function ProfileScreen({ profile, stats, onSave, onResetStats, onBack }: Props) {
+export function ProfileScreen({ profile, stats, onSave, onResetStats, onOpenAchievements, onBack }: Props) {
   const [nick, setNick] = useState(profile.nick);
   const [avatar, setAvatar] = useState(profile.avatar);
   const level = levelFromXp(profile.xp);
@@ -80,9 +81,17 @@ export function ProfileScreen({ profile, stats, onSave, onResetStats, onBack }: 
             <Stat label="Рекорд" value={stats.bestScore} />
             <Stat label="Очисток всего" value={stats.totalClears} />
             <Stat label="Мульти-очистка" value={`×${stats.maxMultiClear}`} />
+            <Stat label="Стрик сейчас" value={stats.currentWinStreak} />
+            <Stat label="Лучший стрик" value={stats.bestWinStreak} />
           </div>
           <button className="back-link" onClick={onResetStats}>
             сбросить статистику
+          </button>
+        </section>
+
+        <section className="setup-sec">
+          <button className="sec-btn ach-link" onClick={onOpenAchievements}>
+            🏅 Ачивки →
           </button>
         </section>
       </div>
