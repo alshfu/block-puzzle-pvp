@@ -116,6 +116,17 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .avatar-nick { font-weight: 700; font-size: 13px; }
 .avatar-lvl { font-size: 10px; color: var(--muted); }
 .mode-badge { font-size: 10.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; text-transform: uppercase; letter-spacing: .06em; background: var(--panel2); white-space: nowrap; }
+.menu-top-right { display: flex; align-items: center; gap: 6px; }
+.coin-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px; border-radius: 999px;
+  background: var(--panel); border: 1px solid var(--p0);
+  color: var(--ink); font-family: var(--font-mono); font-size: 12px;
+  box-shadow: 0 0 10px -4px var(--p0);
+}
+.coin-chip.read-only { cursor: default; }
+.coin-icon { font-size: 14px; line-height: 1; }
+.coin-amount { font-weight: 700; }
 .icon-btn {
   width: 38px; height: 38px; border-radius: 50%;
   background: var(--panel); border: 1px solid var(--line);
@@ -395,6 +406,42 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .resume-btn { padding: 8px 12px; border-radius: var(--btn-r); background: var(--panel2); border: 1px solid var(--line); color: var(--ink); font-family: var(--font-mono); font-size: 11.5px; }
 .resume-btn.primary { background: linear-gradient(135deg, var(--p0), var(--p0d)); color: #1a1206; border-color: transparent; }
 [data-kind="light"] .resume-btn.primary { color: #fff; }
+
+/* ---------- shop ---------- */
+.shop-list { display: flex; flex-direction: column; gap: 10px; }
+.shop-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--panel2); border: 1px solid var(--line); border-radius: var(--btn-r);
+  padding: 10px 12px;
+}
+.shop-card.equipped { border-color: var(--good); box-shadow: 0 0 0 1px var(--good) inset; }
+.shop-preview { display: flex; gap: 4px; padding: 6px; background: var(--cell); border-radius: var(--btn-r); }
+.shop-preview .cell { width: 28px; height: 28px; }
+.shop-text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.shop-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.shop-desc { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); line-height: 1.35; }
+.shop-action { display: flex; align-items: center; }
+.shop-status.equipped { font-family: var(--font-mono); font-size: 10.5px; color: var(--good); white-space: nowrap; }
+
+/* ---------- skins (классы доски) ---------- */
+.board.skin-gem .cell.filled { box-shadow: inset 0 -4px 6px rgba(0,0,0,.25), inset 0 4px 4px rgba(255,255,255,.45); }
+.board.skin-gem .cell.filled.owner0 { background: radial-gradient(120% 90% at 30% 25%, #fff3, var(--p0) 55%, var(--p0d)); }
+.board.skin-gem .cell.filled.owner1 { background: radial-gradient(120% 90% at 30% 25%, #fff3, var(--p1) 55%, var(--p1d)); }
+
+.board.skin-bullet .cell.filled { background: linear-gradient(180deg,#cfd6e2,#7f8b9c 60%,#3a4150); box-shadow: inset 0 2px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.4); border-color: transparent; }
+.board.skin-bullet .cell.filled.owner0 { border-bottom: 2px solid var(--p0); }
+.board.skin-bullet .cell.filled.owner1 { border-bottom: 2px solid var(--p1); }
+
+.board.skin-neon .cell.filled { background: var(--cell); border: 2px solid var(--p0); box-shadow: 0 0 12px var(--p0), inset 0 0 6px var(--p0); }
+.board.skin-neon .cell.filled.owner1 { border-color: var(--p1); box-shadow: 0 0 12px var(--p1), inset 0 0 6px var(--p1); }
+
+.board.skin-pixel .cell.filled { border-radius: 0; box-shadow: inset -2px -2px 0 rgba(0,0,0,.35), inset 2px 2px 0 rgba(255,255,255,.4); }
+.board.skin-pixel .cell.filled.owner0 { background: var(--p0); }
+.board.skin-pixel .cell.filled.owner1 { background: var(--p1); }
+
+.board.skin-candy .cell.filled { box-shadow: inset 0 4px 6px rgba(255,255,255,.75), inset 0 -4px 6px rgba(0,0,0,.18); }
+.board.skin-candy .cell.filled.owner0 { background: radial-gradient(120% 90% at 30% 20%, #ffd1ea, var(--p0) 55%, var(--p0d)); }
+.board.skin-candy .cell.filled.owner1 { background: radial-gradient(120% 90% at 30% 20%, #c9fff8, var(--p1) 55%, var(--p1d)); }
 
 /* ---------- combo flash overlay ---------- */
 .combo-flash {

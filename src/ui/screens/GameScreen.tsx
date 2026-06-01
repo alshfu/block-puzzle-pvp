@@ -28,6 +28,8 @@ interface Props {
   savedGame: SavedGame | null;
   currentStreak: number;
   prevBestStreak: number;
+  /** CSS-класс активного скина для клеток доски. */
+  skinClass?: string;
   onExit: () => void;
   onMatchOver: (outcome: MatchOutcome) => void;
   onRematch: () => void;
@@ -53,11 +55,13 @@ export function GameScreen({
   savedGame,
   currentStreak,
   prevBestStreak,
+  skinClass,
   onExit,
   onMatchOver,
   onRematch,
 }: Props) {
   const names = useMemo<[string, string]>(() => {
+    if (mode === "arcade") return [THEMES[theme].p0name, ""];
     if (mode === "hotseat") return ["Игрок 1", "Игрок 2"];
     if (mode === "botvbot") return [`Бот A · ${botLevelB}`, `Бот B · ${botLevel}`];
     return [THEMES[theme].p0name, THEMES[theme].p1name];
@@ -65,7 +69,7 @@ export function GameScreen({
 
   const botLevels = useMemo<[BotLevel | null, BotLevel | null]>(() => {
     if (mode === "bot") return [null, botLevel];
-    if (mode === "hotseat") return [null, null];
+    if (mode === "hotseat" || mode === "arcade") return [null, null];
     return [botLevelB, botLevel]; // botvbot: A first, B second
   }, [mode, botLevel, botLevelB]);
 
@@ -296,7 +300,9 @@ export function GameScreen({
             ? "vs bot · " + botLevel
             : mode === "hotseat"
               ? "hot-seat"
-              : "bot × bot"}
+              : mode === "arcade"
+                ? "arcade · solo"
+                : "bot × bot"}
         </span>
         <button className="pause-btn" onClick={() => setPausedLocal(true)}>
           ⏸
@@ -314,30 +320,32 @@ export function GameScreen({
         timer={{ remaining: state.timer.remaining, perTurn: state.timer.perTurn }}
       />
 
-      <Hand
-        title={
-          mode === "bot"
-            ? "Рука соперника"
-            : mode === "botvbot"
-              ? `${names[topOwner]}`
-              : `${names[topOwner]} · ждёт`
-        }
-        hint={
-          mode === "botvbot"
-            ? state.current === topOwner ? "ходит" : "ждёт"
-            : mode === "bot"
-              ? "наблюдай"
-              : state.current === topOwner ? "ходит" : "ждёт"
-        }
-        hand={state.players[topOwner].hand}
-        owner={topOwner}
-        selId={null}
-        deadIds={null}
-        interactive={false}
-        tone="watch"
-      />
+      {mode !== "arcade" && (
+        <Hand
+          title={
+            mode === "bot"
+              ? "Рука соперника"
+              : mode === "botvbot"
+                ? `${names[topOwner]}`
+                : `${names[topOwner]} · ждёт`
+          }
+          hint={
+            mode === "botvbot"
+              ? state.current === topOwner ? "ходит" : "ждёт"
+              : mode === "bot"
+                ? "наблюдай"
+                : state.current === topOwner ? "ходит" : "ждёт"
+          }
+          hand={state.players[topOwner].hand}
+          owner={topOwner}
+          selId={null}
+          deadIds={null}
+          interactive={false}
+          tone="watch"
+        />
+      )}
 
-      <Board ref={boardRef} board={state.board} ghost={ghost} flash={state.flash} popups={state.popups} />
+      <Board ref={boardRef} board={state.board} ghost={ghost} flash={state.flash} popups={state.popups} skinClass={skinClass} />
 
       <div className="status-bar">{state.statusMsg}</div>
 

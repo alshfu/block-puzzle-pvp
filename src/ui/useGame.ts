@@ -511,7 +511,8 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
     const boardAfter = cloneBoard(s.board);
     if (clearedCells.length > 0) applyClears(boardAfter, clearedCells);
 
-    const next: 0 | 1 = (1 - s.current) as 0 | 1;
+    // В аркаде ходит только player 0; ход не передаём, дедлок считаем сам себе.
+    const next: 0 | 1 = sess.mode === "arcade" ? 0 : ((1 - s.current) as 0 | 1);
     const nextRound = Math.floor((s.turnCount + 1) / 2);
     const perTurn = perTurnForRound(sess.blitz, cfg, nextRound);
     const opponentHasMove = hasAnyMove(boardAfter, s.players[next].hand, cfg);

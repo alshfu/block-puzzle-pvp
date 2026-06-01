@@ -18,15 +18,17 @@ interface Props {
   ghost: Ghost | null;
   flash: Set<string> | null;
   popups: ScorePopup[];
+  /** CSS-класс скина клеток. Default: "skin-default". */
+  skinClass?: string;
 }
 
 const BoardImpl = forwardRef<HTMLDivElement, Props>(function BoardImpl(
-  { board, ghost, flash, popups }: Props,
+  { board, ghost, flash, popups, skinClass = "skin-default" }: Props,
   ref,
 ) {
   return (
     <div className="board-wrap">
-      <div className="board" ref={ref}>
+      <div className={`board ${skinClass}`} ref={ref}>
         {board.map((row, r) =>
           row.map((cell, c) => {
             const key = `${r},${c}`;

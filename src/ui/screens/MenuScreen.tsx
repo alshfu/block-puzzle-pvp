@@ -6,7 +6,7 @@ import { MiniPiece } from "../components/MiniPiece";
 import type { SavedGame } from "../storage/saveGame";
 import type { ThemeId } from "../themes";
 
-export type GameMode = "bot" | "hotseat" | "botvbot" | "online";
+export type GameMode = "bot" | "hotseat" | "botvbot" | "online" | "arcade";
 
 export interface Profile {
   nick: string;
@@ -22,8 +22,11 @@ interface Props {
   onDiscardSave: () => void;
   onOpenProfile: () => void;
   onOpenSettings: () => void;
+  onOpenShop: () => void;
+  onOpenDaily: () => void;
   profile: Profile;
   savedGame: SavedGame | null;
+  coins: number;
 }
 
 export function MenuScreen({
@@ -32,8 +35,11 @@ export function MenuScreen({
   onDiscardSave,
   onOpenProfile,
   onOpenSettings,
+  onOpenShop,
+  onOpenDaily,
   profile,
   savedGame,
+  coins,
 }: Props) {
   const [modeOpen, setModeOpen] = useState(false);
 
@@ -47,9 +53,18 @@ export function MenuScreen({
             <span className="avatar-lvl">ур. {profile.level}</span>
           </span>
         </button>
-        <button className="icon-btn" onClick={onOpenSettings} title="Настройки" aria-label="Настройки">
-          <span className="icon-gear">⚙</span>
-        </button>
+        <div className="menu-top-right">
+          <button className="coin-chip" onClick={onOpenShop} title="Монеты — в магазин">
+            <span className="coin-icon">🪙</span>
+            <span className="coin-amount">{coins}</span>
+          </button>
+          <button className="icon-btn" onClick={onOpenDaily} title="Дейли" aria-label="Дейли">
+            <span className="icon-gear">🎯</span>
+          </button>
+          <button className="icon-btn" onClick={onOpenSettings} title="Настройки" aria-label="Настройки">
+            <span className="icon-gear">⚙</span>
+          </button>
+        </div>
       </div>
 
       <div className="menu-hero">
@@ -81,6 +96,13 @@ export function MenuScreen({
               <span className="mode-txt">
                 <b>Вдвоём</b>
                 <i>hot-seat на одном устройстве</i>
+              </span>
+            </Button>
+            <Button kind="ghost" className="mode-btn" onClick={() => onStart("arcade")}>
+              <span className="mode-ico">🎯</span>
+              <span className="mode-txt">
+                <b>Аркада</b>
+                <i>один на доске — на рекорд, +монеты</i>
               </span>
             </Button>
             <Button kind="ghost" className="mode-btn" onClick={() => onStart("botvbot")}>
