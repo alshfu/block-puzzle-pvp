@@ -5,6 +5,7 @@ import { Logo } from "../components/Logo";
 import { MiniPiece } from "../components/MiniPiece";
 import { ThemeSwitch } from "../components/ThemeSwitch";
 import type { ThemeId } from "../themes";
+import type { SavedGame } from "../storage/saveGame";
 
 export type GameMode = "bot" | "hotseat";
 
@@ -18,15 +19,31 @@ interface Props {
   theme: ThemeId;
   setTheme: (t: ThemeId) => void;
   onStart: (mode: GameMode) => void;
+  onResume: () => void;
+  onDiscardSave: () => void;
+  onOpenProfile: () => void;
+  onOpenSettings: () => void;
   profile: Profile;
+  savedGame: SavedGame | null;
 }
 
-export function MenuScreen({ theme, setTheme, onStart, profile }: Props) {
+export function MenuScreen({
+  theme,
+  setTheme,
+  onStart,
+  onResume,
+  onDiscardSave,
+  onOpenProfile,
+  onOpenSettings,
+  profile,
+  savedGame,
+}: Props) {
   const [modeOpen, setModeOpen] = useState(false);
+
   return (
     <div className="screen menu-screen">
       <div className="menu-top">
-        <button className="avatar-chip">
+        <button className="avatar-chip" onClick={onOpenProfile}>
           <span className="avatar-face">{profile.avatar}</span>
           <span className="avatar-meta">
             <span className="avatar-nick">{profile.nick}</span>
@@ -43,6 +60,10 @@ export function MenuScreen({ theme, setTheme, onStart, profile }: Props) {
       </div>
 
       <div className="menu-actions">
+        {savedGame && !modeOpen && (
+          <ResumeCard saved={savedGame} onResume={onResume} onDiscard={onDiscardSave} />
+        )}
+
         {!modeOpen ? (
           <Button kind="primary" className="hero-btn" onClick={() => setModeOpen(true)}>
             ▶ Играть
@@ -77,9 +98,9 @@ export function MenuScreen({ theme, setTheme, onStart, profile }: Props) {
         )}
         {!modeOpen && (
           <div className="menu-secondary">
-            <button className="sec-btn">Профиль</button>
-            <button className="sec-btn">Ачивки</button>
-            <button className="sec-btn">Настройки</button>
+            <button className="sec-btn" onClick={onOpenProfile}>Профиль</button>
+            <button className="sec-btn" disabled>Ачивки</button>
+            <button className="sec-btn" onClick={onOpenSettings}>Настройки</button>
           </div>
         )}
       </div>
@@ -99,6 +120,36 @@ function MiniDeco() {
       {demo.map((t, i) => (
         <MiniPiece key={i} cells={BASE_SHAPES[t]} owner={(i % 2) as 0 | 1} cellSize={11} />
       ))}
+    </div>
+  );
+}
+
+function ResumeCard({
+  saved,
+  onResume,
+  onDiscard,
+}: {
+  saved: SavedGame;
+  onResume: () => void;
+  onDiscard: () => void;
+}) {
+  const modeLabel = saved.mode === "bot" ? `vs bot · ${saved.botLevel}` : "hot-seat";
+  return (
+    <div className="resume-card">
+      <div className="resume-text">
+        <div className="resume-title">Продолжить партию</div>
+        <div className="resume-sub">
+          {modeLabel} · счёт {saved.players[0].score}:{saved.players[1].score}
+        </div>
+      </div>
+      <div className="resume-actions">
+        <button className="resume-btn primary" onClick={onResume}>
+          ▶
+        </button>
+        <button className="resume-btn" onClick={onDiscard}>
+          ✕
+        </button>
+      </div>
     </div>
   );
 }

@@ -316,6 +316,53 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .night-skyline span::after { content: ""; position: absolute; inset: 6px 4px auto 4px; height: 60%; background-image: radial-gradient(1px 2px at 4px 6px, rgba(255,210,63,.5), transparent), radial-gradient(1px 2px at 12px 16px, rgba(58,166,255,.4), transparent), radial-gradient(1px 2px at 8px 28px, rgba(255,210,63,.35), transparent); opacity: .7; }
 .night-grid { position: absolute; bottom: 0; left: 0; right: 0; height: 110px; background-image: linear-gradient(var(--p1) 1px, transparent 1px), linear-gradient(90deg, var(--p1) 1px, transparent 1px); background-size: 36px 36px; opacity: .07; transform: perspective(300px) rotateX(62deg); transform-origin: bottom; }
 
+/* ---------- profile / settings ---------- */
+.text-input {
+  width: 100%; padding: 12px 14px; border-radius: var(--btn-r);
+  background: var(--panel2); border: 1px solid var(--line); color: var(--ink);
+  font-family: var(--font-display); font-size: 15px; min-height: 44px;
+  outline: none; transition: border-color .15s;
+}
+.text-input:focus { border-color: var(--p1); }
+
+.avatar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.avatar-pick {
+  font-size: 22px; padding: 8px 0; border-radius: var(--btn-r);
+  background: var(--panel2); border: 1px solid var(--line);
+  display: grid; place-items: center; min-height: 44px;
+  transition: .15s;
+}
+.avatar-pick:hover { border-color: var(--muted); }
+.avatar-pick.on { border-color: var(--p1); box-shadow: 0 0 0 1px var(--p1) inset, 0 0 12px -4px var(--p1); }
+
+.lvl-row { display: flex; align-items: center; gap: 12px; }
+.lvl-num { font-family: var(--font-mono); font-size: 14px; color: var(--ink); white-space: nowrap; }
+.lvl-row .xp-bar { flex: 1; height: 10px; border-radius: 999px; background: var(--panel2); overflow: hidden; border: 1px solid var(--line); }
+.lvl-row .xp-fill { height: 100%; background: linear-gradient(90deg, var(--p0), var(--p1)); }
+.xp-num { font-family: var(--font-mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.stat-tile {
+  background: var(--panel2); border: 1px solid var(--line); border-radius: var(--btn-r);
+  padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;
+}
+.stat-val { font-family: var(--font-mono); font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1; }
+.stat-lbl { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+
+/* ---------- menu: "продолжить партию" plашка ---------- */
+.resume-card {
+  background: var(--panel); border: 1px solid var(--p0); border-radius: var(--card-r);
+  padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--p0) 30%, transparent), 0 10px 24px -12px var(--p0);
+}
+.resume-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.resume-title { font-size: 13px; font-weight: 700; }
+.resume-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.resume-actions { display: flex; gap: 6px; }
+.resume-btn { padding: 8px 12px; border-radius: var(--btn-r); background: var(--panel2); border: 1px solid var(--line); color: var(--ink); font-family: var(--font-mono); font-size: 11.5px; }
+.resume-btn.primary { background: linear-gradient(135deg, var(--p0), var(--p0d)); color: #1a1206; border-color: transparent; }
+[data-kind="light"] .resume-btn.primary { color: #fff; }
+
 /* reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .candy-bit, .night-beam, .night-emblem, .turn-timer.danger .tt-fill, .score-pop, .cell.flash { animation: none !important; }

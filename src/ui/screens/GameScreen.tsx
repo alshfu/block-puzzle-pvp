@@ -9,6 +9,8 @@ import { Scoreboard } from "../components/Scoreboard";
 import { TransformControls } from "../components/TransformControls";
 import { THEMES, type ThemeId } from "../themes";
 import { useGame } from "../useGame";
+import type { SavedGame } from "../storage/saveGame";
+import type { MatchOutcome } from "../storage/stats";
 import type { GameMode } from "./MenuScreen";
 import { ResultOverlay } from "./ResultOverlay";
 import type { BlitzPreset } from "./SetupScreen";
@@ -20,16 +22,32 @@ interface Props {
   cfg: RuleConfig;
   botLevel: BotLevel;
   blitz: BlitzPreset;
+  savedGame: SavedGame | null;
   onExit: () => void;
+  onMatchOver: (outcome: MatchOutcome) => void;
 }
 
-export function GameScreen({ theme, setTheme, mode, cfg, botLevel, blitz, onExit }: Props) {
+export function GameScreen({
+  theme,
+  setTheme,
+  mode,
+  cfg,
+  botLevel,
+  blitz,
+  savedGame,
+  onExit,
+  onMatchOver,
+}: Props) {
   const names = useMemo<[string, string]>(() => {
     if (mode === "hotseat") return ["Игрок 1", "Игрок 2"];
     return [THEMES[theme].p0name, THEMES[theme].p1name];
   }, [mode, theme]);
 
-  const game = useGame({ cfg, mode, botLevel, blitz, names });
+  const game = useGame({
+    session: { cfg, mode, botLevel, blitz, names },
+    savedGame,
+    onMatchOver,
+  });
   const { state, ghost, deadIds } = game;
 
   const [paused, setPausedLocal] = useState(false);

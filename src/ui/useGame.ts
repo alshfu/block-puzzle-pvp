@@ -28,10 +28,17 @@ import type { ScorePopup } from "./components/Board";
 import type { MatchResult } from "./screens/ResultOverlay";
 import type { GameMode } from "./screens/MenuScreen";
 import { BLITZ_PRESETS, type BlitzPreset } from "./screens/SetupScreen";
+import {
+  clearSavedGame,
+  loadSavedGame,
+  saveGame,
+  type SavedGame,
+} from "./storage/saveGame";
+import type { MatchOutcome } from "./storage/stats";
 
 interface Selection {
   pieceId: string;
-  cells: Coord[]; // нормализованные текущей ориентации
+  cells: Coord[];
 }
 
 interface Player {
@@ -63,7 +70,9 @@ interface State {
   statusMsg: string;
   animating: boolean;
   result: MatchResult | null;
-  shake: number; // tick для триггера shake-анимации в UI
+  shake: number;
+  totalClears: number;
+  maxMultiClear: number;
 }
 
 type Action =
@@ -82,7 +91,6 @@ type Action =
       newPiece: PieceInstance | null;
       gained: number;
       popup: ScorePopup | null;
-      perfect: boolean;
       clearedCount: number;
       statusMsg: string;
     }
@@ -141,6 +149,8 @@ function reducer(s: State, a: Action): State {
         popups: a.popup ? [...s.popups, a.popup] : s.popups,
         animating: true,
         statusMsg: a.statusMsg,
+        totalClears: s.totalClears + a.clearedCount,
+        maxMultiClear: Math.max(s.maxMultiClear, a.clearedCount),
       };
     }
     case "FINALIZE":
@@ -182,11 +192,15 @@ export interface GameSession {
   names: [string, string];
 }
 
-function makeInitialState(session: GameSession, seed: number): {
+interface InitPack {
   state: State;
   bags: [Bag, Bag];
   botRng: () => number;
-} {
+  drawCounts: [number, number];
+  seed: number;
+}
+
+function freshInit(session: GameSession, seed: number): InitPack {
   const bags: [Bag, Bag] = [new Bag(seed + 11), new Bag(seed + 99)];
   const handSize = session.cfg.handSize;
   const players: [Player, Player] = [
@@ -204,52 +218,111 @@ function makeInitialState(session: GameSession, seed: number): {
     },
   ];
   const perTurn = perTurnForRound(session.blitz, session.cfg, 0);
-  const state: State = {
-    board: emptyBoard(),
-    players,
-    current: 0,
-    status: "playing",
-    sel: null,
-    hover: null,
-    flash: null,
-    popups: [],
-    timer: { remaining: perTurn, perTurn, round: 0 },
-    turnCount: 0,
-    statusMsg:
-      session.mode === "bot"
-        ? "Выбери фигуру → кликни по полю"
-        : "Игрок 1: твой ход",
-    animating: false,
-    result: null,
-    shake: 0,
+  return {
+    state: {
+      board: emptyBoard(),
+      players,
+      current: 0,
+      status: "playing",
+      sel: null,
+      hover: null,
+      flash: null,
+      popups: [],
+      timer: { remaining: perTurn, perTurn, round: 0 },
+      turnCount: 0,
+      statusMsg:
+        session.mode === "bot"
+          ? "Выбери фигуру → кликни по полю"
+          : "Игрок 1: твой ход",
+      animating: false,
+      result: null,
+      shake: 0,
+      totalClears: 0,
+      maxMultiClear: 0,
+    },
+    bags,
+    botRng: makeRng(seed + 7),
+    drawCounts: [handSize, handSize],
+    seed,
   };
-  const botRng = makeRng(seed + 7);
-  return { state, bags, botRng };
+}
+
+function restoreInit(session: GameSession, saved: SavedGame): InitPack {
+  // Перематываем мешки на сохранённое количество дёрганий.
+  const bags: [Bag, Bag] = [new Bag(saved.seed + 11), new Bag(saved.seed + 99)];
+  for (let i = 0; i < saved.drawCounts[0]; i++) bags[0].draw();
+  for (let i = 0; i < saved.drawCounts[1]; i++) bags[1].draw();
+  // А botRng — детерминирован от seed, но мы не считали его вызовы.
+  // Это слегка нарушает детерминизм бота при load (вызовы между сохранениями не повторяются).
+  // Для UX автосохранения такого допущения достаточно.
+  const botRng = makeRng(saved.seed + 7);
+  return {
+    state: {
+      board: saved.board,
+      players: [
+        { ...saved.players[0] },
+        { ...saved.players[1] },
+      ] as [Player, Player],
+      current: saved.current,
+      status: "playing",
+      sel: null,
+      hover: null,
+      flash: null,
+      popups: [],
+      timer: {
+        remaining: saved.remaining,
+        perTurn: saved.perTurn,
+        round: Math.floor(saved.turnCount / 2),
+      },
+      turnCount: saved.turnCount,
+      statusMsg: session.mode === "bot" ? "Партия восстановлена" : `Ходит: ${session.names[saved.current]}`,
+      animating: false,
+      result: null,
+      shake: 0,
+      totalClears: saved.totalClears,
+      maxMultiClear: saved.maxMultiClear,
+    },
+    bags,
+    botRng,
+    drawCounts: [...saved.drawCounts] as [number, number],
+    seed: saved.seed,
+  };
 }
 
 function perTurnForRound(blitz: BlitzPreset, cfg: RuleConfig, round: number): number {
   if (!cfg.turnTimerEnabled) return Infinity;
   const preset = BLITZ_PRESETS[blitz];
-  // Из ТЗ: уменьшение turnTimeDecay/раунд, не ниже turnTimeMin. Прототип использовал
-  // целые секунды и уменьшение на 1с каждые 2 хода — оставляем плавное по ТЗ.
   return Math.max(preset.min, preset.start - cfg.turnTimeDecay * Math.max(0, round));
 }
 
 let POPUP_ID = 1;
 
-export function useGame(session: GameSession) {
-  const seedRef = useRef<number>(Math.floor(Math.random() * 0xffff) || 1234);
+export interface UseGameOptions {
+  session: GameSession;
+  savedGame: SavedGame | null;
+  onMatchOver?: (outcome: MatchOutcome) => void;
+}
+
+export function useGame({ session, savedGame, onMatchOver }: UseGameOptions) {
   const bagsRef = useRef<[Bag, Bag] | null>(null);
   const botRngRef = useRef<(() => number) | null>(null);
+  const drawCountsRef = useRef<[number, number]>([0, 0]);
+  const seedRef = useRef<number>(0);
   const popupTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
   const finalizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const botTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pausedRef = useRef<boolean>(false);
+  const matchOverFiredRef = useRef<boolean>(false);
 
-  const initialPack = useMemo(() => makeInitialState(session, seedRef.current), []);
+  const initialPack = useMemo(() => {
+    const seed = savedGame?.seed ?? (Math.floor(Math.random() * 0xffff) || 1234);
+    return savedGame ? restoreInit(session, savedGame) : freshInit(session, seed);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   if (!bagsRef.current) {
     bagsRef.current = initialPack.bags;
     botRngRef.current = initialPack.botRng;
+    drawCountsRef.current = initialPack.drawCounts;
+    seedRef.current = initialPack.seed;
   }
 
   const [state, dispatch] = useReducer(reducer, initialPack.state);
@@ -259,6 +332,9 @@ export function useGame(session: GameSession) {
   const sessionRef = useRef(session);
   sessionRef.current = session;
 
+  const onMatchOverRef = useRef(onMatchOver);
+  onMatchOverRef.current = onMatchOver;
+
   const clearAllTimers = useCallback(() => {
     popupTimersRef.current.forEach(clearTimeout);
     popupTimersRef.current.clear();
@@ -266,14 +342,8 @@ export function useGame(session: GameSession) {
       clearTimeout(finalizeTimerRef.current);
       finalizeTimerRef.current = null;
     }
-    if (botTimerRef.current) {
-      clearTimeout(botTimerRef.current);
-      botTimerRef.current = null;
-    }
   }, []);
 
-  // Координированный «ход»: считаем результат, диспатчим APPLY_MOVE, ставим
-  // таймер на FINALIZE (за время отыгрыша анимации очистки).
   const performMove = useCallback((move: CandidateMove, owner: 0 | 1) => {
     const s = stateRef.current;
     const sess = sessionRef.current;
@@ -308,11 +378,14 @@ export function useGame(session: GameSession) {
       statusMsg = owner === 0 ? "Ход сделан" : `${sess.names[owner]} походил`;
     }
 
-    // дотягиваем руку до cfg.handSize (берём из своего мешка)
     const bag = bagsRef.current![owner];
     const handAfterRemoval =
       s.players[owner].hand.filter((p) => p.id !== move.pieceId).length;
-    const newPiece = handAfterRemoval < cfg.handSize ? bag.draw() : null;
+    let newPiece: PieceInstance | null = null;
+    if (handAfterRemoval < cfg.handSize) {
+      newPiece = bag.draw();
+      drawCountsRef.current[owner]++;
+    }
 
     dispatch({
       type: "APPLY_MOVE",
@@ -323,7 +396,6 @@ export function useGame(session: GameSession) {
       newPiece,
       gained,
       popup,
-      perfect,
       clearedCount: clears.count,
       statusMsg,
     });
@@ -358,6 +430,17 @@ export function useGame(session: GameSession) {
         statusMsg: "Игра окончена",
         result: { winner, scores },
       });
+      clearSavedGame();
+      if (!matchOverFiredRef.current) {
+        matchOverFiredRef.current = true;
+        onMatchOverRef.current?.({
+          winner,
+          scores,
+          myScore: s.players[0].score,
+          totalClearsThisMatch: s.totalClears,
+          maxMultiClearThisMatch: s.maxMultiClear,
+        });
+      }
       return;
     }
 
@@ -376,18 +459,39 @@ export function useGame(session: GameSession) {
       statusMsg: nextStatus,
       result: null,
     });
+
+    // Автосохранение текущего состояния после хода.
+    const finalState = stateRef.current;
+    saveGame({
+      version: 1,
+      seed: seedRef.current,
+      cfg: sess.cfg,
+      mode: sess.mode,
+      botLevel: sess.botLevel,
+      blitz: sess.blitz,
+      board: boardAfter,
+      players: [
+        { ...finalState.players[0] },
+        { ...finalState.players[1] },
+      ],
+      drawCounts: [...drawCountsRef.current] as [number, number],
+      current: next,
+      turnCount: s.turnCount + 1,
+      perTurn,
+      remaining: perTurn,
+      totalClears: finalState.totalClears,
+      maxMultiClear: finalState.maxMultiClear,
+      savedAt: Date.now(),
+    });
   }, []);
 
-  // Бот делает ход, когда наступила его очередь
   useEffect(() => {
     if (state.status !== "playing") return;
     if (state.animating) return;
     const isBotsTurn = state.players[state.current].isBot;
     if (!isBotsTurn) return;
-    if (botTimerRef.current) return;
     const delay = 400 + Math.floor((botRngRef.current?.() ?? 0.5) * 800);
-    botTimerRef.current = setTimeout(() => {
-      botTimerRef.current = null;
+    const t = setTimeout(() => {
       const s = stateRef.current;
       if (s.status !== "playing" || !s.players[s.current].isBot) return;
       const sess = sessionRef.current;
@@ -404,9 +508,9 @@ export function useGame(session: GameSession) {
       }
       performMove(move, s.current);
     }, delay);
+    return () => clearTimeout(t);
   }, [state.current, state.status, state.animating, state.players, performMove, finalizeMove]);
 
-  // Tick таймера
   useEffect(() => {
     if (state.status !== "playing") return;
     if (state.animating) return;
@@ -416,7 +520,6 @@ export function useGame(session: GameSession) {
       const s = stateRef.current;
       if (s.status !== "playing" || s.animating || pausedRef.current) return;
       if (s.timer.remaining - 0.1 <= 0) {
-        // таймаут
         const sess = sessionRef.current;
         const preferred = s.sel?.pieceId;
         const fp = forcePlace(s.board, s.players[s.current].hand, sess.cfg, botRngRef.current!, preferred);
@@ -433,10 +536,8 @@ export function useGame(session: GameSession) {
     return () => clearInterval(iv);
   }, [state.status, state.animating, state.current, state.timer.remaining, performMove, finalizeMove]);
 
-  // size-effects clean-up при размонтировании
   useEffect(() => clearAllTimers, [clearAllTimers]);
 
-  // --- user actions ---
   const selectPiece = useCallback((piece: PieceInstance) => {
     const s = stateRef.current;
     if (s.status !== "playing" || s.animating || pausedRef.current) return;
@@ -475,14 +576,17 @@ export function useGame(session: GameSession) {
 
   const restart = useCallback(() => {
     clearAllTimers();
-    seedRef.current = Math.floor(Math.random() * 0xffff) || 1234;
-    const fresh = makeInitialState(sessionRef.current, seedRef.current);
+    clearSavedGame();
+    matchOverFiredRef.current = false;
+    const seed = Math.floor(Math.random() * 0xffff) || 1234;
+    const fresh = freshInit(sessionRef.current, seed);
     bagsRef.current = fresh.bags;
     botRngRef.current = fresh.botRng;
+    drawCountsRef.current = fresh.drawCounts;
+    seedRef.current = fresh.seed;
     dispatch({ type: "RESTART", initial: fresh.state });
   }, [clearAllTimers]);
 
-  // --- derived ---
   const ghost = useMemo(() => {
     if (!state.sel || !state.hover) return null;
     const { r, c } = state.hover;
@@ -528,3 +632,5 @@ function countFilled(board: Board): number {
   for (const row of board) for (const c of row) if (c.filled) n++;
   return n;
 }
+
+export { loadSavedGame };
