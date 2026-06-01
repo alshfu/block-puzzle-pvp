@@ -31,7 +31,9 @@ import { TUTORIAL_REWARD_COINS } from "./tutorial/steps";
 import { loadDaily, saveDaily, type DailyState } from "./storage/daily";
 import { loadPlayerSkins, savePlayerSkins, type PlayerSkins } from "./storage/skins";
 import { claimQuest as claimQuestEngine } from "./daily/engine";
-import { coinsForMatch, loadWallet, saveWallet, type Wallet } from "./storage/wallet";
+import { addScoreForCrystals, coinsForMatch, loadWallet, saveWallet, type Wallet } from "./storage/wallet";
+import { loadInventory, saveInventory, type Inventory } from "./storage/inventory";
+import type { PowerupId, PowerupDef } from "./shop/powerups";
 import { SetupScreen, type BlitzPreset } from "./screens/SetupScreen";
 import {
   DEFAULT_PROFILE,
@@ -105,6 +107,7 @@ export function App() {
   const [toasts, setToasts] = useState<AchievementDef[]>([]);
   const [onlineMatch, setOnlineMatch] = useState<{ roomId: string; opponent: OnlineProfile } | null>(null);
   const [wallet, setWallet] = useState<Wallet>(loadWallet);
+  const [inventory, setInventory] = useState<Inventory>(loadInventory);
   const [playerSkins, setPlayerSkins] = useState<PlayerSkins>(loadPlayerSkins);
   const [daily, setDaily] = useState<DailyState>(loadDaily);
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
@@ -137,6 +140,10 @@ export function App() {
   useEffect(() => {
     saveWallet(wallet);
   }, [wallet]);
+
+  useEffect(() => {
+    saveInventory(inventory);
+  }, [inventory]);
 
   useEffect(() => {
     savePlayerSkins(playerSkins);
@@ -302,9 +309,13 @@ export function App() {
       setToasts((cur) => [...cur, ...unlocked]);
     }
 
-    // Монеты за матч
+    // Монеты за матч + кристаллы из накопленного score (150 score = 1 кристалл)
     const coins = coinsForMatch(outcome.myScore, outcome.winner === 0);
-    setWallet((w) => ({ coins: w.coins + coins, totalEarned: w.totalEarned + coins }));
+    setWallet((w) => {
+      const withCoins = { ...w, coins: w.coins + coins, totalEarned: w.totalEarned + coins };
+      const { wallet: withCrystals } = addScoreForCrystals(withCoins, outcome.myScore);
+      return withCrystals;
+    });
 
     // Daily quests
     const dailyCtx: DailyMatchContext = {
@@ -340,7 +351,7 @@ export function App() {
     const { next, coinsAwarded } = claimQuestEngine(daily, defId);
     setDaily(next);
     if (coinsAwarded > 0) {
-      setWallet((w) => ({ coins: w.coins + coinsAwarded, totalEarned: w.totalEarned + coinsAwarded }));
+      setWallet((w) => ({ ...w, coins: w.coins + coinsAwarded, totalEarned: w.totalEarned + coinsAwarded }));
     }
   };
 
@@ -357,8 +368,19 @@ export function App() {
     );
   };
 
+  const handleBuyPowerup = (p: PowerupDef) => {
+    if (wallet.crystals < p.price) return;
+    setWallet((w) => ({ ...w, crystals: w.crystals - p.price }));
+    setInventory((inv) => ({ ...inv, [p.id]: inv[p.id] + 1 }));
+  };
+
+  const handleConsumePowerup = (id: PowerupId) => {
+    setInventory((inv) => ({ ...inv, [id]: Math.max(0, inv[id] - 1) }));
+  };
+
   const handleTutorialCompleted = () => {
     setWallet((w) => ({
+      ...w,
       coins: w.coins + TUTORIAL_REWARD_COINS,
       totalEarned: w.totalEarned + TUTORIAL_REWARD_COINS,
     }));
@@ -402,10 +424,12 @@ export function App() {
         )}
         {screen === "shop" && (
           <ShopScreen
-            coins={wallet.coins}
+            wallet={wallet}
             player={playerSkins}
-            onBuy={handleBuySkin}
-            onEquip={handleEquipSkin}
+            inventory={inventory}
+            onBuySkin={handleBuySkin}
+            onEquipSkin={handleEquipSkin}
+            onBuyPowerup={handleBuyPowerup}
             onBack={() => setScreen("menu")}
           />
         )}
@@ -454,6 +478,8 @@ export function App() {
             currentStreak={stats.currentWinStreak}
             prevBestStreak={prevBestStreakRef.current}
             skinClass={SKINS_BY_ID[playerSkins.equipped]?.cssClass ?? "skin-default"}
+            inventory={inventory}
+            onConsumePowerup={handleConsumePowerup}
             onExit={handleExitGame}
             onMatchOver={handleMatchOver}
             onRematch={() => { wasRematchRef.current = true; }}
@@ -545,7 +571,11 @@ export function App() {
               const achXp = unlocked.reduce((sum, a) => sum + a.rewardXp, 0);
 
               const reward = summary.won ? 30 : summary.drew ? 15 : 8;
-              setWallet((w) => ({ coins: w.coins + reward, totalEarned: w.totalEarned + reward }));
+              setWallet((w) => {
+                const withCoins = { ...w, coins: w.coins + reward, totalEarned: w.totalEarned + reward };
+                const { wallet: withCrystals } = addScoreForCrystals(withCoins, summary.myScore);
+                return withCrystals;
+              });
               if (achXp > 0) setProfile((p) => ({ ...p, xp: p.xp + achXp }));
             }}
           />

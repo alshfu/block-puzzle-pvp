@@ -4,6 +4,9 @@ import { SIZE } from "../../core";
 import { Board } from "../components/Board";
 import { useBoardPointer } from "../hooks/useBoardPointer";
 import { ComboFlash, pickComboMessage } from "../components/ComboFlash";
+import { PowerupsPanel } from "../components/PowerupsPanel";
+import type { PowerupId } from "../shop/powerups";
+import type { Inventory } from "../storage/inventory";
 import { Confetti } from "../components/Confetti";
 import { DragLayer } from "../components/DragLayer";
 import { Hand } from "../components/Hand";
@@ -31,6 +34,8 @@ interface Props {
   prevBestStreak: number;
   /** CSS-класс активного скина для клеток доски. */
   skinClass?: string;
+  inventory: Inventory;
+  onConsumePowerup: (id: PowerupId) => void;
   onExit: () => void;
   onMatchOver: (outcome: MatchOutcome) => void;
   onRematch: () => void;
@@ -57,6 +62,8 @@ export function GameScreen({
   currentStreak,
   prevBestStreak,
   skinClass,
+  inventory,
+  onConsumePowerup,
   onExit,
   onMatchOver,
   onRematch,
@@ -268,6 +275,70 @@ export function GameScreen({
     onPlace: game.onPlace,
   });
 
+  // ─── Power-ups ─────────────────────────────────────────────────────────
+  const [activePowerup, setActivePowerup] = useState<PowerupId | null>(null);
+
+  const handlePowerupClick = (id: PowerupId) => {
+    if (inventory[id] <= 0) return;
+    if (id === "swap_hand") {
+      if (game.powerSwapHand()) onConsumePowerup(id);
+      return;
+    }
+    if (id === "auto_play") {
+      if (game.powerAutoPlay()) onConsumePowerup(id);
+      return;
+    }
+    if (id === "hint") {
+      const hint = game.powerHint();
+      if (hint) {
+        onConsumePowerup(id);
+        // через 3 сек снять selection и hover
+        setTimeout(() => { game.clearSel(); }, 3000);
+      }
+      return;
+    }
+    // stick_row / stick_col / bomb_3x3 — переходим в selection mode
+    setActivePowerup(activePowerup === id ? null : id);
+  };
+
+  // клик по доске в power-up режиме: вычисляем (row,col) и вызываем нужный action
+  useEffect(() => {
+    if (!activePowerup) return;
+    const el = boardRef.current;
+    if (!el) return;
+    const onClick = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      const PAD = 9;
+      const GAP = 3;
+      const step = cellPx + GAP;
+      const lx = e.clientX - rect.left - PAD;
+      const ly = e.clientY - rect.top - PAD;
+      const c = Math.floor(lx / step);
+      const r = Math.floor(ly / step);
+      if (r < 0 || r >= SIZE || c < 0 || c >= SIZE) return;
+      let used = false;
+      if (activePowerup === "stick_row") used = game.powerClearRow(r);
+      else if (activePowerup === "stick_col") used = game.powerClearCol(c);
+      else if (activePowerup === "bomb_3x3") used = game.powerBomb(r, c);
+      if (used) {
+        onConsumePowerup(activePowerup);
+        setActivePowerup(null);
+      }
+    };
+    el.addEventListener("click", onClick);
+    return () => el.removeEventListener("click", onClick);
+  }, [activePowerup, cellPx, game, onConsumePowerup]);
+
+  // Esc — отменить power-up
+  useEffect(() => {
+    if (!activePowerup) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActivePowerup(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [activePowerup]);
+
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (paused || state.status !== "playing") return;
     if (state.players[state.current].isBot) return;
@@ -400,6 +471,16 @@ export function GameScreen({
         onFlip={game.flipSel}
         onClear={game.clearSel}
       />
+
+      {/* Power-ups доступны только пока ход локального игрока */}
+      {mode !== "online" && (
+        <PowerupsPanel
+          inventory={inventory}
+          active={activePowerup}
+          enabled={isLocalTurn}
+          onClick={handlePowerupClick}
+        />
+      )}
 
       {drag?.active && (
         <DragLayer

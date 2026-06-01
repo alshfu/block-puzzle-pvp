@@ -725,6 +725,135 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
     return s;
   }, [state.board, state.players, state.current]);
 
+  // ─── Power-ups ─────────────────────────────────────────────────────────
+  /** Очистить произвольные клетки + начислить очки игроку 0 как обычную очистку. */
+  const applyArbitraryClear = useCallback((targets: Coord[], reason: string): boolean => {
+    const s = stateRef.current;
+    const sess = sessionRef.current;
+    if (s.status !== "playing" || s.animating) return false;
+    // Считаем только filled клетки.
+    const cleared: Coord[] = [];
+    for (const [r, c] of targets) {
+      if (r < 0 || r >= SIZE || c < 0 || c >= SIZE) continue;
+      if (s.board[r][c].filled) cleared.push([r, c]);
+    }
+    if (cleared.length === 0) return false;
+    const newBoard = cloneBoard(s.board);
+    applyClears(newBoard, cleared);
+    // приближённое начисление: считаем как N=1 очистку с реальным числом клеток
+    const N = 1;
+    const gained = scoreForMove(N, 0, false, sess.cfg);
+    const cellsKey = new Set(cleared.map(([r, c]) => `${r},${c}`));
+    dispatch({
+      type: "APPLY_MOVE",
+      owner: 0,
+      newBoard,
+      cleared: cellsKey,
+      pieceIdRemoved: "",
+      newPiece: null,
+      gained,
+      popup: {
+        id: POPUP_ID++,
+        r: cleared[0][0],
+        c: cleared[0][1],
+        owner: 0,
+        text: `+${gained} ${reason}`,
+      },
+      clearedCount: 0, // не считаем как «полная очистка линии», чтобы не сбить ачивки
+      statusMsg: reason,
+      perfect: false,
+      baseAddP0: gained,
+      comboAddP0: 0,
+      perfectAddP0: 0,
+    });
+    // Через delay снимаем flash и не передаём ход.
+    finalizeTimerRef.current = setTimeout(() => {
+      finalizeTimerRef.current = null;
+      // FINALIZE без смены current — переиспользуем finalizeMove с current=0 sentinel
+      const board2 = cloneBoard(stateRef.current.board);
+      dispatch({
+        type: "FINALIZE",
+        perTurn: stateRef.current.timer.perTurn,
+        next: stateRef.current.current,
+        over: false,
+        statusMsg: stateRef.current.statusMsg,
+        result: null,
+        boardAfter: board2,
+      });
+    }, 320);
+    return true;
+  }, []);
+
+  /** Очистить целую строку. */
+  const powerClearRow = useCallback((row: number): boolean => {
+    const coords: Coord[] = [];
+    for (let c = 0; c < SIZE; c++) coords.push([row, c]);
+    return applyArbitraryClear(coords, "⚡ строка");
+  }, [applyArbitraryClear]);
+
+  /** Очистить целый столбец. */
+  const powerClearCol = useCallback((col: number): boolean => {
+    const coords: Coord[] = [];
+    for (let r = 0; r < SIZE; r++) coords.push([r, col]);
+    return applyArbitraryClear(coords, "⚡ столбец");
+  }, [applyArbitraryClear]);
+
+  /** Бомба 3×3. */
+  const powerBomb = useCallback((centerR: number, centerC: number): boolean => {
+    const coords: Coord[] = [];
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      coords.push([centerR + dr, centerC + dc]);
+    }
+    return applyArbitraryClear(coords, "💣 бомба");
+  }, [applyArbitraryClear]);
+
+  /** Обмен всех фигур в руке игрока 0 на новые из мешка. */
+  const powerSwapHand = useCallback((): boolean => {
+    const s = stateRef.current;
+    if (s.status !== "playing" || s.animating) return false;
+    const bag = bagsRef.current?.[0];
+    if (!bag) return false;
+    const newHand: PieceInstance[] = [];
+    for (let i = 0; i < sessionRef.current.cfg.handSize; i++) {
+      newHand.push(bag.draw());
+      drawCountsRef.current[0]++;
+    }
+    // Заменяем hand игрока 0 через mini-redaktor.
+    const players = s.players.map((p, i) => i === 0 ? { ...p, hand: newHand } : p) as [Player, Player];
+    dispatch({
+      type: "RESTART",
+      initial: { ...s, players, sel: null, hover: null, statusMsg: "🔄 рука обновлена" },
+    });
+    return true;
+  }, []);
+
+  /** Найти лучший ход (best evaluation) для игрока 0. */
+  const findBestMove = useCallback((): CandidateMove | null => {
+    const s = stateRef.current;
+    const sess = sessionRef.current;
+    return chooseBotMove(s.board, s.players[0].hand, "hard", sess.cfg, botRngRef.current!);
+  }, []);
+
+  /** Подсветка лучшего хода (через ghost): селектим фигуру и hover на её позицию. Возвращаем cells для UI. */
+  const powerHint = useCallback((): { pieceId: string; cells: Coord[]; r: number; c: number } | null => {
+    const m = findBestMove();
+    if (!m) return null;
+    dispatch({ type: "SELECT", piece: { id: m.pieceId, type: m.type, cells: m.cells } });
+    dispatch({ type: "HOVER", r: m.r, c: m.c });
+    return { pieceId: m.pieceId, cells: m.cells, r: m.r, c: m.c };
+  }, [findBestMove]);
+
+  /** Умный ход — найти и сразу применить лучший. */
+  const powerAutoPlay = useCallback((): boolean => {
+    const s = stateRef.current;
+    if (s.status !== "playing" || s.animating) return false;
+    if (s.players[s.current].isBot) return false;
+    const m = findBestMove();
+    if (!m) return false;
+    performMove(m, 0);
+    return true;
+  }, [findBestMove, performMove]);
+
   return {
     state,
     ghost,
@@ -738,6 +867,13 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
     onPlace,
     setPaused,
     restart,
+    // Power-ups
+    powerClearRow,
+    powerClearCol,
+    powerBomb,
+    powerSwapHand,
+    powerHint,
+    powerAutoPlay,
   };
 }
 
