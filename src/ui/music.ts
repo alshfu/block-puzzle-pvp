@@ -176,7 +176,18 @@ let scheduler: ReturnType<typeof setInterval> | null = null;
 let nextEnd = 0;
 let enabled = false;
 let currentTheme: ThemeId = "neutral";
-const VOLUME = 0.55;
+let userVolume = 0.5; // 0..1 — пользовательский множитель
+const VOLUME_BASE = 0.55;
+
+export function setMusicVolume(v: number): void {
+  userVolume = Math.max(0, Math.min(1, v));
+  if (ctx && masterGain && enabled) {
+    const t = ctx.currentTime;
+    masterGain.gain.cancelScheduledValues(t);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, t);
+    masterGain.gain.linearRampToValueAtTime(VOLUME_BASE * userVolume, t + 0.15);
+  }
+}
 
 function ensureCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -193,7 +204,7 @@ function ensureCtx(): AudioContext | null {
   }
   if (!masterGain && ctx) {
     masterGain = ctx.createGain();
-    masterGain.gain.value = enabled ? VOLUME : 0;
+    masterGain.gain.value = enabled ? VOLUME_BASE * userVolume : 0;
     masterGain.connect(ctx.destination);
   }
   return ctx;
@@ -272,7 +283,7 @@ export function setMusicEnabled(v: boolean): void {
       const t = ctx.currentTime;
       masterGain.gain.cancelScheduledValues(t);
       masterGain.gain.setValueAtTime(masterGain.gain.value, t);
-      masterGain.gain.linearRampToValueAtTime(VOLUME, t + 0.25);
+      masterGain.gain.linearRampToValueAtTime(VOLUME_BASE * userVolume, t + 0.25);
     }
     if (ctx) nextEnd = ctx.currentTime;
     startScheduler();

@@ -5,14 +5,22 @@
 
 let ctx: AudioContext | null = null;
 let soundEnabled = true;
+let soundVolume = 0.7;
 let vibrateEnabled = true;
+let vibrateScale = 1; // 0 / 0.5 / 1 для off/light/strong
 
 export function setSoundEnabled(v: boolean): void {
   soundEnabled = v;
 }
+export function setSoundVolume(v: number): void {
+  soundVolume = Math.max(0, Math.min(1, v));
+}
 
 export function setVibrateEnabled(v: boolean): void {
   vibrateEnabled = v;
+}
+export function setVibrateIntensity(v: "off" | "light" | "strong"): void {
+  vibrateScale = v === "off" ? 0 : v === "light" ? 0.4 : 1;
 }
 
 function ensureCtx(): AudioContext | null {
@@ -44,7 +52,7 @@ interface ToneOpts {
 }
 
 function tone({ freq, duration, type = "sine", gain = 0.1, start = 0 }: ToneOpts): void {
-  if (!soundEnabled) return;
+  if (!soundEnabled || soundVolume <= 0) return;
   const c = ensureCtx();
   if (!c) return;
   const t0 = c.currentTime + start;
@@ -52,8 +60,9 @@ function tone({ freq, duration, type = "sine", gain = 0.1, start = 0 }: ToneOpts
   const g = c.createGain();
   osc.type = type;
   osc.frequency.setValueAtTime(freq, t0);
+  const peak = gain * soundVolume;
   g.gain.setValueAtTime(0, t0);
-  g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+  g.gain.linearRampToValueAtTime(peak, t0 + 0.01);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
   osc.connect(g).connect(c.destination);
   osc.start(t0);
@@ -114,11 +123,14 @@ export function playClick(): void {
 // --- vibration ---
 
 export function vibrate(pattern: number | number[]): void {
-  if (!vibrateEnabled) return;
+  if (!vibrateEnabled || vibrateScale <= 0) return;
   if (typeof navigator === "undefined") return;
   if (typeof navigator.vibrate !== "function") return;
+  const scaled = typeof pattern === "number"
+    ? Math.round(pattern * vibrateScale)
+    : pattern.map((p) => Math.round(p * vibrateScale));
   try {
-    navigator.vibrate(pattern);
+    navigator.vibrate(scaled);
   } catch {
     /* ignore */
   }

@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import type { BotLevel, RuleConfig } from "../core";
 import { processMatchAchievements, processOnlineAchievements, streakXpBonus } from "./achievements/engine";
 import type { AchievementDef } from "./achievements/definitions";
-import { setSoundEnabled, setVibrateEnabled } from "./audio";
-import { setMusicEnabled, setMusicTheme } from "./music";
+import { setSoundEnabled, setSoundVolume, setVibrateEnabled, setVibrateIntensity } from "./audio";
+import { setMusicEnabled, setMusicTheme, setMusicVolume } from "./music";
 import { ThemeBackdrop } from "./components/ThemeBackdrop";
 import { ToastStack } from "./components/ToastStack";
 import {
@@ -16,6 +16,7 @@ import type { OnlineProfile } from "../../party/protocol";
 import { observeAuthUser, type AuthUser } from "./auth/auth";
 import { pullCloud, pushCloud, type CloudSnapshot } from "./auth/sync";
 import { applyMatchToDaily, type DailyMatchContext } from "./daily/engine";
+import { clearSpeedMs } from "./storage/settings";
 import { SKINS_BY_ID, type SkinDef } from "./shop/skins";
 import { AchievementsScreen } from "./screens/AchievementsScreen";
 import { DailyScreen } from "./screens/DailyScreen";
@@ -210,15 +211,26 @@ export function App() {
   useEffect(() => {
     saveSettings(settings);
     setSoundEnabled(settings.sound);
+    setSoundVolume(settings.soundVolume);
     setVibrateEnabled(settings.vibrate);
+    setVibrateIntensity(settings.vibrateIntensity);
     setMusicEnabled(settings.music);
+    setMusicVolume(settings.musicVolume);
+    // reduced-motion → атрибут на <html>, CSS ловит через [data-reduced-motion="true"]
+    if (typeof document !== "undefined") {
+      document.documentElement.dataset.reducedMotion = settings.reducedMotion ? "true" : "false";
+      document.documentElement.dataset.mascotsEnabled = settings.mascotEnabled ? "true" : "false";
+      document.documentElement.dataset.flashEnabled = settings.flashEnabled ? "true" : "false";
+    }
   }, [settings]);
 
-  // Применяем сохранённые тумблеры сразу при первом рендере (до изменения settings).
   useEffect(() => {
     setSoundEnabled(settings.sound);
+    setSoundVolume(settings.soundVolume);
     setVibrateEnabled(settings.vibrate);
+    setVibrateIntensity(settings.vibrateIntensity);
     setMusicEnabled(settings.music);
+    setMusicVolume(settings.musicVolume);
     setMusicTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -378,6 +390,52 @@ export function App() {
     setInventory((inv) => ({ ...inv, [id]: Math.max(0, inv[id] - 1) }));
   };
 
+  // ─── Export / Import / Reset ─────────────────────────────────────────
+  const handleExport = () => {
+    const snap = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      profile, stats, wallet, achievements, settings,
+      playerSkins, inventory, daily,
+    };
+    const blob = new Blob([JSON.stringify(snap, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `blockduel-progress-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  const handleImport = (raw: string) => {
+    try {
+      const data = JSON.parse(raw);
+      if (typeof data !== "object" || data === null) throw new Error("not an object");
+      if (data.profile) setProfile(data.profile);
+      if (data.stats) setStats(data.stats);
+      if (data.wallet) setWallet(data.wallet);
+      if (data.achievements) setAchievements(data.achievements);
+      if (data.settings) setSettings(data.settings);
+      if (data.playerSkins) setPlayerSkins(data.playerSkins);
+      if (data.inventory) setInventory(data.inventory);
+      if (data.daily) setDaily(data.daily);
+    } catch (e) {
+      console.warn("import failed", e);
+      alert("Не удалось распарсить JSON: " + (e instanceof Error ? e.message : String(e)));
+    }
+  };
+  const handleResetAll = () => {
+    setProfile(DEFAULT_PROFILE);
+    setStats(DEFAULT_STATS);
+    setWallet({ coins: 0, totalEarned: 0, crystals: 0, scoreForCrystals: 0, totalCrystalsEarned: 0 });
+    setAchievements({});
+    setPlayerSkins({ unlocked: ["default"], equipped: "default" });
+    setInventory({ stick_row: 0, stick_col: 0, bomb_3x3: 0, swap_hand: 0, hint: 0, auto_play: 0 });
+    setSavedGame(null);
+    clearSavedGame();
+  };
+
   const handleTutorialCompleted = () => {
     setWallet((w) => ({
       ...w,
@@ -480,6 +538,10 @@ export function App() {
             skinClass={SKINS_BY_ID[playerSkins.equipped]?.cssClass ?? "skin-default"}
             inventory={inventory}
             onConsumePowerup={handleConsumePowerup}
+            botDelayMs={settings.botDelayMs}
+            clearAnimMs={clearSpeedMs(settings.clearSpeed)}
+            confettiEnabled={settings.confettiEnabled}
+            showGhost={settings.showGhost}
             onExit={handleExitGame}
             onMatchOver={handleMatchOver}
             onRematch={() => { wasRematchRef.current = true; }}
@@ -587,6 +649,9 @@ export function App() {
             settings={settings}
             setSettings={setSettings}
             authUser={authUser}
+            onExport={handleExport}
+            onImport={handleImport}
+            onResetAll={handleResetAll}
             onBack={() => setScreen("menu")}
           />
         )}

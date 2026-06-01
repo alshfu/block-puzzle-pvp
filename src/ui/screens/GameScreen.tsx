@@ -36,6 +36,10 @@ interface Props {
   skinClass?: string;
   inventory: Inventory;
   onConsumePowerup: (id: PowerupId) => void;
+  botDelayMs?: number;
+  clearAnimMs?: number;
+  confettiEnabled?: boolean;
+  showGhost?: boolean;
   onExit: () => void;
   onMatchOver: (outcome: MatchOutcome) => void;
   onRematch: () => void;
@@ -64,6 +68,10 @@ export function GameScreen({
   skinClass,
   inventory,
   onConsumePowerup,
+  botDelayMs,
+  clearAnimMs,
+  confettiEnabled = true,
+  showGhost = true,
   onExit,
   onMatchOver,
   onRematch,
@@ -84,7 +92,7 @@ export function GameScreen({
   const [confettiTick, setConfettiTick] = useState(0);
   const [comboFlash, setComboFlash] = useState<{ key: number; level: 1 | 2 | 3; combo: number; message: string } | null>(null);
   const game = useGame({
-    session: { cfg, mode, botLevels, blitz, names },
+    session: { cfg, mode, botLevels, blitz, names, botDelayMs, clearAnimMs },
     savedGame,
     onMatchOver,
     onPerfect: () => setConfettiTick((t) => t + 1),
@@ -434,7 +442,7 @@ export function GameScreen({
         />
       )}
 
-      <Board ref={boardRef} board={state.board} ghost={ghost} flash={state.flash} popups={state.popups} skinClass={skinClass} hasSelection={!!state.sel} />
+      <Board ref={boardRef} board={state.board} ghost={showGhost ? ghost : null} flash={state.flash} popups={state.popups} skinClass={skinClass} hasSelection={!!state.sel} />
 
       <div className="status-bar">{state.statusMsg}</div>
 
@@ -521,7 +529,7 @@ export function GameScreen({
         />
       )}
 
-      {showConfetti && <Confetti tick={confettiTick} />}
+      {showConfetti && confettiEnabled && <Confetti tick={confettiTick} />}
 
       {comboFlash && (
         <ComboFlash

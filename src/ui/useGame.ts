@@ -230,6 +230,10 @@ export interface GameSession {
   botLevels: [BotLevel | null, BotLevel | null];
   blitz: BlitzPreset;
   names: [string, string];
+  /** Задержка хода бота (мс). По умолчанию 800. */
+  botDelayMs?: number;
+  /** Длительность анимации очистки (мс). По умолчанию 430. */
+  clearAnimMs?: number;
 }
 
 interface InitPack {
@@ -497,7 +501,8 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
       perfectAddP0,
     });
 
-    const delay = clears.count > 0 ? 430 : 150;
+    const clearMs = sessionRef.current.clearAnimMs ?? 430;
+    const delay = clears.count > 0 ? clearMs : Math.max(80, Math.floor(clearMs * 0.35));
     finalizeTimerRef.current = setTimeout(() => {
       finalizeTimerRef.current = null;
       finalizeMove(clears.cleared);
@@ -600,7 +605,10 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
     if (state.animating) return;
     const isBotsTurn = state.players[state.current].isBot;
     if (!isBotsTurn) return;
-    const delay = 400 + Math.floor((botRngRef.current?.() ?? 0.5) * 800);
+    // base = настройка пользователя, ±20% случайного джиттера для «живости»
+    const base = sessionRef.current.botDelayMs ?? 800;
+    const jitter = (botRngRef.current?.() ?? 0.5) * 0.4 - 0.2; // -0.2..+0.2
+    const delay = Math.max(0, Math.floor(base * (1 + jitter)));
     const t = setTimeout(() => {
       const s = stateRef.current;
       if (s.status !== "playing" || !s.players[s.current].isBot) return;
