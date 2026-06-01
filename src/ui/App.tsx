@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import type { BotLevel, RuleConfig } from "../core";
 import { setSoundEnabled, setVibrateEnabled } from "./audio";
+import { setMusicEnabled, setMusicTheme } from "./music";
 import { ThemeBackdrop } from "./components/ThemeBackdrop";
 import { GameScreen } from "./screens/GameScreen";
 import { MenuScreen, type GameMode } from "./screens/MenuScreen";
@@ -69,6 +70,7 @@ export function App() {
     } catch {
       /* ignore */
     }
+    setMusicTheme(theme);
   }, [theme]);
 
   useEffect(() => {
@@ -83,12 +85,15 @@ export function App() {
     saveSettings(settings);
     setSoundEnabled(settings.sound);
     setVibrateEnabled(settings.vibrate);
+    setMusicEnabled(settings.music);
   }, [settings]);
 
   // Применяем сохранённые тумблеры сразу при первом рендере (до изменения settings).
   useEffect(() => {
     setSoundEnabled(settings.sound);
     setVibrateEnabled(settings.vibrate);
+    setMusicEnabled(settings.music);
+    setMusicTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -170,8 +175,6 @@ export function App() {
         )}
         {screen === "setup" && (
           <SetupScreen
-            theme={theme}
-            setTheme={setTheme}
             mode={mode}
             cfg={cfg}
             setCfg={setCfg}
@@ -191,7 +194,6 @@ export function App() {
         {screen === "game" && (
           <GameScreen
             theme={theme}
-            setTheme={setTheme}
             mode={mode}
             cfg={cfg}
             botLevel={botLevel}

@@ -116,6 +116,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .avatar-nick { font-weight: 700; font-size: 13px; }
 .avatar-lvl { font-size: 10px; color: var(--muted); }
 .mode-badge { font-size: 10.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; text-transform: uppercase; letter-spacing: .06em; background: var(--panel2); white-space: nowrap; }
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--panel); border: 1px solid var(--line);
+  display: grid; place-items: center; font-size: 18px; color: var(--ink);
+  transition: .15s;
+}
+.icon-btn:hover { border-color: var(--p1); color: var(--p1); }
+.icon-gear { line-height: 1; }
+[data-theme="night"] .icon-btn { clip-path: polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px); border-radius: 0; }
 .menu-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; }
 .menu-tagline { font-size: 12px; color: var(--muted); }
 .mini-deco { display: flex; gap: 14px; align-items: flex-end; margin-top: 6px; opacity: .9; }

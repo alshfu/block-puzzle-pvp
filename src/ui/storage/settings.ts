@@ -6,6 +6,7 @@ const KEY = "bd_settings";
 
 export interface AppSettings {
   sound: boolean;
+  music: boolean;
   vibrate: boolean;
   defaultCfg: RuleConfig;
   defaultBotLevel: BotLevel;
@@ -14,6 +15,7 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
   sound: true,
+  music: true,
   vibrate: true,
   defaultCfg: DEFAULT_CONFIG,
   defaultBotLevel: "medium",
@@ -24,6 +26,7 @@ export function loadSettings(): AppSettings {
   const raw = readJSON<Partial<AppSettings>>(KEY, {});
   return {
     sound: raw.sound ?? DEFAULT_SETTINGS.sound,
+    music: raw.music ?? DEFAULT_SETTINGS.music,
     vibrate: raw.vibrate ?? DEFAULT_SETTINGS.vibrate,
     defaultCfg: { ...DEFAULT_CONFIG, ...(raw.defaultCfg ?? {}) },
     defaultBotLevel: raw.defaultBotLevel ?? DEFAULT_SETTINGS.defaultBotLevel,

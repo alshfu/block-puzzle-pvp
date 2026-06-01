@@ -38,9 +38,12 @@ export function SettingsScreen({ theme, setTheme, settings, setSettings, onBack 
         </section>
 
         <section className="setup-sec">
-          <div className="sec-cap">Звук и тактильно</div>
+          <div className="sec-cap">Звук, музыка, вибро</div>
           <div className="toggle-row">
             <Toggle label="Звук" checked={settings.sound} onChange={(v) => upd("sound", v)} />
+            <Toggle label="Музыка" checked={settings.music} onChange={(v) => upd("music", v)} />
+          </div>
+          <div className="toggle-row">
             <Toggle label="Вибро" checked={settings.vibrate} onChange={(v) => upd("vibrate", v)} />
           </div>
         </section>

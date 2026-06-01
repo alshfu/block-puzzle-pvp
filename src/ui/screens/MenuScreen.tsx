@@ -3,9 +3,8 @@ import { BASE_SHAPES, type PieceType } from "../../core";
 import { Button } from "../components/Button";
 import { Logo } from "../components/Logo";
 import { MiniPiece } from "../components/MiniPiece";
-import { ThemeSwitch } from "../components/ThemeSwitch";
-import type { ThemeId } from "../themes";
 import type { SavedGame } from "../storage/saveGame";
+import type { ThemeId } from "../themes";
 
 export type GameMode = "bot" | "hotseat" | "botvbot";
 
@@ -28,8 +27,6 @@ interface Props {
 }
 
 export function MenuScreen({
-  theme,
-  setTheme,
   onStart,
   onResume,
   onDiscardSave,
@@ -43,14 +40,16 @@ export function MenuScreen({
   return (
     <div className="screen menu-screen">
       <div className="menu-top">
-        <button className="avatar-chip" onClick={onOpenProfile}>
+        <button className="avatar-chip" onClick={onOpenProfile} title="Профиль">
           <span className="avatar-face">{profile.avatar}</span>
           <span className="avatar-meta">
             <span className="avatar-nick">{profile.nick}</span>
             <span className="avatar-lvl">ур. {profile.level}</span>
           </span>
         </button>
-        <span className="mode-badge">mvp · ts core</span>
+        <button className="icon-btn" onClick={onOpenSettings} title="Настройки" aria-label="Настройки">
+          <span className="icon-gear">⚙</span>
+        </button>
       </div>
 
       <div className="menu-hero">
@@ -103,17 +102,9 @@ export function MenuScreen({
             </button>
           </div>
         )}
-        {!modeOpen && (
-          <div className="menu-secondary">
-            <button className="sec-btn" onClick={onOpenProfile}>Профиль</button>
-            <button className="sec-btn" disabled>Ачивки</button>
-            <button className="sec-btn" onClick={onOpenSettings}>Настройки</button>
-          </div>
-        )}
       </div>
 
       <div className="menu-foot">
-        <ThemeSwitch theme={theme} setTheme={setTheme} />
         <div className="version">v0.1 · mvp</div>
       </div>
     </div>
@@ -140,7 +131,12 @@ function ResumeCard({
   onResume: () => void;
   onDiscard: () => void;
 }) {
-  const modeLabel = saved.mode === "bot" ? `vs bot · ${saved.botLevel}` : "hot-seat";
+  const modeLabel =
+    saved.mode === "bot"
+      ? `vs bot · ${saved.botLevel}`
+      : saved.mode === "hotseat"
+        ? "hot-seat"
+        : "bot × bot";
   return (
     <div className="resume-card">
       <div className="resume-text">

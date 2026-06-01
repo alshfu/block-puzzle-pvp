@@ -1,16 +1,12 @@
 import type { BotLevel, RuleConfig } from "../../core";
 import { Button } from "../components/Button";
 import { Segment } from "../components/Segment";
-import { ThemeSwitch } from "../components/ThemeSwitch";
 import { Toggle } from "../components/Toggle";
-import type { ThemeId } from "../themes";
 import type { GameMode } from "./MenuScreen";
 
 export type BlitzPreset = "hard" | "norm" | "casual";
 
 interface Props {
-  theme: ThemeId;
-  setTheme: (t: ThemeId) => void;
   mode: GameMode;
   cfg: RuleConfig;
   setCfg: (c: RuleConfig) => void;
@@ -25,7 +21,7 @@ interface Props {
 }
 
 export function SetupScreen({
-  theme, setTheme, mode, cfg, setCfg,
+  mode, cfg, setCfg,
   botLevel, setBotLevel, botLevelB, setBotLevelB,
   blitz, setBlitz, onBack, onStart,
 }: Props) {
@@ -129,7 +125,6 @@ export function SetupScreen({
       </div>
 
       <div className="setup-foot">
-        <ThemeSwitch theme={theme} setTheme={setTheme} compact />
         <Button kind="primary" className="start-btn" onClick={onStart}>
           Начать →
         </Button>

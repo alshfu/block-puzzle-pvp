@@ -4,7 +4,6 @@ import { SIZE } from "../../core";
 import { Board } from "../components/Board";
 import { Confetti } from "../components/Confetti";
 import { DragLayer } from "../components/DragLayer";
-import { FloatingTheme } from "../components/FloatingTheme";
 import { Hand } from "../components/Hand";
 import { Logo } from "../components/Logo";
 import { PauseOverlay } from "../components/PauseOverlay";
@@ -20,7 +19,6 @@ import type { BlitzPreset } from "./SetupScreen";
 
 interface Props {
   theme: ThemeId;
-  setTheme: (t: ThemeId) => void;
   mode: GameMode;
   cfg: RuleConfig;
   botLevel: BotLevel;
@@ -43,7 +41,6 @@ const DRAG_THRESHOLD_PX = 6;
 
 export function GameScreen({
   theme,
-  setTheme,
   mode,
   cfg,
   botLevel,
@@ -386,8 +383,6 @@ export function GameScreen({
       )}
 
       {showConfetti && <Confetti tick={confettiTick} />}
-
-      <FloatingTheme theme={theme} setTheme={setTheme} />
     </div>
   );
 }
