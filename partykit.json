@@ -1,0 +1,10 @@
+{
+  "$schema": "https://www.partykit.io/schema.json",
+  "name": "blockduel-party",
+  "main": "party/lobby.ts",
+  "parties": {
+    "lobby": "party/lobby.ts",
+    "room": "party/room.ts"
+  },
+  "compatibilityDate": "2024-09-25"
+}

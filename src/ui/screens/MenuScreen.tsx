@@ -6,7 +6,7 @@ import { MiniPiece } from "../components/MiniPiece";
 import type { SavedGame } from "../storage/saveGame";
 import type { ThemeId } from "../themes";
 
-export type GameMode = "bot" | "hotseat" | "botvbot";
+export type GameMode = "bot" | "hotseat" | "botvbot" | "online";
 
 export interface Profile {
   nick: string;
@@ -90,13 +90,13 @@ export function MenuScreen({
                 <i>смотри как ИИ играет с ИИ</i>
               </span>
             </Button>
-            <button className="mode-btn ghost-mode" disabled>
+            <Button kind="ghost" className="mode-btn" onClick={() => onStart("online")}>
               <span className="mode-ico">🌐</span>
               <span className="mode-txt">
                 <b>Онлайн</b>
-                <i>скоро</i>
+                <i>quick-play против живого соперника</i>
               </span>
-            </button>
+            </Button>
             <button className="back-link" onClick={() => setModeOpen(false)}>
               ← назад
             </button>

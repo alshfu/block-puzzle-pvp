@@ -12,8 +12,11 @@ import {
   type PlayerAchievements,
 } from "./storage/achievements";
 import { GameScreen } from "./screens/GameScreen";
+import type { OnlineProfile } from "../../party/protocol";
 import { AchievementsScreen } from "./screens/AchievementsScreen";
 import { MenuScreen, type GameMode } from "./screens/MenuScreen";
+import { OnlineGameScreen } from "./screens/OnlineGameScreen";
+import { OnlineMenuScreen } from "./screens/OnlineMenuScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
 import { SetupScreen, type BlitzPreset } from "./screens/SetupScreen";
@@ -44,7 +47,7 @@ import {
 } from "./storage/stats";
 import { isThemeId, THEMES, THEME_STORAGE_KEY, type ThemeId } from "./themes";
 
-type Screen = "menu" | "setup" | "game" | "profile" | "settings" | "achievements";
+type Screen = "menu" | "setup" | "game" | "profile" | "settings" | "achievements" | "online-menu" | "online-game";
 
 function loadTheme(): ThemeId {
   try {
@@ -74,6 +77,7 @@ export function App() {
   const [restoring, setRestoring] = useState(false);
   const [achievements, setAchievements] = useState<PlayerAchievements>(loadAchievements);
   const [toasts, setToasts] = useState<AchievementDef[]>([]);
+  const [onlineMatch, setOnlineMatch] = useState<{ roomId: string; opponent: OnlineProfile } | null>(null);
   const wasRematchRef = useRef(false);
   const prevBestStreakRef = useRef(loadStats().bestWinStreak);
 
@@ -128,6 +132,11 @@ export function App() {
     setSavedGame(null);
     setRestoring(false);
     setMode(m);
+    if (m === "online") {
+      setOnlineMatch(null);
+      setScreen("online-menu");
+      return;
+    }
     setCfg(settings.defaultCfg);
     setBotLevel(settings.defaultBotLevel);
     setBotLevelB(settings.defaultBotLevel);
@@ -274,6 +283,28 @@ export function App() {
           <AchievementsScreen
             achievements={achievements}
             onBack={() => setScreen("profile")}
+          />
+        )}
+        {screen === "online-menu" && (
+          <OnlineMenuScreen
+            profile={{ id: profile.id, nick: profile.nick, avatar: profile.avatar }}
+            onBack={() => setScreen("menu")}
+            onMatched={(roomId, opponent) => {
+              setOnlineMatch({ roomId, opponent });
+              setScreen("online-game");
+            }}
+          />
+        )}
+        {screen === "online-game" && onlineMatch && (
+          <OnlineGameScreen
+            theme={theme}
+            roomId={onlineMatch.roomId}
+            profile={{ id: profile.id, nick: profile.nick, avatar: profile.avatar }}
+            opponent={onlineMatch.opponent}
+            onExit={() => {
+              setOnlineMatch(null);
+              setScreen("menu");
+            }}
           />
         )}
         {screen === "settings" && (
