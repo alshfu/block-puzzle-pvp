@@ -1,5 +1,5 @@
 import { memo, useRef, type PointerEvent } from "react";
-import type { PieceInstance } from "../../core";
+import type { Coord, PieceInstance } from "../../core";
 import { MiniPiece } from "./MiniPiece";
 
 interface Props {
@@ -8,6 +8,8 @@ interface Props {
   hand: PieceInstance[];
   owner: 0 | 1;
   selId: string | null;
+  /** Текущая (повёрнутая/отражённая) ориентация выбранной фигуры. Если задан — слот с selId перерисовывается с этими cells. */
+  selCells?: Coord[] | null;
   deadIds: Set<string> | null;
   interactive: boolean;
   tone: "play" | "watch";
@@ -23,6 +25,7 @@ function HandImpl({
   hand,
   owner,
   selId,
+  selCells,
   deadIds,
   interactive,
   tone,
@@ -40,10 +43,12 @@ function HandImpl({
         {hand.map((piece) => {
           const dead = deadIds?.has(piece.id) ?? false;
           const selected = selId === piece.id;
+          const displayCells = selected && selCells ? selCells : piece.cells;
           return (
             <PieceSlot
               key={piece.id}
               piece={piece}
+              displayCells={displayCells}
               owner={owner}
               dead={dead}
               selected={selected}
@@ -60,6 +65,7 @@ function HandImpl({
 
 interface SlotProps {
   piece: PieceInstance;
+  displayCells: Coord[];
   owner: 0 | 1;
   dead: boolean;
   selected: boolean;
@@ -68,12 +74,12 @@ interface SlotProps {
   onTap?: (piece: PieceInstance) => void;
 }
 
-function PieceSlot({ piece, owner, dead, selected, interactive, onPointerDown, onTap }: SlotProps) {
+function PieceSlot({ piece, displayCells, owner, dead, selected, interactive, onPointerDown, onTap }: SlotProps) {
   const downRef = useRef({ x: 0, y: 0, moved: false });
   if (!interactive) {
     return (
       <div className={`hand-slot ${selected ? "sel" : ""} ${dead ? "dead" : ""}`}>
-        <MiniPiece cells={piece.cells} owner={owner} cellSize={13} dead={dead} />
+        <MiniPiece cells={displayCells} owner={owner} cellSize={13} dead={dead} />
       </div>
     );
   }
@@ -96,7 +102,7 @@ function PieceSlot({ piece, owner, dead, selected, interactive, onPointerDown, o
         if (!downRef.current.moved) onTap?.(piece);
       }}
     >
-      <MiniPiece cells={piece.cells} owner={owner} cellSize={13} dead={dead} />
+      <MiniPiece cells={displayCells} owner={owner} cellSize={13} dead={dead} />
     </div>
   );
 }

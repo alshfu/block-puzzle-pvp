@@ -343,6 +343,7 @@ export function TutorialScreen({ skinClass, onExit, onCompleted }: Props) {
         hand={hand}
         owner={0}
         selId={sel?.pieceId ?? null}
+        selCells={sel?.cells ?? null}
         deadIds={deadIds}
         interactive={!doneStep}
         tone="play"

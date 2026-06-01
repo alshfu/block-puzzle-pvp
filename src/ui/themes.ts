@@ -45,17 +45,20 @@ export const THEMES: Record<ThemeId, Theme> = {
     p1name: "Пони-бот",
     vars: {
       "--bg": "#ffeaf6", "--bg2": "#f4e6ff",
-      "--panel": "rgba(255,255,255,0.80)", "--panel2": "#ffe1f1", "--line": "#ffc7e6",
-      "--ink": "#6b3b78", "--muted": "#b07fc4",
-      "--p0": "#ff77b3", "--p0d": "#ff3d92",
-      "--p1": "#3fd5d0", "--p1d": "#16b3ac",
-      "--good": "#5fd38a", "--bad": "#ff6b8a",
-      "--cell": "#fff6fb", "--cellline": "#ffd9ec",
+      // Чуть менее прозрачный panel → лучше читается текст на пёстром backdrop
+      "--panel": "rgba(255,255,255,0.92)", "--panel2": "#ffe1f1", "--line": "#e9a3cb",
+      // Более тёмный --ink (~9:1 vs #fff) и заметно темнее --muted (~5.5:1 vs #fff)
+      "--ink": "#4a235a", "--muted": "#7a4a8e",
+      // Более насыщенный розовый — лучше отличается от фона
+      "--p0": "#ff4d97", "--p0d": "#d8266f",
+      "--p1": "#2bbdb8", "--p1d": "#0d8e89",
+      "--good": "#2da664", "--bad": "#d83258",
+      "--cell": "#fff6fb", "--cellline": "#ffc6e0",
       "--board-r": "26px", "--card-r": "22px", "--btn-r": "18px",
       "--cell-r": "9px", "--mini-r": "6px",
       "--font-display": "'Fredoka', sans-serif",
       "--font-mono": "'Baloo 2', cursive",
-      "--display-weight": "600", "--display-spacing": "0em",
+      "--display-weight": "700", "--display-spacing": "0em",
     } as CSSProperties,
   },
   night: {

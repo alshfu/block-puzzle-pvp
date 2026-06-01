@@ -385,6 +385,7 @@ export function GameScreen({
         hand={state.players[bottomOwner].hand}
         owner={bottomOwner}
         selId={state.sel?.pieceId ?? null}
+        selCells={state.sel?.cells ?? null}
         deadIds={bottomIsActive ? deadIds : null}
         interactive={bottomInteractive}
         tone="play"

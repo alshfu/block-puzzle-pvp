@@ -312,6 +312,7 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit }: P
         hand={youView.hand}
         owner={0}
         selId={sel?.pieceId ?? null}
+        selCells={sel?.cells ?? null}
         deadIds={myTurn ? deadIds : null}
         interactive={myTurn}
         tone="play"

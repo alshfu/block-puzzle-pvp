@@ -375,6 +375,35 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   opacity: .5; filter: blur(2px); }
 .candy-cloud { position: absolute; width: 120px; height: 46px; background: #fff; border-radius: 999px; opacity: .55; filter: blur(1px); box-shadow: 36px 8px 0 -6px #fff, -34px 6px 0 -8px #fff; }
 .candy-bit { position: absolute; top: -8%; display: inline-block; animation-name: floatdown; animation-timing-function: linear; animation-iteration-count: infinite; opacity: .85; }
+
+/* Парящие пони по бокам candy-фона — невидимы на узких экранах, чтобы не лезть на phone-frame */
+.candy-pony-deco {
+  position: absolute; pointer-events: none;
+  width: clamp(80px, 12vw, 150px);
+  height: clamp(80px, 12vw, 150px);
+  opacity: 0;
+  animation: ponyBob 5s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(122, 74, 142, 0.25));
+}
+@media (min-width: 760px) {
+  .candy-pony-deco { opacity: 0.85; }
+}
+@media (min-width: 1100px) {
+  .candy-pony-deco { opacity: 0.95; width: clamp(100px, 11vw, 180px); height: clamp(100px, 11vw, 180px); }
+}
+.candy-pony-deco.p1 { left: 2%; top: 14%; animation-delay: -.5s; }
+.candy-pony-deco.p2 { right: 2%; top: 22%; animation-delay: -1.5s; transform: scaleX(-1); }
+.candy-pony-deco.p3 { left: 3%; bottom: 12%; animation-delay: -2.5s; }
+.candy-pony-deco.p4 { right: 3%; bottom: 18%; animation-delay: -3.5s; transform: scaleX(-1); }
+/* Используем CSS property `translate` отдельно от `transform`, чтобы scaleX не конфликтовал. */
+@keyframes ponyBob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .candy-pony-deco { animation: none; }
+}
+
 .candy-bit.heart { background: currentColor; clip-path: path('M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z'); -webkit-mask: none; }
 .candy-bit.star { background: currentColor; clip-path: polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
 .candy-bit.spark { background: currentColor; clip-path: polygon(50% 0, 56% 44%, 100% 50%, 56% 56%, 50% 100%, 44% 56%, 0 50%, 44% 44%); }
