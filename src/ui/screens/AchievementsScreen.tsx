@@ -11,6 +11,7 @@ const CATEGORY_LABEL: Record<AchievementDef["category"], string> = {
   progressive: "Прогресс",
   series: "Серии побед",
   hidden: "Секреты",
+  online: "Онлайн PvP",
 };
 
 export function AchievementsScreen({ achievements, onBack }: Props) {
@@ -19,6 +20,7 @@ export function AchievementsScreen({ achievements, onBack }: Props) {
     progressive: [],
     series: [],
     hidden: [],
+    online: [],
   };
   for (const a of ACHIEVEMENTS) grouped[a.category].push(a);
 

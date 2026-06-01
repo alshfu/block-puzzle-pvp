@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type { BotLevel, RuleConfig } from "../core";
-import { processMatchAchievements, streakXpBonus } from "./achievements/engine";
+import { processMatchAchievements, processOnlineAchievements, streakXpBonus } from "./achievements/engine";
 import type { AchievementDef } from "./achievements/definitions";
 import { setSoundEnabled, setVibrateEnabled } from "./audio";
 import { setMusicEnabled, setMusicTheme } from "./music";
@@ -52,6 +52,7 @@ import {
 } from "./storage/settings";
 import {
   applyMatchToStats,
+  applyOnlineMatchToStats,
   DEFAULT_STATS,
   loadStats,
   saveStats,
@@ -510,17 +511,42 @@ export function App() {
               setOnlineMatch(null);
               setScreen("menu");
             }}
-            onMatchEnded={(won, drew) => {
-              setStats((prev) => ({
-                ...prev,
-                onlineGames: prev.onlineGames + 1,
-                onlineWins: prev.onlineWins + (won ? 1 : 0),
-                onlineLosses: prev.onlineLosses + (!won && !drew ? 1 : 0),
-                onlineDraws: prev.onlineDraws + (drew ? 1 : 0),
-              }));
-              // даём немного coin за онлайн-матч
-              const reward = won ? 30 : drew ? 15 : 8;
+            onMatchEnded={(summary) => {
+              const d = new Date();
+              const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+              const wasOpKnown = !!stats.onlineOpponents[summary.opponentId];
+              const matchInfo = {
+                won: summary.won,
+                drew: summary.drew,
+                myScore: summary.myScore,
+                opponentScore: summary.opponentScore,
+                scoreGap: summary.scoreGap,
+                opponentId: summary.opponentId,
+                opponentNick: summary.opponentNick,
+                turnCount: summary.turnCount,
+                themeId: summary.themeId,
+                reason: summary.reason,
+                isRematchOfSameOpponent: wasOpKnown,
+                bestComboThisMatch: 0,
+                maxMultiClearThisMatch: 0,
+                myClearsThisMatch: 0,
+                hadPerfectClear: false,
+                today,
+              };
+              const nextStats = applyOnlineMatchToStats(stats, matchInfo);
+              setStats(nextStats);
+
+              const { next: nextAch, unlocked } = processOnlineAchievements(achievements, {
+                stats: nextStats,
+                match: matchInfo,
+              });
+              setAchievements(nextAch);
+              if (unlocked.length > 0) setToasts((cur) => [...cur, ...unlocked]);
+              const achXp = unlocked.reduce((sum, a) => sum + a.rewardXp, 0);
+
+              const reward = summary.won ? 30 : summary.drew ? 15 : 8;
               setWallet((w) => ({ coins: w.coins + reward, totalEarned: w.totalEarned + reward }));
+              if (achXp > 0) setProfile((p) => ({ ...p, xp: p.xp + achXp }));
             }}
           />
         )}

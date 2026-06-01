@@ -22,6 +22,19 @@ import { useOnlineGame } from "../online/useOnlineGame";
 import { ResultOverlay } from "./ResultOverlay";
 import type { ThemeId } from "../themes";
 
+export interface OnlineMatchSummary {
+  won: boolean;
+  drew: boolean;
+  myScore: number;
+  opponentScore: number;
+  scoreGap: number;        // myScore - opponentScore (положительный = победа большим разрывом)
+  opponentId: string;
+  opponentNick: string;
+  turnCount: number;
+  themeId: ThemeId;
+  reason?: "deadlock" | "timeout" | "resign";
+}
+
 interface Props {
   theme: ThemeId;
   roomId: string;
@@ -29,7 +42,7 @@ interface Props {
   opponent: OnlineProfile;
   onExit: () => void;
   /** Зовётся один раз когда матч завершён (любым способом). */
-  onMatchEnded?: (won: boolean, drew: boolean) => void;
+  onMatchEnded?: (summary: OnlineMatchSummary) => void;
 }
 
 interface Selection {
@@ -244,15 +257,29 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
 
   // Уведомляем родителя ровно один раз после окончания матча — для online stats.
   useEffect(() => {
-    if (!onlineState.state || onlineState.state.status !== "over" || !onlineState.state.result) return;
+    if (!onlineState.state || onlineState.state.status !== "over" || !onlineState.state.result || you === null) return;
     const key = `${onlineState.state.matchId}-${onlineState.state.turnCount}`;
     if (matchEndedRef.current === key) return;
     matchEndedRef.current = key;
     const winnerServer = onlineState.state.result.winner;
     const drew = winnerServer === -1;
-    const won = !drew && you !== null && winnerServer === you;
-    onMatchEnded?.(won, drew);
-  }, [onlineState.state, you, onMatchEnded]);
+    const won = !drew && winnerServer === you;
+    const scores = onlineState.state.result.scores;
+    const myScore = scores[you];
+    const opponentScore = scores[1 - you];
+    onMatchEnded?.({
+      won,
+      drew,
+      myScore,
+      opponentScore,
+      scoreGap: myScore - opponentScore,
+      opponentId: opponent.id,
+      opponentNick: opponent.nick,
+      turnCount: onlineState.state.turnCount,
+      themeId: theme,
+      reason: onlineState.state.result.reason,
+    });
+  }, [onlineState.state, you, onMatchEnded, opponent, theme]);
 
   // ─── рендер ────────────────────────────────────────────────────────────
   if (!onlineState.state || you === null || !youView || !oppView) {
