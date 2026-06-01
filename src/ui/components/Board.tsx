@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { forwardRef, memo } from "react";
 import { SIZE, type Board as BoardType } from "../../core";
 
 export interface Ghost {
@@ -18,16 +18,15 @@ interface Props {
   ghost: Ghost | null;
   flash: Set<string> | null;
   popups: ScorePopup[];
-  interactive: boolean;
-  onHover: (r: number, c: number) => void;
-  onLeave: () => void;
-  onPlace: (r: number, c: number) => void;
 }
 
-function BoardImpl({ board, ghost, flash, popups, interactive, onHover, onLeave, onPlace }: Props) {
+const BoardImpl = forwardRef<HTMLDivElement, Props>(function BoardImpl(
+  { board, ghost, flash, popups }: Props,
+  ref,
+) {
   return (
     <div className="board-wrap">
-      <div className="board" onMouseLeave={onLeave}>
+      <div className="board" ref={ref}>
         {board.map((row, r) =>
           row.map((cell, c) => {
             const key = `${r},${c}`;
@@ -38,14 +37,7 @@ function BoardImpl({ board, ghost, flash, popups, interactive, onHover, onLeave,
             if (gh === "good") cls += " ghost-good";
             else if (gh === "bad") cls += " ghost-bad";
             if (isFlash) cls += " flash";
-            return (
-              <div
-                key={key}
-                className={cls}
-                onMouseEnter={interactive ? () => onHover(r, c) : undefined}
-                onClick={interactive ? () => onPlace(r, c) : undefined}
-              />
-            );
+            return <div key={key} className={cls} />;
           })
         )}
       </div>
@@ -67,6 +59,6 @@ function BoardImpl({ board, ghost, flash, popups, interactive, onHover, onLeave,
       ))}
     </div>
   );
-}
+});
 
 export const Board = memo(BoardImpl);
