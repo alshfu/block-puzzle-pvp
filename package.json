@@ -12,18 +12,22 @@
     "typecheck": "tsc -b --noEmit",
     "deploy": "npm run build && gh-pages -d dist -m \"deploy: $(date -u +%FT%TZ)\"",
     "party:dev": "partykit dev",
-    "party:deploy": "partykit deploy"
+    "party:deploy": "partykit deploy",
+    "server:dev": "tsx server/index.ts",
+    "server:start": "tsx server/index.ts"
   },
   "dependencies": {
     "firebase": "^12.14.0",
     "partykit": "^0.0.115",
     "partysocket": "^1.1.19",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "ws": "^8.21.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^4.3.4",
     "gh-pages": "^6.3.0",
     "tsx": "^4.22.4",
