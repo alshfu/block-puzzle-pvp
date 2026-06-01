@@ -352,9 +352,11 @@ export interface UseGameOptions {
   savedGame: SavedGame | null;
   onMatchOver?: (outcome: MatchOutcome) => void;
   onPerfect?: () => void;
+  /** Зовётся когда combo живого игрока пересекает порог 3/5/10. */
+  onComboMilestone?: (level: 1 | 2 | 3, combo: number) => void;
 }
 
-export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameOptions) {
+export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMilestone }: UseGameOptions) {
   const bagsRef = useRef<[Bag, Bag] | null>(null);
   const botRngRef = useRef<(() => number) | null>(null);
   const drawCountsRef = useRef<[number, number]>([0, 0]);
@@ -387,6 +389,8 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
   onMatchOverRef.current = onMatchOver;
   const onPerfectRef = useRef(onPerfect);
   onPerfectRef.current = onPerfect;
+  const onComboMilestoneRef = useRef(onComboMilestone);
+  onComboMilestoneRef.current = onComboMilestone;
 
   const clearAllTimers = useCallback(() => {
     popupTimersRef.current.forEach(clearTimeout);
@@ -448,6 +452,18 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
       } else {
         playClear(clears.count);
         vibrateClear(clears.count);
+      }
+      // Combo milestone (только для живого игрока). До хода combo было s.players[owner].combo;
+      // после успешной очистки оно станет +1 (см. reducer APPLY_MOVE).
+      const isHuman = sess.botLevels[owner] === null;
+      if (isHuman) {
+        const oldC = s.players[owner].combo;
+        const newC = oldC + 1;
+        let level: 1 | 2 | 3 | 0 = 0;
+        if (oldC < 3 && newC >= 3) level = 1;
+        if (oldC < 5 && newC >= 5) level = 2;
+        if (oldC < 10 && newC >= 10) level = 3;
+        if (level !== 0) onComboMilestoneRef.current?.(level, newC);
       }
     } else {
       statusMsg = owner === 0 ? "Ход сделан" : `${sess.names[owner]} походил`;

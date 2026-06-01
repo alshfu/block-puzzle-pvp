@@ -75,6 +75,7 @@ export function App() {
   const [achievements, setAchievements] = useState<PlayerAchievements>(loadAchievements);
   const [toasts, setToasts] = useState<AchievementDef[]>([]);
   const wasRematchRef = useRef(false);
+  const prevBestStreakRef = useRef(loadStats().bestWinStreak);
 
   useEffect(() => {
     try {
@@ -152,6 +153,7 @@ export function App() {
   };
 
   const handleMatchOver = (outcome: MatchOutcome) => {
+    prevBestStreakRef.current = stats.bestWinStreak; // снимаем «до» для UI «новый рекорд»
     const nextStats = applyMatchToStats(stats, outcome);
     // rematch streak: засчитываем продление, только если предыдущий выход был через «Реванш».
     nextStats.rematchStreak = wasRematchRef.current ? nextStats.rematchStreak + 1 : 1;
@@ -248,6 +250,8 @@ export function App() {
             botLevelB={botLevelB}
             blitz={blitz}
             savedGame={restoring ? savedGame : null}
+            currentStreak={stats.currentWinStreak}
+            prevBestStreak={prevBestStreakRef.current}
             onExit={handleExitGame}
             onMatchOver={handleMatchOver}
             onRematch={() => { wasRematchRef.current = true; }}

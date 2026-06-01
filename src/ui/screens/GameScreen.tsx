@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import type { BotLevel, Coord, PieceInstance, RuleConfig } from "../../core";
 import { SIZE } from "../../core";
 import { Board } from "../components/Board";
+import { ComboFlash, pickComboMessage } from "../components/ComboFlash";
 import { Confetti } from "../components/Confetti";
 import { DragLayer } from "../components/DragLayer";
 import { Hand } from "../components/Hand";
@@ -25,6 +26,8 @@ interface Props {
   botLevelB: BotLevel;
   blitz: BlitzPreset;
   savedGame: SavedGame | null;
+  currentStreak: number;
+  prevBestStreak: number;
   onExit: () => void;
   onMatchOver: (outcome: MatchOutcome) => void;
   onRematch: () => void;
@@ -48,6 +51,8 @@ export function GameScreen({
   botLevelB,
   blitz,
   savedGame,
+  currentStreak,
+  prevBestStreak,
   onExit,
   onMatchOver,
   onRematch,
@@ -65,12 +70,27 @@ export function GameScreen({
   }, [mode, botLevel, botLevelB]);
 
   const [confettiTick, setConfettiTick] = useState(0);
+  const [comboFlash, setComboFlash] = useState<{ key: number; level: 1 | 2 | 3; combo: number; message: string } | null>(null);
   const game = useGame({
     session: { cfg, mode, botLevels, blitz, names },
     savedGame,
     onMatchOver,
     onPerfect: () => setConfettiTick((t) => t + 1),
+    onComboMilestone: (level, combo) => {
+      setComboFlash({
+        key: Date.now(),
+        level,
+        combo,
+        message: pickComboMessage(theme, level),
+      });
+    },
   });
+  // авто-скрытие combo flash
+  useEffect(() => {
+    if (!comboFlash) return;
+    const t = setTimeout(() => setComboFlash(null), 1700);
+    return () => clearTimeout(t);
+  }, [comboFlash]);
   const [showConfetti, setShowConfetti] = useState(false);
   useEffect(() => {
     if (confettiTick === 0) return;
@@ -368,11 +388,14 @@ export function GameScreen({
       <ResultOverlay
         result={state.result}
         names={names}
+        theme={theme}
         breakdown={{
           base: state.baseScoreP0,
           combo: state.comboBonusP0,
           perfect: state.perfectBonusP0,
         }}
+        streak={currentStreak}
+        prevBestStreak={prevBestStreak}
         xp={xp}
         onRematch={() => { onRematch(); game.restart(); }}
         onMenu={onExit}
@@ -391,6 +414,16 @@ export function GameScreen({
       )}
 
       {showConfetti && <Confetti tick={confettiTick} />}
+
+      {comboFlash && (
+        <ComboFlash
+          key={comboFlash.key}
+          theme={theme}
+          level={comboFlash.level}
+          combo={comboFlash.combo}
+          message={comboFlash.message}
+        />
+      )}
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import { Button } from "../components/Button";
+import { Mascot } from "../components/Mascot";
+import type { ThemeId } from "../themes";
 
 export interface MatchResult {
   winner: 0 | 1 | -1;
@@ -16,11 +18,26 @@ interface Props {
   names: [string, string];
   breakdown?: ScoreBreakdown;
   xp: number;
+  /** Текущий стрик после партии (после applyMatchToStats). */
+  streak?: number;
+  /** Лучший стрик до партии — чтобы понять, побит ли он. */
+  prevBestStreak?: number;
+  theme?: ThemeId;
   onRematch: () => void;
   onMenu: () => void;
 }
 
-export function ResultOverlay({ result, names, breakdown, xp, onRematch, onMenu }: Props) {
+export function ResultOverlay({
+  result,
+  names,
+  breakdown,
+  xp,
+  streak = 0,
+  prevBestStreak = 0,
+  theme = "neutral",
+  onRematch,
+  onMenu,
+}: Props) {
   if (!result) return null;
   const { winner, scores } = result;
   let title: string;
@@ -39,9 +56,28 @@ export function ResultOverlay({ result, names, breakdown, xp, onRematch, onMenu 
     cls = "draw";
     emo = "🤝";
   }
+  const showStreak = winner === 0 && streak >= 3;
+  const isPersonalRecord = winner === 0 && streak > prevBestStreak && streak >= 3;
   return (
     <div className="overlay">
       <div className={`result-card ${cls}`}>
+        {showStreak && (
+          <div className={`streak-banner ${isPersonalRecord ? "record" : ""}`}>
+            <div className="streak-mascot">
+              <Mascot theme={theme} size={64} />
+            </div>
+            <div className="streak-text">
+              <div className="streak-title">
+                {isPersonalRecord ? "Новый личный рекорд!" : `${streak} побед подряд!`}
+              </div>
+              <div className="streak-sub">
+                {isPersonalRecord
+                  ? `${streak} подряд — больше, чем когда-либо`
+                  : `Лучший: ${Math.max(prevBestStreak, streak)}`}
+              </div>
+            </div>
+          </div>
+        )}
         <div className="result-emo">{emo}</div>
         <div className="result-title">{title}</div>
         <div className="result-sub">ходы кончились</div>

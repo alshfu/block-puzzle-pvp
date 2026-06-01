@@ -388,6 +388,76 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .resume-btn.primary { background: linear-gradient(135deg, var(--p0), var(--p0d)); color: #1a1206; border-color: transparent; }
 [data-kind="light"] .resume-btn.primary { color: #fff; }
 
+/* ---------- combo flash overlay ---------- */
+.combo-flash {
+  position: absolute; inset: 0; z-index: 45;
+  pointer-events: none;
+  display: grid; place-items: center;
+  animation: comboFlashFadeOut 1.7s ease-out forwards;
+}
+.combo-flash-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 18px 24px; border-radius: var(--card-r);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  border: 2px solid var(--p0);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--p0) 30%, transparent),
+              0 30px 60px -20px var(--p0);
+  animation: comboFlashIn .35s cubic-bezier(.2,1.4,.4,1) both;
+}
+.combo-flash.level-2 .combo-flash-inner { border-color: var(--good); box-shadow: 0 0 0 4px color-mix(in srgb, var(--good) 30%, transparent), 0 30px 60px -20px var(--good); }
+.combo-flash.level-3 .combo-flash-inner { border-color: var(--p1); box-shadow: 0 0 0 4px color-mix(in srgb, var(--p1) 30%, transparent), 0 30px 60px -20px var(--p1); }
+.combo-flash-mascot { animation: mascotBounce .9s ease-out; }
+@keyframes mascotBounce {
+  0% { transform: scale(.4) translateY(20px); opacity: 0; }
+  50% { transform: scale(1.15) translateY(-6px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+.combo-flash-text { text-align: center; }
+.combo-flash-title {
+  font-family: var(--font-display); font-weight: var(--display-weight);
+  font-size: 32px; line-height: 1; color: var(--p0);
+  text-shadow: 0 2px 14px color-mix(in srgb, var(--p0) 60%, transparent);
+  letter-spacing: var(--display-spacing); text-transform: none;
+}
+.combo-flash.level-2 .combo-flash-title { color: var(--good); font-size: 38px; text-shadow: 0 2px 14px color-mix(in srgb, var(--good) 60%, transparent); }
+.combo-flash.level-3 .combo-flash-title { color: var(--p1); font-size: 44px; text-shadow: 0 2px 18px color-mix(in srgb, var(--p1) 70%, transparent); }
+.combo-flash-sub {
+  font-family: var(--font-mono); font-size: 13px; color: var(--ink); opacity: 0.75; margin-top: 6px;
+}
+[data-theme="night"] .combo-flash-title { text-transform: uppercase; }
+
+@keyframes comboFlashIn {
+  from { transform: scale(.6) translateY(40px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes comboFlashFadeOut {
+  0%, 70% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(.95); }
+}
+
+/* ---------- mascot ---------- */
+.mascot { display: block; }
+
+/* ---------- streak banner в ResultOverlay ---------- */
+.streak-banner {
+  width: 100%;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: var(--btn-r);
+  background: color-mix(in srgb, var(--p0) 16%, var(--panel2));
+  border: 1px solid var(--p0);
+  margin-bottom: 4px;
+}
+.streak-banner.record {
+  background: color-mix(in srgb, var(--good) 18%, var(--panel2));
+  border-color: var(--good);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 25%, transparent);
+}
+.streak-mascot { flex-shrink: 0; }
+.streak-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.streak-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.streak-banner.record .streak-title { color: var(--good); }
+.streak-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+
 /* ---------- score breakdown в ResultOverlay ---------- */
 .breakdown {
   width: 100%; display: flex; flex-direction: column; gap: 4px;
