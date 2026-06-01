@@ -111,16 +111,28 @@ export function SetupScreen({
         </section>
 
         <section className="setup-sec">
-          <div className="sec-cap">Блиц · время на ход</div>
-          <Segment<BlitzPreset>
-            value={blitz}
-            onChange={setBlitz}
-            options={[
-              { v: "hard", label: "Хардкор", sub: "8 → 2с" },
-              { v: "norm", label: "Норма", sub: "12 → 3с" },
-              { v: "casual", label: "Казуал", sub: "20 → 6с" },
-            ]}
-          />
+          <div className="sec-cap">Таймер хода</div>
+          <div className="toggle-row">
+            <Toggle
+              label={cfg.turnTimerEnabled ? "Блиц включён" : "Без таймера"}
+              checked={cfg.turnTimerEnabled}
+              onChange={(v) => upd("turnTimerEnabled", v)}
+            />
+          </div>
+          {cfg.turnTimerEnabled && (
+            <>
+              <div className="sub-cap">Длительность</div>
+              <Segment<BlitzPreset>
+                value={blitz}
+                onChange={setBlitz}
+                options={[
+                  { v: "hard", label: "Хардкор", sub: "8 → 2с" },
+                  { v: "norm", label: "Норма", sub: "12 → 3с" },
+                  { v: "casual", label: "Казуал", sub: "20 → 6с" },
+                ]}
+              />
+            </>
+          )}
         </section>
       </div>
 

@@ -72,6 +72,14 @@ export function SettingsScreen({ theme, setTheme, settings, setSettings, onBack 
               { v: 4, label: "4" },
             ]}
           />
+          <div className="sub-cap">Таймер хода по умолчанию</div>
+          <div className="toggle-row">
+            <Toggle
+              label={settings.defaultCfg.turnTimerEnabled ? "Блиц включён" : "Без таймера"}
+              checked={settings.defaultCfg.turnTimerEnabled}
+              onChange={(v) => updCfg("turnTimerEnabled", v)}
+            />
+          </div>
         </section>
 
         <section className="setup-sec">

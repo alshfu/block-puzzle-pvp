@@ -37,7 +37,11 @@ export function Scoreboard({ players, names, current, status, timer }: Props) {
       />
       <div className="turn-center">
         <div className={"turn-pill " + (danger ? "danger" : "")}>{centerText}</div>
-        <TurnTimer remaining={timer.remaining} total={timer.perTurn} owner={current} danger={danger} />
+        {Number.isFinite(timer.perTurn) ? (
+          <TurnTimer remaining={timer.remaining} total={timer.perTurn} owner={current} danger={danger} />
+        ) : (
+          <div className={"turn-noclock owner" + current} title="Таймер отключён">∞</div>
+        )}
       </div>
       <PlayerCard
         name={names[1]}
