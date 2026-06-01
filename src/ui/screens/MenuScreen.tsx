@@ -24,6 +24,7 @@ interface Props {
   onOpenSettings: () => void;
   onOpenShop: () => void;
   onOpenDaily: () => void;
+  onOpenTutorial: () => void;
   profile: Profile;
   savedGame: SavedGame | null;
   coins: number;
@@ -37,6 +38,7 @@ export function MenuScreen({
   onOpenSettings,
   onOpenShop,
   onOpenDaily,
+  onOpenTutorial,
   profile,
   savedGame,
   coins,
@@ -103,6 +105,13 @@ export function MenuScreen({
               <span className="mode-txt">
                 <b>Аркада</b>
                 <i>один на доске — на рекорд, +монеты</i>
+              </span>
+            </Button>
+            <Button kind="ghost" className="mode-btn" onClick={onOpenTutorial}>
+              <span className="mode-ico">🎓</span>
+              <span className="mode-txt">
+                <b>Обучение</b>
+                <i>5 шагов · награда 🪙 +{50}</i>
               </span>
             </Button>
             <Button kind="ghost" className="mode-btn" onClick={() => onStart("botvbot")}>

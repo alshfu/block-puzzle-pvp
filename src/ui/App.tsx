@@ -23,6 +23,8 @@ import { OnlineMenuScreen } from "./screens/OnlineMenuScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
 import { ShopScreen } from "./screens/ShopScreen";
+import { TutorialScreen } from "./screens/TutorialScreen";
+import { TUTORIAL_REWARD_COINS } from "./tutorial/steps";
 import { loadDaily, saveDaily, type DailyState } from "./storage/daily";
 import { loadPlayerSkins, savePlayerSkins, type PlayerSkins } from "./storage/skins";
 import { claimQuest as claimQuestEngine } from "./daily/engine";
@@ -65,7 +67,8 @@ type Screen =
   | "online-menu"
   | "online-game"
   | "shop"
-  | "daily";
+  | "daily"
+  | "tutorial";
 
 function loadTheme(): ThemeId {
   try {
@@ -297,6 +300,13 @@ export function App() {
     );
   };
 
+  const handleTutorialCompleted = () => {
+    setWallet((w) => ({
+      coins: w.coins + TUTORIAL_REWARD_COINS,
+      totalEarned: w.totalEarned + TUTORIAL_REWARD_COINS,
+    }));
+  };
+
   const dismissToast = (id: string) => {
     setToasts((cur) => cur.filter((a) => a.id !== id));
   };
@@ -327,6 +337,7 @@ export function App() {
             onOpenSettings={() => setScreen("settings")}
             onOpenShop={() => setScreen("shop")}
             onOpenDaily={() => setScreen("daily")}
+            onOpenTutorial={() => setScreen("tutorial")}
             profile={menuProfile}
             savedGame={savedGame}
             coins={wallet.coins}
@@ -347,6 +358,13 @@ export function App() {
             coins={wallet.coins}
             onClaim={handleClaimQuest}
             onBack={() => setScreen("menu")}
+          />
+        )}
+        {screen === "tutorial" && (
+          <TutorialScreen
+            skinClass={SKINS_BY_ID[playerSkins.equipped]?.cssClass ?? "skin-default"}
+            onExit={() => setScreen("menu")}
+            onCompleted={handleTutorialCompleted}
           />
         )}
         {screen === "setup" && (
