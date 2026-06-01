@@ -17,6 +17,7 @@ import { Hand } from "../components/Hand";
 import { Logo } from "../components/Logo";
 import { Scoreboard } from "../components/Scoreboard";
 import { TransformControls } from "../components/TransformControls";
+import { useBoardPointer } from "../hooks/useBoardPointer";
 import { useOnlineGame } from "../online/useOnlineGame";
 import { ResultOverlay } from "./ResultOverlay";
 import type { ThemeId } from "../themes";
@@ -200,6 +201,23 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit }: P
     };
   }, [drag, sel, board, cellPx, sendMove]);
 
+  // desktop fallback
+  useBoardPointer({
+    boardRef,
+    cellPx,
+    sel,
+    dragActive: !!drag?.active,
+    enabled: myTurn,
+    onHover: (r, c) => setHover((h) => (h?.r === r && h?.c === c ? h : { r, c })),
+    onLeave: () => setHover(null),
+    onPlace: (r, c) => {
+      if (sel && board && canPlace(board, sel.cells, r, c)) {
+        sendMove(sel.pieceId, sel.cells, r, c);
+        setSel(null);
+      }
+    },
+  });
+
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (!myTurn) return;
     setSel({ pieceId: piece.id, cells: normalize(piece.cells) });
@@ -277,6 +295,7 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit }: P
         ghost={ghost}
         flash={null}
         popups={[]}
+        hasSelection={!!sel}
       />
 
       <div className="status-bar">

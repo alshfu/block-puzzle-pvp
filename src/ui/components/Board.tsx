@@ -20,15 +20,17 @@ interface Props {
   popups: ScorePopup[];
   /** CSS-класс скина клеток. Default: "skin-default". */
   skinClass?: string;
+  /** Если true — на доску вешается курсор pointer (desktop click-to-place). */
+  hasSelection?: boolean;
 }
 
 const BoardImpl = forwardRef<HTMLDivElement, Props>(function BoardImpl(
-  { board, ghost, flash, popups, skinClass = "skin-default" }: Props,
+  { board, ghost, flash, popups, skinClass = "skin-default", hasSelection = false }: Props,
   ref,
 ) {
   return (
     <div className="board-wrap">
-      <div className={`board ${skinClass}`} ref={ref}>
+      <div className={`board ${skinClass} ${hasSelection ? "has-selection" : ""}`} ref={ref}>
         {board.map((row, r) =>
           row.map((cell, c) => {
             const key = `${r},${c}`;
@@ -43,10 +45,10 @@ const BoardImpl = forwardRef<HTMLDivElement, Props>(function BoardImpl(
           })
         )}
       </div>
-      <div className="box-sep vert" style={{ left: "33.33%" }} />
-      <div className="box-sep vert" style={{ left: "66.66%" }} />
-      <div className="box-sep horz" style={{ top: "33.33%" }} />
-      <div className="box-sep horz" style={{ top: "66.66%" }} />
+      <div className="box-sep vert v1" />
+      <div className="box-sep vert v2" />
+      <div className="box-sep horz h1" />
+      <div className="box-sep horz h2" />
       {popups.map((p) => (
         <div
           key={p.id}

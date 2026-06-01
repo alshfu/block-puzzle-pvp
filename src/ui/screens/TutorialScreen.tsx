@@ -23,6 +23,7 @@ import { DragLayer } from "../components/DragLayer";
 import { Hand } from "../components/Hand";
 import { Logo } from "../components/Logo";
 import { TransformControls } from "../components/TransformControls";
+import { useBoardPointer } from "../hooks/useBoardPointer";
 import { TUTORIAL_REWARD_COINS, TUTORIAL_STEPS } from "../tutorial/steps";
 
 interface Props {
@@ -212,6 +213,23 @@ export function TutorialScreen({ skinClass, onExit, onCompleted }: Props) {
     }
   }
 
+  // desktop fallback
+  useBoardPointer({
+    boardRef,
+    cellPx,
+    sel,
+    dragActive: !!drag?.active,
+    enabled: !doneStep,
+    onHover: (r, c) => setHover({ r, c }),
+    onLeave: () => setHover(null),
+    onPlace: (r, c) => {
+      if (sel && canPlace(board, sel.cells, r, c)) {
+        applyPlayerMove(sel.pieceId, sel.cells, r, c);
+        setSel(null);
+      }
+    },
+  });
+
   // ─── derived: ghost, dead ──────────────────────────────────────────────
   const ghost = useMemo(() => {
     if (!sel || !hover) return null;
@@ -314,6 +332,7 @@ export function TutorialScreen({ skinClass, onExit, onCompleted }: Props) {
         flash={null}
         popups={[]}
         skinClass={skinClass}
+        hasSelection={!!sel}
       />
 
       <div className="status-bar">{statusMsg}</div>

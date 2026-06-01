@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import type { BotLevel, Coord, PieceInstance, RuleConfig } from "../../core";
 import { SIZE } from "../../core";
 import { Board } from "../components/Board";
+import { useBoardPointer } from "../hooks/useBoardPointer";
 import { ComboFlash, pickComboMessage } from "../components/ComboFlash";
 import { Confetti } from "../components/Confetti";
 import { DragLayer } from "../components/DragLayer";
@@ -250,6 +251,23 @@ export function GameScreen({
     };
   }, [drag, game, state.sel, cellPx]);
 
+  // Desktop fallback: click-to-place + hover ghost когда фигура уже выбрана и НЕТ drag.
+  const isHumanTurn =
+    state.status === "playing" &&
+    !state.animating &&
+    !paused &&
+    !state.players[state.current].isBot;
+  useBoardPointer({
+    boardRef,
+    cellPx,
+    sel: state.sel,
+    dragActive: !!drag?.active,
+    enabled: isHumanTurn,
+    onHover: game.onHover,
+    onLeave: game.onLeave,
+    onPlace: game.onPlace,
+  });
+
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (paused || state.status !== "playing") return;
     if (state.players[state.current].isBot) return;
@@ -345,7 +363,7 @@ export function GameScreen({
         />
       )}
 
-      <Board ref={boardRef} board={state.board} ghost={ghost} flash={state.flash} popups={state.popups} skinClass={skinClass} />
+      <Board ref={boardRef} board={state.board} ghost={ghost} flash={state.flash} popups={state.popups} skinClass={skinClass} hasSelection={!!state.sel} />
 
       <div className="status-bar">{state.statusMsg}</div>
 
