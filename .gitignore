@@ -15,3 +15,7 @@ yarn-error.log*
 .vscode/*
 .idea/
 .claude/
+
+# Vite — локальные env переопределения (не для коммита)
+.env.local
+.env.*.local
