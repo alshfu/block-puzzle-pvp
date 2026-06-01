@@ -56,13 +56,13 @@ export function MenuScreen({ theme, setTheme, onStart, profile }: Props) {
                 <i>быстрая партия против ИИ</i>
               </span>
             </Button>
-            <button className="mode-btn ghost-mode" disabled>
+            <Button kind="ghost" className="mode-btn" owner={1} onClick={() => onStart("hotseat")}>
               <span className="mode-ico">👥</span>
               <span className="mode-txt">
                 <b>Вдвоём</b>
-                <i>скоро · hot-seat на одном устройстве</i>
+                <i>hot-seat на одном устройстве</i>
               </span>
-            </button>
+            </Button>
             <button className="mode-btn ghost-mode" disabled>
               <span className="mode-ico">🌐</span>
               <span className="mode-txt">

@@ -313,6 +313,10 @@ export function enumerateMoves(
   return moves;
 }
 
+export function pieceHasMove(board: Board, piece: PieceInstance, cfg: RuleConfig): boolean {
+  return hasAnyMove(board, [piece], cfg);
+}
+
 export function hasAnyMove(board: Board, hand: PieceInstance[], cfg: RuleConfig): boolean {
   for (const piece of hand) {
     for (const oriented of orientations(piece.type, cfg.rotationEnabled, cfg.flipEnabled)) {
