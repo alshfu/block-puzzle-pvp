@@ -483,6 +483,15 @@ export function App() {
               setOnlineMatch({ roomId, opponent });
               setScreen("online-game");
             }}
+            onBotFallback={() => {
+              // никого не нашлось — играем с локальным ботом medium.
+              setMode("bot");
+              setCfg(settings.defaultCfg);
+              setBotLevel("medium");
+              setBlitz(settings.defaultBlitz);
+              wasRematchRef.current = false;
+              setScreen("game");
+            }}
           />
         )}
         {screen === "online-game" && onlineMatch && (
@@ -494,6 +503,18 @@ export function App() {
             onExit={() => {
               setOnlineMatch(null);
               setScreen("menu");
+            }}
+            onMatchEnded={(won, drew) => {
+              setStats((prev) => ({
+                ...prev,
+                onlineGames: prev.onlineGames + 1,
+                onlineWins: prev.onlineWins + (won ? 1 : 0),
+                onlineLosses: prev.onlineLosses + (!won && !drew ? 1 : 0),
+                onlineDraws: prev.onlineDraws + (drew ? 1 : 0),
+              }));
+              // даём немного coin за онлайн-матч
+              const reward = won ? 30 : drew ? 15 : 8;
+              setWallet((w) => ({ coins: w.coins + reward, totalEarned: w.totalEarned + reward }));
             }}
           />
         )}

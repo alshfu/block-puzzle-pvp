@@ -13,6 +13,11 @@ export interface Stats {
   currentWinStreak: number;
   bestWinStreak: number;
   rematchStreak: number; // партий подряд через «Реванш»
+  /** Online: отдельная статистика для PvP. */
+  onlineGames: number;
+  onlineWins: number;
+  onlineLosses: number;
+  onlineDraws: number;
 }
 
 export const DEFAULT_STATS: Stats = {
@@ -26,6 +31,10 @@ export const DEFAULT_STATS: Stats = {
   currentWinStreak: 0,
   bestWinStreak: 0,
   rematchStreak: 0,
+  onlineGames: 0,
+  onlineWins: 0,
+  onlineLosses: 0,
+  onlineDraws: 0,
 };
 
 export function loadStats(): Stats {
@@ -53,6 +62,7 @@ export interface MatchOutcome {
 export function applyMatchToStats(prev: Stats, m: MatchOutcome): Stats {
   const winStreak = m.winner === 0 ? prev.currentWinStreak + 1 : 0;
   return {
+    ...prev,
     games: prev.games + 1,
     wins: prev.wins + (m.winner === 0 ? 1 : 0),
     losses: prev.losses + (m.winner === 1 ? 1 : 0),

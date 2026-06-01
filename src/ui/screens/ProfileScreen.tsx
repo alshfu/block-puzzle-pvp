@@ -83,6 +83,8 @@ export function ProfileScreen({ profile, stats, onSave, onResetStats, onOpenAchi
             <Stat label="Мульти-очистка" value={`×${stats.maxMultiClear}`} />
             <Stat label="Стрик сейчас" value={stats.currentWinStreak} />
             <Stat label="Лучший стрик" value={stats.bestWinStreak} />
+            <Stat label="Онлайн матчей" value={stats.onlineGames} />
+            <Stat label="Онлайн побед" value={stats.onlineWins} />
           </div>
           <button className="back-link" onClick={onResetStats}>
             сбросить статистику

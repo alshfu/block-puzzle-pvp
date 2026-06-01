@@ -9,6 +9,8 @@ import {
   findClears,
   hasAnyMove,
   isPerfectClear,
+  normalize,
+  orientations,
   place,
   scoreForMove,
   type Board,
@@ -43,9 +45,15 @@ interface MatchState {
   current: 0 | 1;
   turnCount: number;
   status: "waiting" | "playing" | "over";
-  result?: { winner: 0 | 1 | -1; scores: [number, number] };
+  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign" };
   lastClearedCells: Coord[];
+  /** Дедлайн текущего хода (ms epoch). */
+  turnDeadline: number;
+  rematchWanted: [boolean, boolean];
+  participants: [{ id: string; nick: string; avatar: string }, { id: string; nick: string; avatar: string }];
 }
+
+const TURN_TIME_MS = 60_000;
 
 /**
  * One Room party = one match.
@@ -53,8 +61,50 @@ interface MatchState {
  */
 export default class RoomServer implements Party.Server {
   state: MatchState | null = null;
+  timerHandle: ReturnType<typeof setInterval> | null = null;
 
   constructor(readonly room: Party.Room) {}
+
+  private startTimer(): void {
+    if (this.timerHandle) return;
+    this.timerHandle = setInterval(() => this.tick(), 1000);
+  }
+  private stopTimer(): void {
+    if (this.timerHandle) {
+      clearInterval(this.timerHandle);
+      this.timerHandle = null;
+    }
+  }
+  private tick(): void {
+    const s = this.state;
+    if (!s || s.status !== "playing") {
+      this.stopTimer();
+      return;
+    }
+    const now = Date.now();
+    if (now >= s.turnDeadline) {
+      // Текущий игрок просрочил ход — присуждаем поражение по таймауту.
+      const winner: 0 | 1 = (1 - s.current) as 0 | 1;
+      s.status = "over";
+      s.result = {
+        winner,
+        scores: [s.players[0].score, s.players[1].score],
+        reason: "timeout",
+      };
+      this.broadcastState();
+      this.stopTimer();
+      return;
+    }
+    // Каждые ~5 секунд шлём обновлённый remaining (мы тикаем секундой, но
+    // экономим трафик — обновляем клиент пореже).
+    if (Math.floor((s.turnDeadline - now) / 1000) % 5 === 0) {
+      this.broadcastState();
+    }
+  }
+  private resetTurnDeadline(): void {
+    if (!this.state) return;
+    this.state.turnDeadline = Date.now() + TURN_TIME_MS;
+  }
 
   /** Lobby делает POST с MatchSeed — инициализируем матч. */
   async onRequest(req: Party.Request): Promise<Response> {
@@ -114,6 +164,8 @@ export default class RoomServer implements Party.Server {
       const bothIn = this.state.players.every((p) => p.connId);
       if (this.state.status === "waiting" && bothIn) {
         this.state.status = "playing";
+        this.resetTurnDeadline();
+        this.startTimer();
       }
       this.send(sender, {
         type: "joined",
@@ -140,6 +192,54 @@ export default class RoomServer implements Party.Server {
       this.handleMove(sender, msg.pieceId, msg.cells, msg.r, msg.c);
       return;
     }
+
+    if (msg.type === "rematch_request" || msg.type === "rematch_cancel") {
+      this.handleRematch(sender, msg.type === "rematch_request");
+      return;
+    }
+  }
+
+  private handleRematch(sender: Party.Connection, wanted: boolean): void {
+    if (!this.state) return;
+    if (this.state.status !== "over") {
+      this.send(sender, { type: "error", reason: "match not over" });
+      return;
+    }
+    const idx = this.state.players.findIndex((p) => p.connId === sender.id);
+    if (idx === -1) return;
+    this.state.rematchWanted[idx as 0 | 1] = wanted;
+    // оповестим обоих
+    for (const p of this.state.players) {
+      if (!p.connId) continue;
+      const conn = this.room.getConnection(p.connId);
+      const pIdx = this.state.players.indexOf(p) as 0 | 1;
+      if (conn) {
+        conn.send(
+          JSON.stringify({
+            type: "rematch_status",
+            yours: this.state.rematchWanted[pIdx],
+            theirs: this.state.rematchWanted[(1 - pIdx) as 0 | 1],
+          }),
+        );
+      }
+    }
+    // если оба хотят — стартуем новый раунд на той же roomId с новым seed
+    if (this.state.rematchWanted[0] && this.state.rematchWanted[1]) {
+      const newSeed = (Math.random() * 0xffffffff) | 0;
+      const old = this.state;
+      this.state = this.initMatch({ matchSeed: newSeed, participants: [old.participants[0], old.participants[1]] });
+      // переносим текущие connId
+      this.state.players[0].connId = old.players[0].connId;
+      this.state.players[1].connId = old.players[1].connId;
+      // если оба подключены — играем сразу
+      const bothIn = this.state.players.every((p) => p.connId);
+      if (bothIn) {
+        this.state.status = "playing";
+        this.resetTurnDeadline();
+        this.startTimer();
+      }
+      this.broadcastState();
+    }
   }
 
   // ─── game logic ────────────────────────────────────────────────────────
@@ -164,6 +264,12 @@ export default class RoomServer implements Party.Server {
       turnCount: 0,
       status: "waiting",
       lastClearedCells: [],
+      turnDeadline: Date.now() + TURN_TIME_MS, // выставляется заново при старте playing
+      rematchWanted: [false, false],
+      participants: [
+        { id: seed.participants[0].id, nick: seed.participants[0].nick, avatar: seed.participants[0].avatar },
+        { id: seed.participants[1].id, nick: seed.participants[1].nick, avatar: seed.participants[1].avatar },
+      ],
     };
   }
 
@@ -192,10 +298,13 @@ export default class RoomServer implements Party.Server {
       this.send(sender, { type: "move_rejected", reason: "cannot place" });
       return;
     }
-    // Проверим, что cells соответствуют какой-либо ориентации фигуры — оставим простой
-    // sanity: число клеток совпадает с количеством клеток в pieceType.
-    if (cells.length !== piece.cells.length) {
-      this.send(sender, { type: "move_rejected", reason: "cells mismatch" });
+    // Анти-чит: cells должны быть одной из валидных ориентаций piece.type
+    // с учётом cfg.rotationEnabled / flipEnabled.
+    const wanted = JSON.stringify(normalize(cells));
+    const valid = orientations(piece.type, s.cfg.rotationEnabled, s.cfg.flipEnabled);
+    const ok = valid.some((o) => JSON.stringify(o) === wanted);
+    if (!ok) {
+      this.send(sender, { type: "move_rejected", reason: "invalid orientation" });
       return;
     }
 
@@ -230,13 +339,16 @@ export default class RoomServer implements Party.Server {
       const scores: [number, number] = [s.players[0].score, s.players[1].score];
       const winner: 0 | 1 | -1 = scores[0] > scores[1] ? 0 : scores[1] > scores[0] ? 1 : -1;
       s.status = "over";
-      s.result = { winner, scores };
+      s.result = { winner, scores, reason: "deadlock" };
+      this.stopTimer();
+    } else {
+      this.resetTurnDeadline();
     }
 
     this.broadcastState(idx, gained, perfect);
   }
 
-  private endMatch(sender: Party.Connection, _reason: string): void {
+  private endMatch(sender: Party.Connection, reason: "resign" | "timeout"): void {
     const s = this.state!;
     if (s.status === "over") return;
     const idx = s.players.findIndex((p) => p.connId === sender.id);
@@ -246,7 +358,9 @@ export default class RoomServer implements Party.Server {
     s.result = {
       winner,
       scores: [s.players[0].score, s.players[1].score],
+      reason,
     };
+    this.stopTimer();
     this.broadcastState();
   }
 
@@ -262,6 +376,7 @@ export default class RoomServer implements Party.Server {
       combo: p.combo,
       hand: p.hand,
     });
+    const remaining = Math.max(0, s.turnDeadline - Date.now());
     return {
       matchId: this.room.id,
       board: s.board,
@@ -271,6 +386,8 @@ export default class RoomServer implements Party.Server {
       status: s.status === "over" ? "over" : "playing",
       result: s.result,
       lastClearedCells: s.lastClearedCells.length > 0 ? s.lastClearedCells : undefined,
+      turnTimeRemainingMs: remaining,
+      turnTimeBaseMs: TURN_TIME_MS,
     };
   }
 

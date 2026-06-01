@@ -28,6 +28,8 @@ interface Props {
   profile: OnlineProfile;
   opponent: OnlineProfile;
   onExit: () => void;
+  /** Зовётся один раз когда матч завершён (любым способом). */
+  onMatchEnded?: (won: boolean, drew: boolean) => void;
 }
 
 interface Selection {
@@ -45,8 +47,9 @@ interface DragState {
 
 const DRAG_THRESHOLD_PX = 6;
 
-export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit }: Props) {
-  const { state: onlineState, sendMove, resign } = useOnlineGame(roomId, profile);
+export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onMatchEnded }: Props) {
+  const { state: onlineState, sendMove, resign, requestRematch } = useOnlineGame(roomId, profile);
+  const matchEndedRef = useRef<string | null>(null);
 
   const cfg = DEFAULT_CONFIG; // онлайн фиксирует конфиг сервера; без таймера
   const [sel, setSel] = useState<Selection | null>(null);
@@ -239,6 +242,18 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit }: P
       ? { winner: remapWinner(onlineState.state.result.winner, you), scores: orderScores(onlineState.state.result.scores, you) }
       : null;
 
+  // Уведомляем родителя ровно один раз после окончания матча — для online stats.
+  useEffect(() => {
+    if (!onlineState.state || onlineState.state.status !== "over" || !onlineState.state.result) return;
+    const key = `${onlineState.state.matchId}-${onlineState.state.turnCount}`;
+    if (matchEndedRef.current === key) return;
+    matchEndedRef.current = key;
+    const winnerServer = onlineState.state.result.winner;
+    const drew = winnerServer === -1;
+    const won = !drew && you !== null && winnerServer === you;
+    onMatchEnded?.(won, drew);
+  }, [onlineState.state, you, onMatchEnded]);
+
   // ─── рендер ────────────────────────────────────────────────────────────
   if (!onlineState.state || you === null || !youView || !oppView) {
     return (
@@ -275,7 +290,10 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit }: P
         names={names}
         current={(you === onlineState.state.current ? 0 : 1) as 0 | 1}
         status={onlineState.state.status}
-        timer={{ remaining: Infinity, perTurn: Infinity }}
+        timer={{
+          remaining: onlineState.state.turnTimeRemainingMs / 1000,
+          perTurn: onlineState.state.turnTimeBaseMs / 1000,
+        }}
       />
 
       <Hand
@@ -344,7 +362,9 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit }: P
         names={names}
         theme={theme}
         xp={0}
-        onRematch={onExit}
+        rematchYours={onlineState.rematchYours}
+        rematchTheirs={onlineState.rematchTheirs}
+        onRematch={() => requestRematch(!onlineState.rematchYours)}
         onMenu={onExit}
       />
     </div>

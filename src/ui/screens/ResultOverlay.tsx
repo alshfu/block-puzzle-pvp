@@ -23,6 +23,10 @@ interface Props {
   /** Лучший стрик до партии — чтобы понять, побит ли он. */
   prevBestStreak?: number;
   theme?: ThemeId;
+  /** Online: ты уже нажал «Реванш». */
+  rematchYours?: boolean;
+  /** Online: соперник уже нажал «Реванш». */
+  rematchTheirs?: boolean;
   onRematch: () => void;
   onMenu: () => void;
 }
@@ -35,6 +39,8 @@ export function ResultOverlay({
   streak = 0,
   prevBestStreak = 0,
   theme = "neutral",
+  rematchYours,
+  rematchTheirs,
   onRematch,
   onMenu,
 }: Props) {
@@ -120,7 +126,15 @@ export function ResultOverlay({
         </div>
         <div className="result-actions">
           <Button kind="primary" onClick={onRematch}>
-            Реванш
+            {rematchYours === undefined
+              ? "Реванш"
+              : rematchYours && rematchTheirs
+                ? "Запуск…"
+                : rematchYours
+                  ? "Жду соперника…"
+                  : rematchTheirs
+                    ? "Соперник хочет реванш"
+                    : "Реванш"}
           </Button>
           <Button kind="ghost" onClick={onMenu}>
             В меню

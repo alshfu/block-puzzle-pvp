@@ -7,11 +7,13 @@ interface Props {
   profile: OnlineProfile;
   onBack: () => void;
   onMatched: (roomId: string, opponent: OnlineProfile) => void;
+  /** Lobby ответил bot_fallback — никого нет, играем с ботом локально. */
+  onBotFallback: () => void;
 }
 
 type Phase = "idle" | "connecting" | "queued" | "error";
 
-export function OnlineMenuScreen({ profile, onBack, onMatched }: Props) {
+export function OnlineMenuScreen({ profile, onBack, onMatched, onBotFallback }: Props) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [position, setPosition] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -34,6 +36,10 @@ export function OnlineMenuScreen({ profile, onBack, onMatched }: Props) {
       onMatched: (roomId, opponent) => {
         lobby.close();
         onMatched(roomId, opponent);
+      },
+      onBotFallback: () => {
+        lobby.close();
+        onBotFallback();
       },
       onError: (reason) => {
         setPhase("error");

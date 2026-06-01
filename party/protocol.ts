@@ -29,10 +29,13 @@ export interface OnlineGameState {
   current: 0 | 1;        // чей ход (индекс в players)
   turnCount: number;
   status: "playing" | "over";
-  result?: { winner: 0 | 1 | -1; scores: [number, number] };
+  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign" };
   /** Последняя очистка (для flash на клиенте) — клетки, которые сервер только что очистил. */
   lastClearedCells?: Coord[];
-  /** Кто сейчас "я" — определяется индивидуально для каждого клиента. */
+  /** Оставшееся время хода (мс). Сервер тикает раз в N мс. */
+  turnTimeRemainingMs: number;
+  /** Базовое время на ход (мс). */
+  turnTimeBaseMs: number;
 }
 
 // ─── Lobby (matchmaking) ────────────────────────────────────────────────
@@ -42,8 +45,9 @@ export type LobbyClient2Server =
   | { type: "cancel" };
 
 export type LobbyServer2Client =
-  | { type: "queued"; position: number }
+  | { type: "queued"; position: number; waitedSec: number }
   | { type: "matched"; roomId: string; opponent: OnlineProfile }
+  | { type: "bot_fallback" } // ждал слишком долго — играй с ботом локально
   | { type: "error"; reason: string };
 
 // ─── Room (game) ────────────────────────────────────────────────────────
@@ -57,7 +61,9 @@ export type RoomClient2Server =
       r: number;
       c: number;
     }
-  | { type: "resign" };
+  | { type: "resign" }
+  | { type: "rematch_request" }
+  | { type: "rematch_cancel" };
 
 export type RoomServer2Client =
   | {
@@ -69,6 +75,7 @@ export type RoomServer2Client =
   | { type: "move_rejected"; reason: string }
   | { type: "opponent_left"; willTimeoutMs: number }
   | { type: "opponent_reconnected" }
+  | { type: "rematch_status"; yours: boolean; theirs: boolean }
   | { type: "error"; reason: string };
 
 // ─── Internal (типы между lobby и room, не для клиента) ─────────────────

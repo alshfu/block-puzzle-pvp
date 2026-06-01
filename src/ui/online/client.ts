@@ -27,6 +27,7 @@ function makeSocket(party: "lobby" | "room", room: string): PartySocket {
 export interface LobbyHandlers {
   onQueued?: (position: number) => void;
   onMatched?: (roomId: string, opponent: OnlineProfile) => void;
+  onBotFallback?: () => void;
   onError?: (reason: string) => void;
   onClose?: () => void;
 }
@@ -47,6 +48,7 @@ export function openLobby(handlers: LobbyHandlers): LobbyConnection {
     }
     if (m.type === "queued") handlers.onQueued?.(m.position);
     else if (m.type === "matched") handlers.onMatched?.(m.roomId, m.opponent);
+    else if (m.type === "bot_fallback") handlers.onBotFallback?.();
     else if (m.type === "error") handlers.onError?.(m.reason);
   });
   ws.addEventListener("close", () => handlers.onClose?.());

@@ -9,7 +9,10 @@ import type {
 interface QueueEntry {
   connId: string;
   profile: OnlineProfile;
+  enqueuedAt: number;
 }
+
+const BOT_FALLBACK_AFTER_MS = 25_000;
 
 /**
  * Singleton lobby: единая FIFO-очередь quick-play.
@@ -18,8 +21,36 @@ interface QueueEntry {
  */
 export default class LobbyServer implements Party.Server {
   queue: QueueEntry[] = [];
+  /** Один alarm tick — каждые 5 секунд проверяем кому пора уходить к боту. */
+  tickTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(readonly room: Party.Room) {}
+
+  private ensureTick(): void {
+    if (this.tickTimer) return;
+    this.tickTimer = setInterval(() => this.onTick(), 5000);
+  }
+  private stopTickIfEmpty(): void {
+    if (this.queue.length === 0 && this.tickTimer) {
+      clearInterval(this.tickTimer);
+      this.tickTimer = null;
+    }
+  }
+  private onTick(): void {
+    const now = Date.now();
+    const stillWaiting: QueueEntry[] = [];
+    for (const q of this.queue) {
+      if (now - q.enqueuedAt >= BOT_FALLBACK_AFTER_MS) {
+        const conn = this.room.getConnection(q.connId);
+        if (conn) this.send(conn, { type: "bot_fallback" });
+      } else {
+        stillWaiting.push(q);
+      }
+    }
+    this.queue = stillWaiting;
+    this.broadcastQueuePositions();
+    this.stopTickIfEmpty();
+  }
 
   /** Регистрация подключения: ничего не делаем, ждём сообщения "queue". */
   onConnect(_conn: Party.Connection, _ctx: Party.ConnectionContext) {}
@@ -39,10 +70,10 @@ export default class LobbyServer implements Party.Server {
     }
 
     if (msg.type === "queue") {
-      // не дублируем игрока с тем же connId
       if (!this.queue.some((q) => q.connId === sender.id)) {
-        this.queue.push({ connId: sender.id, profile: msg.profile });
+        this.queue.push({ connId: sender.id, profile: msg.profile, enqueuedAt: Date.now() });
       }
+      this.ensureTick();
       await this.tryMatch();
       this.broadcastQueuePositions();
       return;
@@ -90,9 +121,16 @@ export default class LobbyServer implements Party.Server {
   }
 
   private broadcastQueuePositions(): void {
+    const now = Date.now();
     this.queue.forEach((q, idx) => {
       const conn = this.room.getConnection(q.connId);
-      if (conn) this.send(conn, { type: "queued", position: idx + 1 });
+      if (conn) {
+        this.send(conn, {
+          type: "queued",
+          position: idx + 1,
+          waitedSec: Math.floor((now - q.enqueuedAt) / 1000),
+        });
+      }
     });
   }
 
