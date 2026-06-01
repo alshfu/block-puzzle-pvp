@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import type { BotLevel, RuleConfig } from "../core";
+import { setSoundEnabled, setVibrateEnabled } from "./audio";
 import { ThemeBackdrop } from "./components/ThemeBackdrop";
 import { GameScreen } from "./screens/GameScreen";
 import { MenuScreen, type GameMode } from "./screens/MenuScreen";
@@ -79,7 +80,16 @@ export function App() {
 
   useEffect(() => {
     saveSettings(settings);
+    setSoundEnabled(settings.sound);
+    setVibrateEnabled(settings.vibrate);
   }, [settings]);
+
+  // Применяем сохранённые тумблеры сразу при первом рендере (до изменения settings).
+  useEffect(() => {
+    setSoundEnabled(settings.sound);
+    setVibrateEnabled(settings.vibrate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const t = THEMES[theme];
   const rootStyle: CSSProperties = t.vars;

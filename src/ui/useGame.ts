@@ -24,6 +24,21 @@ import {
   type PieceInstance,
   type RuleConfig,
 } from "../core";
+import {
+  playClear,
+  playInvalid,
+  playLose,
+  playPerfect,
+  playPlace,
+  playWin,
+  playDraw,
+  vibrateClear,
+  vibrateInvalid,
+  vibrateLose,
+  vibratePerfect,
+  vibratePlace,
+  vibrateWin,
+} from "./audio";
 import type { ScorePopup } from "./components/Board";
 import type { MatchResult } from "./screens/ResultOverlay";
 import type { GameMode } from "./screens/MenuScreen";
@@ -301,9 +316,10 @@ export interface UseGameOptions {
   session: GameSession;
   savedGame: SavedGame | null;
   onMatchOver?: (outcome: MatchOutcome) => void;
+  onPerfect?: () => void;
 }
 
-export function useGame({ session, savedGame, onMatchOver }: UseGameOptions) {
+export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameOptions) {
   const bagsRef = useRef<[Bag, Bag] | null>(null);
   const botRngRef = useRef<(() => number) | null>(null);
   const drawCountsRef = useRef<[number, number]>([0, 0]);
@@ -334,6 +350,8 @@ export function useGame({ session, savedGame, onMatchOver }: UseGameOptions) {
 
   const onMatchOverRef = useRef(onMatchOver);
   onMatchOverRef.current = onMatchOver;
+  const onPerfectRef = useRef(onPerfect);
+  onPerfectRef.current = onPerfect;
 
   const clearAllTimers = useCallback(() => {
     popupTimersRef.current.forEach(clearTimeout);
@@ -374,8 +392,18 @@ export function useGame({ session, savedGame, onMatchOver }: UseGameOptions) {
       const actor = owner === 0 ? "Ты очистил" : `${sess.names[owner]} очистил`;
       const w = clears.count === 1 ? "линию" : "линии";
       statusMsg = `${actor} ${clears.count} ${w} (+${gained})`;
+      if (perfect) {
+        playPerfect();
+        vibratePerfect();
+        onPerfectRef.current?.();
+      } else {
+        playClear(clears.count);
+        vibrateClear(clears.count);
+      }
     } else {
       statusMsg = owner === 0 ? "Ход сделан" : `${sess.names[owner]} походил`;
+      playPlace();
+      vibratePlace();
     }
 
     const bag = bagsRef.current![owner];
@@ -431,6 +459,10 @@ export function useGame({ session, savedGame, onMatchOver }: UseGameOptions) {
         result: { winner, scores },
       });
       clearSavedGame();
+      // Финальные fx
+      if (winner === 0) { playWin(); vibrateWin(); }
+      else if (winner === 1) { playLose(); vibrateLose(); }
+      else { playDraw(); }
       if (!matchOverFiredRef.current) {
         matchOverFiredRef.current = true;
         onMatchOverRef.current?.({
@@ -567,6 +599,8 @@ export function useGame({ session, savedGame, onMatchOver }: UseGameOptions) {
       performMove({ pieceId: s.sel.pieceId, type: piece.type, cells: s.sel.cells, r, c }, s.current);
     } else {
       dispatch({ type: "SHAKE", msg: "Сюда не помещается" });
+      playInvalid();
+      vibrateInvalid();
     }
   }, [performMove]);
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { BotLevel, RuleConfig } from "../../core";
 import { Board } from "../components/Board";
+import { Confetti } from "../components/Confetti";
 import { FloatingTheme } from "../components/FloatingTheme";
 import { Hand } from "../components/Hand";
 import { Logo } from "../components/Logo";
@@ -43,11 +44,21 @@ export function GameScreen({
     return [THEMES[theme].p0name, THEMES[theme].p1name];
   }, [mode, theme]);
 
+  const [confettiTick, setConfettiTick] = useState(0);
   const game = useGame({
     session: { cfg, mode, botLevel, blitz, names },
     savedGame,
     onMatchOver,
+    onPerfect: () => setConfettiTick((t) => t + 1),
   });
+  // confetti виден ~1.7с после триггера
+  const [showConfetti, setShowConfetti] = useState(false);
+  useEffect(() => {
+    if (confettiTick === 0) return;
+    setShowConfetti(true);
+    const t = setTimeout(() => setShowConfetti(false), 1700);
+    return () => clearTimeout(t);
+  }, [confettiTick]);
   const { state, ghost, deadIds } = game;
 
   const [paused, setPausedLocal] = useState(false);
@@ -180,6 +191,8 @@ export function GameScreen({
           onExit={onExit}
         />
       )}
+
+      {showConfetti && <Confetti tick={confettiTick} />}
 
       <FloatingTheme theme={theme} setTheme={setTheme} />
     </div>

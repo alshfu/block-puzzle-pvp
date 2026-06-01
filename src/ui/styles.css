@@ -363,7 +363,23 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .resume-btn.primary { background: linear-gradient(135deg, var(--p0), var(--p0d)); color: #1a1206; border-color: transparent; }
 [data-kind="light"] .resume-btn.primary { color: #fff; }
 
+/* ---------- confetti (perfect clear) ---------- */
+.confetti-burst {
+  position: absolute; inset: 0; pointer-events: none; z-index: 30; overflow: hidden;
+}
+.confetti-bit {
+  position: absolute; top: -8%;
+  width: 8px; height: 14px; border-radius: 2px;
+  animation-name: confettifall; animation-timing-function: ease-in; animation-fill-mode: forwards;
+  --drift: 0px;
+  --rot: 720deg;
+}
+@keyframes confettifall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--drift), 110vh) rotate(var(--rot)); opacity: 0; }
+}
+
 /* reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .candy-bit, .night-beam, .night-emblem, .turn-timer.danger .tt-fill, .score-pop, .cell.flash { animation: none !important; }
+  .candy-bit, .night-beam, .night-emblem, .turn-timer.danger .tt-fill, .score-pop, .cell.flash, .confetti-bit { animation: none !important; }
 }
