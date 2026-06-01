@@ -16,6 +16,8 @@ interface Props {
   setCfg: (c: RuleConfig) => void;
   botLevel: BotLevel;
   setBotLevel: (l: BotLevel) => void;
+  botLevelB: BotLevel;
+  setBotLevelB: (l: BotLevel) => void;
   blitz: BlitzPreset;
   setBlitz: (b: BlitzPreset) => void;
   onBack: () => void;
@@ -24,7 +26,8 @@ interface Props {
 
 export function SetupScreen({
   theme, setTheme, mode, cfg, setCfg,
-  botLevel, setBotLevel, blitz, setBlitz, onBack, onStart,
+  botLevel, setBotLevel, botLevelB, setBotLevelB,
+  blitz, setBlitz, onBack, onStart,
 }: Props) {
   const upd = <K extends keyof RuleConfig>(k: K, v: RuleConfig[K]) =>
     setCfg({ ...cfg, [k]: v });
@@ -36,7 +39,9 @@ export function SetupScreen({
           ←
         </button>
         <div className="setup-title">Настройка матча</div>
-        <span className="mode-badge">{mode === "bot" ? "vs bot" : "hot-seat"}</span>
+        <span className="mode-badge">
+          {mode === "bot" ? "vs bot" : mode === "hotseat" ? "hot-seat" : "bot × bot"}
+        </span>
       </div>
 
       <div className="setup-body">
@@ -53,6 +58,34 @@ export function SetupScreen({
               ]}
             />
           </section>
+        )}
+        {mode === "botvbot" && (
+          <>
+            <section className="setup-sec">
+              <div className="sec-cap">Бот A (ходит первым)</div>
+              <Segment<BotLevel>
+                value={botLevelB}
+                onChange={setBotLevelB}
+                options={[
+                  { v: "easy", label: "Тупой" },
+                  { v: "medium", label: "Умный" },
+                  { v: "hard", label: "Сложный" },
+                ]}
+              />
+            </section>
+            <section className="setup-sec">
+              <div className="sec-cap">Бот B</div>
+              <Segment<BotLevel>
+                value={botLevel}
+                onChange={setBotLevel}
+                options={[
+                  { v: "easy", label: "Тупой" },
+                  { v: "medium", label: "Умный" },
+                  { v: "hard", label: "Сложный" },
+                ]}
+              />
+            </section>
+          </>
         )}
 
         <section className="setup-sec">

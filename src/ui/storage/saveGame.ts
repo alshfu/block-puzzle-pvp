@@ -4,7 +4,7 @@ import type { BlitzPreset } from "../screens/SetupScreen";
 import { readJSON, removeKey, writeJSON } from "./storage";
 
 const KEY = "bd_save";
-const VERSION = 1;
+const VERSION = 2;
 
 export interface SavedPlayer {
   score: number;
@@ -18,7 +18,8 @@ export interface SavedGame {
   seed: number;
   cfg: RuleConfig;
   mode: GameMode;
-  botLevel: BotLevel;
+  botLevel: BotLevel;                              // legacy/UI badge; для логики используем botLevels
+  botLevels: [BotLevel | null, BotLevel | null];   // null = живой игрок
   blitz: BlitzPreset;
   board: Board;
   players: [SavedPlayer, SavedPlayer];
@@ -41,6 +42,8 @@ export function loadSavedGame(): SavedGame | null {
 export function saveGame(s: SavedGame): void {
   writeJSON(KEY, { ...s, version: VERSION });
 }
+
+export const SAVE_VERSION = VERSION;
 
 export function clearSavedGame(): void {
   removeKey(KEY);

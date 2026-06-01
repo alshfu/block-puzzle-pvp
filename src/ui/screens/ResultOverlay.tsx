@@ -20,13 +20,13 @@ export function ResultOverlay({ result, names, xp, onRematch, onMenu }: Props) {
   let cls: string;
   let emo: string;
   if (winner === 0) {
-    title = "Победа";
+    title = `${names[0]} победил`;
     cls = "win owner0";
     emo = "🏆";
   } else if (winner === 1) {
     title = `${names[1]} победил`;
     cls = "lose owner1";
-    emo = "🤖";
+    emo = "🥇";
   } else {
     title = "Ничья";
     cls = "draw";

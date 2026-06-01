@@ -204,7 +204,13 @@ function reducer(s: State, a: Action): State {
 export interface GameSession {
   cfg: RuleConfig;
   mode: GameMode;
-  botLevel: BotLevel;
+  /**
+   * Уровень бота для каждого игрока. null = живой игрок.
+   *   bot:     [null, level]
+   *   hotseat: [null, null]
+   *   botvbot: [levelA, levelB]
+   */
+  botLevels: [BotLevel | null, BotLevel | null];
   blitz: BlitzPreset;
   names: [string, string];
 }
@@ -224,13 +230,13 @@ function freshInit(session: GameSession, seed: number): InitPack {
     {
       score: 0,
       combo: 0,
-      isBot: false,
+      isBot: session.botLevels[0] !== null,
       hand: Array.from({ length: handSize }, () => bags[0].draw()),
     },
     {
       score: 0,
       combo: 0,
-      isBot: session.mode === "bot",
+      isBot: session.botLevels[1] !== null,
       hand: Array.from({ length: handSize }, () => bags[1].draw()),
     },
   ];
@@ -277,8 +283,8 @@ function restoreInit(session: GameSession, saved: SavedGame): InitPack {
     state: {
       board: saved.board,
       players: [
-        { ...saved.players[0] },
-        { ...saved.players[1] },
+        { ...saved.players[0], isBot: session.botLevels[0] !== null },
+        { ...saved.players[1], isBot: session.botLevels[1] !== null },
       ] as [Player, Player],
       current: saved.current,
       status: "playing",
@@ -499,11 +505,12 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
     // Автосохранение текущего состояния после хода.
     const finalState = stateRef.current;
     saveGame({
-      version: 1,
+      version: 2,
       seed: seedRef.current,
       cfg: sess.cfg,
       mode: sess.mode,
-      botLevel: sess.botLevel,
+      botLevel: sess.botLevels[1] ?? sess.botLevels[0] ?? "medium",
+      botLevels: sess.botLevels,
       blitz: sess.blitz,
       board: boardAfter,
       players: [
@@ -531,10 +538,12 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect }: UseGameO
       const s = stateRef.current;
       if (s.status !== "playing" || !s.players[s.current].isBot) return;
       const sess = sessionRef.current;
+      const lvl = sess.botLevels[s.current];
+      if (!lvl) return;
       const move = chooseBotMove(
         s.board,
         s.players[s.current].hand,
-        sess.botLevel,
+        lvl,
         sess.cfg,
         botRngRef.current!,
       );

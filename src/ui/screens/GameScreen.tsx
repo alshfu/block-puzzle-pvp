@@ -24,6 +24,7 @@ interface Props {
   mode: GameMode;
   cfg: RuleConfig;
   botLevel: BotLevel;
+  botLevelB: BotLevel;
   blitz: BlitzPreset;
   savedGame: SavedGame | null;
   onExit: () => void;
@@ -46,6 +47,7 @@ export function GameScreen({
   mode,
   cfg,
   botLevel,
+  botLevelB,
   blitz,
   savedGame,
   onExit,
@@ -53,12 +55,19 @@ export function GameScreen({
 }: Props) {
   const names = useMemo<[string, string]>(() => {
     if (mode === "hotseat") return ["Игрок 1", "Игрок 2"];
+    if (mode === "botvbot") return [`Бот A · ${botLevelB}`, `Бот B · ${botLevel}`];
     return [THEMES[theme].p0name, THEMES[theme].p1name];
-  }, [mode, theme]);
+  }, [mode, theme, botLevel, botLevelB]);
+
+  const botLevels = useMemo<[BotLevel | null, BotLevel | null]>(() => {
+    if (mode === "bot") return [null, botLevel];
+    if (mode === "hotseat") return [null, null];
+    return [botLevelB, botLevel]; // botvbot: A first, B second
+  }, [mode, botLevel, botLevelB]);
 
   const [confettiTick, setConfettiTick] = useState(0);
   const game = useGame({
-    session: { cfg, mode, botLevel, blitz, names },
+    session: { cfg, mode, botLevels, blitz, names },
     savedGame,
     onMatchOver,
     onPerfect: () => setConfettiTick((t) => t + 1),
@@ -243,7 +252,8 @@ export function GameScreen({
     }
   };
 
-  const bottomOwner: 0 | 1 = mode === "bot" ? 0 : state.current;
+  // В режимах с человеком — активная рука внизу. В bot×bot — фиксируем 0 снизу, 1 сверху.
+  const bottomOwner: 0 | 1 = mode === "hotseat" ? state.current : 0;
   const topOwner: 0 | 1 = (1 - bottomOwner) as 0 | 1;
   const isLocalTurn =
     state.status === "playing" &&
@@ -263,7 +273,11 @@ export function GameScreen({
       <div className="game-head">
         <Logo size="mini" />
         <span className="mode-badge">
-          {mode === "bot" ? "vs bot · " + botLevel : "hot-seat"}
+          {mode === "bot"
+            ? "vs bot · " + botLevel
+            : mode === "hotseat"
+              ? "hot-seat"
+              : "bot × bot"}
         </span>
         <button className="pause-btn" onClick={() => setPausedLocal(true)}>
           ⏸
@@ -282,8 +296,20 @@ export function GameScreen({
       />
 
       <Hand
-        title={mode === "bot" ? "Рука соперника" : `${names[topOwner]} · ждёт`}
-        hint={mode === "bot" ? "наблюдай" : state.current === topOwner ? "ходит" : "ждёт"}
+        title={
+          mode === "bot"
+            ? "Рука соперника"
+            : mode === "botvbot"
+              ? `${names[topOwner]}`
+              : `${names[topOwner]} · ждёт`
+        }
+        hint={
+          mode === "botvbot"
+            ? state.current === topOwner ? "ходит" : "ждёт"
+            : mode === "bot"
+              ? "наблюдай"
+              : state.current === topOwner ? "ходит" : "ждёт"
+        }
         hand={state.players[topOwner].hand}
         owner={topOwner}
         selId={null}
@@ -297,8 +323,20 @@ export function GameScreen({
       <div className="status-bar">{state.statusMsg}</div>
 
       <Hand
-        title={mode === "bot" ? "Твоя рука" : `Ходит: ${names[bottomOwner]}`}
-        hint={bottomInteractive ? "перетащи фигуру на доску" : "ждёт хода"}
+        title={
+          mode === "bot"
+            ? "Твоя рука"
+            : mode === "botvbot"
+              ? `${names[bottomOwner]}`
+              : `Ходит: ${names[bottomOwner]}`
+        }
+        hint={
+          bottomInteractive
+            ? "перетащи фигуру на доску"
+            : mode === "botvbot"
+              ? state.current === bottomOwner ? "ходит" : "ждёт"
+              : "ждёт хода"
+        }
         hand={state.players[bottomOwner].hand}
         owner={bottomOwner}
         selId={state.sel?.pieceId ?? null}

@@ -7,7 +7,7 @@ import { ThemeSwitch } from "../components/ThemeSwitch";
 import type { ThemeId } from "../themes";
 import type { SavedGame } from "../storage/saveGame";
 
-export type GameMode = "bot" | "hotseat";
+export type GameMode = "bot" | "hotseat" | "botvbot";
 
 export interface Profile {
   nick: string;
@@ -82,6 +82,13 @@ export function MenuScreen({
               <span className="mode-txt">
                 <b>Вдвоём</b>
                 <i>hot-seat на одном устройстве</i>
+              </span>
+            </Button>
+            <Button kind="ghost" className="mode-btn" onClick={() => onStart("botvbot")}>
+              <span className="mode-ico">🎬</span>
+              <span className="mode-txt">
+                <b>Бот × бот</b>
+                <i>смотри как ИИ играет с ИИ</i>
               </span>
             </Button>
             <button className="mode-btn ghost-mode" disabled>

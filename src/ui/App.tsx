@@ -57,6 +57,7 @@ export function App() {
   const [mode, setMode] = useState<GameMode>("bot");
   const [cfg, setCfg] = useState<RuleConfig>(settings.defaultCfg);
   const [botLevel, setBotLevel] = useState<BotLevel>(settings.defaultBotLevel);
+  const [botLevelB, setBotLevelB] = useState<BotLevel>(settings.defaultBotLevel);
   const [blitz, setBlitz] = useState<BlitzPreset>(settings.defaultBlitz);
 
   const [savedGame, setSavedGame] = useState<SavedGame | null>(loadSavedGame);
@@ -107,6 +108,7 @@ export function App() {
     setMode(m);
     setCfg(settings.defaultCfg);
     setBotLevel(settings.defaultBotLevel);
+    setBotLevelB(settings.defaultBotLevel);
     setBlitz(settings.defaultBlitz);
     setScreen("setup");
   };
@@ -115,7 +117,8 @@ export function App() {
     if (!savedGame) return;
     setMode(savedGame.mode);
     setCfg(savedGame.cfg);
-    setBotLevel(savedGame.botLevel);
+    setBotLevel(savedGame.botLevels?.[1] ?? savedGame.botLevel);
+    setBotLevelB(savedGame.botLevels?.[0] ?? savedGame.botLevel);
     setBlitz(savedGame.blitz);
     setRestoring(true);
     setScreen("game");
@@ -174,6 +177,8 @@ export function App() {
             setCfg={setCfg}
             botLevel={botLevel}
             setBotLevel={setBotLevel}
+            botLevelB={botLevelB}
+            setBotLevelB={setBotLevelB}
             blitz={blitz}
             setBlitz={setBlitz}
             onBack={() => setScreen("menu")}
@@ -190,6 +195,7 @@ export function App() {
             mode={mode}
             cfg={cfg}
             botLevel={botLevel}
+            botLevelB={botLevelB}
             blitz={blitz}
             savedGame={restoring ? savedGame : null}
             onExit={handleExitGame}
