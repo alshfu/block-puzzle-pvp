@@ -73,30 +73,40 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   gap: 10px;
   overflow-y: auto; overflow-x: hidden;
 }
-/* Игровой экран ОБЯЗАН помещаться в 100dvh без скролла, иначе на мобиле
-   уходит TransformControls под край экрана. Board растягивается через
-   flex, остальные блоки фиксированной высоты. */
+/* Игровой экран ОБЯЗАН помещаться в 100dvh без скролла. Board остаётся
+   родного размера (не трогаем — главный игровой элемент), сжимаем только
+   обвязку: scoreboard, руки, transform-controls, отступы. */
 .game-screen {
   overflow: hidden;
-  padding: 8px 12px env(safe-area-inset-bottom);
-  gap: 6px;
+  padding: 6px 12px env(safe-area-inset-bottom);
+  gap: 4px;
 }
 .game-screen > * { flex-shrink: 0; }
+/* Board держит родной квадрат, но если экран совсем низкий — допускаем небольшое сжатие
+   через max-height, чтобы не выдавить нижнюю руку и transform-controls. */
 .game-screen .board-wrap {
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-height: 0;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  display: grid;
-  place-items: center;
-}
-.game-screen .board-wrap > .board {
-  aspect-ratio: 1;
-  width: auto;
-  height: 100%;
-  max-width: 100%;
   max-height: 100%;
+}
+/* Компактные размеры обвязки на мобиле, чтобы всё поместилось в viewport. */
+@media (max-width: 480px) {
+  .game-screen .game-head { gap: 6px; }
+  .game-screen .pause-btn { width: 34px; height: 34px; font-size: 14px; }
+  .game-screen .scoreboard { gap: 6px; }
+  .game-screen .pcard { padding: 6px 8px; gap: 4px; }
+  .game-screen .pcard-score { font-size: 24px; }
+  .game-screen .turn-timer,
+  .game-screen .turn-timer svg { width: 44px; height: 44px; }
+  .game-screen .tt-num { font-size: 14px; }
+  .game-screen .hand { padding: 4px 10px 6px; }
+  .game-screen .hand-head { font-size: 10px; margin-bottom: 2px; }
+  .game-screen .hand-row { min-height: 42px; gap: 10px; }
+  .game-screen .hand-slot { padding: 4px 6px; }
+  .game-screen .tc-btn { min-height: 38px; padding: 8px 4px; font-size: 11px; }
+  .game-screen .transform-controls { gap: 6px; }
+  .game-screen .status-bar { min-height: 14px; padding: 0 4px; font-size: 11px; }
+  .game-screen .mode-badge { padding: 4px 8px; font-size: 10px; }
 }
 .screen::-webkit-scrollbar { width: 0; }
 
