@@ -103,8 +103,9 @@ export function SetupScreen({
             value={cfg.handSize}
             onChange={(v) => upd("handSize", v)}
             options={[
+              { v: 1, label: "1", sub: "тетрис" },
               { v: 2, label: "2" },
-              { v: 3, label: "3" },
+              { v: 3, label: "3", sub: "по умолч." },
               { v: 4, label: "4" },
             ]}
           />

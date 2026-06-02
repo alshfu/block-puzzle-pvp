@@ -62,14 +62,16 @@ export function transformPath(type: keyof typeof BASE_SHAPES, target: Coord[]): 
 }
 
 function targetCellInsideMove(move: CandidateMove): { r: number; c: number } {
-  // Тащим к центру bounding box фигуры в её позиции на доске.
+  // clientToCell в Game/OnlineGameScreen использует offset = round(maxR/2), round(maxC/2)
+  // и вычисляет r = pr - offR, c = pc - offC. Чтобы итоговая (r,c) совпала с move.r/c,
+  // тащим pointer на клетку (move.r + offR, move.c + offC) — это ровно тот же round.
   let maxR = 0;
   let maxC = 0;
   for (const [dr, dc] of move.cells) {
     if (dr > maxR) maxR = dr;
     if (dc > maxC) maxC = dc;
   }
-  return { r: move.r + Math.floor(maxR / 2), c: move.c + Math.floor(maxC / 2) };
+  return { r: move.r + Math.round(maxR / 2), c: move.c + Math.round(maxC / 2) };
 }
 
 async function playOneTurn(opts: Required<PilotOpts>, rng: () => number): Promise<boolean> {
