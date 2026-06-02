@@ -93,12 +93,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 @media (max-width: 480px) {
   .game-screen .game-head { gap: 6px; }
   .game-screen .pause-btn { width: 34px; height: 34px; font-size: 14px; }
-  .game-screen .scoreboard { gap: 6px; }
-  .game-screen .pcard { padding: 6px 8px; gap: 4px; }
-  .game-screen .pcard-score { font-size: 24px; }
+  .game-screen .scoreboard { gap: 4px; }
+  .game-screen .pcard { padding: 4px 8px; gap: 0; }
+  .game-screen .pcard-label { font-size: 9.5px; gap: 4px; }
+  .game-screen .pcard .dot { width: 7px; height: 7px; }
+  .game-screen .pcard-score { font-size: 20px; }
+  .game-screen .pcard-combo { font-size: 9.5px; }
   .game-screen .turn-timer,
-  .game-screen .turn-timer svg { width: 44px; height: 44px; }
-  .game-screen .tt-num { font-size: 14px; }
+  .game-screen .turn-timer svg { width: 40px; height: 40px; }
+  .game-screen .tt-num { font-size: 13px; }
+  .game-screen .turn-noclock { font-size: 18px; width: 40px; height: 40px; }
   .game-screen .hand { padding: 4px 10px 6px; }
   .game-screen .hand-head { font-size: 10px; margin-bottom: 2px; }
   .game-screen .hand-row { min-height: 42px; gap: 10px; }

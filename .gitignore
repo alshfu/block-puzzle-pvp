@@ -25,3 +25,7 @@ test-raport.json
 test-report.json
 lighthouse-*.json
 *.lighthouse.json
+
+# E2E скриншоты пилотного скрипта (генерируются локально, тяжёлые)
+tools/screens/
+tools/debug-page.ts
