@@ -1,10 +1,4 @@
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut as fbSignOut,
-  onAuthStateChanged,
-  type User,
-} from "firebase/auth";
+import type { User } from "firebase/auth";
 import { getAuthOrNull } from "./firebase";
 
 export interface AuthUser {
@@ -25,24 +19,38 @@ function toAuthUser(u: User | null): AuthUser | null {
 }
 
 export function observeAuthUser(cb: (user: AuthUser | null) => void): () => void {
-  const auth = getAuthOrNull();
-  if (!auth) {
-    cb(null);
-    return () => {};
-  }
-  return onAuthStateChanged(auth, (u) => cb(toAuthUser(u)));
+  let cancelled = false;
+  let unsub: (() => void) | null = null;
+  cb(null);
+  void (async () => {
+    const [{ onAuthStateChanged }, auth] = await Promise.all([
+      import("firebase/auth"),
+      getAuthOrNull(),
+    ]);
+    if (cancelled || !auth) return;
+    unsub = onAuthStateChanged(auth, (u) => cb(toAuthUser(u)));
+  })();
+  return () => {
+    cancelled = true;
+    if (unsub) unsub();
+  };
 }
 
 export async function signInWithGoogle(): Promise<AuthUser | null> {
-  const auth = getAuthOrNull();
+  const [{ GoogleAuthProvider, signInWithPopup }, auth] = await Promise.all([
+    import("firebase/auth"),
+    getAuthOrNull(),
+  ]);
   if (!auth) return null;
-  const provider = new GoogleAuthProvider();
-  const cred = await signInWithPopup(auth, provider);
+  const cred = await signInWithPopup(auth, new GoogleAuthProvider());
   return toAuthUser(cred.user);
 }
 
 export async function signOut(): Promise<void> {
-  const auth = getAuthOrNull();
+  const [{ signOut: fbSignOut }, auth] = await Promise.all([
+    import("firebase/auth"),
+    getAuthOrNull(),
+  ]);
   if (!auth) return;
   await fbSignOut(auth);
 }

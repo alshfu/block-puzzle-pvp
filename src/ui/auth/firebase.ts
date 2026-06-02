@@ -1,11 +1,11 @@
 /**
- * Ленивая инициализация Firebase. Если переменные окружения не заданы —
- * `isAuthEnabled()` вернёт false и весь auth-блок UI прячется. Локальная
- * игра остаётся полностью рабочей без Firebase.
+ * Ленивая инициализация Firebase. SDK подгружается через dynamic import
+ * только при первом обращении к `getAuthOrNull()` / `getDbOrNull()` —
+ * это вырезает ~100 KB gzip из initial bundle для гостевой загрузки.
  */
-import { initializeApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import type { FirebaseApp } from "firebase/app";
+import type { Auth } from "firebase/auth";
+import type { Firestore } from "firebase/firestore";
 
 interface FbConfig {
   apiKey: string;
@@ -31,29 +31,43 @@ function readConfig(): FbConfig | null {
   };
 }
 
-let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-let db: Firestore | null = null;
+interface FbHandles {
+  app: FirebaseApp;
+  auth: Auth;
+  db: Firestore;
+}
 
-function init(): void {
-  if (app !== null) return;
+let pending: Promise<FbHandles | null> | null = null;
+
+function loadFirebase(): Promise<FbHandles | null> {
+  if (pending) return pending;
   const cfg = readConfig();
-  if (!cfg) return;
-  app = initializeApp(cfg);
-  auth = getAuth(app);
-  db = getFirestore(app);
+  if (!cfg) {
+    pending = Promise.resolve(null);
+    return pending;
+  }
+  pending = (async () => {
+    const [{ initializeApp }, { getAuth }, { getFirestore }] = await Promise.all([
+      import("firebase/app"),
+      import("firebase/auth"),
+      import("firebase/firestore"),
+    ]);
+    const app = initializeApp(cfg);
+    return { app, auth: getAuth(app), db: getFirestore(app) };
+  })();
+  return pending;
 }
 
 export function isAuthEnabled(): boolean {
   return readConfig() !== null;
 }
 
-export function getAuthOrNull(): Auth | null {
-  init();
-  return auth;
+export async function getAuthOrNull(): Promise<Auth | null> {
+  const h = await loadFirebase();
+  return h?.auth ?? null;
 }
 
-export function getDbOrNull(): Firestore | null {
-  init();
-  return db;
+export async function getDbOrNull(): Promise<Firestore | null> {
+  const h = await loadFirebase();
+  return h?.db ?? null;
 }
