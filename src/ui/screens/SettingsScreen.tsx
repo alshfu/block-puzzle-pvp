@@ -25,7 +25,9 @@ interface Props {
   onBack: () => void;
 }
 
-const APP_VERSION = "v0.1 · mvp";
+// Версия запекается Vite через define из package.json в момент сборки.
+declare const __APP_VERSION__: string;
+const APP_VERSION = typeof __APP_VERSION__ !== "undefined" ? `v${__APP_VERSION__}` : "v0.0.0-dev";
 const REPO_URL = "https://github.com/alshfu/block-puzzle-pvp";
 
 export function SettingsScreen({
