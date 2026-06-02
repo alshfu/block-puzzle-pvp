@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import type { RuleConfig } from "../../core";
 import type { OnlineProfile } from "../../../party/protocol";
 import { Button } from "../components/Button";
+import { Segment } from "../components/Segment";
+import { Toggle } from "../components/Toggle";
 import { openLobby, type LobbyConnection } from "../online/client";
 
 interface Props {
   profile: OnlineProfile;
+  cfg: RuleConfig;
+  setCfg: (c: RuleConfig) => void;
   onBack: () => void;
   onMatched: (roomId: string, opponent: OnlineProfile) => void;
   /** Lobby ответил bot_fallback — никого нет, играем с ботом локально. */
@@ -14,7 +19,10 @@ interface Props {
 
 type Phase = "idle" | "connecting" | "queued" | "error";
 
-export function OnlineMenuScreen({ profile, onBack, onMatched, onBotFallback, onOpenLeaderboard }: Props) {
+export function OnlineMenuScreen({ profile, cfg, setCfg, onBack, onMatched, onBotFallback, onOpenLeaderboard }: Props) {
+  const upd = <K extends keyof RuleConfig>(k: K, v: RuleConfig[K]) =>
+    setCfg({ ...cfg, [k]: v });
+
   const [phase, setPhase] = useState<Phase>("idle");
   const [position, setPosition] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -75,6 +83,39 @@ export function OnlineMenuScreen({ profile, onBack, onMatched, onBotFallback, on
       </div>
 
       <div className="setup-body">
+        {phase === "idle" && (
+          <section className="setup-sec">
+            <div className="sec-cap">Настройка матча</div>
+            <div className="sub-cap">Размер руки</div>
+            <Segment<number>
+              value={cfg.handSize}
+              onChange={(v) => upd("handSize", v)}
+              options={[
+                { v: 1, label: "1", sub: "тетрис" },
+                { v: 2, label: "2" },
+                { v: 3, label: "3", sub: "по умолч." },
+                { v: 4, label: "4" },
+              ]}
+            />
+            <div className="toggle-row" style={{ marginTop: 10 }}>
+              <Toggle
+                label="Повороты"
+                checked={cfg.rotationEnabled}
+                onChange={(v) => upd("rotationEnabled", v)}
+              />
+              <Toggle
+                label="Отражения"
+                checked={cfg.flipEnabled}
+                onChange={(v) => upd("flipEnabled", v)}
+              />
+            </div>
+            <div className="sub-cap" style={{ marginTop: 8, fontSize: "10.5px", color: "var(--muted)" }}>
+              Эти правила увидит сервер от тебя при подключении. Если соперник
+              попал в комнату первым — действуют его настройки.
+            </div>
+          </section>
+        )}
+
         <section className="setup-sec">
           <div className="sec-cap">Игра с живым соперником</div>
           {phase === "idle" && (

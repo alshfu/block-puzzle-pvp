@@ -572,6 +572,8 @@ export function App() {
         {screen === "online-menu" && (
           <OnlineMenuScreen
             profile={{ id: profile.id, nick: profile.nick, avatar: profile.avatar }}
+            cfg={cfg}
+            setCfg={setCfg}
             onBack={() => setScreen("menu")}
             onOpenLeaderboard={() => setScreen("leaderboard")}
             onMatched={(roomId, opponent) => {
