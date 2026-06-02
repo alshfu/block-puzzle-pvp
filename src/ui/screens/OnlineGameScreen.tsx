@@ -19,6 +19,8 @@ import { Scoreboard } from "../components/Scoreboard";
 import { TransformControls } from "../components/TransformControls";
 import { useBoardPointer } from "../hooks/useBoardPointer";
 import { useOnlineGame } from "../online/useOnlineGame";
+import { isPilotEnabled } from "../pilot/flag";
+import { clearPilotState, publishPilotState } from "../pilot/api";
 import { ResultOverlay } from "./ResultOverlay";
 import type { ThemeId } from "../themes";
 
@@ -257,6 +259,27 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
     onlineState.state?.status === "over" && onlineState.state.result
       ? { winner: remapWinner(onlineState.state.result.winner, you), scores: orderScores(onlineState.state.result.scores, you) }
       : null;
+
+  // Public state для UI-пилота — публикуется на window.__BD_PILOT_API__.
+  useEffect(() => {
+    if (!isPilotEnabled()) return;
+    if (!onlineState.state || !youView) return;
+    publishPilotState({
+      mode: "online",
+      playing: onlineState.state.status === "playing",
+      myTurn,
+      board: onlineState.state.board,
+      myHand: youView.hand,
+      cfg,
+      matchId: onlineState.state.matchId,
+    });
+  }, [onlineState.state, youView, myTurn, cfg]);
+
+  // Сбрасываем pilot state при размонтировании экрана.
+  useEffect(() => {
+    if (!isPilotEnabled()) return;
+    return () => clearPilotState();
+  }, []);
 
   // Уведомляем родителя ровно один раз после окончания матча — для online stats.
   useEffect(() => {

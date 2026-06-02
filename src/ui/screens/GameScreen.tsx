@@ -18,6 +18,8 @@ import type { SavedGame } from "../storage/saveGame";
 import type { MatchOutcome } from "../storage/stats";
 import { THEMES, type ThemeId } from "../themes";
 import { useGame } from "../useGame";
+import { isPilotEnabled } from "../pilot/flag";
+import { clearPilotState, publishPilotState } from "../pilot/api";
 import type { GameMode } from "./MenuScreen";
 import { ResultOverlay } from "./ResultOverlay";
 import type { BlitzPreset } from "./SetupScreen";
@@ -390,6 +392,23 @@ export function GameScreen({
 
   const dragCells = state.sel?.cells ?? drag?.piece.cells ?? [];
   const dragOwner: 0 | 1 = state.current;
+
+  // Public state для UI-пилота. Действия пилот выполняет через DOM-события.
+  useEffect(() => {
+    if (!isPilotEnabled()) return;
+    publishPilotState({
+      mode: "offline",
+      playing: state.status === "playing",
+      myTurn: bottomInteractive,
+      board: state.board,
+      myHand: state.players[bottomOwner].hand,
+      cfg,
+      matchId: `offline-${mode}`,
+    });
+    return () => {
+      if (state.status !== "playing") clearPilotState();
+    };
+  }, [state.status, state.board, state.players, bottomOwner, bottomInteractive, cfg, mode]);
 
   return (
     <div className={"screen game-screen " + (shaking ? "shake" : "")}>
