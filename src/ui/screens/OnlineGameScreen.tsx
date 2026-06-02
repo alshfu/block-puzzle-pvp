@@ -327,7 +327,7 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
         title={`${opponent.nick}${onlineState.opponentLeft ? " (отвалился…)" : ""}`}
         hint={onlineState.state.current === oppIdx ? "ходит" : "ждёт"}
         hand={oppView.hand}
-        owner={1}
+        owner={oppIdx ?? 1}
         selId={null}
         deadIds={null}
         interactive={false}
@@ -355,7 +355,7 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
         title="Твоя рука"
         hint={myTurn ? "перетащи на доску" : "ждёт хода"}
         hand={youView.hand}
-        owner={0}
+        owner={you}
         selId={sel?.pieceId ?? null}
         selCells={sel?.cells ?? null}
         deadIds={myTurn ? deadIds : null}
@@ -376,7 +376,7 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
       {drag?.active && sel && (
         <DragLayer
           cells={sel.cells}
-          owner={0}
+          owner={you}
           x={drag.x}
           y={drag.y}
           cellPx={cellPx}
