@@ -236,7 +236,10 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
 
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (!myTurn) return;
-    setSel({ pieceId: piece.id, cells: normalize(piece.cells) });
+    // Сохраняем текущую ориентацию, если игрок уже повернул/отразил эту фигуру.
+    if (sel?.pieceId !== piece.id) {
+      setSel({ pieceId: piece.id, cells: normalize(piece.cells) });
+    }
     setDrag({ piece, pointerId: e.pointerId, x: e.clientX, y: e.clientY, active: false });
   };
 

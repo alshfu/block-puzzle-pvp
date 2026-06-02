@@ -350,8 +350,11 @@ export function GameScreen({
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (paused || state.status !== "playing") return;
     if (state.players[state.current].isBot) return;
-    // выбираем фигуру в ядре, чтобы ghost мог рассчитаться
-    game.selectPiece(piece);
+    // выбираем фигуру в ядре, чтобы ghost мог рассчитаться.
+    // Если эта же фигура уже выбрана (с повёрнутой/отражённой ориентацией) — не сбрасываем её в normalize.
+    if (state.sel?.pieceId !== piece.id) {
+      game.selectPiece(piece);
+    }
     setDrag({
       piece,
       pointerId: e.pointerId,
