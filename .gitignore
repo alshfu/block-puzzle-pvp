@@ -19,3 +19,9 @@ yarn-error.log*
 # Vite — локальные env переопределения (не для коммита)
 .env.local
 .env.*.local
+
+# Lighthouse / отладочные отчёты — лежат локально, не для коммита
+test-raport.json
+test-report.json
+lighthouse-*.json
+*.lighthouse.json
