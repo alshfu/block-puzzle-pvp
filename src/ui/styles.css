@@ -82,46 +82,45 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   gap: 4px;
 }
 .game-screen > * { flex-shrink: 0; }
-/* Board-wrap занимает всё свободное место между обвязкой; сам board
-   внутри — ОБЯЗАТЕЛЬНО квадрат: aspect-ratio + height/max ограничивают
-   обе размерности. На широком экране ограничивает max-width (родной 420px),
-   на низком — height доступного контейнера. Никогда не «плющится». */
-.game-screen .board-wrap {
-  flex: 1 1 0;
-  min-height: 0;
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  display: grid;
-  place-items: center;
-}
-.game-screen .board-wrap > .board {
-  aspect-ratio: 1;
-  height: 100%;
-  width: auto;
-  max-width: 100%;
-  max-height: 100%;
-}
-@media (min-width: 900px) {
-  .game-screen .board-wrap { max-width: 600px; }
-}
-@media (min-width: 1200px) {
-  .game-screen .board-wrap { max-width: 680px; }
-}
+/* Board НЕПРИКОСНОВЕНЕН — всегда родной квадрат (max-width 420 / 600 / 680
+   на разных breakpoint-ах). Если экран совсем низкий — пусть будет
+   overflow внутри game-screen, мы сжимаем ТОЛЬКО обвязку: pcard, руки,
+   transform-controls. */
 /* Компактные размеры обвязки на мобиле, чтобы всё поместилось в viewport. */
 @media (max-width: 480px) {
   .game-screen .game-head { gap: 6px; }
   .game-screen .pause-btn { width: 34px; height: 34px; font-size: 14px; }
-  .game-screen .scoreboard { gap: 4px; }
-  .game-screen .pcard { padding: 4px 8px; gap: 0; }
-  .game-screen .pcard-label { font-size: 9.5px; gap: 4px; }
-  .game-screen .pcard .dot { width: 7px; height: 7px; }
-  .game-screen .pcard-score { font-size: 20px; }
-  .game-screen .pcard-combo { font-size: 9.5px; }
+  /* Pcard в одну строку: label слева, score справа, combo скрыто на компактном
+     виде. Это экономит ~30px высоты. */
+  .game-screen .scoreboard { gap: 3px; align-items: center; }
+  .game-screen .pcard {
+    padding: 4px 8px; gap: 6px;
+    flex-direction: row; align-items: center;
+  }
+  .game-screen .pcard.right { flex-direction: row-reverse; }
+  .game-screen .pcard-label { font-size: 9px; gap: 4px; }
+  .game-screen .pcard .dot { width: 6px; height: 6px; }
+  .game-screen .pcard-score { font-size: 18px; }
+  .game-screen .pcard-combo { display: none; }
   .game-screen .turn-timer,
-  .game-screen .turn-timer svg { width: 40px; height: 40px; }
-  .game-screen .tt-num { font-size: 13px; }
-  .game-screen .turn-noclock { font-size: 18px; width: 40px; height: 40px; }
+  .game-screen .turn-timer svg { width: 36px; height: 36px; }
+  .game-screen .tt-num { font-size: 12px; }
+  .game-screen .turn-noclock { font-size: 16px; width: 36px; height: 36px; }
+  .game-screen .turn-pill { font-size: 8.5px; }
+  .game-screen .turn-center { gap: 2px; }
+  /* Чужая рука — на mobile максимально плоская: меньше padding, мини-фигуры
+     8px (вместо 13), не видим hint справа, заголовок мельче. */
+  .game-screen .hand.watch { padding: 3px 8px 5px; }
+  .game-screen .hand.watch .hand-head { font-size: 9px; margin-bottom: 1px; }
+  .game-screen .hand.watch .hand-hint { display: none; }
+  .game-screen .hand.watch .hand-row { min-height: 32px; gap: 8px; }
+  .game-screen .hand.watch .mini-piece { gap: 2px !important; }
+  .game-screen .hand.watch .mini-cell { width: 9px !important; height: 9px !important; }
+  /* Своя рука — оставляем читаемой, но чуть компактнее заголовка. */
+  .game-screen .hand.play { padding: 5px 10px 6px; }
+  .game-screen .hand.play .hand-head { font-size: 10px; margin-bottom: 1px; }
+  .game-screen .hand.play .hand-row { min-height: 44px; gap: 10px; }
+  .game-screen .hand.play .hand-slot { padding: 3px 6px; }
   .game-screen .hand { padding: 4px 10px 6px; }
   .game-screen .hand-head { font-size: 10px; margin-bottom: 2px; }
   .game-screen .hand-row { min-height: 42px; gap: 10px; }
