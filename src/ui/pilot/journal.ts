@@ -66,4 +66,6 @@ export function downloadJournal(): void {
 }
 
 // expose для удобства из DevTools
-window.__bdPilotDownload = downloadJournal;
+if (typeof window !== "undefined") {
+  window.__bdPilotDownload = downloadJournal;
+}

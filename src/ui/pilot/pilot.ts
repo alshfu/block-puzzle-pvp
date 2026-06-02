@@ -48,7 +48,7 @@ function key(cells: Coord[]): string {
 }
 
 /** Сколько раз нажать «Отразить» (0/1) и «Повернуть» (0–3), чтобы из нормализованной BASE_SHAPES получить move.cells. */
-function transformPath(type: keyof typeof BASE_SHAPES, target: Coord[]): { flips: 0 | 1; rots: 0 | 1 | 2 | 3 } | null {
+export function transformPath(type: keyof typeof BASE_SHAPES, target: Coord[]): { flips: 0 | 1; rots: 0 | 1 | 2 | 3 } | null {
   const tgt = key(target);
   for (const flips of [0, 1] as const) {
     let cur = normalize(BASE_SHAPES[type]);

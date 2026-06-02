@@ -66,40 +66,44 @@ export function center(el: Element): { x: number; y: number } {
 export async function tap(el: Element): Promise<void> {
   const p = center(el);
   fireOn(el, "pointerdown", p);
-  await sleep(20);
-  fireOn(window, "pointerup", p);
-  await sleep(20);
+  await sleep(40);
+  // ВАЖНО: pointerup на самом slot'е, не на window. Hand.tsx слушает
+  // React onPointerUp на элементе — events на window НЕ bubble обратно в DOM.
+  fireOn(el, "pointerup", p);
+  await sleep(80);
 }
 
 /** Обычный клик (для .tc-btn "Повернуть"/"Отразить"). */
 export async function clickEl(el: Element): Promise<void> {
   const p = center(el);
-  // pointerdown/up + click — React onClick реагирует на нативный click
   fireOn(el, "pointerdown", p);
   fireOn(el, "pointerup", p);
   el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, clientX: p.x, clientY: p.y }));
-  await sleep(20);
+  await sleep(80);
 }
 
 /**
  * Drag: pointerdown на source → серия pointermove → pointerup над target.
- * Двигаемся по диагонали с шагом ~12px (чтобы пройти DRAG_THRESHOLD_PX=6
- * и активировать drag в обработчике). Move/up — на window.
+ * Двигаемся по диагонали с шагом, гарантированно проходящим DRAG_THRESHOLD_PX=6.
+ * move/up — на window, потому что useEffect в Game/OnlineGameScreen слушает window.
  */
-export async function drag(source: Element, target: Element, steps = 8): Promise<void> {
+export async function drag(source: Element, target: Element, steps = 10): Promise<void> {
   const a = center(source);
   const b = center(target);
   fireOn(source, "pointerdown", a);
-  await sleep(30);
+  await sleep(60); // дать React зарегистрировать drag state
   for (let i = 1; i <= steps; i++) {
     const t = i / steps;
     const x = a.x + (b.x - a.x) * t;
     const y = a.y + (b.y - a.y) * t;
     fireOn(window, "pointermove", { x, y });
-    await sleep(15);
+    await sleep(20);
   }
-  fireOn(window, "pointerup", b);
+  // финальный move прямо над целью (для lastHoverRef)
+  fireOn(window, "pointermove", b);
   await sleep(30);
+  fireOn(window, "pointerup", b);
+  await sleep(60);
 }
 
 /** Возвращает rect для конкретной клетки board, или null. */
