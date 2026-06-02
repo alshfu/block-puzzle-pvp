@@ -30,6 +30,20 @@ export interface RuleConfig {
   comboStep: number;
   perfectClearBonus: number;
 
+  // ─── Расширенная система очков (v1.5+) ─────────────────────────────
+  /** Базовые очки за каждый тип очистки (строки/столбцы/боксы 3×3). */
+  scoreRowPts: number;
+  scoreColPts: number;
+  scoreBoxPts: number;
+  /** Мультипликатор за multi-clear: за каждый clear сверх первого +N. */
+  multiClearStep: number;
+  /** Экспоненциальная добавка к combo-мультипликатору: 0.02 * max(0, combo-3)^2 */
+  comboExpStep: number;
+  /** Speed-бонус: если осталось > 50% времени хода, до +40% за «моментальный» ход. */
+  speedBonusMax: number;
+  /** Placement-бонус за тип фигуры (даётся даже без очисток). */
+  placementBonus: Partial<Record<PieceType, number>>;
+
   // Blitz-таймер (ТЗ § 2.7.1). Само тиканье — на UI; ядро только хранит параметры
   // и предоставляет forcePlace для постановки на таймауте.
   turnTimerEnabled: boolean;
@@ -47,7 +61,14 @@ export const DEFAULT_CONFIG: RuleConfig = {
   comboEnabled: true,
   comboCap: 10,
   comboStep: 0.1,
-  perfectClearBonus: 15,
+  perfectClearBonus: 25,
+  scoreRowPts: 10,
+  scoreColPts: 10,
+  scoreBoxPts: 15,
+  multiClearStep: 0.15,
+  comboExpStep: 0.02,
+  speedBonusMax: 0.4,
+  placementBonus: { I: 5, L: 3, J: 3, T: 1, S: 1, Z: 1, O: 0 },
   turnTimerEnabled: true,
   turnTimeStart: 12.0,
   turnTimeDecay: 0.4,
@@ -265,19 +286,89 @@ export function isPerfectClear(board: Board): boolean {
 // ─────────────────────────────────────────────────────────────
 // Очки
 // ─────────────────────────────────────────────────────────────
+/**
+ * Базовый scoring API (legacy, без breakdown). Использует расширенную
+ * формулу v1.5+: typed-base (rows/cols/boxes раздельно), multi-clear-mult,
+ * exp-combo. Бот зовёт эту версию (нет данных про фигуру/таймер).
+ *
+ * Для UI в реальной игре используется scoreMoveDetailed — даёт breakdown.
+ */
 export function scoreForMove(
   N: number,
   comboCounter: number,
   perfect: boolean,
-  cfg: RuleConfig
+  cfg: RuleConfig,
 ): number {
-  if (N === 0) return 0;
-  const base = (N * (N + 1)) / 2;
-  const mult = cfg.comboEnabled
+  if (N === 0 && !perfect) return 0;
+  // legacy упрощение: распределяем N на rows/cols равномерно; для бота это
+  // достаточно точно — он сравнивает порядки. Box-бонус не учитываем (бот
+  // не знает breakdown). Цель — backward-совместимый scoring.
+  const base = N * cfg.scoreRowPts;
+  const multiClearMult = 1 + Math.max(0, N - 1) * cfg.multiClearStep;
+  const comboMult = cfg.comboEnabled
     ? 1 + cfg.comboStep * Math.min(comboCounter, cfg.comboCap)
+        + cfg.comboExpStep * Math.max(0, comboCounter - 3) ** 2
     : 1;
-  const bonus = perfect ? cfg.perfectClearBonus : 0;
-  return Math.round(base * mult) + bonus;
+  const perfectBonus = perfect ? cfg.perfectClearBonus : 0;
+  return Math.round(base * multiClearMult * comboMult) + perfectBonus;
+}
+
+export interface ScoreInput {
+  rows: number;
+  cols: number;
+  boxes: number;
+  pieceType: PieceType;
+  combo: number;
+  perfect: boolean;
+  /** Доля оставшегося времени хода (0..1). undefined если таймер отключён. */
+  timeRatio?: number;
+  cfg: RuleConfig;
+}
+
+export interface ScoreBreakdown {
+  total: number;
+  /** «Базовые» очки за очищенные ряды/столбцы/боксы до мультипликаторов. */
+  base: number;
+  /** Placement-бонус за тип фигуры (даже если ничего не очистил). */
+  placement: number;
+  /** Мультипликатор за multi-clear (1.0 если очистка одна). */
+  multiClearMult: number;
+  /** Комбо-мультипликатор (linear + экспоненциальный после 3). */
+  comboMult: number;
+  /** Speed-мультипликатор (≤ 1 + speedBonusMax при моментальном ходе). */
+  speedMult: number;
+  /** Фиксированный бонус за perfect clear. */
+  perfectBonus: number;
+}
+
+/**
+ * Полная детализированная формула v1.5+:
+ *   base       = rows*scoreRowPts + cols*scoreColPts + boxes*scoreBoxPts
+ *   multiClear = 1 + max(0, N-1) * multiClearStep
+ *   combo      = 1 + comboStep*min(combo,cap) + comboExpStep*max(0, combo-3)²
+ *   speed      = 1 + speedBonusMax * max(0, timeRatio-0.5)*2     (timeRatio>0.5)
+ *   total      = round(base * multiClear * combo * speed) + placement + perfectBonus
+ *
+ * Placement-бонус даётся всегда (placement bonus за активность), даже без очисток.
+ */
+export function scoreMoveDetailed(input: ScoreInput): ScoreBreakdown {
+  const { rows, cols, boxes, pieceType, combo, perfect, timeRatio, cfg } = input;
+  const N = rows + cols + boxes;
+  const base = rows * cfg.scoreRowPts + cols * cfg.scoreColPts + boxes * cfg.scoreBoxPts;
+  const multiClearMult = 1 + Math.max(0, N - 1) * cfg.multiClearStep;
+  const comboMult = cfg.comboEnabled
+    ? 1 + cfg.comboStep * Math.min(combo, cfg.comboCap)
+        + cfg.comboExpStep * Math.max(0, combo - 3) ** 2
+    : 1;
+  let speedMult = 1;
+  if (cfg.turnTimerEnabled && typeof timeRatio === "number" && Number.isFinite(timeRatio)) {
+    const r = Math.max(0, Math.min(1, timeRatio));
+    if (r > 0.5) speedMult = 1 + cfg.speedBonusMax * (r - 0.5) * 2;
+  }
+  const placement = cfg.placementBonus[pieceType] ?? 0;
+  const perfectBonus = perfect ? cfg.perfectClearBonus : 0;
+  const total = Math.round(base * multiClearMult * comboMult * speedMult) + placement + perfectBonus;
+  return { total, base, placement, multiClearMult, comboMult, speedMult, perfectBonus };
 }
 
 // ─────────────────────────────────────────────────────────────

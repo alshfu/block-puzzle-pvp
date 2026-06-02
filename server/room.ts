@@ -15,7 +15,7 @@ import {
   normalize,
   orientations,
   place,
-  scoreForMove,
+  scoreMoveDetailed,
   type Board,
   type Coord,
   type PieceInstance,
@@ -214,15 +214,32 @@ export class Room {
     const clears = findClears(newBoard);
     let perfect = false;
     let gained = 0;
+    // Speed-bonus: пропорция оставшегося времени хода (0..1).
+    const timeRatio = TURN_TIME_MS > 0
+      ? Math.max(0, Math.min(1, (s.turnDeadline - Date.now()) / TURN_TIME_MS))
+      : undefined;
     if (clears.count > 0) {
       const probe = cloneBoard(newBoard);
       applyClears(probe, clears.cleared);
       perfect = isPerfectClear(probe);
-      gained = scoreForMove(clears.count, player.combo, perfect, s.cfg);
+      gained = scoreMoveDetailed({
+        rows: clears.rows.length,
+        cols: clears.cols.length,
+        boxes: clears.boxes.length,
+        pieceType: piece.type,
+        combo: player.combo,
+        perfect,
+        timeRatio,
+        cfg: s.cfg,
+      }).total;
       player.score += gained;
       player.combo += 1;
       applyClears(newBoard, clears.cleared);
     } else {
+      // Placement-бонус за тип фигуры даже без очистки.
+      const placement = s.cfg.placementBonus[piece.type] ?? 0;
+      gained = placement;
+      player.score += placement;
       player.combo = 0;
     }
     s.board = newBoard;

@@ -16,6 +16,7 @@ import {
   place,
   rotate90,
   scoreForMove,
+  scoreMoveDetailed,
   SIZE,
   type Board,
   type BotLevel,
@@ -423,23 +424,36 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
     if (clears.count > 0) {
       const filledAfter = countFilled(newBoard) - clears.cleared.length;
       perfect = filledAfter === 0;
-      gained = scoreForMove(clears.count, s.players[owner].combo, perfect, cfg);
-      // breakdown компоненты: base = N(N+1)/2, combo = round(base·mult) − base
-      const baseRaw = (clears.count * (clears.count + 1)) / 2;
-      const mult = cfg.comboEnabled
-        ? 1 + cfg.comboStep * Math.min(s.players[owner].combo, cfg.comboCap)
-        : 1;
-      const baseWithCombo = Math.round(baseRaw * mult);
+      // Доля оставшегося времени (для speed-bonus). 0..1.
+      const timeRatio = cfg.turnTimerEnabled && s.timer.perTurn > 0
+        ? Math.max(0, Math.min(1, s.timer.remaining / s.timer.perTurn))
+        : undefined;
+      const breakdown = scoreMoveDetailed({
+        rows: clears.rows.length,
+        cols: clears.cols.length,
+        boxes: clears.boxes.length,
+        pieceType: move.type,
+        combo: s.players[owner].combo,
+        perfect,
+        timeRatio,
+        cfg,
+      });
+      gained = breakdown.total;
       if (owner === 0) {
-        baseAddP0 = baseRaw;
-        comboAddP0 = baseWithCombo - baseRaw;
-        perfectAddP0 = perfect ? cfg.perfectClearBonus : 0;
+        baseAddP0 = breakdown.base + breakdown.placement;
+        comboAddP0 = breakdown.total - breakdown.base - breakdown.placement - breakdown.perfectBonus;
+        perfectAddP0 = breakdown.perfectBonus;
       }
       cleared = new Set(clears.cleared.map(([r, c]) => `${r},${c}`));
       const id = POPUP_ID++;
-      const text =
-        `+${gained}` +
-        (perfect ? " PERFECT!" : clears.count > 1 ? ` ×${clears.count}` : "");
+      // Информативный popup: показываем доп. ярлык для multi-clear / combo / speed / perfect.
+      let suffix = "";
+      if (perfect) suffix = " PERFECT!";
+      else if (clears.boxes.length > 0 && clears.count > 1) suffix = ` ×${clears.count} box`;
+      else if (clears.count > 1) suffix = ` ×${clears.count}`;
+      else if (breakdown.comboMult > 1.5) suffix = " combo";
+      else if (breakdown.speedMult > 1.15) suffix = " fast";
+      const text = `+${gained}${suffix}`;
       popup = { id, r: move.r, c: move.c, owner, text };
       const t = setTimeout(() => {
         popupTimersRef.current.delete(t);
@@ -470,10 +484,24 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
         if (level !== 0) onComboMilestoneRef.current?.(level, newC);
       }
     } else {
-      statusMsg = owner === 0 ? "Ход сделан" : `${sess.names[owner]} походил`;
+      // Очисток нет, но placement-бонус (за тип фигуры) всё равно начисляется.
+      const placement = cfg.placementBonus[move.type] ?? 0;
+      gained = placement;
+      if (placement > 0 && owner === 0) baseAddP0 = placement;
+      if (placement > 0) {
+        const id = POPUP_ID++;
+        popup = { id, r: move.r, c: move.c, owner, text: `+${placement}` };
+        const t = setTimeout(() => {
+          popupTimersRef.current.delete(t);
+          dispatch({ type: "DISMISS_POPUP", id });
+        }, 700);
+        popupTimersRef.current.add(t);
+      }
+      statusMsg = owner === 0 ? `Ход сделан${placement ? ` (+${placement})` : ""}` : `${sess.names[owner]} походил`;
       playPlace();
       vibratePlace();
     }
+    void scoreForMove; // legacy импорт сохранён для бота, не используется здесь напрямую
 
     const bag = bagsRef.current![owner];
     const handAfterRemoval =
