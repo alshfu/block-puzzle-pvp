@@ -6,22 +6,41 @@
 
 ## Текущий статус
 
-Фаза 1 (MVP). Этап «Фундамент» закрыт; следующий — игровой UI.
+Фазы 1–4 ТЗ реализованы: ядро, UI, vs Bot (3 уровня), Hot-seat, онлайн PvP, прогрессия, магазин, ачивки. Продакшн-сборка живёт на GitHub Pages, онлайн-сервер — на VPS.
 
-- `src/core/index.ts` — pure-ядро игры (TS): типы, PRNG mulberry32, 7-bag, доска, очистка, очки, перебор ходов, бот 3 уровней, blitz-таймер (`turnTimeForRound`), `forcePlace`. **Единственный** источник правды по логике.
-- `src/main.tsx` + `src/ui/App.tsx` — точка входа React. Сейчас экран-заглушка.
-- `tests/` — Vitest. 41 тест: очистки/пересечения, очки/комбо/perfect, 7-bag, тупик/forcePlace, бот, детерминизм, таймер.
-- `legacy/` — старые прототипы (`blockduel-demo.html`, `blockduel-jsx-prototype/`). **Не подключены к сборке**, оставлены как референс по визуальным решениям. См. `legacy/README.md`.
-- `vite.config.ts`, `vitest.config.ts`, `tsconfig.{app,node}.json` — конфиги.
+### Слои и ключевые файлы
+
+- **Ядро** (`src/core/index.ts`) — pure-TS: типы, PRNG `mulberry32`, 7-bag, доска, очистка, очки, перебор ходов, бот 3 уровней с `BOT_WEIGHTS`, дешёвый `opponentThreatGain` (missing=1), blitz-таймер (`turnTimeForRound`), `forcePlace`. **Единственный** источник правды по логике игры; импортируется и клиентом, и сервером.
+- **Entry** — `src/main.tsx` + `src/ui/App.tsx` (роутинг экранов).
+- **Главный хук** — `src/ui/useGame.ts` (useReducer + Bag/rng в refs, бот через setTimeout, blitz tick 100мс).
+- **Экраны** (`src/ui/screens/`) — Menu, Setup, Game, Profile, Settings, Tutorial, Daily, Shop, Achievements, Leaderboard, OnlineMenu, OnlineGame, ResultOverlay.
+- **Компоненты** (`src/ui/components/`) — Board, Hand, Scoreboard, PlayerCard, TurnTimer, TransformControls, Confetti, ComboFlash, ToastStack, PowerupsPanel, PauseOverlay, DragLayer, маскоты/декор (CartoonPony, Mascot, FloatingTheme, ThemeBackdrop, ThemeSwitch) и пр.
+- **Темы** (`src/ui/themes.ts` + `styles.css`) — `neutral`, `candy`, `night`. CSS-переменные на `.app-root`.
+- **Звук** — `src/ui/audio.ts` (синтез Web Audio) + `src/ui/music.ts` (фоновые темы).
+- **Онлайн PvP** — `src/ui/online/{client.ts,useOnlineGame.ts}` (PartySocket-совместимый WS) ↔ `server/{index.ts,lobby.ts,room.ts,leaderboard.ts}` (Node WS на VPS, server-authoritative, ELO K=24).
+- **Auth + sync** — `src/ui/auth/{auth.ts,firebase.ts,sync.ts}` (Google sign-in через Firebase + Firestore cross-device).
+- **Магазин** — `src/ui/shop/{powerups.ts,skins.ts}` (валюта = кристаллы, без реальных платежей).
+- **Ачивки** — `src/ui/achievements/{definitions.ts,engine.ts}` (~120: 15 базовых + 105 PvP).
+- **Сохранение** — `src/ui/storage/*` (profile, stats, settings, saveGame с drawCounts для детерминистичного resume 7-bag).
+- **Tests** — `tests/` Vitest, 7 файлов, **46 тестов**: clears, scoring, 7-bag, deadlock+forcePlace, бот (validity + timing + BOT_WEIGHTS), детерминизм (golden), таймер.
+- **Tools** — `tools/bot-sim.ts` для калибровки бота.
+- **PartyKit-вариант** — `party/*.ts` + `partykit.json` сохранены как опция, не задействованы (онлайн крутится на собственном VPS).
+- **Legacy** — `legacy/blockduel-demo.html` и `legacy/blockduel-jsx-prototype/` инертный референс по визуалу. **Не подключены к сборке.** См. `legacy/README.md`.
+- **Конфиги** — `vite.config.ts`, `vitest.config.ts`, `tsconfig.{app,node}.json`.
 
 ## Команды
 
 ```bash
-npm run dev         # Vite dev server на http://localhost:5173
-npm run build       # tsc -b && vite build → dist/
-npm test            # Vitest (one-shot)
-npm run test:watch  # Vitest watch
-npm run typecheck   # tsc -b --noEmit
+npm run dev          # Vite dev server на http://localhost:5173
+npm run build        # tsc -b && vite build → dist/
+npm test             # Vitest (one-shot, 46 тестов)
+npm run test:watch   # Vitest watch
+npm run typecheck    # tsc -b --noEmit
+npm run deploy       # build + gh-pages → Pages обновится ~30 сек
+npm run server:dev   # локальный WS-сервер (PORT=1999)
+npm run server:start # то же, для прода
+npm run party:dev    # PartyKit-вариант (опционально, не используется)
+npx tsx tools/bot-sim.ts --games 1000   # симулятор калибровки бота
 ```
 
 ## Архитектура
@@ -32,8 +51,8 @@ npm run typecheck   # tsc -b --noEmit
 Презентация (UI, ввод, анимации)              ← src/ui/
     ↓
 Игровое ядро (pure, детерминированное)         ← src/core/
-    ↓
-Платформенные сервисы / Сетевой слой           ← (нет на MVP)
+    ↑
+Сетевой слой (server-authoritative онлайн)     ← server/  (импортирует src/core)
 ```
 
 **Ядро (`src/core/`) обязано оставаться pure и детерминированным:**
@@ -41,7 +60,13 @@ npm run typecheck   # tsc -b --noEmit
 - никакого `Date.now()`, `fetch`, `localStorage`, DOM, импортов UI-фреймворков;
 - одинаковый `(matchSeed, RuleConfig, moveLog)` → одинаковое состояние (нужно для реплеев, server-authoritative онлайна, golden-тестов, анти-чита).
 
-Презентационный код (drag-and-drop, анимации, звук, тикание таймера) — только в `src/ui/`.
+Презентационный код (drag-and-drop, анимации, звук, тикание таймера) — только в `src/ui/`. Серверный авторитет (таймер, anti-cheat ориентаций, ELO) — в `server/`, но игровая механика — через импорт из `src/core/`, не дублировать.
+
+## Деплой
+
+- **Frontend** — GitHub Pages, ветка `gh-pages`. После значимых изменений: `npm test && npm run deploy`. Actions workflow выключен (`.github/workflows/deploy.yml.disabled`) — биллинг.
+- **Backend (PvP)** — VPS `pvp.alshfu.com`, Ubuntu 24.04, systemd unit `blockduel-pvp.service`, nginx + Let's Encrypt. Клиент указывает на сервер через `VITE_PARTY_HOST` в `.env.local` (gitignored). После правок `server/*.ts` нужен `git pull && systemctl restart blockduel-pvp` на VPS (делает пользователь).
+- Подробности — в `DEPLOY.md`.
 
 ## Конвенции
 
@@ -54,11 +79,13 @@ npm run typecheck   # tsc -b --noEmit
 
 ## Стек
 
-ТЗ рекомендует **Flutter + Flame** как целевой стек. Текущая реализация — **TypeScript + React + Vite + Vitest**. Не предлагай миграцию на Flutter без явного запроса.
+ТЗ рекомендует **Flutter + Flame** как целевой стек. Текущая реализация — **TypeScript + React + Vite + Vitest** (фронт), **Node + ws + tsx** (сервер), **Firebase Auth + Firestore** (sync). Не предлагай миграцию на Flutter без явного запроса.
 
 ## Чего НЕ делать самостоятельно
 
-- Не дублировать игровую логику в `src/ui/` — всё через импорт из `src/core/`.
+- Не дублировать игровую логику в `src/ui/` или `server/` — всё через импорт из `src/core/`.
 - Не править файлы в `legacy/` — они инертные.
-- Не вводить онлайн / магазин / ачивки — это Фазы 3–4, не текущий MVP.
 - Не отходить от ТЗ по правилам/балансу без явного запроса.
+- Не возвращать `.github/workflows/deploy.yml.disabled` обратно в `deploy.yml` без подтверждения, что биллинг разблокирован.
+- Не пушить с красными тестами — Pages закэширует сломанный сайт.
+- Не трогать `/etc/nginx/sites-enabled/alshfu-arena.conf` на VPS (это сторонний сайт пользователя).
