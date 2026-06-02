@@ -503,16 +503,20 @@ export function GameScreen({
         onPieceTap={bottomInteractive ? handlePieceTap : undefined}
       />
 
-      <TransformControls
-        hasSelection={!!state.sel}
-        cfg={cfg}
-        onRotate={game.rotateSel}
-        onFlip={game.flipSel}
-        onClear={game.clearSel}
-      />
+      {/* В spectator-режиме (botvbot) transform-controls и power-ups не нужны:
+         игрок только наблюдает, не ходит. Экономим ~100px на мобиле. */}
+      {mode !== "botvbot" && (
+        <TransformControls
+          hasSelection={!!state.sel}
+          cfg={cfg}
+          onRotate={game.rotateSel}
+          onFlip={game.flipSel}
+          onClear={game.clearSel}
+        />
+      )}
 
       {/* Power-ups доступны только пока ход локального игрока */}
-      {mode !== "online" && (
+      {mode !== "online" && mode !== "botvbot" && (
         <PowerupsPanel
           inventory={inventory}
           active={activePowerup}

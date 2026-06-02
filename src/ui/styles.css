@@ -98,7 +98,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     flex-direction: row; align-items: center;
   }
   .game-screen .pcard.right { flex-direction: row-reverse; }
-  .game-screen .pcard-label { font-size: 9px; gap: 4px; }
+  .game-screen .pcard-label { font-size: 9px; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .game-screen .pcard { min-width: 0; }
   .game-screen .pcard .dot { width: 6px; height: 6px; }
   .game-screen .pcard-score { font-size: 18px; }
   .game-screen .pcard-combo { display: none; }
