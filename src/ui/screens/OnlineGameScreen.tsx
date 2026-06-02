@@ -374,17 +374,17 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, requestedCf
         hasSelection={!!sel}
       />
 
-      <div className="status-bar">
-        {onlineState.opponentLeft
-          ? `${opponent.nick} отвалился — ждём 30с реконнекта…`
-          : myTurn
-            ? "Твой ход — перетащи фигуру"
-            : `Ходит ${opponent.nick}…`}
-      </div>
+      {/* Статус-бар убран: его содержимое теперь в заголовке нижней руки. */}
 
       <Hand
-        title="Твоя рука"
-        hint={myTurn ? "перетащи на доску" : "ждёт — можно выбрать заранее"}
+        title={
+          onlineState.opponentLeft
+            ? `Твоя рука · соперник отвалился`
+            : myTurn
+              ? "Твоя рука · ходишь"
+              : `Твоя рука · ход ${opponent.nick}`
+        }
+        hint={myTurn ? "перетащи на доску" : "можно выбрать заранее"}
         hand={youView.hand}
         owner={you}
         selId={sel?.pieceId ?? null}

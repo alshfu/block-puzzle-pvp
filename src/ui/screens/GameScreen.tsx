@@ -468,22 +468,22 @@ export function GameScreen({
 
       <Board ref={boardRef} board={state.board} ghost={showGhost ? ghost : null} flash={state.flash} popups={state.popups} skinClass={skinClass} hasSelection={!!state.sel} />
 
-      <div className="status-bar">{state.statusMsg}</div>
-
       <Hand
         title={
-          mode === "bot"
-            ? "Твоя рука"
-            : mode === "botvbot"
-              ? `${names[bottomOwner]}`
-              : `Ходит: ${names[bottomOwner]}`
+          mode === "botvbot"
+            ? names[bottomOwner]
+            : bottomInteractive
+              ? "Твоя рука · ходишь"
+              : mode === "hotseat"
+                ? `Твоя рука · ходит ${names[state.current]}`
+                : "Твоя рука · ждёт"
         }
         hint={
           bottomInteractive
             ? "перетащи фигуру на доску"
             : mode === "botvbot"
               ? state.current === bottomOwner ? "ходит" : "ждёт"
-              : "ждёт хода"
+              : ""
         }
         hand={state.players[bottomOwner].hand}
         owner={bottomOwner}
