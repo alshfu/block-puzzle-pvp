@@ -120,7 +120,7 @@ export class Room {
 
   private onMessage(conn: Conn, msg: RoomClient2Server): void {
     if (msg.type === "hello") {
-      this.handleHello(conn, msg.profile);
+      this.handleHello(conn, msg.profile, msg.cfg);
       return;
     }
     if (msg.type === "move") {
@@ -137,13 +137,22 @@ export class Room {
     }
   }
 
-  private handleHello(conn: Conn, profile: OnlineProfile): void {
+  private handleHello(conn: Conn, profile: OnlineProfile, requestedCfg?: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }): void {
     const idx = this.state.players.findIndex((p) => p.profile.id === profile.id);
     if (idx === -1) {
       this.send(conn, { type: "error", reason: "not a participant" });
       return;
     }
     this.state.players[idx].conn = conn;
+
+    // Первый hello в waiting-комнате может задать cfg (handSize / rotation / flip).
+    // Игнорируем cfg-запросы после начала матча и от второго клиента (cfg уже зафиксирован).
+    const isFirstHello = this.state.status === "waiting" && this.state.turnCount === 0
+      && this.state.players.filter((p) => p.conn).length === 1;
+    if (isFirstHello && requestedCfg) {
+      this.applyRequestedCfg(requestedCfg);
+    }
+
     const bothIn = this.state.players.every((p) => p.conn);
     if (this.state.status === "waiting" && bothIn) {
       this.state.status = "playing";
@@ -152,6 +161,21 @@ export class Room {
     }
     this.send(conn, { type: "joined", you: idx as 0 | 1, state: this.publicState() });
     if (bothIn) this.broadcastState();
+  }
+
+  /** Применяет cfg от первого подключившегося клиента и пересоздаёт руки под новый handSize. */
+  private applyRequestedCfg(req: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }): void {
+    const cfg = this.state.cfg;
+    if (typeof req.handSize === "number" && req.handSize >= 1 && req.handSize <= 4 && req.handSize !== cfg.handSize) {
+      cfg.handSize = req.handSize;
+      // Пересоздаём руки обоих игроков; bag-state перематывается на 0.
+      this.state.bags = [new Bag(this.state.matchSeed + 11), new Bag(this.state.matchSeed + 99)];
+      for (let i = 0; i < 2; i++) {
+        this.state.players[i].hand = Array.from({ length: cfg.handSize }, () => this.state.bags[i].draw());
+      }
+    }
+    if (typeof req.rotationEnabled === "boolean") cfg.rotationEnabled = req.rotationEnabled;
+    if (typeof req.flipEnabled === "boolean") cfg.flipEnabled = req.flipEnabled;
   }
 
   private handleMove(conn: Conn, pieceId: string, cells: Coord[], r: number, c: number): void {
@@ -341,6 +365,7 @@ export class Room {
       lastClearedCells: s.lastClearedCells.length > 0 ? s.lastClearedCells : undefined,
       turnTimeRemainingMs: Math.max(0, s.turnDeadline - Date.now()),
       turnTimeBaseMs: TURN_TIME_MS,
+      cfg: s.cfg,
     };
   }
 

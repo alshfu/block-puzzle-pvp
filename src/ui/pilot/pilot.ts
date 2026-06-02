@@ -47,6 +47,16 @@ function key(cells: Coord[]): string {
     .join("|");
 }
 
+/** Опрос состояния до условия. Возвращает true если условие выполнилось до таймаута. */
+async function waitFor(predicate: () => boolean, timeoutMs = 600, stepMs = 30): Promise<boolean> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if (predicate()) return true;
+    await sleep(stepMs);
+  }
+  return predicate();
+}
+
 /** Сколько раз нажать «Отразить» (0/1) и «Повернуть» (0–3), чтобы из нормализованной BASE_SHAPES получить move.cells. */
 export function transformPath(type: keyof typeof BASE_SHAPES, target: Coord[]): { flips: 0 | 1; rots: 0 | 1 | 2 | 3 } | null {
   const tgt = key(target);
@@ -98,6 +108,16 @@ async function playOneTurn(opts: Required<PilotOpts>, rng: () => number): Promis
   record("selectPiece", { handIdx, type: move.type });
   await tap(slot);
 
+  // Дождаться, что selection реально применился (sel.pieceId == move.pieceId).
+  const selected = await waitFor(() => {
+    const st = readPilotState();
+    return !!st && st.selPieceId === move.pieceId;
+  });
+  if (!selected) {
+    record("error", { msg: "selection did not register", pieceId: move.pieceId });
+    return false;
+  }
+
   // 2) Применить flip/rotate, чтобы sel соответствовала move.cells.
   const path = transformPath(move.type, move.cells);
   if (!path) {
@@ -119,6 +139,23 @@ async function playOneTurn(opts: Required<PilotOpts>, rng: () => number): Promis
     }
   }
 
+  // Дождаться, что sel.cells действительно совпадает с move.cells — иначе drag отправит
+  // stale cells через useEffect closure и попадёт в чужую клетку.
+  const want = key(move.cells);
+  const ready = await waitFor(() => {
+    const st = readPilotState();
+    return !!st && !!st.selCells && key(st.selCells) === want;
+  });
+  if (!ready) {
+    const st = readPilotState();
+    record("error", {
+      msg: "sel.cells did not converge",
+      want,
+      got: st?.selCells ? key(st.selCells) : null,
+    });
+    return false;
+  }
+
   // 3) Drag из hand-slot в целевую клетку доски.
   const tgt = targetCellInsideMove(move);
   const rect = boardCellRect(tgt.r, tgt.c);
@@ -131,7 +168,6 @@ async function playOneTurn(opts: Required<PilotOpts>, rng: () => number): Promis
     record("error", { msg: "hand slot vanished pre-drag", handIdx });
     return false;
   }
-  // dummy DOM element для drag target — нам нужен только bounding rect, поэтому используем сам cell.
   const cells = document.querySelectorAll<HTMLElement>(".board .cell");
   const cellEl = cells[tgt.r * 9 + tgt.c];
   if (!cellEl) {
@@ -141,6 +177,17 @@ async function playOneTurn(opts: Required<PilotOpts>, rng: () => number): Promis
   record("drag", { from: { handIdx }, to: { r: tgt.r, c: tgt.c }, move: { pieceId: move.pieceId, r: move.r, c: move.c } });
   await drag(slotAgain, cellEl, 10);
   record("moveSent", { pieceId: move.pieceId, r: move.r, c: move.c });
+
+  // Дождаться обновления state — либо пьеса ушла из руки, либо myTurn=false, либо sel=null.
+  const moved = await waitFor(() => {
+    const st = readPilotState();
+    if (!st) return true;
+    if (!st.myTurn) return true;
+    return !st.myHand.some((p: PieceInstance) => p.id === move.pieceId);
+  }, 1200, 60);
+  if (!moved) {
+    record("error", { msg: "move did not apply (still my turn, piece still in hand)", pieceId: move.pieceId });
+  }
   return true;
 }
 

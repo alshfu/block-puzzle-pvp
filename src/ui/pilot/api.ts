@@ -24,6 +24,9 @@ export interface PilotState {
   cfg: RuleConfig;
   /** Совместимый seed для воспроизводимости лога. */
   matchId: string;
+  /** Текущее выделение в UI (pieceId + cells после rotate/flip). null когда ничего не выбрано. */
+  selPieceId: string | null;
+  selCells: import("../../core").Coord[] | null;
 }
 
 declare global {

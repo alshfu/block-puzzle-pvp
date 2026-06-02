@@ -10,7 +10,7 @@ import {
   type Coord,
   type PieceInstance,
 } from "../../core";
-import type { OnlineProfile } from "../../../party/protocol";
+import type { OnlineProfile, RequestedCfg } from "../../../party/protocol";
 import { Board } from "../components/Board";
 import { DragLayer } from "../components/DragLayer";
 import { Hand } from "../components/Hand";
@@ -42,6 +42,8 @@ interface Props {
   roomId: string;
   profile: OnlineProfile;
   opponent: OnlineProfile;
+  /** Запрос параметров комнаты у сервера (применяется только если этот клиент подключился первым). */
+  requestedCfg?: RequestedCfg;
   onExit: () => void;
   /** Зовётся один раз когда матч завершён (любым способом). */
   onMatchEnded?: (summary: OnlineMatchSummary) => void;
@@ -62,11 +64,12 @@ interface DragState {
 
 const DRAG_THRESHOLD_PX = 6;
 
-export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onMatchEnded }: Props) {
-  const { state: onlineState, sendMove, resign, requestRematch } = useOnlineGame(roomId, profile);
+export function OnlineGameScreen({ theme, roomId, profile, opponent, requestedCfg, onExit, onMatchEnded }: Props) {
+  const { state: onlineState, sendMove, resign, requestRematch } = useOnlineGame(roomId, profile, requestedCfg);
   const matchEndedRef = useRef<string | null>(null);
 
-  const cfg = DEFAULT_CONFIG; // онлайн фиксирует конфиг сервера; без таймера
+  // Авторитативный cfg от сервера (после joined). До joined используем DEFAULT_CONFIG как placeholder.
+  const cfg = onlineState.state?.cfg ?? DEFAULT_CONFIG;
   const [sel, setSel] = useState<Selection | null>(null);
   const [hover, setHover] = useState<{ r: number; c: number } | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -279,8 +282,10 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
       myHand: youView.hand,
       cfg,
       matchId: onlineState.state.matchId,
+      selPieceId: sel?.pieceId ?? null,
+      selCells: sel?.cells ?? null,
     });
-  }, [onlineState.state, youView, myTurn, cfg]);
+  }, [onlineState.state, youView, myTurn, cfg, sel]);
 
   // Сбрасываем pilot state при размонтировании экрана.
   useEffect(() => {

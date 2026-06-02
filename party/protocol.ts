@@ -3,7 +3,7 @@
  * Один и тот же файл импортируется из party/* и из src/ui/online/.
  */
 
-import type { Board, BotLevel, Coord, PieceInstance } from "../src/core";
+import type { Board, BotLevel, Coord, PieceInstance, RuleConfig } from "../src/core";
 
 // ─── Профиль игрока в онлайне ────────────────────────────────────────────
 export interface OnlineProfile {
@@ -22,6 +22,13 @@ export interface OnlinePlayerView {
   hand: PieceInstance[];
 }
 
+/** Подмножество правил, которые клиент может запросить при подключении. */
+export interface RequestedCfg {
+  handSize?: number;          // 1..4
+  rotationEnabled?: boolean;
+  flipEnabled?: boolean;
+}
+
 export interface OnlineGameState {
   matchId: string;
   board: Board;
@@ -36,6 +43,8 @@ export interface OnlineGameState {
   turnTimeRemainingMs: number;
   /** Базовое время на ход (мс). */
   turnTimeBaseMs: number;
+  /** Полный cfg, по которому идёт партия (handSize, rotation/flip, blitz и пр.). */
+  cfg: RuleConfig;
 }
 
 // ─── Lobby (matchmaking) ────────────────────────────────────────────────
@@ -53,7 +62,7 @@ export type LobbyServer2Client =
 // ─── Room (game) ────────────────────────────────────────────────────────
 
 export type RoomClient2Server =
-  | { type: "hello"; profile: OnlineProfile }
+  | { type: "hello"; profile: OnlineProfile; cfg?: RequestedCfg }
   | {
       type: "move";
       pieceId: string;

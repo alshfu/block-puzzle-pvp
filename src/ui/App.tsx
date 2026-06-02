@@ -595,6 +595,11 @@ export function App() {
             roomId={onlineMatch.roomId}
             profile={{ id: profile.id, nick: profile.nick, avatar: profile.avatar }}
             opponent={onlineMatch.opponent}
+            requestedCfg={{
+              handSize: cfg.handSize,
+              rotationEnabled: cfg.rotationEnabled,
+              flipEnabled: cfg.flipEnabled,
+            }}
             onExit={() => {
               setOnlineMatch(null);
               setScreen("menu");

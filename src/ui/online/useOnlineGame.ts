@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { OnlineGameState, OnlineProfile, RoomServer2Client } from "../../../party/protocol";
+import type { OnlineGameState, OnlineProfile, RequestedCfg, RoomServer2Client } from "../../../party/protocol";
 import { openRoom, type RoomConnection } from "./client";
 
 interface State {
@@ -24,7 +24,7 @@ export interface UseOnlineGameApi {
   close: () => void;
 }
 
-export function useOnlineGame(roomId: string, profile: OnlineProfile): UseOnlineGameApi {
+export function useOnlineGame(roomId: string, profile: OnlineProfile, requestedCfg?: RequestedCfg): UseOnlineGameApi {
   const [s, setS] = useState<State>({
     state: null,
     you: null,
@@ -41,7 +41,7 @@ export function useOnlineGame(roomId: string, profile: OnlineProfile): UseOnline
     const conn = openRoom(roomId, {
       onOpen: () => {
         setS((p) => ({ ...p, connected: true, lastError: null }));
-        conn.send({ type: "hello", profile });
+        conn.send({ type: "hello", profile, cfg: requestedCfg });
       },
       onClose: () => {
         setS((p) => ({ ...p, connected: false }));

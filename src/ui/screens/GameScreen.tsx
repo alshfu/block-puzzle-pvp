@@ -411,11 +411,13 @@ export function GameScreen({
       myHand: state.players[bottomOwner].hand,
       cfg,
       matchId: `offline-${mode}`,
+      selPieceId: state.sel?.pieceId ?? null,
+      selCells: state.sel?.cells ?? null,
     });
     return () => {
       if (state.status !== "playing") clearPilotState();
     };
-  }, [state.status, state.board, state.players, bottomOwner, bottomInteractive, cfg, mode]);
+  }, [state.status, state.board, state.players, bottomOwner, bottomInteractive, cfg, mode, state.sel]);
 
   return (
     <div className={"screen game-screen " + (shaking ? "shake" : "")}>
