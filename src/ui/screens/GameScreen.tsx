@@ -355,26 +355,35 @@ export function GameScreen({
 
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (paused || state.status !== "playing") return;
-    if (state.players[state.current].isBot) return;
     wasSelBeforeDownRef.current = state.sel?.pieceId ?? null;
     // выбираем фигуру в ядре, чтобы ghost мог рассчитаться.
     // Если эта же фигура уже выбрана (с повёрнутой/отражённой ориентацией) — не сбрасываем её в normalize.
     if (state.sel?.pieceId !== piece.id) {
       game.selectPiece(piece);
     }
-    setDrag({
-      piece,
-      pointerId: e.pointerId,
-      x: e.clientX,
-      y: e.clientY,
-      active: false,
-    });
+    // Drag начинаем только если СЕЙЧАС наш ход. Если ход бота — фигура
+    // выбрана как preselect, но фактически тащить её на доску не имеет
+    // смысла (onPlace всё равно отвергнет).
+    const localTurn =
+      state.status === "playing" &&
+      !state.animating &&
+      !paused &&
+      !state.players[state.current].isBot;
+    if (localTurn) {
+      setDrag({
+        piece,
+        pointerId: e.pointerId,
+        x: e.clientX,
+        y: e.clientY,
+        active: false,
+      });
+    }
   };
 
   const handlePieceTap = (piece: PieceInstance) => {
-    // короткий клик без движения: крутим только если фигура была выбрана ДО этого клика
+    // короткий клик без движения: крутим только если фигура была выбрана ДО этого клика.
+    // Работает и во время preselect (когда ход бота).
     if (paused || state.status !== "playing") return;
-    if (state.players[state.current].isBot) return;
     const wasSelectedBefore = wasSelBeforeDownRef.current === piece.id;
     wasSelBeforeDownRef.current = null;
     if (wasSelectedBefore && cfg.rotationEnabled) {
@@ -386,7 +395,6 @@ export function GameScreen({
 
   // В режимах с человеком — активная рука внизу. В bot×bot — фиксируем 0 снизу, 1 сверху.
   const bottomOwner: 0 | 1 = mode === "hotseat" ? state.current : 0;
-  const topOwner: 0 | 1 = (1 - bottomOwner) as 0 | 1;
   const isLocalTurn =
     state.status === "playing" &&
     !state.animating &&
@@ -446,32 +454,17 @@ export function GameScreen({
         current={state.current}
         status={state.status}
         timer={{ remaining: state.timer.remaining, perTurn: state.timer.perTurn }}
+        hands={
+          mode === "arcade"
+            ? undefined
+            : [
+                bottomOwner === 0 ? null : state.players[0].hand,
+                bottomOwner === 1 ? null : state.players[1].hand,
+              ]
+        }
       />
 
-      {mode !== "arcade" && (
-        <Hand
-          title={
-            mode === "bot"
-              ? "Рука соперника"
-              : mode === "botvbot"
-                ? `${names[topOwner]}`
-                : `${names[topOwner]} · ждёт`
-          }
-          hint={
-            mode === "botvbot"
-              ? state.current === topOwner ? "ходит" : "ждёт"
-              : mode === "bot"
-                ? "наблюдай"
-                : state.current === topOwner ? "ходит" : "ждёт"
-          }
-          hand={state.players[topOwner].hand}
-          owner={topOwner}
-          selId={null}
-          deadIds={null}
-          interactive={false}
-          tone="watch"
-        />
-      )}
+      {/* Рука соперника inline в его pcard (через Scoreboard hands prop). */}
 
       <Board ref={boardRef} board={state.board} ghost={showGhost ? ghost : null} flash={state.flash} popups={state.popups} skinClass={skinClass} hasSelection={!!state.sel} />
 
@@ -497,10 +490,10 @@ export function GameScreen({
         selId={state.sel?.pieceId ?? null}
         selCells={state.sel?.cells ?? null}
         deadIds={bottomIsActive ? deadIds : null}
-        interactive={bottomInteractive}
+        interactive={mode !== "botvbot" && state.status === "playing"}
         tone="play"
-        onPiecePointerDown={bottomInteractive ? handlePiecePointerDown : undefined}
-        onPieceTap={bottomInteractive ? handlePieceTap : undefined}
+        onPiecePointerDown={mode !== "botvbot" ? handlePiecePointerDown : undefined}
+        onPieceTap={mode !== "botvbot" ? handlePieceTap : undefined}
       />
 
       {/* В spectator-режиме (botvbot) transform-controls и power-ups не нужны:

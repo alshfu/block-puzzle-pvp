@@ -661,8 +661,13 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
   const selectPiece = useCallback((piece: PieceInstance) => {
     const s = stateRef.current;
     if (s.status !== "playing" || s.animating || pausedRef.current) return;
-    if (s.players[s.current].isBot) return;
-    if (!s.players[s.current].hand.some((p) => p.id === piece.id)) return;
+    // Pre-select: разрешаем выбрать фигуру из руки ЛЮБОГО игрока-человека,
+    // даже когда сейчас ходит бот. Это даёт возможность подготовить фигуру
+    // к следующему ходу. Финальный place всё равно проверит s.current и
+    // s.players[s.current].isBot, поэтому пользователь не сможет сходить
+    // вне очереди.
+    const isHumanPiece = s.players.some((p) => !p.isBot && p.hand.some((hp) => hp.id === piece.id));
+    if (!isHumanPiece) return;
     dispatch({ type: "SELECT", piece });
   }, []);
 

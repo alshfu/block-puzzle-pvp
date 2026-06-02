@@ -244,17 +244,18 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, requestedCf
   const wasSelBeforeDownRef = useRef<string | null>(null);
 
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
-    if (!myTurn) return;
+    // Pre-select: разрешаем выбирать/крутить даже когда не наш ход.
     wasSelBeforeDownRef.current = sel?.pieceId ?? null;
-    // Сохраняем текущую ориентацию, если игрок уже повернул/отразил эту фигуру.
     if (sel?.pieceId !== piece.id) {
       setSel({ pieceId: piece.id, cells: normalize(piece.cells) });
     }
-    setDrag({ piece, pointerId: e.pointerId, x: e.clientX, y: e.clientY, active: false });
+    // Drag — только когда наш ход. Иначе onUp всё равно не отправит sendMove.
+    if (myTurn) {
+      setDrag({ piece, pointerId: e.pointerId, x: e.clientX, y: e.clientY, active: false });
+    }
   };
 
   const handlePieceTap = (piece: PieceInstance) => {
-    if (!myTurn) return;
     const wasSelectedBefore = wasSelBeforeDownRef.current === piece.id;
     wasSelBeforeDownRef.current = null;
     if (wasSelectedBefore && cfg.rotationEnabled) {
@@ -359,18 +360,10 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, requestedCf
           remaining: onlineState.state.turnTimeRemainingMs / 1000,
           perTurn: onlineState.state.turnTimeBaseMs / 1000,
         }}
+        hands={[null, oppView.hand]}
       />
 
-      <Hand
-        title={`${opponent.nick}${onlineState.opponentLeft ? " (отвалился…)" : ""}`}
-        hint={onlineState.state.current === oppIdx ? "ходит" : "ждёт"}
-        hand={oppView.hand}
-        owner={oppIdx ?? 1}
-        selId={null}
-        deadIds={null}
-        interactive={false}
-        tone="watch"
-      />
+      {/* Рука соперника inline в его pcard (через Scoreboard hands prop). */}
 
       <Board
         ref={boardRef}
@@ -391,16 +384,16 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, requestedCf
 
       <Hand
         title="Твоя рука"
-        hint={myTurn ? "перетащи на доску" : "ждёт хода"}
+        hint={myTurn ? "перетащи на доску" : "ждёт — можно выбрать заранее"}
         hand={youView.hand}
         owner={you}
         selId={sel?.pieceId ?? null}
         selCells={sel?.cells ?? null}
         deadIds={myTurn ? deadIds : null}
-        interactive={myTurn}
+        interactive={true}
         tone="play"
-        onPiecePointerDown={myTurn ? handlePiecePointerDown : undefined}
-        onPieceTap={myTurn ? handlePieceTap : undefined}
+        onPiecePointerDown={handlePiecePointerDown}
+        onPieceTap={handlePieceTap}
       />
 
       <TransformControls

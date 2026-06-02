@@ -98,6 +98,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     flex-direction: row; align-items: center;
   }
   .game-screen .pcard.right { flex-direction: row-reverse; }
+  .game-screen .pcard-hand { display: flex; gap: 6px; align-items: center; }
+  .game-screen .pcard-hand .mini-piece { gap: 1px !important; }
   .game-screen .pcard-label { font-size: 9px; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .game-screen .pcard { min-width: 0; }
   .game-screen .pcard .dot { width: 6px; height: 6px; }
@@ -859,3 +861,8 @@ html[data-flash-enabled="false"] .cell.flash { animation: none !important; backg
 @media (prefers-reduced-motion: reduce) {
   .candy-bit, .night-beam, .night-emblem, .turn-timer.danger .tt-fill, .score-pop, .cell.flash, .confetti-bit { animation: none !important; }
 }
+
+/* Pcard-hand на desktop — чуть крупнее */
+.pcard-hand { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+.pcard.right .pcard-hand { justify-content: flex-end; }
+

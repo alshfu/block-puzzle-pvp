@@ -1,3 +1,4 @@
+import type { PieceInstance } from "../../core";
 import { PlayerCard } from "./PlayerCard";
 import { TurnTimer } from "./TurnTimer";
 
@@ -17,9 +18,11 @@ interface Props {
   current: 0 | 1;
   status: "playing" | "over";
   timer: TimerSummary;
+  /** Inline-руки в pcard. Если null/undefined — рука не показывается. */
+  hands?: [PieceInstance[] | null, PieceInstance[] | null];
 }
 
-export function Scoreboard({ players, names, current, status, timer }: Props) {
+export function Scoreboard({ players, names, current, status, timer, hands }: Props) {
   let centerText = "игра окончена";
   if (status === "playing") {
     centerText = current === 0 ? "твой ход" : "ход соперника";
@@ -34,6 +37,7 @@ export function Scoreboard({ players, names, current, status, timer }: Props) {
         owner={0}
         active={status === "playing" && current === 0}
         side="left"
+        miniHand={hands?.[0] ?? undefined}
       />
       <div className="turn-center">
         <div className={"turn-pill " + (danger ? "danger" : "")}>{centerText}</div>
@@ -50,6 +54,7 @@ export function Scoreboard({ players, names, current, status, timer }: Props) {
         owner={1}
         active={status === "playing" && current === 1}
         side="right"
+        miniHand={hands?.[1] ?? undefined}
       />
     </div>
   );
