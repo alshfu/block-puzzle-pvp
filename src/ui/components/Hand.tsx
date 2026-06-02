@@ -1,5 +1,5 @@
 import { memo, useRef, type PointerEvent } from "react";
-import type { Coord, PieceInstance } from "../../core";
+import { normalize, type Coord, type PieceInstance } from "../../core";
 import { MiniPiece } from "./MiniPiece";
 
 interface Props {
@@ -43,7 +43,8 @@ function HandImpl({
         {hand.map((piece) => {
           const dead = deadIds?.has(piece.id) ?? false;
           const selected = selId === piece.id;
-          const displayCells = selected && selCells ? selCells : piece.cells;
+          // Гарантируем единый вид фигуры до/после selection: обе ветки нормализованы.
+          const displayCells = selected && selCells ? selCells : normalize(piece.cells);
           return (
             <PieceSlot
               key={piece.id}
