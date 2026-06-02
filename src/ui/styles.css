@@ -82,12 +82,31 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   gap: 4px;
 }
 .game-screen > * { flex-shrink: 0; }
-/* Board держит родной квадрат, но если экран совсем низкий — допускаем небольшое сжатие
-   через max-height, чтобы не выдавить нижнюю руку и transform-controls. */
+/* Board-wrap занимает всё свободное место между обвязкой; сам board
+   внутри — ОБЯЗАТЕЛЬНО квадрат: aspect-ratio + height/max ограничивают
+   обе размерности. На широком экране ограничивает max-width (родной 420px),
+   на низком — height доступного контейнера. Никогда не «плющится». */
 .game-screen .board-wrap {
-  flex: 0 1 auto;
+  flex: 1 1 0;
   min-height: 0;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+}
+.game-screen .board-wrap > .board {
+  aspect-ratio: 1;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
   max-height: 100%;
+}
+@media (min-width: 900px) {
+  .game-screen .board-wrap { max-width: 600px; }
+}
+@media (min-width: 1200px) {
+  .game-screen .board-wrap { max-width: 680px; }
 }
 /* Компактные размеры обвязки на мобиле, чтобы всё поместилось в viewport. */
 @media (max-width: 480px) {
