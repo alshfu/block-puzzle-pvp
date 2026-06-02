@@ -349,9 +349,14 @@ export function GameScreen({
     return () => window.removeEventListener("keydown", onKey);
   }, [activePowerup]);
 
+  // Был ли pieceId выбран ДО pointerdown — иначе первый же tap воспринимался
+  // как повтор и крутил фигуру (pointerdown сам ставит sel перед tap-up).
+  const wasSelBeforeDownRef = useRef<string | null>(null);
+
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (paused || state.status !== "playing") return;
     if (state.players[state.current].isBot) return;
+    wasSelBeforeDownRef.current = state.sel?.pieceId ?? null;
     // выбираем фигуру в ядре, чтобы ghost мог рассчитаться.
     // Если эта же фигура уже выбрана (с повёрнутой/отражённой ориентацией) — не сбрасываем её в normalize.
     if (state.sel?.pieceId !== piece.id) {
@@ -367,12 +372,14 @@ export function GameScreen({
   };
 
   const handlePieceTap = (piece: PieceInstance) => {
-    // короткий клик без движения: если та же выбранная фигура — повернуть; иначе оставить выбранной.
+    // короткий клик без движения: крутим только если фигура была выбрана ДО этого клика
     if (paused || state.status !== "playing") return;
     if (state.players[state.current].isBot) return;
-    if (state.sel?.pieceId === piece.id && cfg.rotationEnabled) {
+    const wasSelectedBefore = wasSelBeforeDownRef.current === piece.id;
+    wasSelBeforeDownRef.current = null;
+    if (wasSelectedBefore && cfg.rotationEnabled) {
       game.rotateSel();
-    } else {
+    } else if (state.sel?.pieceId !== piece.id) {
       game.selectPiece(piece);
     }
   };

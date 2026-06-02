@@ -236,8 +236,13 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
     },
   });
 
+  // Был ли pieceId выбран ДО pointerdown (нужно для tap-to-rotate, иначе первый
+  // же tap воспринимался как повтор, потому что pointerdown сам ставит sel).
+  const wasSelBeforeDownRef = useRef<string | null>(null);
+
   const handlePiecePointerDown = (piece: PieceInstance, e: PointerEvent<HTMLDivElement>) => {
     if (!myTurn) return;
+    wasSelBeforeDownRef.current = sel?.pieceId ?? null;
     // Сохраняем текущую ориентацию, если игрок уже повернул/отразил эту фигуру.
     if (sel?.pieceId !== piece.id) {
       setSel({ pieceId: piece.id, cells: normalize(piece.cells) });
@@ -247,9 +252,11 @@ export function OnlineGameScreen({ theme, roomId, profile, opponent, onExit, onM
 
   const handlePieceTap = (piece: PieceInstance) => {
     if (!myTurn) return;
-    if (sel?.pieceId === piece.id && cfg.rotationEnabled) {
-      setSel({ ...sel, cells: rotate90(sel.cells) });
-    } else {
+    const wasSelectedBefore = wasSelBeforeDownRef.current === piece.id;
+    wasSelBeforeDownRef.current = null;
+    if (wasSelectedBefore && cfg.rotationEnabled) {
+      setSel((prev) => (prev ? { ...prev, cells: rotate90(prev.cells) } : prev));
+    } else if (sel?.pieceId !== piece.id) {
       setSel({ pieceId: piece.id, cells: normalize(piece.cells) });
     }
   };
