@@ -74,11 +74,18 @@ export class Room {
   private init(seed: MatchSeed): MatchState {
     const cfg: RuleConfig = { ...DEFAULT_CONFIG, turnTimerEnabled: false };
     const bags: [Bag, Bag] = [new Bag(seed.matchSeed + 11), new Bag(seed.matchSeed + 99)];
+    const fillHand = (bag: Bag, size: number): PieceInstance[] => {
+      const out: PieceInstance[] = [];
+      while (out.length < size) {
+        out.push(bag.drawAvoiding(new Set(out.map((p) => p.type))));
+      }
+      return out;
+    };
     const makeP = (p: OnlineProfile, bag: Bag): ServerPlayer => ({
       profile: p,
       score: 0,
       combo: 0,
-      hand: Array.from({ length: cfg.handSize }, () => bag.draw()),
+      hand: fillHand(bag, cfg.handSize),
     });
     return {
       matchSeed: seed.matchSeed,
@@ -166,12 +173,16 @@ export class Room {
   /** Применяет cfg от первого подключившегося клиента и пересоздаёт руки под новый handSize. */
   private applyRequestedCfg(req: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }): void {
     const cfg = this.state.cfg;
-    if (typeof req.handSize === "number" && req.handSize >= 1 && req.handSize <= 4 && req.handSize !== cfg.handSize) {
+    if (typeof req.handSize === "number" && req.handSize >= 1 && req.handSize <= 3 && req.handSize !== cfg.handSize) {
       cfg.handSize = req.handSize;
       // Пересоздаём руки обоих игроков; bag-state перематывается на 0.
       this.state.bags = [new Bag(this.state.matchSeed + 11), new Bag(this.state.matchSeed + 99)];
       for (let i = 0; i < 2; i++) {
-        this.state.players[i].hand = Array.from({ length: cfg.handSize }, () => this.state.bags[i].draw());
+        const hand: PieceInstance[] = [];
+        while (hand.length < cfg.handSize) {
+          hand.push(this.state.bags[i].drawAvoiding(new Set(hand.map((p) => p.type))));
+        }
+        this.state.players[i].hand = hand;
       }
     }
     if (typeof req.rotationEnabled === "boolean") cfg.rotationEnabled = req.rotationEnabled;
@@ -245,7 +256,9 @@ export class Room {
     s.board = newBoard;
     s.lastClearedCells = clears.cleared;
     player.hand = player.hand.filter((p) => p.id !== pieceId);
-    while (player.hand.length < s.cfg.handSize) player.hand.push(s.bags[idx].draw());
+    while (player.hand.length < s.cfg.handSize) {
+      player.hand.push(s.bags[idx].drawAvoiding(new Set(player.hand.map((p) => p.type))));
+    }
 
     const next: 0 | 1 = (1 - idx) as 0 | 1;
     s.current = next;

@@ -94,7 +94,6 @@ export function OnlineMenuScreen({ profile, cfg, setCfg, onBack, onMatched, onBo
                 { v: 1, label: "1", sub: "тетрис" },
                 { v: 2, label: "2" },
                 { v: 3, label: "3", sub: "по умолч." },
-                { v: 4, label: "4" },
               ]}
             />
             <div className="toggle-row" style={{ marginTop: 10 }}>

@@ -245,6 +245,19 @@ interface InitPack {
   seed: number;
 }
 
+/**
+ * Заполняет руку из мешка `size` уникальными по типу фигурами, насколько
+ * позволяет состояние bag. Опирается на 7-bag (Bag.drawAvoiding).
+ */
+function fillHand(bag: Bag, size: number, startWith: PieceInstance[] = []): PieceInstance[] {
+  const out = [...startWith];
+  while (out.length < size) {
+    const avoid = new Set(out.map((p) => p.type));
+    out.push(bag.drawAvoiding(avoid));
+  }
+  return out;
+}
+
 function freshInit(session: GameSession, seed: number): InitPack {
   const bags: [Bag, Bag] = [new Bag(seed + 11), new Bag(seed + 99)];
   const handSize = session.cfg.handSize;
@@ -253,13 +266,13 @@ function freshInit(session: GameSession, seed: number): InitPack {
       score: 0,
       combo: 0,
       isBot: session.botLevels[0] !== null,
-      hand: Array.from({ length: handSize }, () => bags[0].draw()),
+      hand: fillHand(bags[0], handSize),
     },
     {
       score: 0,
       combo: 0,
       isBot: session.botLevels[1] !== null,
-      hand: Array.from({ length: handSize }, () => bags[1].draw()),
+      hand: fillHand(bags[1], handSize),
     },
   ];
   const perTurn = perTurnForRound(session.blitz, session.cfg, 0);
@@ -504,11 +517,11 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
     void scoreForMove; // legacy импорт сохранён для бота, не используется здесь напрямую
 
     const bag = bagsRef.current![owner];
-    const handAfterRemoval =
-      s.players[owner].hand.filter((p) => p.id !== move.pieceId).length;
+    const remainingHand = s.players[owner].hand.filter((p) => p.id !== move.pieceId);
     let newPiece: PieceInstance | null = null;
-    if (handAfterRemoval < cfg.handSize) {
-      newPiece = bag.draw();
+    if (remainingHand.length < cfg.handSize) {
+      const avoid = new Set(remainingHand.map((p) => p.type));
+      newPiece = bag.drawAvoiding(avoid);
       drawCountsRef.current[owner]++;
     }
 
@@ -854,11 +867,8 @@ export function useGame({ session, savedGame, onMatchOver, onPerfect, onComboMil
     if (s.status !== "playing" || s.animating) return false;
     const bag = bagsRef.current?.[0];
     if (!bag) return false;
-    const newHand: PieceInstance[] = [];
-    for (let i = 0; i < sessionRef.current.cfg.handSize; i++) {
-      newHand.push(bag.draw());
-      drawCountsRef.current[0]++;
-    }
+    const newHand = fillHand(bag, sessionRef.current.cfg.handSize);
+    drawCountsRef.current[0] += newHand.length;
     // Заменяем hand игрока 0 через mini-redaktor.
     const players = s.players.map((p, i) => i === 0 ? { ...p, hand: newHand } : p) as [Player, Player];
     dispatch({

@@ -2,6 +2,20 @@
 
 История значимых релизов BlockDuel 9×9. Формат — обратный хронологический.
 
+## 1.6.1 — 2026-06-03
+
+- **handSize=4 удалён.** В SetupScreen и OnlineMenuScreen остались только
+  «1 · тетрис», «2», «3». Server валидация ограничена 1..3.
+- **Антидубликат в руке.** Bag получил метод `drawAvoiding(types)`: если top
+  of mешка совпадает с типом уже в руке — берётся следующий не-дубликат
+  из bag (queue position сохраняется через splice). Полный 7-bag fairness
+  не нарушен — каждая фигура всё ещё появляется по разу в каждом цикле.
+  Применено в:
+  - initial-hand при freshInit / makeP (offline + server),
+  - newPiece при performMove / handleMove,
+  - powerSwapHand,
+  - пересоздание hand при requestedCfg на сервере.
+
 ## 1.6.0 — 2026-06-03
 
 Расширенная система очков (5 направлений сразу).

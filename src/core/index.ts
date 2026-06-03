@@ -194,6 +194,33 @@ export class Bag {
 
   draw(): PieceInstance {
     const type = this.next();
+    return this.makePiece(type);
+  }
+
+  /**
+   * Draw фигуры с предпочтением «уникального типа» — если top of queue совпадает
+   * с одним из переданных `avoidTypes`, ищем дальше в очереди и берём первый
+   * не-конфликтующий. Если все остатки текущего мешка конфликтуют (бывает в
+   * конце 7-bag, когда осталась пара одинаковых после ходов), берём top как
+   * есть — повторов всё равно не избежать.
+   *
+   * Это сохраняет 7-bag fairness (каждая фигура появляется по разу в каждом
+   * полном цикле), но локально приоритизирует разнообразие в руке.
+   */
+  drawAvoiding(avoidTypes: Set<PieceType>): PieceInstance {
+    if (this.queue.length === 0) {
+      this.queue = shuffle(ALL_TYPES, this.rng);
+    }
+    const idx = this.queue.findIndex((t) => !avoidTypes.has(t));
+    if (idx === -1) {
+      // Все в очереди — конфликтующие типы (или avoidTypes покрыл все 7).
+      return this.draw();
+    }
+    const [type] = this.queue.splice(idx, 1);
+    return this.makePiece(type);
+  }
+
+  private makePiece(type: PieceType): PieceInstance {
     return {
       id: `p${this.counter++}`,
       type,
