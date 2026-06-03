@@ -77,7 +77,7 @@ const TRACKS: Record<ThemeId, Track> = {
       {
         // hi-counter — редкие верхние ноты
         type: "sine",
-        gain: 0.025,
+        gain: 0.055,
         notes: [
           { f: R, d: 8 },
           { f: n("E6"), d: 2 }, { f: R, d: 2 },
@@ -147,7 +147,7 @@ const TRACKS: Record<ThemeId, Track> = {
       {
         // лид — фригийская мелодия
         type: "square",
-        gain: 0.035,
+        gain: 0.055,
         notes: [
           { f: n("D4"), d: 2 }, { f: n("F4"), d: 1 }, { f: n("A4"), d: 1 },
           { f: n("Bb4"), d: 2 }, { f: n("A4"), d: 2 },

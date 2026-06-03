@@ -141,7 +141,7 @@ export function vibratePlace(): void {
 }
 
 export function vibrateInvalid(): void {
-  vibrate([20, 30, 20]);
+  vibrate([20, 30, 20]);1
 }
 
 export function vibrateClear(n: number): void {
