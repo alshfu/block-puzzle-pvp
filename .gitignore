@@ -29,3 +29,6 @@ lighthouse-*.json
 # E2E скриншоты пилотного скрипта (генерируются локально, тяжёлые)
 tools/screens/
 tools/debug-page.ts
+
+# Flutter — сборочные артефакты вне flutter/ (на случай запуска из корня)
+/build/

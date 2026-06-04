@@ -1,0 +1,78 @@
+# pubspec.yaml — манифест Flutter-приложения BlockDuel 9×9 (Dart-порт).
+#
+# За что отвечает файл:
+#   Объявляет имя пакета, версию, окружение SDK и все зависимости (runtime
+#   и dev) Flutter-клиента. Это «package.json» Dart-мира.
+#
+# Ключевые блоки:
+#   name/description/version — идентификация приложения. Версия 2.0.0 —
+#     major bump относительно TS-версии v1.6.1 (миграция на Dart/Flutter).
+#   environment.sdk        — минимальная версия Dart SDK.
+#   dependencies           — то, что нужно в рантайме:
+#     flame                — игровой движок (рендер доски 9×9, частицы, цикл).
+#     flutter_riverpod     — state management (единый на проект).
+#     riverpod_annotation  — аннотации для codegen-провайдеров.
+#     freezed_annotation   — immutable value-классы ядра (RuleConfig, Move…).
+#     json_annotation      — (де)сериализация моделей/сохранёнок.
+#     collection           — стабильная сортировка и утилиты коллекций
+#                            (важно для детерминизма ядра).
+#     go_router            — декларативная навигация экран↔маршрут.
+#   dev_dependencies       — инструменты разработки:
+#     build_runner         — раннер кодогенерации.
+#     freezed              — генератор immutable-классов и copyWith.
+#     json_serializable    — генератор toJson/fromJson.
+#     riverpod_generator   — генератор провайдеров.
+#     flutter_lints        — набор рекомендованных правил анализатора.
+#
+# Подключение Firebase / Hive / flame_audio / шрифтов и ассетов — в
+# соответствующих фазах миграции (см. MIGRATION_FLUTTER.md §5 и
+# MIGRATION_PROGRESS.md). Сейчас зависимости держим минимальными.
+
+name: block_duel
+description: "BlockDuel 9×9 — competitive block puzzle (Dart/Flutter port)."
+publish_to: 'none'
+
+# Версия после миграции — major bump (TS-версия была 1.6.1).
+version: 2.0.0+1
+
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Игровой рендер и цикл (доска 9×9, drag-preview, частицы, комбо-вспышки).
+  flame: ^1.37.0
+
+  # State management — единый на проект.
+  flutter_riverpod: ^3.3.1
+  riverpod_annotation: ^4.0.2
+
+  # Immutable-модели и (де)сериализация.
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.12.0
+
+  # Утилиты коллекций + стабильная сортировка (детерминизм ядра).
+  collection: ^1.19.1
+
+  # Навигация.
+  go_router: ^17.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+  # Кодогенерация: freezed / json / riverpod.
+  build_runner: ^2.15.0
+  freezed: ^3.2.6-dev.1
+  json_serializable: ^6.14.0
+  riverpod_generator: ^4.0.4-dev.1
+
+flutter:
+  uses-material-design: true
+  # assets/fonts подключаются в Фазах 2 и 5 (design tokens, декор, звук).
