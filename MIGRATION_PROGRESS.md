@@ -48,15 +48,20 @@
       DM Mono, Fredoka, Baloo 2, Oswald, Share Tech Mono).
 - [ ] Экспортировать SVG `CartoonPony`/`Mascot`/`favicon` → `assets/images/`.
 - [ ] Эталонные скриншоты TS-версии (3 темы) → `test/golden/source/`.
-- [ ] Golden-дамп TS-ядра → `test/golden/determinism_match.json`
-      (скрипт `tools/dump-golden.ts`).
+- [x] **2026-06-05** — golden-дамп TS-ядра → `flutter/test/golden/
+      determinism_match.json` (скрипт `tools/dump-golden.ts`). Послойно: rng
+      (5 сидов×16), bag (4×21), orientations (7 фигур), scoring (5 кейсов),
+      clears (5 сценариев), game (3 партии 25/57/80 ходов). Харнесс партии
+      идентичен `tests/determinism.test.ts` (moves[0], без rng в решениях).
+      Доска кодируется строкой 81 символ ('.'/'0'/'1').
 
 ## Фаза 1 — ядро (Dart-порт `src/core/`)
 
 - [ ] `lib/core/types.dart`, `rng.dart`, `pieces.dart`, `board.dart`,
       `scoring.dart`, `bag.dart`, `moves.dart`, `bot.dart`, `timer.dart`.
 - [ ] Зеркало 46 Vitest-тестов → `flutter/test/`.
-- [ ] **Gate:** golden-тест детерминизма проходит бит-в-бит.
+- [ ] **Gate:** golden-тест детерминизма (`determinism_match.json`) проходит
+      бит-в-бит на обоих таргетах (VM + Web).
 
 ## Фазы 2–9
 
