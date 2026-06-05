@@ -57,11 +57,22 @@
 
 ## Фаза 1 — ядро (Dart-порт `src/core/`)
 
-- [ ] `lib/core/types.dart`, `rng.dart`, `pieces.dart`, `board.dart`,
-      `scoring.dart`, `bag.dart`, `moves.dart`, `bot.dart`, `timer.dart`.
-- [ ] Зеркало 46 Vitest-тестов → `flutter/test/`.
-- [ ] **Gate:** golden-тест детерминизма (`determinism_match.json`) проходит
-      бит-в-бит на обоих таргетах (VM + Web).
+- [x] **2026-06-05** — портировано всё ядро в `flutter/lib/core/`:
+      `types.dart` (типы + defaultConfig), `rng.dart` (mulberry32 с ручным
+      `_imul` для 32-бит), `pieces.dart` (формы/ориентации), `board.dart`
+      (доска/очистка), `bag.dart` (7-bag), `scoring.dart` (v1.5+),
+      `moves.dart` (перебор/эвристики), `bot.dart` (3 уровня), `timer.dart`
+      (blitz/forcePlace), барель `core.dart`. Константы в lowerCamelCase
+      (`defaultConfig`, `botWeights`). `flutter analyze` чист.
+- [x] **2026-06-05** — **GATE ПРОЙДЕН:** golden-тест детерминизма зелёный
+      бит-в-бит. `test/golden/determinism_golden_test.dart` (bag/orientations/
+      scoring/clears/game — 29 тестов на VM), `test/core/rng_golden_test.dart`
+      (PRNG vs эталон). **PRNG проверен и на Web:** `test/core/rng_web_test.dart`
+      проходит и через `dart test` (VM), и `dart test -p chrome` (JS) — риск
+      32/64-bit закрыт.
+- [ ] Зеркало поведенческих unit-тестов (deadlock+forcePlace, bot validity/
+      timing, timer-значения) — golden уже покрывает board/clears/scoring/bag/
+      orientations/enumerateMoves; осталось добить явные кейсы.
 
 ## Фазы 2–9
 

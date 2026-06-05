@@ -73,6 +73,10 @@ dev_dependencies:
   json_serializable: ^6.14.0
   riverpod_generator: ^4.0.4-dev.1
 
+  # Чистый package:test — для core-тестов, запускаемых на Web (`dart test -p
+  # chrome`) для проверки детерминизма PRNG на 32/64-бит таргетах.
+  test: ^1.31.0
+
 flutter:
   uses-material-design: true
   # assets/fonts подключаются в Фазах 2 и 5 (design tokens, декор, звук).
