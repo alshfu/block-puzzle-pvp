@@ -143,7 +143,16 @@ Daily + resume сохранёнки).
       профилю и навигации; итог партии начисляет XP/монеты профилю (кроме
       bot×bot). Тесты `test/profile/profile_test.dart`. **57 тестов** зелёные,
       analyze чист, работает на Web.
-- [ ] Achievements (definitions + engine) + AchievementsScreen.
+- [x] **2026-06-05** — достижения: `achievements/{achievement.dart,
+      definitions.dart,achievements_controller.dart}` (модель + 11 базовых
+      ачивок + движок-ViewModel с персистом), экран `AchievementsScreen`,
+      роут `/achievements`, чип 🏆 в меню; пересчёт по итогу партии. (Полные
+      ~120, вкл. PvP, — позже/Фаза 6.)
+- [x] **2026-06-05** — **PILOT/E2E:** `integration_test/app_test.dart`
+      (реальное устройство/web) + headless-зеркало `test/pilot_test.dart`
+      (в обычном `flutter test`): сквозной прогон меню→профиль→достижения и
+      hot-seat (выбор фигуры → постановка → возврат). Device-прогон тут не идёт
+      (среда не форграундит окно), headless — зелёный.
 - [ ] Daily quests + DailyScreen.
 - [ ] Hive + resume сохранёнки (drawCounts) — тяжёлая часть, позже.
 

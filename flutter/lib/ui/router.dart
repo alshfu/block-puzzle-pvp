@@ -10,6 +10,7 @@ library;
 
 import 'package:go_router/go_router.dart';
 
+import 'screens/achievements_screen.dart';
 import 'screens/game_screen.dart';
 import 'screens/menu_screen.dart';
 import 'screens/profile_screen.dart';
@@ -32,6 +33,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/settings',
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/achievements',
+      builder: (context, state) => const AchievementsScreen(),
     ),
   ],
 );

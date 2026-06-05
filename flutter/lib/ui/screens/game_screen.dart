@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../achievements/achievements_controller.dart';
 import '../../game/game_notifier.dart';
 import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
@@ -61,6 +62,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ref
             .read(profileControllerProvider.notifier)
             .recordResult(won: next.winner == 0, draw: next.winner == null);
+        // После начисления статистики — пересчёт достижений.
+        ref.read(achievementsControllerProvider.notifier).evaluate();
       }
     });
     final state = ref.watch(gameProvider(_config));
