@@ -79,4 +79,27 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # assets/fonts подключаются в Фазах 2 и 5 (design tokens, декор, звук).
+
+  # Шрифты бандлятся локально (offline/PWA, без FOUT). Имена family должны
+  # 1:1 совпадать с fontDisplay/fontMono в BlockDuelTheme (themes.ts).
+  # Bricolage/Fredoka/Baloo2/Oswald — variable (ось wght покрывает начертания);
+  # DM Mono и Share Tech Mono — статические Regular. Лицензия OFL.
+  fonts:
+    - family: BricolageGrotesque
+      fonts:
+        - asset: assets/fonts/BricolageGrotesque.ttf
+    - family: DMMono
+      fonts:
+        - asset: assets/fonts/DMMono-Regular.ttf
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka.ttf
+    - family: Baloo2
+      fonts:
+        - asset: assets/fonts/Baloo2.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald.ttf
+    - family: ShareTechMono
+      fonts:
+        - asset: assets/fonts/ShareTechMono-Regular.ttf
