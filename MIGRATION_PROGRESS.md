@@ -81,7 +81,26 @@
 **Фаза 1 завершена.** Ядро портировано и детерминизм доказан бит-в-бит
 (VM + Web). Следующая — Фаза 2 (UI shell + design tokens + Board на Flame).
 
-## Фазы 2–9
+## Фаза 2 — UI shell + design tokens + Board (в работе)
+
+- [x] **2026-06-05** — design-tokens 1:1 из `themes.ts`:
+      `lib/ui/design_tokens.dart` (`BlockDuelTheme` как `ThemeExtension`, 3 темы
+      neutral/candy/night, цвета hex-в-hex, радиусы, шрифты), `responsive.dart`
+      (breakpoints 480/900/1200 + `clampVw` = CSS `clamp`).
+- [x] **2026-06-05** — каркас MVVM + меню:
+      ViewModel `lib/ui/theme/theme_controller.dart` (Riverpod Notifier темы,
+      без BuildContext); View `lib/app.dart` (MaterialApp.router),
+      `lib/ui/router.dart` (go_router: `/`, `/game/:mode`), `screens/
+      menu_screen.dart` (меню), `widgets/{logo,mini_piece,theme_switch}.dart`,
+      `screens/game_placeholder_screen.dart`. `main.dart` → ProviderScope.
+      Меню рендерится на Web (localhost:8080), переключение 3 тем работает.
+      `flutter analyze` чист, 48 тестов зелёные.
+- [ ] Шрифты TTF (6 семейств) — пока рендер фолбэком.
+- [ ] Golden-скриншот MenuScreen в 3 темах (§6.8) — после шрифтов.
+- [ ] **Фаза 2.3:** GameNotifier (ViewModel) + GameScreen + Board на Flame +
+      Hand + drag-and-drop + rotate/flip → играбельный hot-seat.
+
+## Фазы 3–9
 
 См. план `MIGRATION_FLUTTER.md` §8. Будут раскрыты по мере подхода.
 

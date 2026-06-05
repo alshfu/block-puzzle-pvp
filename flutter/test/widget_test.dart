@@ -1,21 +1,24 @@
-/// widget_test.dart — smoke-тест корневого виджета на стадии скелета.
+/// widget_test.dart — smoke-тест корневого приложения и меню.
 ///
 /// За что отвечает файл:
-///   Проверяет, что приложение собирается и рисует заглушку Фазы 0
-///   ([MigrationPlaceholderApp]) без исключений. Реальные виджет-тесты
-///   экранов появятся в Фазах 2+.
+///   Проверяет, что [BlockDuelApp] под `ProviderScope` собирается и рисует
+///   главное меню без исключений (находит слоган и версию). Полные
+///   golden-тесты MenuScreen в трёх темах — отдельной задачей (§6.8).
 library;
 
-import 'package:block_duel/main.dart';
+import 'package:block_duel/app.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Заглушка миграции отображает название игры', (tester) async {
-    // Рисуем корневой виджет и ждём первого кадра.
-    await tester.pumpWidget(const MigrationPlaceholderApp());
+  testWidgets('Меню рисуется: слоган и версия на месте', (tester) async {
+    await tester.pumpWidget(const ProviderScope(child: BlockDuelApp()));
+    await tester.pumpAndSettle();
 
-    // На экране должно быть название игры и пометка фазы.
-    expect(find.text('BlockDuel 9×9'), findsOneWidget);
-    expect(find.textContaining('Phase 0'), findsOneWidget);
+    expect(
+      find.text('дуэль на поле 9×9 · ставь, очищай, побеждай'),
+      findsOneWidget,
+    );
+    expect(find.text('v2.0 · flutter migration'), findsOneWidget);
   });
 }
