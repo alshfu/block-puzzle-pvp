@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../game/game_notifier.dart';
 import '../../game/match_config.dart';
+import '../../profile/profile_controller.dart';
 import '../design_tokens.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
@@ -52,6 +53,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<BlockDuelTheme>()!;
+    // Начисляем награды игроку 0 (человеку) при завершении партии — кроме
+    // зрительского bot×bot. Срабатывает один раз на переходе в gameOver.
+    ref.listen(gameProvider(_config), (prev, next) {
+      final justEnded = (prev == null || !prev.gameOver) && next.gameOver;
+      if (justEnded && _config.mode != MatchMode.botvbot) {
+        ref
+            .read(profileControllerProvider.notifier)
+            .recordResult(won: next.winner == 0, draw: next.winner == null);
+      }
+    });
     final state = ref.watch(gameProvider(_config));
     final vm = ref.read(gameProvider(_config).notifier);
     final humanTurn = !state.gameOver && !_config.isBot(state.current);

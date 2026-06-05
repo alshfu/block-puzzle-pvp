@@ -128,7 +128,26 @@
 **Фаза 3 завершена.** Дальше — Фаза 4 (Storage/Hive + Profile + Achievements +
 Daily + resume сохранёнки).
 
-## Фазы 4–9
+## Фаза 4 — Storage + Profile + Settings + (Achievements/Daily — далее)
+
+- [x] **2026-06-05** — фундамент персистентности на `shared_preferences`:
+      `storage/prefs.dart` (провайдер + ключи, override в main),
+      `profile/{profile.dart,profile_controller.dart}` (модель + ViewModel,
+      XP/уровень треугольный, награды за матч),
+      `settings/{settings.dart,settings_controller.dart}` (звук/музыка/анимации).
+      Тема теперь персистится (`ThemeController` читает/пишет prefs). `main.dart`
+      — async-bootstrap с загрузкой prefs.
+- [x] **2026-06-05** — экраны `ProfileScreen` (ник/аватар/уровень/XP/стата) и
+      `SettingsScreen` (тема + тогглы + about) + общий `ScreenScaffold`; роуты
+      `/profile`, `/settings`; верхняя панель меню привязана к реальному
+      профилю и навигации; итог партии начисляет XP/монеты профилю (кроме
+      bot×bot). Тесты `test/profile/profile_test.dart`. **57 тестов** зелёные,
+      analyze чист, работает на Web.
+- [ ] Achievements (definitions + engine) + AchievementsScreen.
+- [ ] Daily quests + DailyScreen.
+- [ ] Hive + resume сохранёнки (drawCounts) — тяжёлая часть, позже.
+
+## Фазы 5–9
 
 См. план `MIGRATION_FLUTTER.md` §8. Будут раскрыты по мере подхода.
 

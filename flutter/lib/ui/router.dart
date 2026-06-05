@@ -12,6 +12,8 @@ import 'package:go_router/go_router.dart';
 
 import 'screens/game_screen.dart';
 import 'screens/menu_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/settings_screen.dart';
 
 /// Глобальный роутер приложения.
 final GoRouter appRouter = GoRouter(
@@ -22,6 +24,14 @@ final GoRouter appRouter = GoRouter(
       path: '/game/:mode',
       builder: (context, state) =>
           GameScreen(modeRaw: state.pathParameters['mode'] ?? 'bot'),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

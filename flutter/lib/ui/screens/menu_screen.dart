@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../profile/profile_controller.dart';
 import '../design_tokens.dart';
 import '../responsive.dart';
 import '../widgets/logo.dart';
@@ -61,7 +62,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
                 child: Column(
                   children: [
-                    _TopBar(tokens: tokens),
+                    const _TopBar(),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -112,28 +113,29 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
 }
 
 /// Верхняя панель: профиль (заглушка), монеты, иконки дейли/настроек.
-class _TopBar extends StatelessWidget {
-  final BlockDuelTheme tokens;
-
-  const _TopBar({required this.tokens});
+class _TopBar extends ConsumerWidget {
+  const _TopBar();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
+    final profile = ref.watch(profileControllerProvider);
     return Row(
       children: [
         _Chip(
           tokens: tokens,
+          onTap: () => context.go('/profile'),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('🙂', style: TextStyle(fontSize: 18)),
+              Text(profile.avatar, style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Игрок',
+                    profile.nick,
                     style: TextStyle(
                       color: tokens.ink,
                       fontSize: 13,
@@ -141,7 +143,7 @@ class _TopBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'ур. 1',
+                    'ур. ${profile.level}',
                     style: TextStyle(color: tokens.muted, fontSize: 11),
                   ),
                 ],
@@ -152,13 +154,14 @@ class _TopBar extends StatelessWidget {
         const Spacer(),
         _Chip(
           tokens: tokens,
+          onTap: () => context.go('/profile'),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text('🪙', style: TextStyle(fontSize: 14)),
               const SizedBox(width: 6),
               Text(
-                '0',
+                '${profile.coins}',
                 style: TextStyle(
                   color: tokens.ink,
                   fontSize: 13,
@@ -169,9 +172,11 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        _IconChip(tokens: tokens, emoji: '🎯'),
-        const SizedBox(width: 8),
-        _IconChip(tokens: tokens, emoji: '⚙'),
+        _IconChip(
+          tokens: tokens,
+          emoji: '⚙',
+          onTap: () => context.go('/settings'),
+        ),
       ],
     );
   }
@@ -372,45 +377,63 @@ class _ModeButton extends StatelessWidget {
   }
 }
 
-/// Контейнер-«чип» с фоном панели и скруглением темы.
+/// Контейнер-«чип» с фоном панели и скруглением темы (кликабельный).
 class _Chip extends StatelessWidget {
   final BlockDuelTheme tokens;
   final Widget child;
+  final VoidCallback? onTap;
 
-  const _Chip({required this.tokens, required this.child});
+  const _Chip({required this.tokens, required this.child, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: tokens.panel,
+    return Material(
+      color: tokens.panel,
+      borderRadius: BorderRadius.circular(tokens.btnRadius),
+      child: InkWell(
         borderRadius: BorderRadius.circular(tokens.btnRadius),
-        border: Border.all(color: tokens.line),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(tokens.btnRadius),
+            border: Border.all(color: tokens.line),
+          ),
+          child: child,
+        ),
       ),
-      child: child,
     );
   }
 }
 
-/// Квадратный чип-иконка.
+/// Квадратный чип-иконка (кликабельный).
 class _IconChip extends StatelessWidget {
   final BlockDuelTheme tokens;
   final String emoji;
+  final VoidCallback? onTap;
 
-  const _IconChip({required this.tokens, required this.emoji});
+  const _IconChip({required this.tokens, required this.emoji, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 38,
-      height: 38,
-      decoration: BoxDecoration(
-        color: tokens.panel,
+    return Material(
+      color: tokens.panel,
+      borderRadius: BorderRadius.circular(tokens.btnRadius),
+      child: InkWell(
         borderRadius: BorderRadius.circular(tokens.btnRadius),
-        border: Border.all(color: tokens.line),
+        onTap: onTap,
+        child: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(tokens.btnRadius),
+            border: Border.all(color: tokens.line),
+          ),
+          child: Center(
+            child: Text(emoji, style: const TextStyle(fontSize: 16)),
+          ),
+        ),
       ),
-      child: Center(child: Text(emoji, style: const TextStyle(fontSize: 16))),
     );
   }
 }

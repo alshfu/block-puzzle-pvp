@@ -61,6 +61,10 @@ dependencies:
   # Навигация.
   go_router: ^17.3.0
 
+  # Локальное хранилище (тема, настройки, профиль, статистика). На Web —
+  # localStorage/IndexedDB. Hive для тяжёлых сохранёнок — позже при надобности.
+  shared_preferences: ^2.5.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
