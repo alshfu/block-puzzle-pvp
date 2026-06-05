@@ -20,6 +20,7 @@ import '../design_tokens.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/scoreboard.dart';
+import '../widgets/turn_timer.dart';
 
 /// Игровой экран для режима [modeRaw] (строка из маршрута).
 class GameScreen extends ConsumerStatefulWidget {
@@ -73,6 +74,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       _TopBar(theme: theme, onNewGame: vm.newGame),
                       const SizedBox(height: 10),
                       Scoreboard(state: state, theme: theme),
+                      if (humanTurn) ...[
+                        const SizedBox(height: 10),
+                        TurnTimer(state: state, theme: theme),
+                      ],
                       const SizedBox(height: 12),
                       BoardView(
                         state: state,

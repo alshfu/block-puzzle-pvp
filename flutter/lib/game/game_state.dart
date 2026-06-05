@@ -73,6 +73,12 @@ class GameState {
   /// Индекс текущей ориентации выбранной фигуры (в списке [orientations]).
   final int orientIndex;
 
+  /// Лимит времени на текущий ход (секунды; `infinity` если blitz выключен).
+  final double turnLimit;
+
+  /// Остаток времени на текущий ход (секунды).
+  final double turnRemaining;
+
   /// Правила партии.
   final RuleConfig cfg;
 
@@ -86,6 +92,8 @@ class GameState {
     required this.winner,
     required this.selectedPieceId,
     required this.orientIndex,
+    required this.turnLimit,
+    required this.turnRemaining,
     required this.cfg,
   });
 
@@ -138,6 +146,8 @@ class GameState {
     String? selectedPieceId,
     bool clearSelection = false,
     int? orientIndex,
+    double? turnLimit,
+    double? turnRemaining,
   }) => GameState(
     board: board ?? this.board,
     players: players ?? this.players,
@@ -149,6 +159,8 @@ class GameState {
         ? null
         : (selectedPieceId ?? this.selectedPieceId),
     orientIndex: orientIndex ?? this.orientIndex,
+    turnLimit: turnLimit ?? this.turnLimit,
+    turnRemaining: turnRemaining ?? this.turnRemaining,
     cfg: cfg,
   );
 }

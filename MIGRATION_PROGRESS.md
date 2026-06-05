@@ -95,8 +95,10 @@
       `screens/game_placeholder_screen.dart`. `main.dart` → ProviderScope.
       Меню рендерится на Web (localhost:8080), переключение 3 тем работает.
       `flutter analyze` чист, 48 тестов зелёные.
-- [ ] Шрифты TTF (6 семейств) — пока рендер фолбэком.
-- [ ] Golden-скриншот MenuScreen в 3 темах (§6.8) — после шрифтов.
+- [x] **2026-06-05** — 6 TTF-шрифтов подключены (`assets/fonts/`, OFL),
+      бандлятся локально; variable Bricolage/Fredoka/Baloo2/Oswald + статические
+      DM Mono / Share Tech Mono. FontManifest на Web содержит все 6 семейств.
+- [ ] Golden-скриншот MenuScreen в 3 темах (§6.8) — после доводки вёрстки.
 - [x] **2026-06-05** — **Фаза 2.3: игра играбельна.** Model/ViewModel:
       `game/match_config.dart`, `game/game_state.dart` (+ query-методы
       activeCells/canPlaceAt/previewCells), `game/game_notifier.dart`
@@ -112,7 +114,21 @@
       конструкторе. Blitz-таймер/force-place — Фаза 3; arcade/tutorial/online,
       сохранёнки, звук, декор — последующие фазы.
 
-## Фазы 3–9
+## Фаза 3 — бот, blitz, force-place
+
+- [x] **2026-06-05** — бот ходит через `Timer` (3 уровня) — сделано в 2.3.
+- [x] **2026-06-05** — blitz-таймер + force-place: `GameState` получил
+      `turnLimit`/`turnRemaining`; `GameNotifier._armTimers/_tick/_onTimeout`
+      ведут отсчёт 100мс на ходу человека и на таймауте ставят фигуру через
+      `forcePlace` (предпочитая выбранную); виджет `ui/widgets/turn_timer.dart`
+      (полоса + секунды, тревожный цвет ≤3с). Добавлен `RuleConfig.copyWith`
+      (аддитивно). Тест `blitz-таймаут → force-place`. **53 теста** зелёные,
+      analyze чист.
+
+**Фаза 3 завершена.** Дальше — Фаза 4 (Storage/Hive + Profile + Achievements +
+Daily + resume сохранёнки).
+
+## Фазы 4–9
 
 См. план `MIGRATION_FLUTTER.md` §8. Будут раскрыты по мере подхода.
 

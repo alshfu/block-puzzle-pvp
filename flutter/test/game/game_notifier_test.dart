@@ -81,6 +81,24 @@ void main() {
     }
   });
 
+  test('blitz-таймаут авто-ставит фигуру (force-place)', () async {
+    final c = _container();
+    // Короткий лимит, чтобы таймаут наступил быстро в реальном времени.
+    final shortCfg = defaultConfig.copyWith(
+      turnTimeStart: 0.2,
+      turnTimeMin: 0.2,
+    );
+    final cfg = MatchConfig(mode: MatchMode.hotseat, seed: 1, cfg: shortCfg);
+    // Чтение строит ViewModel и запускает blitz-тикер.
+    expect(c.read(gameProvider(cfg)).turnLimit, closeTo(0.2, 1e-9));
+
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    final s = c.read(gameProvider(cfg));
+    final filled = s.board.any((row) => row.any((cell) => cell.filled));
+    expect(filled, isTrue, reason: 'force-place поставил фигуру по таймауту');
+  });
+
   test('ход бота заблокирован для управляемого ботом игрока', () {
     final c = _container();
     const botCfg = MatchConfig(mode: MatchMode.bot, seed: 7);

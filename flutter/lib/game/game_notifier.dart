@@ -3,11 +3,18 @@
 /// За что отвечает файл:
 ///   Управляет ходом партии поверх чистого ядра (Model): держит мешки и rng,
 ///   выставляет команды для View (выбор фигуры, поворот/отражение, постановка,
-///   новая игра) и сам ходит за бота через `Timer`. Никакого `BuildContext`,
-///   виджетов и `dart:ui` — только Riverpod + ядро.
+///   новая игра), сам ходит за бота и ведёт blitz-таймер с force-place на
+///   таймауте (ТЗ §2.7.1). Никакого `BuildContext`, виджетов и `dart:ui` —
+///   только Riverpod + ядро.
+///
+/// Таймеры:
+///   `_botTimer`    — отложенный ход бота (читаемая пауза);
+///   `_blitzTicker` — периодический отсчёт времени хода человека (100 мс);
+///   оба переинициализируются на каждой смене хода методом [_armTimers] и
+///   отменяются при dispose.
 ///
 /// Соответствие TS: `src/ui/useGame.ts` (reducer + refs на bag/rng + бот через
-/// setTimeout). Blitz-таймер/force-place подключим в Фазе 3.
+/// setTimeout + blitz tick + forcePlace).
 library;
 
 import 'dart:async';
@@ -21,6 +28,12 @@ import 'match_config.dart';
 /// Задержка перед ходом бота — чтобы ход был визуально читаем.
 const Duration _botThinkDelay = Duration(milliseconds: 350);
 
+/// Период тика blitz-таймера.
+const Duration _blitzTick = Duration(milliseconds: 100);
+
+/// Шаг убывания таймера за один тик (секунды) — соответствует [_blitzTick].
+const double _blitzStep = 0.1;
+
 /// ViewModel партии. Семейство по [MatchConfig]: конфиг приходит в конструктор
 /// (API Riverpod 3.x: `NotifierT Function(ArgT)`), `build()` — без параметров.
 class GameNotifier extends Notifier<GameState> {
@@ -33,18 +46,26 @@ class GameNotifier extends Notifier<GameState> {
   /// Источник случайности для решений бота.
   late RandomSource _botRng;
 
-  /// Таймер отложенного хода бота (отменяется при dispose/смене хода).
+  /// Источник случайности для force-place на таймауте.
+  late RandomSource _forceRng;
+
+  /// Таймер отложенного хода бота.
   Timer? _botTimer;
+
+  /// Периодический тикер blitz-таймера хода человека.
+  Timer? _blitzTicker;
 
   /// Создаёт ViewModel для конкретной партии [config].
   GameNotifier(this.config);
 
   @override
   GameState build() {
-    ref.onDispose(() => _botTimer?.cancel());
+    ref.onDispose(() {
+      _botTimer?.cancel();
+      _blitzTicker?.cancel();
+    });
     final fresh = _freshState();
-    // Если первый ход — за ботом (botvbot), запланировать его после построения.
-    _scheduleBotIfNeeded(fresh);
+    _armTimers(fresh);
     return fresh;
   }
 
@@ -78,18 +99,18 @@ class GameNotifier extends Notifier<GameState> {
 
   /// Начинает новую партию с тем же конфигом.
   void newGame() {
-    _botTimer?.cancel();
     final fresh = _freshState();
     state = fresh;
-    _scheduleBotIfNeeded(fresh);
+    _armTimers(fresh);
   }
 
-  // ── Внутреннее ─────────────────────────────────────────────────────────────
+  // ── Старт партии ─────────────────────────────────────────────────────────
 
   /// Создаёт стартовое состояние: новые мешки, розданные руки, пустая доска.
   GameState _freshState() {
     _bags = [Bag(config.seed), Bag(config.seed ^ 0x9e3779b9)];
     _botRng = makeRng(config.seed + 777);
+    _forceRng = makeRng(config.seed + 999);
     final names = [
       'Игрок 1',
       config.mode == MatchMode.hotseat ? 'Игрок 2' : 'Бот',
@@ -103,6 +124,7 @@ class GameNotifier extends Notifier<GameState> {
           name: names[i],
         ),
     ];
+    final limit = turnTimeForRound(0, config.cfg);
     return GameState(
       board: emptyBoard(),
       players: players,
@@ -112,6 +134,8 @@ class GameNotifier extends Notifier<GameState> {
       winner: null,
       selectedPieceId: null,
       orientIndex: 0,
+      turnLimit: limit,
+      turnRemaining: limit,
       cfg: config.cfg,
     );
   }
@@ -125,8 +149,10 @@ class GameNotifier extends Notifier<GameState> {
     return hand;
   }
 
+  // ── Ход ──────────────────────────────────────────────────────────────────
+
   /// Применяет постановку фигуры [pieceId] (клетки [cells]) с якорем `(r, c)`:
-  /// очистка, очки, пополнение руки, передача хода, проверка тупика.
+  /// очистка, очки, пополнение руки, передача хода, сброс таймера, тупик.
   void _applyPlacement(String pieceId, List<Coord> cells, int r, int c) {
     final player = state.current;
     final board = cloneBoard(state.board);
@@ -157,6 +183,7 @@ class GameNotifier extends Notifier<GameState> {
 
     final next = 1 - player;
     final round = player == 1 ? state.round + 1 : state.round;
+    final limit = turnTimeForRound(round, config.cfg);
 
     var nextState = state.copyWith(
       board: board,
@@ -165,6 +192,8 @@ class GameNotifier extends Notifier<GameState> {
       round: round,
       clearSelection: true,
       orientIndex: 0,
+      turnLimit: limit,
+      turnRemaining: limit,
     );
 
     // Тупик: следующий игрок не может сходить — партия окончена.
@@ -173,7 +202,7 @@ class GameNotifier extends Notifier<GameState> {
     }
 
     state = nextState;
-    if (!state.gameOver) _scheduleBotIfNeeded(state);
+    _armTimers(state);
   }
 
   /// Завершает партию: считает победителя по счёту (равенство — ничья).
@@ -189,11 +218,55 @@ class GameNotifier extends Notifier<GameState> {
     );
   }
 
-  /// Планирует ход бота, если сейчас ходит управляемый ботом игрок.
-  void _scheduleBotIfNeeded(GameState s) {
+  // ── Таймеры (бот + blitz) ──────────────────────────────────────────────────
+
+  /// Переинициализирует таймеры под ход состояния [s]: бот — отложенный ход;
+  /// человек — запуск blitz-тикера (если таймер включён). Состояние не эмитит
+  /// (лимит уже выставлен при смене хода).
+  void _armTimers(GameState s) {
     _botTimer?.cancel();
-    if (s.gameOver || !config.isBot(s.current)) return;
-    _botTimer = Timer(_botThinkDelay, _botMove);
+    _blitzTicker?.cancel();
+    if (s.gameOver) return;
+    if (config.isBot(s.current)) {
+      _botTimer = Timer(_botThinkDelay, _botMove);
+      return;
+    }
+    if (!s.turnLimit.isFinite) return; // blitz выключен
+    _blitzTicker = Timer.periodic(_blitzTick, (_) => _tick());
+  }
+
+  /// Один тик blitz-таймера: убывание времени, при нуле — force-place.
+  void _tick() {
+    final s = state;
+    if (s.gameOver || config.isBot(s.current)) {
+      _blitzTicker?.cancel();
+      return;
+    }
+    final remaining = s.turnRemaining - _blitzStep;
+    if (remaining <= 0) {
+      _onTimeout();
+    } else {
+      state = s.copyWith(turnRemaining: remaining);
+    }
+  }
+
+  /// Таймаут хода: ставит фигуру force-place (предпочитая выбранную), либо
+  /// завершает партию при тупике.
+  void _onTimeout() {
+    _blitzTicker?.cancel();
+    final s = state;
+    final move = forcePlace(
+      s.board,
+      s.currentPlayer.hand,
+      config.cfg,
+      _forceRng,
+      preferredPieceId: s.selectedPieceId,
+    );
+    if (move == null) {
+      state = _finishGame(s);
+      return;
+    }
+    _applyPlacement(move.pieceId, move.cells, move.r, move.c);
   }
 
   /// Ход бота: выбирает и применяет ход, либо завершает партию при тупике.

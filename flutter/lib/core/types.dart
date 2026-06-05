@@ -183,6 +183,52 @@ class RuleConfig {
     required this.turnTimeMin,
     required this.onTimeout,
   });
+
+  /// Возвращает копию с изменёнными полями (для настроек/онлайна; ядро не
+  /// зависит от изменяемости — это удобный конструктор вариаций).
+  RuleConfig copyWith({
+    int? handSize,
+    bool? rotationEnabled,
+    bool? flipEnabled,
+    bool? sharedBag,
+    bool? comboEnabled,
+    int? comboCap,
+    double? comboStep,
+    int? perfectClearBonus,
+    int? scoreRowPts,
+    int? scoreColPts,
+    int? scoreBoxPts,
+    double? multiClearStep,
+    double? comboExpStep,
+    double? speedBonusMax,
+    Map<PieceType, int>? placementBonus,
+    bool? turnTimerEnabled,
+    double? turnTimeStart,
+    double? turnTimeDecay,
+    double? turnTimeMin,
+    TimeoutPolicy? onTimeout,
+  }) => RuleConfig(
+    handSize: handSize ?? this.handSize,
+    rotationEnabled: rotationEnabled ?? this.rotationEnabled,
+    flipEnabled: flipEnabled ?? this.flipEnabled,
+    sharedBag: sharedBag ?? this.sharedBag,
+    comboEnabled: comboEnabled ?? this.comboEnabled,
+    comboCap: comboCap ?? this.comboCap,
+    comboStep: comboStep ?? this.comboStep,
+    perfectClearBonus: perfectClearBonus ?? this.perfectClearBonus,
+    scoreRowPts: scoreRowPts ?? this.scoreRowPts,
+    scoreColPts: scoreColPts ?? this.scoreColPts,
+    scoreBoxPts: scoreBoxPts ?? this.scoreBoxPts,
+    multiClearStep: multiClearStep ?? this.multiClearStep,
+    comboExpStep: comboExpStep ?? this.comboExpStep,
+    speedBonusMax: speedBonusMax ?? this.speedBonusMax,
+    placementBonus: placementBonus ?? this.placementBonus,
+    turnTimerEnabled: turnTimerEnabled ?? this.turnTimerEnabled,
+    turnTimeStart: turnTimeStart ?? this.turnTimeStart,
+    turnTimeDecay: turnTimeDecay ?? this.turnTimeDecay,
+    turnTimeMin: turnTimeMin ?? this.turnTimeMin,
+    onTimeout: onTimeout ?? this.onTimeout,
+  );
 }
 
 /// Дефолтная конфигурация правил. Значения 1:1 с TS `DEFAULT_CONFIG`
