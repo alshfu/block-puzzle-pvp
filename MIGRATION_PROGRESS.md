@@ -70,9 +70,13 @@
       (PRNG vs эталон). **PRNG проверен и на Web:** `test/core/rng_web_test.dart`
       проходит и через `dart test` (VM), и `dart test -p chrome` (JS) — риск
       32/64-bit закрыт.
-- [ ] Зеркало поведенческих unit-тестов (deadlock+forcePlace, bot validity/
-      timing, timer-значения) — golden уже покрывает board/clears/scoring/bag/
-      orientations/enumerateMoves; осталось добить явные кейсы.
+- [x] **2026-06-05** — поведенческие unit-тесты `test/core/
+      core_behavior_test.dart` (тупик/forcePlace, валидность бота на 3 уровнях,
+      blitz-таймер, антидубль drawAvoiding, доска/очистки). Итого **48 тестов**
+      зелёные, `flutter analyze` чист.
+
+**Фаза 1 завершена.** Ядро портировано и детерминизм доказан бит-в-бит
+(VM + Web). Следующая — Фаза 2 (UI shell + design tokens + Board на Flame).
 
 ## Фазы 2–9
 
