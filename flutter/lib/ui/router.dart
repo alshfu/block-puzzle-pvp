@@ -10,7 +10,7 @@ library;
 
 import 'package:go_router/go_router.dart';
 
-import 'screens/game_placeholder_screen.dart';
+import 'screens/game_screen.dart';
 import 'screens/menu_screen.dart';
 
 /// Глобальный роутер приложения.
@@ -21,7 +21,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/game/:mode',
       builder: (context, state) =>
-          GamePlaceholderScreen(mode: state.pathParameters['mode'] ?? 'bot'),
+          GameScreen(modeRaw: state.pathParameters['mode'] ?? 'bot'),
     ),
   ],
 );

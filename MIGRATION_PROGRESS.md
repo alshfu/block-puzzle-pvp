@@ -97,8 +97,20 @@
       `flutter analyze` чист, 48 тестов зелёные.
 - [ ] Шрифты TTF (6 семейств) — пока рендер фолбэком.
 - [ ] Golden-скриншот MenuScreen в 3 темах (§6.8) — после шрифтов.
-- [ ] **Фаза 2.3:** GameNotifier (ViewModel) + GameScreen + Board на Flame +
-      Hand + drag-and-drop + rotate/flip → играбельный hot-seat.
+- [x] **2026-06-05** — **Фаза 2.3: игра играбельна.** Model/ViewModel:
+      `game/match_config.dart`, `game/game_state.dart` (+ query-методы
+      activeCells/canPlaceAt/previewCells), `game/game_notifier.dart`
+      (Riverpod Notifier-family: выбор/поворот/постановка, авто-ход бота через
+      Timer, детекция тупика, без BuildContext). View: доска на Flame
+      `ui/game/board_game.dart`, обёртка ввода `ui/widgets/board_view.dart`
+      (tap/hover/drag → призрак + постановка), `hand_view.dart`,
+      `scoreboard.dart`, экран `screens/game_screen.dart` (+ оверлей конца
+      игры), роут `/game/:mode` → GameScreen. Режимы hotseat/bot/botvbot.
+      Тесты ViewModel `test/game/game_notifier_test.dart`. Итого **52 теста**
+      зелёные, analyze чист, игра идёт на Web (localhost:8080).
+      *Замечания:* API Riverpod 3.x family = `Notifier` с конфигом в
+      конструкторе. Blitz-таймер/force-place — Фаза 3; arcade/tutorial/online,
+      сохранёнки, звук, декор — последующие фазы.
 
 ## Фазы 3–9
 
