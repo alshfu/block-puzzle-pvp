@@ -298,12 +298,34 @@ precious-wandering-sifakis.md`.
 (реального сервера в CI нет). Остаётся ручной кросс-протокол smoke (локальный
 Node-сервер + `flutter run -d chrome --dart-define=PARTY_HOST=localhost:1999`).
 
-## Фаза 6B + 7–9
+## Фаза 6B — Auth + Firestore sync
 
-- **6B** — Google sign-in (FlutterFire) + Firestore cross-device sync. Блокеры:
-  `flutterfire configure` (твой Firebase-проект) + решение по схеме CloudSnapshot.
+Firebase-проект `blockduel-web` (config заведён вручную из консоли, без
+flutterfire CLI — у него был сломан токен). apiKey web публичен.
+
+- [x] **2026-06-08** — **6B.1 Firebase + Google sign-in**: `firebase_options.dart`
+      (web), мягкая инициализация в `main` (сбой не валит app), `auth/
+      auth_controller.dart` (guarded: без Firebase available=false; web popup +
+      authStateChanges + signOut), секция «Аккаунт» в настройках. analyze:
+      `analysis_options.yaml` excludes `build/**`. **119 тестов.**
+- [x] **2026-06-08** — **6B.2 Firestore sync**: `auth/cloud_snapshot.dart`
+      (чистая модель + merge: max-счётчики, не-дефолтные ник/аватар, id из
+      облака, union ачивок), `auth/sync_controller.dart` (users/{uid}: pull+seed
+      на входе, debounced push на изменениях; guarded), `replace`/`mergeUnlocked`
+      в контроллерах, активация в `app.dart`. **123 теста** зелёные, analyze чист,
+      web собирается.
+
+**Фаза 6B закрыта по коду.** Минимальная схема (легаси-данных TS нет). Осталось:
+нативный Google-вход (Android/iOS — нужен flutterfire configure на платформы),
+применить `firestore.rules` в проекте `blockduel-web`, богатая схема (кошелёк/
+скины/детальная статистика) — позже. Ручная проверка входа+синка — за
+пользователем (`flutter run -d chrome`).
+
+## Фазы 7–9
+
 - Богатая онлайн-статистика (`stats.ts`) + ~105 PvP-ачивок — отдельный слайс.
-- Фазы 7–9 — см. `MIGRATION_FLUTTER.md` §8.
+- Фаза 7 (shop+powerups), 8 (cut-over), 9 (Dart-сервер) — см.
+  `MIGRATION_FLUTTER.md` §8.
 
 ---
 
@@ -316,7 +338,8 @@ Node-сервер + `flutter run -d chrome --dart-define=PARTY_HOST=localhost:19
 
 ---
 
-_Last updated: 2026-06-07 — Фазы 0–5 + 6A закрыты по коду. Онлайн-PvP (лобби,
-живой матч, лидерборд) на Dart-клиенте к старому Node-серверу (кросс-протокол).
-117 тестов зелёные, web собирается. Дальше — 6B (auth + Firestore sync, нужен
-flutterfire configure) или Фаза 7 (shop). Открыт визуальный gate pixel-parity._
+_Last updated: 2026-06-08 — Фазы 0–6 закрыты по коду. Онлайн-PvP (кросс-протокол
+к Node-серверу) + Google auth (web) + Firestore sync (проект blockduel-web).
+123 теста зелёные, web собирается. Дальше — Фаза 7 (shop) или богатая
+онлайн-статистика+PvP-ачивки. Открыт визуальный gate pixel-parity и ручная
+проверка онлайна/входа/синка пользователем._
