@@ -204,8 +204,17 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
       mock-prefs (иначе `pumpAndSettle` висит на бесконечном тикере). **74 теста**
       зелёные, analyze чист, web собирается. *Отложено:* ponies/mascots в
       candy-фоне — отдельный SVG-слайс.
-- [ ] Декор (продолжение): `Mascot`/`CartoonPony` через `flutter_svg` или
-      `CustomPaint`, `FloatingTheme`-кнопка.
+- [x] **2026-06-07** — **маскоты `Mascot`/`CartoonPony`** через **flutter_svg**
+      (`SvgPicture.string` той же SVG-разметкой, что в TSX → точный силуэт без
+      ручного переноса безье). `ui/decor/cartoon_pony.dart` (chibi-пони,
+      viewBox 160, параметризован телом/3 прядями гривы/акцентом + хелпер
+      `darken`), `ui/decor/mascot.dart` (по теме: candy=пони, night=тень в
+      капюшоне, neutral=киберробот; viewBox 120). Интеграция: 4 парящих пони в
+      углах candy-фона (`ThemeBackdrop`, порт `.candy-pony-deco`, покачивание
+      `ponyBob`, только на широких экранах ≥700px) + маскот в оверлее конца игры
+      (`_GameOverOverlay`). Тест `test/decor/mascot_test.dart` (рендер всех
+      вариантов + `darken`). **80 тестов** зелёные, analyze чист, web собирается.
+- [ ] Декор (продолжение): `FloatingTheme`-кнопка.
 - [ ] Анимации: `ConfettiComponent`/`ComboFlashComponent` (Flame), Toast/Pause/
       Result-оверлеи через `flutter_animate` с теми же таймингами.
 - [ ] Фоновая музыка (`src/ui/music.ts`) — синтез в Dart, отдельный слайс.
@@ -228,5 +237,5 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
 ---
 
 _Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 в работе (звук в Dart +
-анимированный ThemeBackdrop под 3 темы). 74 теста зелёные, web собирается.
-Дальше по Фазе 5 — маскоты/ponies, Confetti/ComboFlash, музыка, pixel-parity._
+ThemeBackdrop под 3 темы + маскоты/ponies через flutter_svg). 80 тестов зелёные,
+web собирается. Дальше по Фазе 5 — Confetti/ComboFlash, музыка, pixel-parity._

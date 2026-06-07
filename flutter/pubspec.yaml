@@ -65,6 +65,7 @@ dependencies:
   # localStorage/IndexedDB. Hive для тяжёлых сохранёнок — позже при надобности.
   shared_preferences: ^2.5.5
   audioplayers: ^6.7.1
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:

@@ -23,7 +23,9 @@ import '../../game/game_notifier.dart';
 import '../../game/game_state.dart';
 import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
+import '../decor/mascot.dart';
 import '../design_tokens.dart';
+import '../theme/theme_controller.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/scoreboard.dart';
@@ -178,6 +180,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           if (state.gameOver)
             _GameOverOverlay(
               theme: theme,
+              themeId: ref.watch(themeControllerProvider),
               winnerName: state.winner == null
                   ? null
                   : state.players[state.winner!].name,
@@ -316,12 +319,14 @@ class _IconButton extends StatelessWidget {
 /// Оверлей конца партии: результат + кнопки.
 class _GameOverOverlay extends StatelessWidget {
   final BlockDuelTheme theme;
+  final ThemeId themeId;
   final String? winnerName;
   final List<int> scores;
   final VoidCallback onNewGame;
 
   const _GameOverOverlay({
     required this.theme,
+    required this.themeId,
     required this.winnerName,
     required this.scores,
     required this.onNewGame,
@@ -342,6 +347,8 @@ class _GameOverOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Mascot(themeId: themeId, size: 96),
+              const SizedBox(height: 8),
               Text(
                 winnerName == null ? 'Ничья' : 'Победил $winnerName',
                 style: TextStyle(

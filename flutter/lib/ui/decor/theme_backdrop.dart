@@ -30,6 +30,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../settings/settings_controller.dart';
 import '../design_tokens.dart';
 import '../theme/theme_controller.dart';
+import 'cartoon_pony.dart';
 
 /// Анимированный фон, переключающийся по текущей теме.
 class ThemeBackdrop extends ConsumerStatefulWidget {
@@ -161,14 +162,101 @@ class _ThemeBackdropState extends ConsumerState<ThemeBackdrop>
         stops: [0.0, 0.3, 0.6, 1.0],
       ),
     ),
-    child: AnimatedBuilder(
-      animation: _clock,
-      builder: (_, _) => CustomPaint(
-        painter: _CandyPainter(bits: _bits, seconds: _clock.value),
-        size: Size.infinite,
+    child: LayoutBuilder(
+      builder: (context, constraints) => Stack(
+        children: [
+          AnimatedBuilder(
+            animation: _clock,
+            builder: (_, _) => CustomPaint(
+              painter: _CandyPainter(bits: _bits, seconds: _clock.value),
+              size: Size.infinite,
+            ),
+          ),
+          // Парящие пони в боковых зонах — только на широких экранах (как
+          // `.candy-pony-deco`, видимые на десктопе).
+          if (constraints.maxWidth >= 700)
+            ..._candyPonies(constraints.maxWidth),
+        ],
       ),
     ),
   );
+
+  /// Четыре декоративных пони по углам (порт `.candy-pony-deco p1..p4`),
+  /// слегка покачиваются (`@keyframes ponyBob`) от общих часов.
+  List<Widget> _candyPonies(double width) {
+    final size = width.clamp(700.0, 1600.0) * 0.11;
+    final ponies = <_PonyDeco>[
+      const _PonyDeco(
+        body: '#ff9ecb',
+        mane: ['#ffd166', '#7fe7df', '#b89cff'],
+        accent: '#ff77b3',
+        left: 0.02,
+        top: 0.14,
+        flip: false,
+        delay: 0.5,
+      ),
+      const _PonyDeco(
+        body: '#b89cff',
+        mane: ['#ff77b3', '#ffd166', '#7fe7df'],
+        accent: '#ff9ecb',
+        right: 0.02,
+        top: 0.22,
+        flip: true,
+        delay: 1.5,
+      ),
+      const _PonyDeco(
+        body: '#7fe7df',
+        mane: ['#b89cff', '#ff9ecb', '#ffd166'],
+        accent: '#ff77b3',
+        left: 0.03,
+        bottom: 0.12,
+        flip: false,
+        delay: 2.5,
+      ),
+      const _PonyDeco(
+        body: '#ffd166',
+        mane: ['#7fe7df', '#ff77b3', '#b89cff'],
+        accent: '#ff9ecb',
+        right: 0.03,
+        bottom: 0.18,
+        flip: true,
+        delay: 3.5,
+      ),
+    ];
+    return [
+      for (final p in ponies)
+        Positioned(
+          left: p.left == null ? null : p.left! * width,
+          right: p.right == null ? null : p.right! * width,
+          top: p.top == null ? null : p.top! * width,
+          bottom: p.bottom == null ? null : p.bottom! * width,
+          child: AnimatedBuilder(
+            animation: _clock,
+            builder: (_, child) {
+              // Покачивание ±6px по вертикали, период 4с, со сдвигом фазы.
+              final bob =
+                  math.sin((_clock.value + p.delay) / 4 * 2 * math.pi) * 6;
+              final m = Matrix4.translationValues(0, bob, 0);
+              if (p.flip) m.scaleByDouble(-1.0, 1.0, 1.0, 1.0);
+              return Transform(
+                alignment: Alignment.center,
+                transform: m,
+                child: child,
+              );
+            },
+            child: Opacity(
+              opacity: 0.9,
+              child: CartoonPony(
+                body: p.body,
+                mane: p.mane,
+                accent: p.accent,
+                size: size,
+              ),
+            ),
+          ),
+        ),
+    ];
+  }
 
   // ── Night ────────────────────────────────────────────────────────────────
 
@@ -277,6 +365,31 @@ class _Building {
   final double width;
   final double height;
   const _Building({required this.width, required this.height});
+}
+
+/// Конфигурация декоративного пони в углу candy-фона (доли ширины для позиций).
+class _PonyDeco {
+  final String body;
+  final List<String> mane;
+  final String accent;
+  final double? left;
+  final double? right;
+  final double? top;
+  final double? bottom;
+  final bool flip; // отражение по X (как `scaleX(-1)`)
+  final double delay; // фазовый сдвиг покачивания, с
+
+  const _PonyDeco({
+    required this.body,
+    required this.mane,
+    required this.accent,
+    required this.flip,
+    required this.delay,
+    this.left,
+    this.right,
+    this.top,
+    this.bottom,
+  });
 }
 
 /// Рисует радугу, облака и падающие биты темы candy.
