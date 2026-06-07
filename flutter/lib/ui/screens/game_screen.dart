@@ -23,8 +23,11 @@ import '../../game/game_notifier.dart';
 import '../../game/game_state.dart';
 import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
+import '../../settings/settings_controller.dart';
+import '../decor/combo_flash.dart';
 import '../decor/mascot.dart';
 import '../design_tokens.dart';
+import '../game/confetti_overlay.dart';
 import '../theme/theme_controller.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
@@ -49,6 +52,12 @@ class GameScreen extends ConsumerStatefulWidget {
 class _GameScreenState extends ConsumerState<GameScreen> {
   /// Конфиг партии, созданный один раз (стабильный ключ провайдера).
   late final MatchConfig _config;
+
+  /// Flame-салют конфетти (живёт всё время жизни экрана).
+  final ConfettiGame _confetti = ConfettiGame();
+
+  /// Активная вспышка комбо (null — ничего не показываем).
+  _ComboFlashData? _comboFlash;
 
   @override
   void initState() {
@@ -92,6 +101,40 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
   }
 
+  /// Запускает визуальные эффекты на новом ходу: салют конфетти на perfect и
+  /// вспышку комбо при пересечении вех (3/5/10) ходившим человеком. Эффекты
+  /// гасятся при reduceMotion. [prev]/[next] — состояния до/после хода.
+  void _playMoveEffects(GameState? prev, GameState next) {
+    if (prev == null || next.moveSeq <= prev.moveSeq) return;
+    if (ref.read(settingsControllerProvider).reduceMotion) return;
+    final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
+
+    if (next.lastPerfect) {
+      _confetti.burst([tokens.p0, tokens.p1, tokens.good]);
+    }
+
+    // Веха комбо: ходивший игрок — prev.current; его combo выросло после хода.
+    final mover = prev.current;
+    if (_config.isBot(mover)) return;
+    final oldC = prev.players[mover].combo;
+    final newC = next.players[mover].combo;
+    var level = 0;
+    if (oldC < 3 && newC >= 3) level = 1;
+    if (oldC < 5 && newC >= 5) level = 2;
+    if (oldC < 10 && newC >= 10) level = 3;
+    if (level == 0) return;
+
+    final themeId = ref.read(themeControllerProvider);
+    setState(() {
+      _comboFlash = _ComboFlashData(
+        key: next.moveSeq,
+        level: level,
+        combo: newC,
+        message: pickComboMessage(themeId, level),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<BlockDuelTheme>()!;
@@ -99,6 +142,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // зрительского bot×bot. Срабатывает один раз на переходе в gameOver.
     ref.listen(gameProvider(_config), (prev, next) {
       _playMoveSfx(prev, next);
+      _playMoveEffects(prev, next);
       final justEnded = (prev == null || !prev.gameOver) && next.gameOver;
       if (justEnded && _config.mode != MatchMode.botvbot) {
         final won = next.winner == 0;
@@ -177,6 +221,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               ),
             ),
           ),
+          // Салют конфетти (perfect clear) — поверх поля, под оверлеями.
+          Positioned.fill(child: ConfettiOverlay(game: _confetti)),
+          // Вспышка комбо-вехи.
+          if (_comboFlash != null)
+            ComboFlash(
+              key: ValueKey(_comboFlash!.key),
+              themeId: ref.watch(themeControllerProvider),
+              level: _comboFlash!.level,
+              combo: _comboFlash!.combo,
+              message: _comboFlash!.message,
+              onComplete: () => setState(() => _comboFlash = null),
+            ),
           if (state.gameOver)
             _GameOverOverlay(
               theme: theme,
@@ -191,6 +247,21 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       ),
     );
   }
+}
+
+/// Данные активной вспышки комбо ([key] перезапускает анимацию на новой вехе).
+class _ComboFlashData {
+  final int key;
+  final int level;
+  final int combo;
+  final String message;
+
+  const _ComboFlashData({
+    required this.key,
+    required this.level,
+    required this.combo,
+    required this.message,
+  });
 }
 
 /// Верхняя панель игрового экрана: назад + новая игра.

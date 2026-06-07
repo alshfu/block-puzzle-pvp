@@ -215,8 +215,20 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
       (`_GameOverOverlay`). Тест `test/decor/mascot_test.dart` (рендер всех
       вариантов + `darken`). **80 тестов** зелёные, analyze чист, web собирается.
 - [ ] Декор (продолжение): `FloatingTheme`-кнопка.
-- [ ] Анимации: `ConfettiComponent`/`ComboFlashComponent` (Flame), Toast/Pause/
-      Result-оверлеи через `flutter_animate` с теми же таймингами.
+- [x] **2026-06-07** — **Confetti (Flame) + ComboFlash (оверлей).** Confetti
+      `ui/game/confetti_overlay.dart` — порт `Confetti.tsx` на Flame
+      `ParticleSystem`: 32 частицы-прямоугольника, ускоряющееся падение (ease-in
+      через acceleration), дрейф ±40px, вращение 0..720°, затухание; цвета темы
+      (p0/p1/good); прозрачный полноэкранный `GameWidget`, ввод не перехватывает.
+      ComboFlash `ui/decor/combo_flash.dart` — порт `ComboFlash.tsx` (в оригинале
+      DOM-оверлей с SVG-маскотом+текстом, поэтому Flutter-оверлей, а не Flame):
+      `comboMessages`/`pickComboMessage`, маскот с bounce, заголовок цвета уровня
+      (1=p0/2=good/3=p1), вход overshoot-scale + затухание за 1.7с. Триггеры в
+      `GameScreen._playMoveEffects` по диффу: perfect→салют; ходивший человек
+      пересёк комбо 3/5/10 → вспышка уровня 1/2/3 (логика порога 1:1 с
+      `useGame.ts`). Гасятся при reduceMotion. Тест `test/decor/combo_flash_test`.
+      **84 теста** зелёные, analyze чист, web собирается.
+- [ ] Анимации (продолжение): Toast/Pause/Result-оверлеи через `flutter_animate`.
 - [ ] Фоновая музыка (`src/ui/music.ts`) — синтез в Dart, отдельный слайс.
 - [ ] Click-звук на элементы UI (каталог готов — `Sfx.click`).
 - [ ] **Gate:** полная визуальная сверка pixel-parity во всех 3 темах.
@@ -237,5 +249,6 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
 ---
 
 _Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 в работе (звук в Dart +
-ThemeBackdrop под 3 темы + маскоты/ponies через flutter_svg). 80 тестов зелёные,
-web собирается. Дальше по Фазе 5 — Confetti/ComboFlash, музыка, pixel-parity._
+ThemeBackdrop + маскоты/ponies + Confetti на Flame + ComboFlash). 84 теста
+зелёные, web собирается. Дальше по Фазе 5 — Toast/Pause-оверлеи, музыка,
+FloatingTheme, click-звук, pixel-parity._
