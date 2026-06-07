@@ -228,7 +228,17 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
       пересёк комбо 3/5/10 → вспышка уровня 1/2/3 (логика порога 1:1 с
       `useGame.ts`). Гасятся при reduceMotion. Тест `test/decor/combo_flash_test`.
       **84 теста** зелёные, analyze чист, web собирается.
-- [ ] Анимации (продолжение): Toast/Pause/Result-оверлеи через `flutter_animate`.
+- [x] **2026-06-07** — **Toast/Pause-оверлеи + click-звук.** `ui/decor/
+      toast_stack.dart` — порт `ToastStack.tsx`: тосты о вновь разблокированных
+      ачивках сверху (въезд/уезд `toastIn/toastOut`, авто-уезд 4с, тап раньше);
+      источник — `evaluate()` по итогу партии. `ui/decor/pause_overlay.dart` —
+      порт `PauseOverlay.tsx` (блюр + карточка «Пауза» + продолжить/новая/меню).
+      Реальная пауза: `GameState.paused` + `GameNotifier.setPaused` останавливает
+      blitz/бот-таймеры (учёт в `_armTimers`/`_tick`); кнопка ⏸ в топбаре.
+      Click-звук (`Sfx.click`, каталог был готов) на ключевых кнопках: меню
+      (играть/режимы), пауза и её действия, game-over. Тесты: пауза в
+      `game_notifier_test`. **91 тест** зелёный, analyze чист, web собирается.
+- [ ] Анимации (опц.): Result-оверлей как отдельный экран (сейчас инлайн).
 - [x] **2026-06-07** — **фоновая музыка** (порт `src/ui/music.ts`). `audio/
       music.dart` (чистый): парсер нот `noteFreq` (равномерная темперация),
       треки 3 тем (bpm + голоса), `renderTrack` рендерит ОДИН цикл в WAV
@@ -241,7 +251,8 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
       настройке музыки и теме. Тест `test/audio/music_test.dart`. В тестах
       `musicOn:false` (петля-плеер не висит в headless). **90 тестов** зелёные,
       analyze чист, web собирается.
-- [ ] Click-звук на элементы UI (каталог готов — `Sfx.click`).
+- [x] **2026-06-07** — click-звук подключён (см. Toast/Pause-слайс).
+- [ ] `FloatingTheme`-кнопка (плавающий переключатель темы) — опционально.
 - [ ] **Gate:** полная визуальная сверка pixel-parity во всех 3 темах.
 
 ## Фазы 6–9
@@ -259,7 +270,7 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
 
 ---
 
-_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 в работе (звук + музыка
-синтезируются в Dart, ThemeBackdrop, маскоты/ponies, Confetti на Flame,
-ComboFlash). 90 тестов зелёные, web собирается. Дальше по Фазе 5 —
-Toast/Pause-оверлеи, FloatingTheme, click-звук, pixel-parity._
+_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 почти закрыта (звук+
+музыка в Dart, ThemeBackdrop, маскоты/ponies, Confetti на Flame, ComboFlash,
+Toast/Pause-оверлеи, click-звук). 91 тест зелёный, web собирается. Осталось:
+FloatingTheme (опц.) + gate pixel-parity (визуальная приёмка)._

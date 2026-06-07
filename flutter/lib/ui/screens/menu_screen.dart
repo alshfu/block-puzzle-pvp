@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../audio/audio_service.dart';
+import '../../audio/sfx.dart';
 import '../../game/saved_game.dart';
 import '../../game/saved_game_store.dart';
 import '../../profile/profile_controller.dart';
@@ -42,8 +44,14 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   /// Раскрыт ли список режимов (локальное состояние View).
   bool _modeOpen = false;
 
+  /// Проигрывает звук клика по элементу UI.
+  void _click() => ref.read(audioServiceProvider).play(Sfx.click);
+
   /// Навигация к игре выбранного режима.
-  void _start(GameMode mode) => context.go('/game/${mode.name}');
+  void _start(GameMode mode) {
+    _click();
+    context.go('/game/${mode.name}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +113,14 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                       _Actions(
                         tokens: tokens,
                         modeOpen: _modeOpen,
-                        onOpenModes: () => setState(() => _modeOpen = true),
-                        onBack: () => setState(() => _modeOpen = false),
+                        onOpenModes: () {
+                          _click();
+                          setState(() => _modeOpen = true);
+                        },
+                        onBack: () {
+                          _click();
+                          setState(() => _modeOpen = false);
+                        },
                         onStart: _start,
                       ),
                       const SizedBox(height: 16),

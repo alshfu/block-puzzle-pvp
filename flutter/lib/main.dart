@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'storage/prefs.dart';
 
-/// Запускает приложение: грузит хранилище и поднимает DI-корень MVVM.
+/// З   апускает приложение: грузит хранилище и поднимает DI-корень MVVM.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();

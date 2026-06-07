@@ -92,6 +92,9 @@ class GameState {
   /// Был ли последний ход perfect clear.
   final bool lastPerfect;
 
+  /// Стоит ли партия на паузе (таймеры остановлены, показан оверлей).
+  final bool paused;
+
   /// Создаёт снимок партии.
   const GameState({
     required this.board,
@@ -108,6 +111,7 @@ class GameState {
     this.moveSeq = 0,
     this.lastClearCount = 0,
     this.lastPerfect = false,
+    this.paused = false,
   });
 
   /// Текущий игрок.
@@ -164,6 +168,7 @@ class GameState {
     int? moveSeq,
     int? lastClearCount,
     bool? lastPerfect,
+    bool? paused,
   }) => GameState(
     board: board ?? this.board,
     players: players ?? this.players,
@@ -181,5 +186,6 @@ class GameState {
     moveSeq: moveSeq ?? this.moveSeq,
     lastClearCount: lastClearCount ?? this.lastClearCount,
     lastPerfect: lastPerfect ?? this.lastPerfect,
+    paused: paused ?? this.paused,
   );
 }

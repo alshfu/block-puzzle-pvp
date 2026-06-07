@@ -108,6 +108,13 @@ class GameNotifier extends Notifier<GameState> {
     _applyPlacement(piece.id, cells, r, c);
   }
 
+  /// Ставит/снимает партию с паузы: останавливает или перезапускает таймеры.
+  void setPaused(bool value) {
+    if (state.gameOver || state.paused == value) return;
+    state = state.copyWith(paused: value);
+    _armTimers(state);
+  }
+
   /// Начинает новую партию с тем же конфигом (сбрасывает сохранёнку).
   void newGame() {
     ref.read(savedGameStoreProvider).clear();
@@ -315,7 +322,7 @@ class GameNotifier extends Notifier<GameState> {
   void _armTimers(GameState s) {
     _botTimer?.cancel();
     _blitzTicker?.cancel();
-    if (s.gameOver) return;
+    if (s.gameOver || s.paused) return;
     if (config.isBot(s.current)) {
       _botTimer = Timer(_botThinkDelay, _botMove);
       return;
@@ -327,7 +334,7 @@ class GameNotifier extends Notifier<GameState> {
   /// Один тик blitz-таймера: убывание времени, при нуле — force-place.
   void _tick() {
     final s = state;
-    if (s.gameOver || config.isBot(s.current)) {
+    if (s.gameOver || s.paused || config.isBot(s.current)) {
       _blitzTicker?.cancel();
       return;
     }

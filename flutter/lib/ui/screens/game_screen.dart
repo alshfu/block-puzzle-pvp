@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../achievements/achievement.dart';
 import '../../achievements/achievements_controller.dart';
 import '../../audio/audio_service.dart';
 import '../../audio/sfx.dart';
@@ -26,6 +27,8 @@ import '../../profile/profile_controller.dart';
 import '../../settings/settings_controller.dart';
 import '../decor/combo_flash.dart';
 import '../decor/mascot.dart';
+import '../decor/pause_overlay.dart';
+import '../decor/toast_stack.dart';
 import '../design_tokens.dart';
 import '../game/confetti_overlay.dart';
 import '../theme/theme_controller.dart';
@@ -58,6 +61,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   /// Активная вспышка комбо (null — ничего не показываем).
   _ComboFlashData? _comboFlash;
+
+  /// Очередь тостов о вновь разблокированных ачивках.
+  final List<Achievement> _toasts = [];
+
+  /// Проигрывает звук клика по элементу UI.
+  void _click() => ref.read(audioServiceProvider).play(Sfx.click);
 
   @override
   void initState() {
@@ -150,8 +159,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         final coins = ref
             .read(profileControllerProvider.notifier)
             .recordResult(won: won, draw: draw);
-        // Пересчёт достижений и прогресс ежедневных квестов.
-        ref.read(achievementsControllerProvider.notifier).evaluate();
+        // Пересчёт достижений (вновь разблокированные → тосты) и прогресс
+        // ежедневных квестов.
+        final fresh = ref
+            .read(achievementsControllerProvider.notifier)
+            .evaluate();
+        if (fresh.isNotEmpty) setState(() => _toasts.addAll(fresh));
         ref
             .read(dailyControllerProvider.notifier)
             .recordGame(DailyGameEvent(won: won && !draw, coinsEarned: coins));
@@ -184,7 +197,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                   child: Column(
                     children: [
-                      _TopBar(theme: theme, onNewGame: vm.newGame),
+                      _TopBar(
+                        theme: theme,
+                        onNewGame: vm.newGame,
+                        onPause: () {
+                          _click();
+                          vm.setPaused(true);
+                        },
+                      ),
                       const SizedBox(height: 10),
                       Scoreboard(state: state, theme: theme),
                       if (humanTurn) ...[
@@ -233,6 +253,24 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               message: _comboFlash!.message,
               onComplete: () => setState(() => _comboFlash = null),
             ),
+          // Оверлей паузы (таймеры остановлены в ViewModel).
+          if (state.paused && !state.gameOver)
+            PauseOverlay(
+              theme: theme,
+              onResume: () {
+                _click();
+                vm.setPaused(false);
+              },
+              onRestart: () {
+                _click();
+                vm.setPaused(false);
+                vm.newGame();
+              },
+              onExit: () {
+                _click();
+                context.go('/');
+              },
+            ),
           if (state.gameOver)
             _GameOverOverlay(
               theme: theme,
@@ -241,8 +279,22 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   ? null
                   : state.players[state.winner!].name,
               scores: [state.players[0].score, state.players[1].score],
-              onNewGame: vm.newGame,
+              onNewGame: () {
+                _click();
+                vm.newGame();
+              },
+              onMenu: () {
+                _click();
+                context.go('/');
+              },
             ),
+          // Тосты о вновь разблокированных ачивках (поверх всего).
+          ToastStack(
+            toasts: _toasts,
+            theme: theme,
+            onDismiss: (id) =>
+                setState(() => _toasts.removeWhere((a) => a.id == id)),
+          ),
         ],
       ),
     );
@@ -268,8 +320,13 @@ class _ComboFlashData {
 class _TopBar extends StatelessWidget {
   final BlockDuelTheme theme;
   final VoidCallback onNewGame;
+  final VoidCallback onPause;
 
-  const _TopBar({required this.theme, required this.onNewGame});
+  const _TopBar({
+    required this.theme,
+    required this.onNewGame,
+    required this.onPause,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -281,6 +338,8 @@ class _TopBar extends StatelessWidget {
           onTap: () => context.go('/'),
         ),
         const Spacer(),
+        _IconButton(theme: theme, label: '⏸ пауза', onTap: onPause),
+        const SizedBox(width: 8),
         _IconButton(theme: theme, label: '↺ новая', onTap: onNewGame),
       ],
     );
@@ -394,6 +453,7 @@ class _GameOverOverlay extends StatelessWidget {
   final String? winnerName;
   final List<int> scores;
   final VoidCallback onNewGame;
+  final VoidCallback onMenu;
 
   const _GameOverOverlay({
     required this.theme,
@@ -401,6 +461,7 @@ class _GameOverOverlay extends StatelessWidget {
     required this.winnerName,
     required this.scores,
     required this.onNewGame,
+    required this.onMenu,
   });
 
   @override
@@ -442,11 +503,7 @@ class _GameOverOverlay extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _IconButton(
-                    theme: theme,
-                    label: '← меню',
-                    onTap: () => context.go('/'),
-                  ),
+                  _IconButton(theme: theme, label: '← меню', onTap: onMenu),
                   const SizedBox(width: 12),
                   _IconButton(
                     theme: theme,

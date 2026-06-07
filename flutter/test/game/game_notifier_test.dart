@@ -107,6 +107,33 @@ void main() {
     expect(filled, isTrue, reason: 'force-place поставил фигуру по таймауту');
   });
 
+  test('пауза останавливает blitz-таймер, снятие — возобновляет', () async {
+    final c = await _container();
+    final shortCfg = defaultConfig.copyWith(turnTimeStart: 5, turnTimeMin: 5);
+    final cfg = MatchConfig(mode: MatchMode.hotseat, seed: 2, cfg: shortCfg);
+    final vm = c.read(gameProvider(cfg).notifier);
+    expect(c.read(gameProvider(cfg)).paused, isFalse);
+
+    vm.setPaused(true);
+    expect(c.read(gameProvider(cfg)).paused, isTrue);
+    final frozen = c.read(gameProvider(cfg)).turnRemaining;
+
+    // На паузе таймер не убывает.
+    await Future<void>.delayed(const Duration(milliseconds: 350));
+    expect(c.read(gameProvider(cfg)).turnRemaining, frozen);
+    expect(
+      c
+          .read(gameProvider(cfg))
+          .board
+          .every((r) => r.every((cell) => !cell.filled)),
+      isTrue,
+      reason: 'на паузе force-place не срабатывает',
+    );
+
+    vm.setPaused(false);
+    expect(c.read(gameProvider(cfg)).paused, isFalse);
+  });
+
   test('ход бота заблокирован для управляемого ботом игрока', () async {
     final c = await _container();
     const botCfg = MatchConfig(mode: MatchMode.bot, seed: 7);
