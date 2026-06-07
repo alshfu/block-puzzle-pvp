@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../auth/auth_controller.dart';
 import '../../settings/settings_controller.dart';
 import '../design_tokens.dart';
 import '../widgets/screen_scaffold.dart';
@@ -58,6 +59,10 @@ class SettingsScreen extends ConsumerWidget {
           onChanged: (_) => ctrl.toggleReduceMotion(),
         ),
         const SizedBox(height: 24),
+        _SectionLabel(text: 'Аккаунт', theme: theme),
+        const SizedBox(height: 8),
+        _AccountSection(theme: theme),
+        const SizedBox(height: 24),
         _SectionLabel(text: 'О приложении', theme: theme),
         const SizedBox(height: 8),
         Text(
@@ -66,6 +71,149 @@ class SettingsScreen extends ConsumerWidget {
           style: TextStyle(color: theme.muted, fontSize: 13, height: 1.4),
         ),
       ],
+    );
+  }
+}
+
+/// Секция аккаунта: вход через Google / профиль + выход, либо «недоступно».
+class _AccountSection extends ConsumerWidget {
+  final BlockDuelTheme theme;
+
+  const _AccountSection({required this.theme});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authControllerProvider);
+    final ctrl = ref.read(authControllerProvider.notifier);
+
+    if (!auth.available) {
+      return Text(
+        'Облачная синхронизация недоступна на этой платформе.',
+        style: TextStyle(color: theme.muted, fontSize: 13),
+      );
+    }
+
+    if (auth.signedIn) {
+      final u = auth.user!;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              if (u.photoUrl != null)
+                ClipOval(
+                  child: Image.network(
+                    u.photoUrl!,
+                    width: 36,
+                    height: 36,
+                    errorBuilder: (_, _, _) => Text(
+                      '👤',
+                      style: TextStyle(color: theme.ink, fontSize: 24),
+                    ),
+                  ),
+                )
+              else
+                Text('👤', style: TextStyle(color: theme.ink, fontSize: 24)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      u.displayName ?? 'Игрок',
+                      style: TextStyle(
+                        color: theme.ink,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      u.email ?? u.uid,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: theme.muted, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'синхронизация прогресса включена',
+            style: TextStyle(color: theme.good, fontSize: 11),
+          ),
+          const SizedBox(height: 10),
+          _AuthButton(
+            theme: theme,
+            label: 'Выйти',
+            ghost: true,
+            onTap: ctrl.signOut,
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Войди, чтобы синхронизировать прогресс между устройствами.',
+          style: TextStyle(color: theme.muted, fontSize: 13),
+        ),
+        const SizedBox(height: 10),
+        _AuthButton(
+          theme: theme,
+          label: auth.busy ? 'Вход…' : '🔑 Войти через Google',
+          onTap: auth.busy ? null : ctrl.signInWithGoogle,
+        ),
+        if (auth.error != null) ...[
+          const SizedBox(height: 6),
+          Text(auth.error!, style: TextStyle(color: theme.bad, fontSize: 12)),
+        ],
+      ],
+    );
+  }
+}
+
+/// Кнопка авторизации (основная/призрак).
+class _AuthButton extends StatelessWidget {
+  final BlockDuelTheme theme;
+  final String label;
+  final bool ghost;
+  final VoidCallback? onTap;
+
+  const _AuthButton({
+    required this.theme,
+    required this.label,
+    required this.onTap,
+    this.ghost = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: ghost ? Colors.transparent : theme.p0,
+      borderRadius: BorderRadius.circular(theme.btnRadius),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(theme.btnRadius),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(theme.btnRadius),
+            border: ghost ? Border.all(color: theme.line) : null,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: ghost ? theme.ink : theme.bg,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,0 +1,278 @@
+[debug] [2026-06-07T20:07:42.631Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:07:42.636Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase login:list
+[debug] [2026-06-07T20:07:42.636Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:07:42.637Z] Platform:      darwin
+[debug] [2026-06-07T20:07:42.637Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:07:42.637Z] Time:          Sun Jun 07 2026 23:07:42 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:07:42.638Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:07:42.641Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[info] Logged in as alshfu@gmail.com
+[debug] [2026-06-07T20:07:43.459Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-06-07T20:07:43.459Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-06-07T20:07:52.730Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:07:54.818Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:07:54.823Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase projects:list
+[debug] [2026-06-07T20:07:54.823Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:07:54.823Z] Platform:      darwin
+[debug] [2026-06-07T20:07:54.823Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:07:54.824Z] Time:          Sun Jun 07 2026 23:07:54 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:07:54.824Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:07:54.831Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-07T20:07:54.832Z] > authorizing via signed-in user (alshfu@gmail.com)
+[debug] [2026-06-07T20:07:54.837Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:07:54.838Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:07:54.838Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:07:54.840Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:07:54.840Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:07:56.257Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:07:56.258Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:07:56.259Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-07T20:07:56.933Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2026-06-07T20:07:56.935Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-06-07T20:07:56.935Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-07T20:07:56.935Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:07:56.935Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:07:56.935Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:07:56.937Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:07:56.938Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:07:57.111Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:07:57.112Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:07:57.115Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-07T20:08:02.135Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:10:07.202Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:10:07.207Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase projects:list
+[debug] [2026-06-07T20:10:07.208Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:10:07.208Z] Platform:      darwin
+[debug] [2026-06-07T20:10:07.208Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:10:07.208Z] Time:          Sun Jun 07 2026 23:10:07 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:10:07.208Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:10:07.215Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-07T20:10:07.217Z] > authorizing via signed-in user (alshfu@gmail.com)
+[debug] [2026-06-07T20:10:07.222Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:07.223Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:07.224Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:10:07.225Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:10:07.226Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:07.849Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:10:07.850Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:07.851Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-07T20:10:08.174Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2026-06-07T20:10:08.175Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-06-07T20:10:08.175Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-07T20:10:08.176Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:08.176Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:08.176Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:10:08.177Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:10:08.178Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:08.330Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:10:08.332Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:08.337Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-07T20:10:13.359Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:10:27.449Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:10:27.454Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase projects:list --debug
+[debug] [2026-06-07T20:10:27.454Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:10:27.454Z] Platform:      darwin
+[debug] [2026-06-07T20:10:27.454Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:10:27.454Z] Time:          Sun Jun 07 2026 23:10:27 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:10:27.455Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:10:27.463Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-07T20:10:27.465Z] > authorizing via signed-in user (alshfu@gmail.com)
+[debug] [2026-06-07T20:10:27.470Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:27.471Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:27.472Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:10:27.473Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:10:27.474Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:27.850Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:10:27.851Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:27.852Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-07T20:10:28.254Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2026-06-07T20:10:28.256Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-06-07T20:10:28.256Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-07T20:10:28.256Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:28.256Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:10:28.256Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:10:28.258Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:10:28.259Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:28.384Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:10:28.386Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:10:28.389Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-07T20:10:33.401Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:52:29.230Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:52:29.235Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase projects:list
+[debug] [2026-06-07T20:52:29.235Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:52:29.236Z] Platform:      darwin
+[debug] [2026-06-07T20:52:29.236Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:52:29.236Z] Time:          Sun Jun 07 2026 23:52:29 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:52:29.236Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:52:29.244Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-07T20:52:29.246Z] > authorizing via signed-in user (alshfu@gmail.com)
+[debug] [2026-06-07T20:52:29.251Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:52:29.252Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:52:29.252Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:52:29.254Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:52:29.254Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:52:29.801Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:52:29.802Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:52:29.803Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-07T20:52:30.216Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2026-06-07T20:52:30.217Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-06-07T20:52:30.218Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-07T20:52:30.218Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:52:30.218Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:52:30.219Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:52:30.220Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:52:30.221Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:52:30.362Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:52:30.364Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:52:30.367Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-07T20:52:35.388Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:52:50.155Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:52:50.160Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase login:list
+[debug] [2026-06-07T20:52:50.160Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:52:50.160Z] Platform:      darwin
+[debug] [2026-06-07T20:52:50.160Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:52:50.161Z] Time:          Sun Jun 07 2026 23:52:50 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:52:50.161Z] ----------------------------------------------------------------------
+[debug] 
+[info] Logged in as alshfu@gmail.com
+[debug] [2026-06-07T20:53:00.254Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:53:02.358Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:53:02.363Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase projects:list --debug
+[debug] [2026-06-07T20:53:02.363Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:53:02.363Z] Platform:      darwin
+[debug] [2026-06-07T20:53:02.363Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:53:02.364Z] Time:          Sun Jun 07 2026 23:53:02 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:53:02.364Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:53:02.373Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-07T20:53:02.375Z] > authorizing via signed-in user (alshfu@gmail.com)
+[debug] [2026-06-07T20:53:02.380Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:53:02.381Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:53:02.381Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:53:02.383Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:53:02.383Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:53:02.788Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:53:02.789Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:53:02.790Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-07T20:53:03.050Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2026-06-07T20:53:03.051Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-06-07T20:53:03.052Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-07T20:53:03.052Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:53:03.052Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:53:03.053Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:53:03.053Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:53:03.054Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:53:03.193Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:53:03.194Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:53:03.197Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-07T20:53:08.214Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:58:33.452Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:58:33.457Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase projects:list
+[debug] [2026-06-07T20:58:33.457Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:58:33.457Z] Platform:      darwin
+[debug] [2026-06-07T20:58:33.457Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:58:33.458Z] Time:          Sun Jun 07 2026 23:58:33 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:58:33.459Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:58:33.466Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-07T20:58:33.468Z] > authorizing via signed-in user (alshfu@gmail.com)
+[debug] [2026-06-07T20:58:33.473Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:58:33.474Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:58:33.475Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:58:33.476Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:58:33.477Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:58:34.088Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:58:34.089Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:58:34.090Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-07T20:58:34.455Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2026-06-07T20:58:34.455Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-06-07T20:58:34.455Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-07T20:58:34.455Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:58:34.455Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:58:34.456Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:58:34.456Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:58:34.457Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:58:34.615Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:58:34.617Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:58:34.621Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-07T20:58:39.645Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-07T20:58:59.916Z] ----------------------------------------------------------------------
+[debug] [2026-06-07T20:58:59.921Z] Command:       /usr/local/bin/firebase /Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase projects:list --debug
+[debug] [2026-06-07T20:58:59.921Z] CLI Version:   14.7.0
+[debug] [2026-06-07T20:58:59.921Z] Platform:      darwin
+[debug] [2026-06-07T20:58:59.921Z] Node Version:  v20.18.2
+[debug] [2026-06-07T20:58:59.922Z] Time:          Sun Jun 07 2026 23:58:59 GMT+0300 (Moscow Standard Time)
+[debug] [2026-06-07T20:58:59.922Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-07T20:58:59.930Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-07T20:58:59.932Z] > authorizing via signed-in user (alshfu@gmail.com)
+[debug] [2026-06-07T20:58:59.937Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:58:59.938Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:58:59.939Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:58:59.941Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:58:59.941Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:59:00.349Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:59:00.350Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:59:00.350Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-07T20:59:01.136Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2026-06-07T20:59:01.139Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-06-07T20:59:01.139Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-07T20:59:01.139Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:59:01.141Z] Checked if tokens are valid: false, expires at: 1750111758553
+[debug] [2026-06-07T20:59:01.143Z] > refreshing access token with scopes: []
+[debug] [2026-06-07T20:59:01.145Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-07T20:59:01.146Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:59:01.284Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-07T20:59:01.284Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-07T20:59:01.286Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-07T20:59:06.302Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/al_sh/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/utils.js:267:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.

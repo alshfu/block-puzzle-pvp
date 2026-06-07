@@ -15,6 +15,14 @@
 
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    # Сгенерированные сборки и вендоренные исходники плагинов (напр.
+    # build/macos/SourcePackages/firebase_*/test/*) — не наш код.
+    - build/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
 formatter:
   page_width: 80
 
