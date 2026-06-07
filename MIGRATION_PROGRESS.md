@@ -252,8 +252,18 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
       `musicOn:false` (петля-плеер не висит в headless). **90 тестов** зелёные,
       analyze чист, web собирается.
 - [x] **2026-06-07** — click-звук подключён (см. Toast/Pause-слайс).
-- [ ] `FloatingTheme`-кнопка (плавающий переключатель темы) — опционально.
-- [ ] **Gate:** полная визуальная сверка pixel-parity во всех 3 темах.
+- [x] **2026-06-07** — **`FloatingTheme`** (`ui/widgets/floating_theme.dart`) —
+      порт `FloatingTheme.tsx`: плавающая пилюля снизу-справа в меню, тап
+      циклирует тему, внутри образец следующей темы (диагональный p0/p1) + ярлык
+      текущей; click-звук. analyze чист, web собирается.
+- [ ] **Gate:** полная визуальная сверка pixel-parity во всех 3 темах
+      (визуальная приёмка пользователя — вне кода).
+
+**Фаза 5 (декор/анимации/звук) закрыта по коду.** Реализовано: SFX + музыка
+синтезируются в Dart; ThemeBackdrop (3 темы); маскоты/ponies (flutter_svg);
+Confetti на Flame; ComboFlash; Toast/Pause-оверлеи; click-звук; FloatingTheme.
+Остаётся только визуальный gate pixel-parity (приёмка пользователем) — он не
+блокирует переход к Фазе 6.
 
 ## Фазы 6–9
 
@@ -270,7 +280,8 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
 
 ---
 
-_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 почти закрыта (звук+
-музыка в Dart, ThemeBackdrop, маскоты/ponies, Confetti на Flame, ComboFlash,
-Toast/Pause-оверлеи, click-звук). 91 тест зелёный, web собирается. Осталось:
-FloatingTheme (опц.) + gate pixel-parity (визуальная приёмка)._
+_Last updated: 2026-06-07 — Фазы 0–5 закрыты по коду (звук+музыка в Dart,
+ThemeBackdrop, маскоты/ponies, Confetti на Flame, ComboFlash, Toast/Pause,
+click-звук, FloatingTheme). 91 тест зелёный, web собирается. Остаётся лишь
+визуальный gate pixel-parity (приёмка пользователя). Дальше — Фаза 6 (онлайн
+PvP + auth + sync)._

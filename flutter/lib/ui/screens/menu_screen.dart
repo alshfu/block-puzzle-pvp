@@ -24,6 +24,7 @@ import '../../profile/profile_controller.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
 import '../responsive.dart';
+import '../widgets/floating_theme.dart';
 import '../widgets/logo.dart';
 import '../widgets/mini_piece.dart';
 import '../widgets/theme_switch.dart';
@@ -135,6 +136,12 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                 ),
               ),
             ),
+          ),
+          // Плавающий переключатель темы снизу-справа.
+          const Positioned(
+            right: 14,
+            bottom: 14,
+            child: SafeArea(child: FloatingTheme()),
           ),
         ],
       ),
