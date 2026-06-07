@@ -8,12 +8,16 @@
 /// Соответствие TS: роутинг экранов из `App.tsx`.
 library;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../online/online_models.dart';
+import '../profile/profile_controller.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/daily_screen.dart';
 import 'screens/game_screen.dart';
 import 'screens/menu_screen.dart';
+import 'screens/online/online_game_screen.dart';
 import 'screens/online/online_menu_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
@@ -51,6 +55,33 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/online',
       builder: (context, state) => const OnlineMenuScreen(),
+    ),
+    GoRoute(
+      path: '/online/game/:roomId',
+      builder: (context, state) {
+        final roomId = state.pathParameters['roomId']!;
+        final extra = state.extra;
+        if (extra is OnlineGameArgs) {
+          return OnlineGameScreen(
+            roomId: roomId,
+            me: extra.me,
+            opponent: extra.opponent,
+          );
+        }
+        // Фолбэк (deep-link / hot-reload без extra): профиль из провайдера,
+        // соперник-заглушка (реальные имена придут в `joined`).
+        return Consumer(
+          builder: (context, ref, _) => OnlineGameScreen(
+            roomId: roomId,
+            me: OnlineProfile.fromProfile(ref.read(profileControllerProvider)),
+            opponent: const OnlineProfile(
+              id: '',
+              nick: 'Соперник',
+              avatar: '👤',
+            ),
+          ),
+        );
+      },
     ),
   ],
 );
