@@ -12,6 +12,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'audio/music_service.dart';
+import 'settings/settings_controller.dart';
 import 'ui/design_tokens.dart';
 import 'ui/router.dart';
 import 'ui/theme/theme_controller.dart';
@@ -25,6 +27,12 @@ class BlockDuelApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeId = ref.watch(themeControllerProvider);
     final tokens = blockDuelThemes[themeId]!;
+    // Драйвер фоновой музыки: реагирует на настройку музыки и тему. Вызов
+    // идемпотентен (no-op без изменений), сам сервис плагин-зависим.
+    final musicOn = ref.watch(
+      settingsControllerProvider.select((s) => s.musicOn),
+    );
+    ref.read(musicServiceProvider).update(enabled: musicOn, theme: themeId);
     return MaterialApp.router(
       title: 'BlockDuel 9×9',
       debugShowCheckedModeBanner: false,

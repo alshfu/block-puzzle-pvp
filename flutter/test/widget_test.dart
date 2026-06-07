@@ -17,7 +17,7 @@ void main() {
     // reduceMotion → анимированный ThemeBackdrop не запускает Ticker, и
     // pumpAndSettle сходится (декоративный фон рисуется статичным кадром).
     SharedPreferences.setMockInitialValues({
-      'bd_settings': '{"soundOn":true,"musicOn":true,"reduceMotion":true}',
+      'bd_settings': '{"soundOn":true,"musicOn":false,"reduceMotion":true}',
     });
     final prefs = await SharedPreferences.getInstance();
 

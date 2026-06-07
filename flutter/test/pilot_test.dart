@@ -24,7 +24,7 @@ Future<void> _pumpApp(WidgetTester tester) async {
   // reduceMotion → декоративный ThemeBackdrop не крутит Ticker (pumpAndSettle
   // на меню/профиле сходится); blitz-таймер игры гасится отдельными pump().
   SharedPreferences.setMockInitialValues({
-    'bd_settings': '{"soundOn":true,"musicOn":true,"reduceMotion":true}',
+    'bd_settings': '{"soundOn":true,"musicOn":false,"reduceMotion":true}',
   });
   final prefs = await SharedPreferences.getInstance();
   await tester.pumpWidget(

@@ -51,11 +51,13 @@ class ToneSpec {
 /// Частота дискретизации по умолчанию.
 const int defaultSampleRate = 44100;
 
-/// Длительность атаки (с) — линейный подъём 0→peak. Совпадает с TS (0.01).
-const double _attack = 0.01;
+/// Длительность атаки по умолчанию (с) — линейный подъём 0→peak. SFX-значение
+/// из TS (`tone()`: 0.01). Музыка задаёт своё (`playNote`: 0.03).
+const double defaultAttack = 0.01;
 
-/// «Хвост» после затухания, как `osc.stop(t0 + duration + 0.02)` в TS.
-const double _tail = 0.02;
+/// «Хвост» по умолчанию после затухания, как `osc.stop(t0 + dur + 0.02)`. Музыка
+/// использует 0.08 (`playNote`).
+const double defaultTail = 0.02;
 
 /// Минимальный уровень экспоненциального спада (Web Audio не допускает 0).
 const double _floor = 0.0001;
@@ -77,36 +79,55 @@ double _osc(Wave type, double x) {
   }
 }
 
-/// Огибающая громкости тона на локальном времени [local] (с от старта тона).
-/// Возвращает множитель в [0, peak]; вне диапазона тона — 0.
-double _envelope(double local, double duration, double peak) {
+/// Огибающая громкости тона на локальном времени [local] (с от старта тона):
+/// линейная атака за [attack], затем экспоненциальный спад к [_floor] за
+/// `duration`, потом короткий хвост [tail]. Множитель в [0, peak]; вне — 0.
+double _envelope(
+  double local,
+  double duration,
+  double peak,
+  double attack,
+  double tail,
+) {
   if (local < 0) return 0;
-  if (local < _attack) return peak * (local / _attack);
+  if (local < attack) return peak * (local / attack);
   if (local <= duration) {
-    // Экспоненциальный спад peak → _floor за (duration - _attack).
-    final span = duration - _attack;
+    final span = duration - attack;
     if (span <= 0) return _floor;
-    final frac = (local - _attack) / span;
+    final frac = (local - attack) / span;
     return peak * math.pow(_floor / peak, frac).toDouble();
   }
-  if (local <= duration + _tail) return _floor; // короткий хвост
+  if (local <= duration + tail) return _floor; // короткий хвост
   return 0;
 }
 
 /// Синтезирует тоны [tones] (с общим множителем громкости [volume]) в один
-/// моно-буфер float-сэмплов в [-1, 1]. Длина — до конца самого позднего тона.
+/// моно-буфер float-сэмплов в [-1, 1].
+///
+/// Длина — до конца самого позднего тона, либо ровно [totalDuration] секунд,
+/// если задано (нужно для бесшовного зацикливания музыки: буфер = длине цикла,
+/// хвосты крайних нот обрезаются). [attack]/[tail] переопределяют огибающую
+/// (музыка: 0.03/0.08; SFX: дефолты).
 Float64List renderSamples(
   List<ToneSpec> tones, {
   double volume = 0.7,
   int sampleRate = defaultSampleRate,
+  double attack = defaultAttack,
+  double tail = defaultTail,
+  double? totalDuration,
 }) {
-  if (tones.isEmpty) return Float64List(0);
-  var maxEnd = 0.0;
-  for (final t in tones) {
-    final end = t.start + t.duration + _tail;
-    if (end > maxEnd) maxEnd = end;
+  if (tones.isEmpty && totalDuration == null) return Float64List(0);
+  final int n;
+  if (totalDuration != null) {
+    n = (totalDuration * sampleRate).ceil();
+  } else {
+    var maxEnd = 0.0;
+    for (final t in tones) {
+      final end = t.start + t.duration + tail;
+      if (end > maxEnd) maxEnd = end;
+    }
+    n = (maxEnd * sampleRate).ceil();
   }
-  final n = (maxEnd * sampleRate).ceil();
   final out = Float64List(n);
   for (final t in tones) {
     final peak = t.gain * volume;
@@ -114,11 +135,11 @@ Float64List renderSamples(
     final startSample = (t.start * sampleRate).floor();
     final endSample = math.min(
       n,
-      ((t.start + t.duration + _tail) * sampleRate).ceil(),
+      ((t.start + t.duration + tail) * sampleRate).ceil(),
     );
     for (int i = math.max(0, startSample); i < endSample; i++) {
       final local = (i - startSample) / sampleRate;
-      final env = _envelope(local, t.duration, peak);
+      final env = _envelope(local, t.duration, peak, attack, tail);
       if (env == 0) continue;
       out[i] += env * _osc(t.type, t.freq * local);
     }

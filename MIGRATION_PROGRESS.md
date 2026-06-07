@@ -229,7 +229,18 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
       `useGame.ts`). Гасятся при reduceMotion. Тест `test/decor/combo_flash_test`.
       **84 теста** зелёные, analyze чист, web собирается.
 - [ ] Анимации (продолжение): Toast/Pause/Result-оверлеи через `flutter_animate`.
-- [ ] Фоновая музыка (`src/ui/music.ts`) — синтез в Dart, отдельный слайс.
+- [x] **2026-06-07** — **фоновая музыка** (порт `src/ui/music.ts`). `audio/
+      music.dart` (чистый): парсер нот `noteFreq` (равномерная темперация),
+      треки 3 тем (bpm + голоса), `renderTrack` рендерит ОДИН цикл в WAV
+      переиспользуя `synth.dart`. Вместо real-time планировщика Web Audio —
+      готовый зацикливаемый буфер (один проход голосов = блок `scheduleLoop`),
+      длина = длине цикла → бесшовная петля. `synth.dart` обобщён аддитивно
+      (параметры `attack`/`tail`/`totalDuration`; музыка: 0.03/0.08/loop). Плеер
+      `audio/music_service.dart` на `audioplayers` (`ReleaseMode.loop`, кэш,
+      идемпотентный `update(enabled, theme)`), драйвится из `app.dart` по
+      настройке музыки и теме. Тест `test/audio/music_test.dart`. В тестах
+      `musicOn:false` (петля-плеер не висит в headless). **90 тестов** зелёные,
+      analyze чист, web собирается.
 - [ ] Click-звук на элементы UI (каталог готов — `Sfx.click`).
 - [ ] **Gate:** полная визуальная сверка pixel-parity во всех 3 темах.
 
@@ -248,7 +259,7 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
 
 ---
 
-_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 в работе (звук в Dart +
-ThemeBackdrop + маскоты/ponies + Confetti на Flame + ComboFlash). 84 теста
-зелёные, web собирается. Дальше по Фазе 5 — Toast/Pause-оверлеи, музыка,
-FloatingTheme, click-звук, pixel-parity._
+_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 в работе (звук + музыка
+синтезируются в Dart, ThemeBackdrop, маскоты/ponies, Confetti на Flame,
+ComboFlash). 90 тестов зелёные, web собирается. Дальше по Фазе 5 —
+Toast/Pause-оверлеи, FloatingTheme, click-звук, pixel-parity._
