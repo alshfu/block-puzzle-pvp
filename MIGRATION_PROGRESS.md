@@ -265,9 +265,45 @@ Confetti на Flame; ComboFlash; Toast/Pause-оверлеи; click-звук; Flo
 Остаётся только визуальный gate pixel-parity (приёмка пользователем) — он не
 блокирует переход к Фазе 6.
 
-## Фазы 6–9
+## Фаза 6A — Онлайн PvP (без auth/sync; сервер Node/VPS не трогаем)
 
-См. план `MIGRATION_FLUTTER.md` §8. Будут раскрыты по мере подхода.
+Решения: Dart-клиент говорит со старым Node-сервером по тому же WS-протоколу
+(кросс-протокол); auth+Firestore-sync (6B) отложены; статистика минимальная
+(онлайн W/L/D + ELO-лидерборд). План — `/Users/al_sh/.claude/plans/
+precious-wandering-sifakis.md`.
+
+- [x] **2026-06-07** — **6A.1 транспорт + DTO** (`lib/online/`): `party_host`
+      (хост из `--dart-define=PARTY_HOST`), `transport` (ITransport/WsTransport на
+      web_socket_channel), `online_wire` (wire⇄ядро бит-в-бит: PieceType
+      заглавными, Coord `[r,c]`, RuleConfig int→double, onTimeout "forcePlace"),
+      `online_models`, `online_to_game_state` (адаптер для переиспользования
+      игровых виджетов), `uuid`. Profile += id(UUID)+онлайн W/L/D +
+      `recordOnlineResult`. Тесты wire/adapter. **101 тест.**
+- [x] **2026-06-07** — **6A.2 лобби + матчмейкинг**: `lobby_notifier` (queue/
+      cancel, queued/matched/bot_fallback/error), `OnlineMenuScreen` (/online),
+      чип 🌐 в меню, `transport_provider` (DI-шов для FakeTransport),
+      bot_fallback→/game/bot. **107 тестов.**
+- [x] **2026-06-07** — **6A.3 живой матч**: `online_match_state` +
+      `online_game_notifier` (hello/move/resign/rematch, reconnect с backoff+
+      повторным hello, placeAt через адаптер → anti-cheat проходит),
+      `OnlineGameScreen` (переиспользует BoardView/HandView/Scoreboard/TurnTimer
+      через адаптер; SFX+конфетти по диффу; recordOnlineResult),
+      `online_overlays` (соперник-ушёл + финал с ремачом), роут
+      /online/game/:roomId. **115 тестов.**
+- [x] **2026-06-07** — **6A.4 лидерборд**: `leaderboard_notifier` (subscribe/
+      snapshot, поле `totalPlayers`), `LeaderboardScreen` (/leaderboard, топ +
+      мой ранг), роут. **117 тестов** зелёные, analyze чист, web собирается.
+
+**Фаза 6A закрыта по коду.** Все нотифайеры покрыты тестами на FakeTransport
+(реального сервера в CI нет). Остаётся ручной кросс-протокол smoke (локальный
+Node-сервер + `flutter run -d chrome --dart-define=PARTY_HOST=localhost:1999`).
+
+## Фаза 6B + 7–9
+
+- **6B** — Google sign-in (FlutterFire) + Firestore cross-device sync. Блокеры:
+  `flutterfire configure` (твой Firebase-проект) + решение по схеме CloudSnapshot.
+- Богатая онлайн-статистика (`stats.ts`) + ~105 PvP-ачивок — отдельный слайс.
+- Фазы 7–9 — см. `MIGRATION_FLUTTER.md` §8.
 
 ---
 
@@ -280,8 +316,7 @@ Confetti на Flame; ComboFlash; Toast/Pause-оверлеи; click-звук; Flo
 
 ---
 
-_Last updated: 2026-06-07 — Фазы 0–5 закрыты по коду (звук+музыка в Dart,
-ThemeBackdrop, маскоты/ponies, Confetti на Flame, ComboFlash, Toast/Pause,
-click-звук, FloatingTheme). 91 тест зелёный, web собирается. Остаётся лишь
-визуальный gate pixel-parity (приёмка пользователя). Дальше — Фаза 6 (онлайн
-PvP + auth + sync)._
+_Last updated: 2026-06-07 — Фазы 0–5 + 6A закрыты по коду. Онлайн-PvP (лобби,
+живой матч, лидерборд) на Dart-клиенте к старому Node-серверу (кросс-протокол).
+117 тестов зелёные, web собирается. Дальше — 6B (auth + Firestore sync, нужен
+flutterfire configure) или Фаза 7 (shop). Открыт визуальный gate pixel-parity._
