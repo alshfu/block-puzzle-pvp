@@ -54,6 +54,13 @@ class ProfileController extends Notifier<Profile> {
         .setString(PrefKeys.profile, jsonEncode(state.toJson()));
   }
 
+  /// Полностью заменяет профиль (например, результатом облачного слияния) и
+  /// сохраняет.
+  void replace(Profile profile) {
+    state = profile;
+    _persist();
+  }
+
   /// Меняет ник (пустой игнорируется).
   void setNick(String nick) {
     final trimmed = nick.trim();

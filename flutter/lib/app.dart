@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'audio/music_service.dart';
+import 'auth/sync_controller.dart';
 import 'settings/settings_controller.dart';
 import 'ui/design_tokens.dart';
 import 'ui/router.dart';
@@ -33,6 +34,8 @@ class BlockDuelApp extends ConsumerWidget {
       settingsControllerProvider.select((s) => s.musicOn),
     );
     ref.read(musicServiceProvider).update(enabled: musicOn, theme: themeId);
+    // Поднимаем синхронизацию прогресса (no-op без Firebase/входа).
+    ref.watch(syncControllerProvider);
     return MaterialApp.router(
       title: 'BlockDuel 9×9',
       debugShowCheckedModeBanner: false,

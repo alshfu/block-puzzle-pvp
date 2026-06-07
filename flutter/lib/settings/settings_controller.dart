@@ -35,6 +35,12 @@ class SettingsController extends Notifier<Settings> {
         .setString(PrefKeys.settings, jsonEncode(state.toJson()));
   }
 
+  /// Полностью заменяет настройки (например, из облака) и сохраняет.
+  void replace(Settings settings) {
+    state = settings;
+    _persist();
+  }
+
   /// Переключает звуковые эффекты.
   void toggleSound() {
     state = state.copyWith(soundOn: !state.soundOn);

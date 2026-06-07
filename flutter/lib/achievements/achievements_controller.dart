@@ -63,6 +63,16 @@ class AchievementsController extends Notifier<Set<String>> {
     }
     return fresh;
   }
+
+  /// Объединяет текущее множество с [ids] (например, из облака) и сохраняет.
+  void mergeUnlocked(Set<String> ids) {
+    final merged = {...state, ...ids};
+    if (merged.length == state.length) return;
+    state = merged;
+    ref
+        .read(sharedPreferencesProvider)
+        .setString(_unlockedKey, jsonEncode(merged.toList()));
+  }
 }
 
 /// Провайдер ViewModel достижений.
