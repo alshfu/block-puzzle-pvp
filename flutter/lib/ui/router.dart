@@ -11,6 +11,7 @@ library;
 import 'package:go_router/go_router.dart';
 
 import 'screens/achievements_screen.dart';
+import 'screens/daily_screen.dart';
 import 'screens/game_screen.dart';
 import 'screens/menu_screen.dart';
 import 'screens/profile_screen.dart';
@@ -23,8 +24,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/', builder: (context, state) => const MenuScreen()),
     GoRoute(
       path: '/game/:mode',
-      builder: (context, state) =>
-          GameScreen(modeRaw: state.pathParameters['mode'] ?? 'bot'),
+      builder: (context, state) {
+        final resume = state.uri.queryParameters['resume'] == '1';
+        final seedStr = state.uri.queryParameters['seed'];
+        final resumeSeed = resume ? int.tryParse(seedStr ?? '') : null;
+        return GameScreen(
+          modeRaw: state.pathParameters['mode'] ?? 'bot',
+          resumeSeed: resumeSeed,
+        );
+      },
     ),
     GoRoute(
       path: '/profile',
@@ -38,5 +46,6 @@ final GoRouter appRouter = GoRouter(
       path: '/achievements',
       builder: (context, state) => const AchievementsScreen(),
     ),
+    GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
   ],
 );

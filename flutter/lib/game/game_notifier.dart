@@ -24,6 +24,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'game_state.dart';
 import 'match_config.dart';
+import 'saved_game.dart';
+import 'saved_game_store.dart';
 
 /// Задержка перед ходом бота — чтобы ход был визуально читаем.
 const Duration _botThinkDelay = Duration(milliseconds: 350);
@@ -64,6 +66,15 @@ class GameNotifier extends Notifier<GameState> {
       _botTimer?.cancel();
       _blitzTicker?.cancel();
     });
+    // Resume: если просили продолжить и есть сохранёнка с тем же seed.
+    if (config.resume) {
+      final saved = ref.read(savedGameStoreProvider).load();
+      if (saved != null && saved.seed == config.seed) {
+        final restored = _restore(saved);
+        _armTimers(restored);
+        return restored;
+      }
+    }
     final fresh = _freshState();
     _armTimers(fresh);
     return fresh;
@@ -97,8 +108,9 @@ class GameNotifier extends Notifier<GameState> {
     _applyPlacement(piece.id, cells, r, c);
   }
 
-  /// Начинает новую партию с тем же конфигом.
+  /// Начинает новую партию с тем же конфигом (сбрасывает сохранёнку).
   void newGame() {
+    ref.read(savedGameStoreProvider).clear();
     final fresh = _freshState();
     state = fresh;
     _armTimers(fresh);
@@ -147,6 +159,79 @@ class GameNotifier extends Notifier<GameState> {
       hand.add(bag.drawAvoiding(hand.map((p) => p.type).toSet()));
     }
     return hand;
+  }
+
+  // ── Save / resume ──────────────────────────────────────────────────────────
+
+  /// Восстанавливает состояние из сохранёнки: мешки (точное внутреннее
+  /// состояние), руки (клетки выводятся из типа), доска, ход, раунд. rng бота и
+  /// force-place воссоздаются от seed (допустимая микро-расхождение).
+  GameState _restore(SavedGame saved) {
+    _bags = [for (final b in saved.bags) b.toBag()];
+    _botRng = makeRng(config.seed + 777);
+    _forceRng = makeRng(config.seed + 999);
+    final players = [
+      for (final sp in saved.players)
+        PlayerState(
+          score: sp.score,
+          combo: sp.combo,
+          name: sp.name,
+          hand: [
+            for (final h in sp.hand)
+              PieceInstance(
+                id: h.id,
+                type: h.type,
+                cells: normalize(baseShapes[h.type]!),
+              ),
+          ],
+        ),
+    ];
+    final limit = turnTimeForRound(saved.round, config.cfg);
+    return GameState(
+      board: decodeBoard(saved.board),
+      players: players,
+      current: saved.current,
+      round: saved.round,
+      gameOver: false,
+      winner: null,
+      selectedPieceId: null,
+      orientIndex: 0,
+      turnLimit: limit,
+      turnRemaining: limit,
+      cfg: config.cfg,
+    );
+  }
+
+  /// Снимает текущее состояние партии в сериализуемую сохранёнку.
+  SavedGame _snapshot() => SavedGame(
+    mode: config.mode,
+    botLevel: config.botLevel,
+    seed: config.seed,
+    board: encodeBoard(state.board),
+    players: [
+      for (final p in state.players)
+        SavedPlayer(
+          score: p.score,
+          combo: p.combo,
+          name: p.name,
+          hand: [for (final pi in p.hand) (id: pi.id, type: pi.type)],
+        ),
+    ],
+    bags: [for (final b in _bags) BagSnapshot.of(b)],
+    current: state.current,
+    round: state.round,
+  );
+
+  /// Авто-сохранение после хода: пишем снимок (или удаляем сохранёнку по
+  /// завершении). Зрительский bot×bot не сохраняем.
+  void _autoSave() {
+    if (config.mode == MatchMode.botvbot) return;
+    final store = ref.read(savedGameStoreProvider);
+    if (state.gameOver) {
+      store.clear();
+    } else {
+      store.save(_snapshot());
+    }
   }
 
   // ── Ход ──────────────────────────────────────────────────────────────────
@@ -203,6 +288,7 @@ class GameNotifier extends Notifier<GameState> {
 
     state = nextState;
     _armTimers(state);
+    _autoSave();
   }
 
   /// Завершает партию: считает победителя по счёту (равенство — ничья).

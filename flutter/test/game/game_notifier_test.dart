@@ -9,12 +9,20 @@ library;
 import 'package:block_duel/core/core.dart';
 import 'package:block_duel/game/game_notifier.dart';
 import 'package:block_duel/game/match_config.dart';
+import 'package:block_duel/storage/prefs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// Создаёт изолированный контейнер провайдеров с авто-очисткой.
-ProviderContainer _container() {
-  final c = ProviderContainer();
+/// Создаёт изолированный контейнер провайдеров с авто-очисткой и mock-prefs.
+/// Mock-prefs нужен, чтобы автосохранение партии (savedGameStoreProvider →
+/// sharedPreferencesProvider) не падало в headless-тестах.
+Future<ProviderContainer> _container() async {
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
+  final c = ProviderContainer(
+    overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+  );
   addTearDown(c.dispose);
   return c;
 }
@@ -22,8 +30,8 @@ ProviderContainer _container() {
 void main() {
   const config = MatchConfig(mode: MatchMode.hotseat, seed: 12345);
 
-  test('стартовое состояние: ход игрока 0, рука из 3 фигур', () {
-    final c = _container();
+  test('стартовое состояние: ход игрока 0, рука из 3 фигур', () async {
+    final c = await _container();
     final state = c.read(gameProvider(config));
     expect(state.current, 0);
     expect(state.gameOver, isFalse);
@@ -31,8 +39,8 @@ void main() {
     expect(state.players[1].hand.length, defaultConfig.handSize);
   });
 
-  test('постановка фигуры переключает ход и пополняет руку', () {
-    final c = _container();
+  test('постановка фигуры переключает ход и пополняет руку', () async {
+    final c = await _container();
     final vm = c.read(gameProvider(config).notifier);
     final firstId = c.read(gameProvider(config)).players[0].hand.first.id;
 
@@ -61,8 +69,8 @@ void main() {
     expect(filled, greaterThan(0));
   });
 
-  test('поворот меняет ориентацию выбранной фигуры', () {
-    final c = _container();
+  test('поворот меняет ориентацию выбранной фигуры', () async {
+    final c = await _container();
     final vm = c.read(gameProvider(config).notifier);
     final hand = c.read(gameProvider(config)).players[0].hand;
     // Берём фигуру с несколькими ориентациями (T всегда даёт 4).
@@ -82,7 +90,7 @@ void main() {
   });
 
   test('blitz-таймаут авто-ставит фигуру (force-place)', () async {
-    final c = _container();
+    final c = await _container();
     // Короткий лимит, чтобы таймаут наступил быстро в реальном времени.
     final shortCfg = defaultConfig.copyWith(
       turnTimeStart: 0.2,
@@ -99,8 +107,8 @@ void main() {
     expect(filled, isTrue, reason: 'force-place поставил фигуру по таймауту');
   });
 
-  test('ход бота заблокирован для управляемого ботом игрока', () {
-    final c = _container();
+  test('ход бота заблокирован для управляемого ботом игрока', () async {
+    final c = await _container();
     const botCfg = MatchConfig(mode: MatchMode.bot, seed: 7);
     final vm = c.read(gameProvider(botCfg).notifier);
     // Игрок 0 — человек; команды доступны. Проверяем, что выбор работает.

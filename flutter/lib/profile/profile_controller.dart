@@ -57,9 +57,17 @@ class ProfileController extends Notifier<Profile> {
     _persist();
   }
 
+  /// Начисляет монеты (например, награда за ежедневный квест).
+  void addCoins(int amount) {
+    if (amount == 0) return;
+    state = state.copyWith(coins: state.coins + amount);
+    _persist();
+  }
+
   /// Начисляет результат партии: XP, монеты и счётчики. [won] — победа ли;
   /// [draw] — ничья (как поражение по наградам, но без инкремента wins).
-  void recordResult({required bool won, bool draw = false}) {
+  /// Возвращает число начисленных монет (для ежедневных квестов).
+  int recordResult({required bool won, bool draw = false}) {
     final xpGain = won ? _xpForWin : _xpForLoss;
     final coinGain = won ? _coinsForWin : _coinsForLoss;
     state = state.copyWith(
@@ -69,6 +77,7 @@ class ProfileController extends Notifier<Profile> {
       wins: state.wins + (won && !draw ? 1 : 0),
     );
     _persist();
+    return coinGain;
   }
 }
 

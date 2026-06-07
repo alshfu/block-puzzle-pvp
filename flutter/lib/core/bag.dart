@@ -30,25 +30,47 @@ List<PieceType> _shuffle(List<PieceType> source, RandomSource rng) {
 }
 
 /// Мешок фигур «7-bag». Хранит очередь текущего мешка, источник случайности и
-/// счётчик для уникальных id экземпляров.
+/// счётчик для уникальных id экземпляров. Состояние сериализуемо ([queueSnapshot]
+/// / [counter] / [rngState]) для детерминистичного resume сохранёнок.
 class Bag {
   /// Очередь текущего (недовыданного) мешка.
   final List<PieceType> _queue = [];
 
-  /// Источник случайности (mulberry32 от seed).
-  final RandomSource _rng;
+  /// Генератор случайности (mulberry32 от seed) — хранится как объект, чтобы
+  /// можно было снять/восстановить его внутреннее состояние.
+  final Mulberry32 _rng;
 
   /// Счётчик выданных фигур — основа уникального id (`p0`, `p1`, …).
   int _counter = 0;
 
   /// Создаёт мешок от целочисленного [seed].
-  Bag(int seed) : _rng = makeRng(seed);
+  Bag(int seed) : _rng = Mulberry32(seed);
+
+  /// Восстанавливает мешок из снятого состояния (resume сохранёнки): очередь
+  /// [queue], счётчик [counter] и состояние PRNG [rngState].
+  Bag.fromState({
+    required List<PieceType> queue,
+    required int counter,
+    required int rngState,
+  }) : _rng = Mulberry32.fromState(rngState) {
+    _counter = counter;
+    _queue.addAll(queue);
+  }
+
+  /// Снимок очереди текущего мешка (для сериализации).
+  List<PieceType> get queueSnapshot => List.unmodifiable(_queue);
+
+  /// Текущее значение счётчика id (для сериализации).
+  int get counter => _counter;
+
+  /// Внутреннее состояние PRNG (для сериализации).
+  int get rngState => _rng.state;
 
   /// Возвращает следующий тип фигуры; при опустошении очереди перетасовывает
   /// новый полный мешок из всех 7 типов. TS: `Bag.next`.
   PieceType _next() {
     if (_queue.isEmpty) {
-      _queue.addAll(_shuffle(allTypes, _rng));
+      _queue.addAll(_shuffle(allTypes, _rng.next));
     }
     return _queue.removeAt(0);
   }
@@ -61,7 +83,7 @@ class Bag {
   /// очереди как есть. Сохраняет 7-bag fairness. TS: `Bag.drawAvoiding`.
   PieceInstance drawAvoiding(Set<PieceType> avoidTypes) {
     if (_queue.isEmpty) {
-      _queue.addAll(_shuffle(allTypes, _rng));
+      _queue.addAll(_shuffle(allTypes, _rng.next));
     }
     final idx = _queue.indexWhere((t) => !avoidTypes.contains(t));
     if (idx == -1) {

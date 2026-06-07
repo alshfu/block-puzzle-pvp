@@ -15,6 +15,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../achievements/achievements_controller.dart';
+import '../../daily/daily.dart';
+import '../../daily/daily_controller.dart';
 import '../../game/game_notifier.dart';
 import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
@@ -29,8 +31,11 @@ class GameScreen extends ConsumerStatefulWidget {
   /// Код режима из маршрута (`bot`/`hotseat`/`botvbot`).
   final String modeRaw;
 
+  /// Seed сохранённой партии для продолжения (resume) либо `null` — новая игра.
+  final int? resumeSeed;
+
   /// Создаёт игровой экран.
-  const GameScreen({super.key, required this.modeRaw});
+  const GameScreen({super.key, required this.modeRaw, this.resumeSeed});
 
   @override
   ConsumerState<GameScreen> createState() => _GameScreenState();
@@ -43,12 +48,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
-    // Seed берётся во View (не в ядре) — ядро остаётся детерминированным.
-    final seed = DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
-    _config = MatchConfig(
-      mode: MatchConfig.modeFromString(widget.modeRaw),
-      seed: seed,
-    );
+    final mode = MatchConfig.modeFromString(widget.modeRaw);
+    if (widget.resumeSeed != null) {
+      // Продолжение: тот же seed + флаг resume (ViewModel восстановит снимок).
+      _config = MatchConfig(mode: mode, seed: widget.resumeSeed!, resume: true);
+    } else {
+      // Новая игра: seed берётся во View (ядро остаётся детерминированным).
+      final seed = DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
+      _config = MatchConfig(mode: mode, seed: seed);
+    }
   }
 
   @override
@@ -59,11 +67,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     ref.listen(gameProvider(_config), (prev, next) {
       final justEnded = (prev == null || !prev.gameOver) && next.gameOver;
       if (justEnded && _config.mode != MatchMode.botvbot) {
-        ref
+        final won = next.winner == 0;
+        final draw = next.winner == null;
+        final coins = ref
             .read(profileControllerProvider.notifier)
-            .recordResult(won: next.winner == 0, draw: next.winner == null);
-        // После начисления статистики — пересчёт достижений.
+            .recordResult(won: won, draw: draw);
+        // Пересчёт достижений и прогресс ежедневных квестов.
         ref.read(achievementsControllerProvider.notifier).evaluate();
+        ref
+            .read(dailyControllerProvider.notifier)
+            .recordGame(DailyGameEvent(won: won && !draw, coinsEarned: coins));
       }
     });
     final state = ref.watch(gameProvider(_config));

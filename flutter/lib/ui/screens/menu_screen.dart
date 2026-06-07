@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../game/saved_game.dart';
+import '../../game/saved_game_store.dart';
 import '../../profile/profile_controller.dart';
 import '../design_tokens.dart';
 import '../responsive.dart';
@@ -45,6 +47,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
+    final saved = ref.read(savedGameStoreProvider).load();
     return Scaffold(
       body: DecoratedBox(
         decoration: BoxDecoration(
@@ -87,6 +90,21 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                         ],
                       ),
                     ),
+                    if (!_modeOpen && saved != null) ...[
+                      _ResumeCard(
+                        tokens: tokens,
+                        saved: saved,
+                        onResume: () => context.go(
+                          '/game/${saved.mode.name}'
+                          '?resume=1&seed=${saved.seed}',
+                        ),
+                        onDiscard: () {
+                          ref.read(savedGameStoreProvider).clear();
+                          setState(() {});
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                     _Actions(
                       tokens: tokens,
                       modeOpen: _modeOpen,
@@ -170,6 +188,12 @@ class _TopBar extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+        const SizedBox(width: 8),
+        _IconChip(
+          tokens: tokens,
+          emoji: '🎯',
+          onTap: () => context.go('/daily'),
         ),
         const SizedBox(width: 8),
         _IconChip(
@@ -439,6 +463,67 @@ class _IconChip extends StatelessWidget {
             child: Text(emoji, style: const TextStyle(fontSize: 16)),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Карточка «Продолжить партию»: режим, счёт и кнопки продолжить/сбросить.
+class _ResumeCard extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final SavedGame saved;
+  final VoidCallback onResume;
+  final VoidCallback onDiscard;
+
+  const _ResumeCard({
+    required this.tokens,
+    required this.saved,
+    required this.onResume,
+    required this.onDiscard,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scoreText = '${saved.players[0].score} : ${saved.players[1].score}';
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
+      decoration: BoxDecoration(
+        color: tokens.panel,
+        borderRadius: BorderRadius.circular(tokens.cardRadius),
+        border: Border.all(color: tokens.p0, width: 2),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Продолжить партию',
+                  style: TextStyle(
+                    color: tokens.ink,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  '${saved.mode.name} · счёт $scoreText',
+                  style: TextStyle(color: tokens.muted, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: onResume,
+            icon: Icon(Icons.play_arrow, color: tokens.p0),
+            tooltip: 'Продолжить',
+          ),
+          IconButton(
+            onPressed: onDiscard,
+            icon: Icon(Icons.close, color: tokens.muted),
+            tooltip: 'Сбросить',
+          ),
+        ],
       ),
     );
   }

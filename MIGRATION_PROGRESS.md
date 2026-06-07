@@ -153,8 +153,26 @@ Daily + resume сохранёнки).
       (в обычном `flutter test`): сквозной прогон меню→профиль→достижения и
       hot-seat (выбор фигуры → постановка → возврат). Device-прогон тут не идёт
       (среда не форграундит окно), headless — зелёный.
-- [ ] Daily quests + DailyScreen.
-- [ ] Hive + resume сохранёнки (drawCounts) — тяжёлая часть, позже.
+- [x] **2026-06-07** — **Daily quests:** `daily/{daily.dart,daily_controller.dart}`
+      (модель: пул из 5 квестов, детерминированный выбор 3-х по date-seed,
+      метрики gamesPlayed/wins/coinsEarned; ViewModel: персист в
+      shared_preferences, сброс при смене дня, `recordGame`/`claim` с
+      начислением монет в профиль), экран `DailyScreen` + роут `/daily` + чип 🎯
+      в меню. Итог партии вызывает `recordGame`; `ProfileController.addCoins` +
+      `recordResult` теперь возвращает начисленные монеты. Тест `daily_test.dart`.
+- [x] **2026-06-07** — **resume сохранёнки:** вместо Hive — `shared_preferences`
+      (JSON-слот `bd_savegame`). `game/{saved_game.dart,saved_game_store.dart}`:
+      `BagSnapshot` сохраняет точное внутреннее состояние мешка (queue+counter+
+      rngState) → детерминистичный resume 7-bag без replay по drawCounts; доска
+      кодируется строкой 81 символ. `GameNotifier._autoSave` пишет снимок после
+      каждого хода (bot×bot не сохраняется), `_restore` поднимает партию;
+      `MatchConfig.resume` + карточка «Продолжить» в меню + route-параметр
+      `?resume=1&seed=`. Тест `save_resume_test.dart` (round-trip). *Отступление
+      от плана:* shared_preferences вместо Hive — слот один, JSON достаточно.
+      **65 тестов** зелёные, analyze чист.
+
+**Фаза 4 завершена.** Storage + Profile + Settings + Achievements + Daily +
+resume — всё на месте. Дальше — Фаза 5 (декор, анимации, звук, pixel-parity).
 
 ## Фазы 5–9
 
@@ -171,4 +189,5 @@ Daily + resume сохранёнки).
 
 ---
 
-_Last updated: 2026-06-05 — Фаза 0 скелет готов, ядро не начато._
+_Last updated: 2026-06-07 — Фазы 0–4 завершены (ядро, UI, игра, blitz, storage,
+профиль, ачивки, daily, resume); 65 тестов зелёные. Следующая — Фаза 5._

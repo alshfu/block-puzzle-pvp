@@ -37,12 +37,16 @@ class MatchConfig {
   /// Seed для мешков обоих игроков (задаётся один раз при старте партии).
   final int seed;
 
+  /// Продолжить ли сохранённую партию с этим seed (resume), а не начать новую.
+  final bool resume;
+
   /// Создаёт конфигурацию партии.
   const MatchConfig({
     required this.mode,
     required this.seed,
     this.botLevel = BotLevel.medium,
     this.cfg = defaultConfig,
+    this.resume = false,
   });
 
   /// Является ли игрок [player] (0/1) ботом в этом режиме.
@@ -66,8 +70,10 @@ class MatchConfig {
       other.mode == mode &&
       other.botLevel == botLevel &&
       other.seed == seed &&
+      other.resume == resume &&
       identical(other.cfg, cfg);
 
   @override
-  int get hashCode => Object.hash(mode, botLevel, seed, identityHashCode(cfg));
+  int get hashCode =>
+      Object.hash(mode, botLevel, seed, resume, identityHashCode(cfg));
 }

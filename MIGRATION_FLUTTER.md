@@ -834,10 +834,10 @@ npm run server:dev
 - [ ] §5 pubspec.yaml зафиксирован
 - [ ] §6 дизайн-стратегия одобрена; эталонные screenshot-ы и шрифты собраны
 - [ ] Фаза 0: skeleton + IDE настроена + golden dump из TS + дизайн-эталоны
-- [ ] Фаза 1: ядро Dart + golden детерминизма зелёный
-- [ ] Фаза 2: UI shell + design tokens + Board + golden MenuScreen зелёный + hot-seat играется
-- [ ] Фаза 3: бот + blitz
-- [ ] Фаза 4: storage + ачивки
+- [x] Фаза 1: ядро Dart + golden детерминизма зелёный
+- [x] Фаза 2: UI shell + design tokens + Board + hot-seat играется (golden MenuScreen — отложен)
+- [x] Фаза 3: бот + blitz
+- [x] Фаза 4: storage + ачивки + daily + resume
 - [ ] Фаза 5: декор + анимации + звук + **полный pixel-parity дизайна**
 - [ ] Фаза 6: online + auth + sync, кросс-протокол OK
 - [ ] Фаза 7: shop + powerups
