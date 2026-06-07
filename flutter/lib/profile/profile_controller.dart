@@ -13,6 +13,7 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../online/uuid.dart';
 import '../storage/prefs.dart';
 import 'profile.dart';
 
@@ -28,12 +29,22 @@ class ProfileController extends Notifier<Profile> {
   Profile build() {
     final prefs = ref.watch(sharedPreferencesProvider);
     final raw = prefs.getString(PrefKeys.profile);
-    if (raw == null) return Profile.initial;
-    try {
-      return Profile.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    } catch (_) {
-      return Profile.initial;
+    var profile = Profile.initial;
+    if (raw != null) {
+      try {
+        profile = Profile.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+      } catch (_) {
+        profile = Profile.initial;
+      }
     }
+    // Лениво выдаём стабильный онлайн-id при первом запуске и сохраняем.
+    if (profile.id.isEmpty) {
+      profile = profile.copyWith(id: newUuidV4());
+      ref
+          .read(sharedPreferencesProvider)
+          .setString(PrefKeys.profile, jsonEncode(profile.toJson()));
+    }
+    return profile;
   }
 
   /// Сохраняет текущий профиль в хранилище.
@@ -78,6 +89,18 @@ class ProfileController extends Notifier<Profile> {
     );
     _persist();
     return coinGain;
+  }
+
+  /// Начисляет результат онлайн-матча: только счётчики W/L/D ([outcome]:
+  /// 1 победа / 0 ничья / -1 поражение). XP/монеты онлайн пока не трогаем
+  /// (минимальная статистика Фазы 6A; экономику онлайна вынесем отдельно).
+  void recordOnlineResult({required int outcome}) {
+    state = state.copyWith(
+      onlineWins: state.onlineWins + (outcome > 0 ? 1 : 0),
+      onlineLosses: state.onlineLosses + (outcome < 0 ? 1 : 0),
+      onlineDraws: state.onlineDraws + (outcome == 0 ? 1 : 0),
+    );
+    _persist();
   }
 }
 
