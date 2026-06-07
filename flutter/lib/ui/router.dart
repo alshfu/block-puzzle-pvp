@@ -14,6 +14,7 @@ import 'screens/achievements_screen.dart';
 import 'screens/daily_screen.dart';
 import 'screens/game_screen.dart';
 import 'screens/menu_screen.dart';
+import 'screens/online/online_menu_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 
@@ -47,5 +48,9 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const AchievementsScreen(),
     ),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
+    GoRoute(
+      path: '/online',
+      builder: (context, state) => const OnlineMenuScreen(),
+    ),
   ],
 );

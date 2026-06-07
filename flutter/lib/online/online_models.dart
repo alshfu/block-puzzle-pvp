@@ -48,6 +48,17 @@ class OnlineProfile {
   );
 }
 
+/// Аргументы перехода лобби→игра (передаются через go_router `extra`).
+class OnlineGameArgs {
+  /// Профиль соперника (для отображения до прихода `joined`).
+  final OnlineProfile opponent;
+
+  /// Свой профиль (для `hello`).
+  final OnlineProfile me;
+
+  const OnlineGameArgs({required this.opponent, required this.me});
+}
+
 /// Представление игрока в состоянии матча (с сервера).
 class OnlinePlayerView {
   final String id;

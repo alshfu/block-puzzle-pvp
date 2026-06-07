@@ -26,3 +26,12 @@ Uri partyUri(String party, String room) {
   final scheme = partyTls ? 'wss' : 'ws';
   return Uri.parse('$scheme://$partyHost/parties/$party/$room');
 }
+
+/// URL лобби (матчмейкинг).
+Uri partyUriLobby() => partyUri('lobby', 'main');
+
+/// URL игровой комнаты [roomId].
+Uri partyUriRoom(String roomId) => partyUri('room', roomId);
+
+/// URL лидерборда.
+Uri partyUriLeaderboard() => partyUri('leaderboard', 'main');

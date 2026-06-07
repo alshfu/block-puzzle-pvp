@@ -211,6 +211,12 @@ class _TopBar extends ConsumerWidget {
         const SizedBox(width: 8),
         _IconChip(
           tokens: tokens,
+          emoji: '🌐',
+          onTap: () => context.go('/online'),
+        ),
+        const SizedBox(width: 8),
+        _IconChip(
+          tokens: tokens,
           emoji: '🎯',
           onTap: () => context.go('/daily'),
         ),
