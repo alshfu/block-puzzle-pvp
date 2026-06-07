@@ -190,8 +190,22 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
       по итогу. Тест `test/audio/synth_test.dart` (WAV-заголовок, длина буфера,
       пик огибающей, детерминизм, кламп). **74 теста** зелёные, analyze чист,
       `flutter build web` собирается (WASM dry-run ок).
-- [ ] Декор: `Mascot`/`CartoonPony` через `flutter_svg`, `FloatingTheme`,
-      `ThemeBackdrop` (candy=блёстки, night=неон).
+- [x] **2026-06-07** — **декор: `ThemeBackdrop`** (`ui/decor/theme_backdrop.dart`)
+      — порт `components/ThemeBackdrop.tsx` + CSS-анимаций. 3 темы: neutral
+      (статичные радиальные градиенты), candy (розовый градиент + радуга +
+      облака + 22 падающих сердечка/звезды/искры через `floatdown`), night
+      (тёмный градиент + звёзды + качающийся луч `beamsweep` + эмблема-ромб со
+      звездой `emblemglow` + неоновый скайлайн из 22 зданий + сетка). Частицы
+      засеяны **тем же PRNG ядра**: `makeRng(7)` для candy-битов, `makeRng(100+i)`
+      для зданий — раскладка совпадает с TS. Анимация от свободного `Ticker`
+      (монотонные секунды), при `reduceMotion` тикер не стартует (статичный
+      кадр). Встроен за контент в `MenuScreen` и `ScreenScaffold` (профиль/
+      настройки/ачивки/daily). Тесты переведены на `reduceMotion:true` в
+      mock-prefs (иначе `pumpAndSettle` висит на бесконечном тикере). **74 теста**
+      зелёные, analyze чист, web собирается. *Отложено:* ponies/mascots в
+      candy-фоне — отдельный SVG-слайс.
+- [ ] Декор (продолжение): `Mascot`/`CartoonPony` через `flutter_svg` или
+      `CustomPaint`, `FloatingTheme`-кнопка.
 - [ ] Анимации: `ConfettiComponent`/`ComboFlashComponent` (Flame), Toast/Pause/
       Result-оверлеи через `flutter_animate` с теми же таймингами.
 - [ ] Фоновая музыка (`src/ui/music.ts`) — синтез в Dart, отдельный слайс.
@@ -213,6 +227,6 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
 
 ---
 
-_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 начата (звук
-синтезируется в Dart). 74 теста зелёные, web собирается. Дальше по Фазе 5 —
-декор/анимации/музыка/pixel-parity._
+_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 в работе (звук в Dart +
+анимированный ThemeBackdrop под 3 темы). 74 теста зелёные, web собирается.
+Дальше по Фазе 5 — маскоты/ponies, Confetti/ComboFlash, музыка, pixel-parity._

@@ -21,7 +21,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _pumpApp(WidgetTester tester) async {
-  SharedPreferences.setMockInitialValues({});
+  // reduceMotion → декоративный ThemeBackdrop не крутит Ticker (pumpAndSettle
+  // на меню/профиле сходится); blitz-таймер игры гасится отдельными pump().
+  SharedPreferences.setMockInitialValues({
+    'bd_settings': '{"soundOn":true,"musicOn":true,"reduceMotion":true}',
+  });
   final prefs = await SharedPreferences.getInstance();
   await tester.pumpWidget(
     ProviderScope(

@@ -8,6 +8,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
 
 /// Каркас вторичного экрана с шапкой и прокручиваемым телом.
@@ -37,44 +38,49 @@ class ScreenScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: theme.bg,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 16, 6),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: onBack,
-                        icon: Icon(Icons.arrow_back, color: theme.ink),
+      body: Stack(
+        children: [
+          const ThemeBackdrop(),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 460),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 16, 6),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: onBack,
+                            icon: Icon(Icons.arrow_back, color: theme.ink),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            title,
+                            style: TextStyle(
+                              color: theme.ink,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              fontFamily: theme.fontDisplay,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        title,
-                        style: TextStyle(
-                          color: theme.ink,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: theme.fontDisplay,
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                        children: children,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                    children: children,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

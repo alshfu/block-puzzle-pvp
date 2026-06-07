@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import '../../game/saved_game.dart';
 import '../../game/saved_game_store.dart';
 import '../../profile/profile_controller.dart';
+import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
 import '../responsive.dart';
 import '../widgets/logo.dart';
@@ -49,82 +50,79 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     final saved = ref.read(savedGameStoreProvider).load();
     return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [tokens.bg, tokens.bg2],
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 460),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-                child: Column(
-                  children: [
-                    const _TopBar(),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Logo(),
-                          const SizedBox(height: 12),
-                          Text(
-                            'дуэль на поле 9×9 · ставь, очищай, побеждай',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: tokens.muted,
-                              fontSize: clampVw(
-                                context,
-                                min: 12,
-                                prefVw: 3.4,
-                                max: 15,
+      backgroundColor: tokens.bg,
+      body: Stack(
+        children: [
+          const ThemeBackdrop(),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 460),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                  child: Column(
+                    children: [
+                      const _TopBar(),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Logo(),
+                            const SizedBox(height: 12),
+                            Text(
+                              'дуэль на поле 9×9 · ставь, очищай, побеждай',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: tokens.muted,
+                                fontSize: clampVw(
+                                  context,
+                                  min: 12,
+                                  prefVw: 3.4,
+                                  max: 15,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          const _MiniDeco(),
-                        ],
-                      ),
-                    ),
-                    if (!_modeOpen && saved != null) ...[
-                      _ResumeCard(
-                        tokens: tokens,
-                        saved: saved,
-                        onResume: () => context.go(
-                          '/game/${saved.mode.name}'
-                          '?resume=1&seed=${saved.seed}',
+                            const SizedBox(height: 20),
+                            const _MiniDeco(),
+                          ],
                         ),
-                        onDiscard: () {
-                          ref.read(savedGameStoreProvider).clear();
-                          setState(() {});
-                        },
                       ),
-                      const SizedBox(height: 10),
+                      if (!_modeOpen && saved != null) ...[
+                        _ResumeCard(
+                          tokens: tokens,
+                          saved: saved,
+                          onResume: () => context.go(
+                            '/game/${saved.mode.name}'
+                            '?resume=1&seed=${saved.seed}',
+                          ),
+                          onDiscard: () {
+                            ref.read(savedGameStoreProvider).clear();
+                            setState(() {});
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                      _Actions(
+                        tokens: tokens,
+                        modeOpen: _modeOpen,
+                        onOpenModes: () => setState(() => _modeOpen = true),
+                        onBack: () => setState(() => _modeOpen = false),
+                        onStart: _start,
+                      ),
+                      const SizedBox(height: 16),
+                      const ThemeSwitch(),
+                      const SizedBox(height: 12),
+                      Text(
+                        'v2.0 · flutter migration',
+                        style: TextStyle(color: tokens.muted, fontSize: 11),
+                      ),
                     ],
-                    _Actions(
-                      tokens: tokens,
-                      modeOpen: _modeOpen,
-                      onOpenModes: () => setState(() => _modeOpen = true),
-                      onBack: () => setState(() => _modeOpen = false),
-                      onStart: _start,
-                    ),
-                    const SizedBox(height: 16),
-                    const ThemeSwitch(),
-                    const SizedBox(height: 12),
-                    Text(
-                      'v2.0 · flutter migration',
-                      style: TextStyle(color: tokens.muted, fontSize: 11),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -14,7 +14,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('Меню рисуется: слоган и версия на месте', (tester) async {
-    SharedPreferences.setMockInitialValues({});
+    // reduceMotion → анимированный ThemeBackdrop не запускает Ticker, и
+    // pumpAndSettle сходится (декоративный фон рисуется статичным кадром).
+    SharedPreferences.setMockInitialValues({
+      'bd_settings': '{"soundOn":true,"musicOn":true,"reduceMotion":true}',
+    });
     final prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
