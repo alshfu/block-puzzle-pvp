@@ -174,7 +174,31 @@ Daily + resume сохранёнки).
 **Фаза 4 завершена.** Storage + Profile + Settings + Achievements + Daily +
 resume — всё на месте. Дальше — Фаза 5 (декор, анимации, звук, pixel-parity).
 
-## Фазы 5–9
+## Фаза 5 — декор, анимации, звук, pixel-parity (в работе)
+
+- [x] **2026-06-07** — **звук синтезируется в Dart** (решение пользователя: не
+      запекать .wav из браузера, а портировать Web Audio синтез). Чистый движок
+      `audio/synth.dart` (осциллятор sine/triangle/sawtooth/square + envelope:
+      линейная атака 0→peak за 10мс, exp-спад peak→0.0001 за `duration`; смешение
+      тонов с `start` → WAV-байты моно/16-bit). Каталог `audio/sfx.dart` (1:1 с
+      `src/ui/audio.ts`: place/invalid/clear(n)/perfect/win/lose/draw/tick/click).
+      Воспроизведение `audio/audio_service.dart` на `audioplayers` (пул из 4
+      плееров round-robin, кэш WAV, уважает `soundOn`) — единственное место с
+      плагином, синтез остаётся чистым. Проводка: `GameState` получил
+      `moveSeq`/`lastClearCount`/`lastPerfect`; `GameScreen._playMoveSfx`
+      (постановка/очистка/perfect + тик в danger-зоне ≤3с) и звук win/lose/draw
+      по итогу. Тест `test/audio/synth_test.dart` (WAV-заголовок, длина буфера,
+      пик огибающей, детерминизм, кламп). **74 теста** зелёные, analyze чист,
+      `flutter build web` собирается (WASM dry-run ок).
+- [ ] Декор: `Mascot`/`CartoonPony` через `flutter_svg`, `FloatingTheme`,
+      `ThemeBackdrop` (candy=блёстки, night=неон).
+- [ ] Анимации: `ConfettiComponent`/`ComboFlashComponent` (Flame), Toast/Pause/
+      Result-оверлеи через `flutter_animate` с теми же таймингами.
+- [ ] Фоновая музыка (`src/ui/music.ts`) — синтез в Dart, отдельный слайс.
+- [ ] Click-звук на элементы UI (каталог готов — `Sfx.click`).
+- [ ] **Gate:** полная визуальная сверка pixel-parity во всех 3 темах.
+
+## Фазы 6–9
 
 См. план `MIGRATION_FLUTTER.md` §8. Будут раскрыты по мере подхода.
 
@@ -189,5 +213,6 @@ resume — всё на месте. Дальше — Фаза 5 (декор, ан
 
 ---
 
-_Last updated: 2026-06-07 — Фазы 0–4 завершены (ядро, UI, игра, blitz, storage,
-профиль, ачивки, daily, resume); 65 тестов зелёные. Следующая — Фаза 5._
+_Last updated: 2026-06-07 — Фазы 0–4 завершены; Фаза 5 начата (звук
+синтезируется в Dart). 74 теста зелёные, web собирается. Дальше по Фазе 5 —
+декор/анимации/музыка/pixel-parity._

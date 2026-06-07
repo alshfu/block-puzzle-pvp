@@ -82,6 +82,16 @@ class GameState {
   /// Правила партии.
   final RuleConfig cfg;
 
+  /// Счётчик сделанных постановок (растёт на каждый ход). View использует его,
+  /// чтобы отличить новый ход от прочих обновлений (тик таймера) и сыграть звук.
+  final int moveSeq;
+
+  /// Сколько линий очистил последний ход (0 — без очистки).
+  final int lastClearCount;
+
+  /// Был ли последний ход perfect clear.
+  final bool lastPerfect;
+
   /// Создаёт снимок партии.
   const GameState({
     required this.board,
@@ -95,6 +105,9 @@ class GameState {
     required this.turnLimit,
     required this.turnRemaining,
     required this.cfg,
+    this.moveSeq = 0,
+    this.lastClearCount = 0,
+    this.lastPerfect = false,
   });
 
   /// Текущий игрок.
@@ -148,6 +161,9 @@ class GameState {
     int? orientIndex,
     double? turnLimit,
     double? turnRemaining,
+    int? moveSeq,
+    int? lastClearCount,
+    bool? lastPerfect,
   }) => GameState(
     board: board ?? this.board,
     players: players ?? this.players,
@@ -162,5 +178,8 @@ class GameState {
     turnLimit: turnLimit ?? this.turnLimit,
     turnRemaining: turnRemaining ?? this.turnRemaining,
     cfg: cfg,
+    moveSeq: moveSeq ?? this.moveSeq,
+    lastClearCount: lastClearCount ?? this.lastClearCount,
+    lastPerfect: lastPerfect ?? this.lastPerfect,
   );
 }

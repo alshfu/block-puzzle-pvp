@@ -279,6 +279,9 @@ class GameNotifier extends Notifier<GameState> {
       orientIndex: 0,
       turnLimit: limit,
       turnRemaining: limit,
+      moveSeq: state.moveSeq + 1,
+      lastClearCount: clears.count,
+      lastPerfect: perfect,
     );
 
     // Тупик: следующий игрок не может сходить — партия окончена.

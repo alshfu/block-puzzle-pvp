@@ -15,9 +15,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../achievements/achievements_controller.dart';
+import '../../audio/audio_service.dart';
+import '../../audio/sfx.dart';
 import '../../daily/daily.dart';
 import '../../daily/daily_controller.dart';
 import '../../game/game_notifier.dart';
+import '../../game/game_state.dart';
 import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
 import '../design_tokens.dart';
@@ -59,12 +62,41 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
   }
 
+  /// Граница «danger-зоны» таймера (с) — ниже неё тикает звук.
+  static const double _dangerThreshold = 3.0;
+
+  /// Играет звук хода по диффу состояния: постановка/очистка/perfect — на новом
+  /// ходу ([moveSeq] вырос); тик — при входе остатка таймера в danger-зону.
+  void _playMoveSfx(GameState? prev, GameState next) {
+    final audio = ref.read(audioServiceProvider);
+    if (prev != null && next.moveSeq > prev.moveSeq) {
+      if (next.lastPerfect) {
+        audio.play(Sfx.perfect);
+      } else if (next.lastClearCount > 0) {
+        audio.playClear(next.lastClearCount);
+      } else {
+        audio.play(Sfx.place);
+      }
+    }
+    // Тик таймера: только на ходу человека, при пересечении порога вниз.
+    if (prev != null &&
+        !next.gameOver &&
+        !_config.isBot(next.current) &&
+        next.turnLimit.isFinite) {
+      final crossedDown =
+          prev.turnRemaining > _dangerThreshold &&
+          next.turnRemaining <= _dangerThreshold;
+      if (crossedDown) audio.play(Sfx.tick);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<BlockDuelTheme>()!;
     // Начисляем награды игроку 0 (человеку) при завершении партии — кроме
     // зрительского bot×bot. Срабатывает один раз на переходе в gameOver.
     ref.listen(gameProvider(_config), (prev, next) {
+      _playMoveSfx(prev, next);
       final justEnded = (prev == null || !prev.gameOver) && next.gameOver;
       if (justEnded && _config.mode != MatchMode.botvbot) {
         final won = next.winner == 0;
@@ -77,6 +109,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ref
             .read(dailyControllerProvider.notifier)
             .recordGame(DailyGameEvent(won: won && !draw, coinsEarned: coins));
+      }
+      if (justEnded) {
+        final audio = ref.read(audioServiceProvider);
+        audio.play(
+          next.winner == null
+              ? Sfx.draw
+              : (next.winner == 0 ? Sfx.win : Sfx.lose),
+        );
       }
     });
     final state = ref.watch(gameProvider(_config));
