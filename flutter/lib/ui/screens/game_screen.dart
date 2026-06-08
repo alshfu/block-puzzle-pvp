@@ -322,10 +322,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       HandView(
                         hand: state.currentPlayer.hand,
                         selectedId: state.selectedPieceId,
+                        selectedCells: state.activeCells,
                         interactive: humanTurn,
                         owner: state.current,
                         theme: theme,
                         onSelect: vm.selectPiece,
+                        onRotate: vm.rotateSelected,
                       ),
                     ],
                   ),

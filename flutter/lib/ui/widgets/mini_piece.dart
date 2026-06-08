@@ -9,6 +9,7 @@
 library;
 
 import 'package:block_duel/core/core.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../design_tokens.dart';
@@ -92,5 +93,8 @@ class _MiniPiecePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_MiniPiecePainter old) =>
-      old.color != color || old.cellSize != cellSize || old.radius != radius;
+      old.color != color ||
+      old.cellSize != cellSize ||
+      old.radius != radius ||
+      !const ListEquality<Coord>().equals(old.cells, cells);
 }

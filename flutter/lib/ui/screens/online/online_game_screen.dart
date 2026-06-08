@@ -177,10 +177,12 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                       HandView(
                         hand: gs.currentPlayer.hand,
                         selectedId: gs.selectedPieceId,
+                        selectedCells: gs.activeCells,
                         interactive: myTurn,
                         owner: game.current,
                         theme: theme,
                         onSelect: vm.selectPiece,
+                        onRotate: vm.rotateSelected,
                       ),
                     ],
                   ),

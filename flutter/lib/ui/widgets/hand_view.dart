@@ -1,9 +1,11 @@
 /// hand_view.dart — рука фигур текущего игрока (View).
 ///
 /// За что отвечает файл:
-///   Показывает фигуры в руке, подсвечивает выбранную и сообщает о выборе через
-///   [onSelect]. Когда ход не за человеком ([interactive] = false) — выбор
-///   заблокирован. Чистый View поверх [MiniPiece]; логики нет.
+///   Показывает фигуры в руке, подсвечивает выбранную (в её ТЕКУЩЕЙ ориентации,
+///   а не в базовой) и сообщает о выборе через [onSelect]. Повторный тап по уже
+///   выбранной фигуре поворачивает её ([onRotate]) — поворот прямо в руке. На
+///   ходу бота ([interactive] = false) выбор заблокирован. Чистый View поверх
+///   [MiniPiece]; логики нет.
 ///
 /// Соответствие TS: `components/Hand.tsx`.
 library;
@@ -31,8 +33,15 @@ class HandView extends StatelessWidget {
   /// Токены темы.
   final BlockDuelTheme theme;
 
+  /// Клетки выбранной фигуры в ТЕКУЩЕЙ ориентации (для отрисовки в руке);
+  /// `null`, если ничего не выбрано — тогда рисуется базовая форма.
+  final List<Coord>? selectedCells;
+
   /// Команда выбора фигуры.
   final void Function(String pieceId) onSelect;
+
+  /// Команда поворота выбранной фигуры (повторный тап по выбранной).
+  final VoidCallback onRotate;
 
   /// Создаёт ряд руки.
   const HandView({
@@ -43,6 +52,8 @@ class HandView extends StatelessWidget {
     required this.owner,
     required this.theme,
     required this.onSelect,
+    required this.onRotate,
+    this.selectedCells,
   });
 
   @override
@@ -51,16 +62,26 @@ class HandView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         for (final piece in hand)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: _HandSlot(
-              selected: piece.id == selectedId,
-              interactive: interactive,
-              accent: theme.playerColor(owner),
-              theme: theme,
-              onTap: () => onSelect(piece.id),
-              child: MiniPiece(cells: piece.cells, owner: owner, cellSize: 18),
-            ),
+          Builder(
+            builder: (context) {
+              final isSel = piece.id == selectedId;
+              // Выбранную рисуем в текущей ориентации, остальные — в базовой.
+              final cells = isSel && selectedCells != null
+                  ? selectedCells!
+                  : piece.cells;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: _HandSlot(
+                  selected: isSel,
+                  interactive: interactive,
+                  accent: theme.playerColor(owner),
+                  theme: theme,
+                  // Повторный тап по выбранной — поворот; иначе — выбор.
+                  onTap: isSel ? onRotate : () => onSelect(piece.id),
+                  child: MiniPiece(cells: cells, owner: owner, cellSize: 18),
+                ),
+              );
+            },
           ),
       ],
     );
