@@ -14,6 +14,10 @@ class MainFlutterWindow: NSWindow {
     // Стартовый размер делаем комфортным (игровое поле помещается целиком).
     self.setContentSize(NSSize(width: 900, height: 840))
     self.center()
+    // Тёмный фон окна под цвет тёмной темы — без белой вспышки при
+    // старте/ресайзе до первого кадра Flutter.
+    self.backgroundColor = NSColor(
+      red: 0x0E / 255.0, green: 0x11 / 255.0, blue: 0x16 / 255.0, alpha: 1.0)
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 
