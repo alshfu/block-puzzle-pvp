@@ -106,7 +106,12 @@ class _BoardViewState extends State<BoardView> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final side = constraints.maxWidth;
+          // Курсор-рука (десктоп), когда есть что ставить под курсором.
+          final cursor = state.activeCells != null
+              ? SystemMouseCursors.click
+              : MouseCursor.defer;
           return MouseRegion(
+            cursor: cursor,
             onHover: (e) => _setHover(_cellAt(e.localPosition, side)),
             onExit: (_) => _setHover(null),
             child: GestureDetector(

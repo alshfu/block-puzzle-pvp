@@ -262,21 +262,26 @@ class _Segment<T> extends StatelessWidget {
         children: [
           for (final entry in options.entries)
             Expanded(
-              child: GestureDetector(
-                onTap: () => onChanged(entry.key),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 9),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: entry.key == value ? tokens.p0 : Colors.transparent,
-                    borderRadius: BorderRadius.circular(tokens.btnRadius - 3),
-                  ),
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      color: entry.key == value ? tokens.bg : tokens.muted,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () => onChanged(entry.key),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 9),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: entry.key == value
+                          ? tokens.p0
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(tokens.btnRadius - 3),
+                    ),
+                    child: Text(
+                      entry.value,
+                      style: TextStyle(
+                        color: entry.key == value ? tokens.bg : tokens.muted,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),

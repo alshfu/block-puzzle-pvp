@@ -319,29 +319,32 @@ class _CategoryBar extends StatelessWidget {
         children: [
           for (int i = 0; i < _cats.length; i++)
             Expanded(
-              child: GestureDetector(
-                onTap: () => onSelect(i),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 9),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: i == active ? theme.p0 : Colors.transparent,
-                    borderRadius: BorderRadius.circular(theme.btnRadius - 3),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(_cats[i].$1, style: const TextStyle(fontSize: 18)),
-                      const SizedBox(height: 2),
-                      Text(
-                        _cats[i].$2,
-                        style: TextStyle(
-                          color: i == active ? theme.bg : theme.muted,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () => onSelect(i),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 9),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: i == active ? theme.p0 : Colors.transparent,
+                      borderRadius: BorderRadius.circular(theme.btnRadius - 3),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(_cats[i].$1, style: const TextStyle(fontSize: 18)),
+                        const SizedBox(height: 2),
+                        Text(
+                          _cats[i].$2,
+                          style: TextStyle(
+                            color: i == active ? theme.bg : theme.muted,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -627,21 +630,24 @@ class _SegmentRow<T> extends StatelessWidget {
         children: [
           for (final entry in options.entries)
             Expanded(
-              child: GestureDetector(
-                onTap: () => onChanged(entry.key),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: entry.key == value ? theme.p0 : Colors.transparent,
-                    borderRadius: BorderRadius.circular(theme.btnRadius - 3),
-                  ),
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      color: entry.key == value ? theme.bg : theme.muted,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () => onChanged(entry.key),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: entry.key == value ? theme.p0 : Colors.transparent,
+                      borderRadius: BorderRadius.circular(theme.btnRadius - 3),
+                    ),
+                    child: Text(
+                      entry.value,
+                      style: TextStyle(
+                        color: entry.key == value ? theme.bg : theme.muted,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
