@@ -39,4 +39,7 @@ abstract final class PrefKeys {
 
   /// JSON инвентаря power-ups (id → количество).
   static const String inventory = 'bd_inventory';
+
+  /// Флаг выданной награды за обучение (`'1'` — уже выдана).
+  static const String tutorialDone = 'bd_tutorial_done';
 }

@@ -53,7 +53,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   void _start(GameMode mode) {
     _click();
     const setupModes = {GameMode.bot, GameMode.hotseat, GameMode.botvbot};
-    if (setupModes.contains(mode)) {
+    if (mode == GameMode.tutorial) {
+      context.go('/tutorial');
+    } else if (setupModes.contains(mode)) {
       context.go('/setup/${mode.name}');
     } else {
       context.go('/game/${mode.name}');
@@ -320,6 +322,13 @@ class _Actions extends StatelessWidget {
           title: 'Бот × бот',
           sub: 'смотри как ИИ играет с ИИ',
           onTap: () => onStart(GameMode.botvbot),
+        ),
+        _ModeButton(
+          tokens: tokens,
+          icon: '🎓',
+          title: 'Обучение',
+          sub: '5 шагов · награда +50 🪙',
+          onTap: () => onStart(GameMode.tutorial),
         ),
         TextButton(
           onPressed: onBack,
