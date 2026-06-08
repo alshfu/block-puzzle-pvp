@@ -67,6 +67,10 @@ void main() {
     await tester.tap(find.text('▶ Играть'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Вдвоём'));
+    await tester.pumpAndSettle();
+    // Экран настройки матча → стартуем с дефолтами.
+    expect(find.text('Настройка матча'), findsOneWidget);
+    await tester.tap(find.text('Начать →'));
     // На игровом экране крутится blitz-таймер → pumpAndSettle зависнет;
     // используем pump с фиксированными интервалами.
     await tester.pump();

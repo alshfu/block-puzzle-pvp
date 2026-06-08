@@ -48,10 +48,16 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
 
-  /// Навигация к игре выбранного режима.
+  /// Навигация к выбранному режиму. Для режимов с настройкой (bot/hotseat/
+  /// botvbot) — через экран настройки матча; arcade пока напрямую.
   void _start(GameMode mode) {
     _click();
-    context.go('/game/${mode.name}');
+    const setupModes = {GameMode.bot, GameMode.hotseat, GameMode.botvbot};
+    if (setupModes.contains(mode)) {
+      context.go('/setup/${mode.name}');
+    } else {
+      context.go('/game/${mode.name}');
+    }
   }
 
   @override

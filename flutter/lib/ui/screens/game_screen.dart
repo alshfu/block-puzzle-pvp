@@ -10,6 +10,7 @@
 /// результат-оверлей с XP — Фазы 3–4.
 library;
 
+import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,8 +46,20 @@ class GameScreen extends ConsumerStatefulWidget {
   /// Seed сохранённой партии для продолжения (resume) либо `null` — новая игра.
   final int? resumeSeed;
 
+  /// Уровень бота (из SetupScreen); null — дефолт.
+  final BotLevel? botLevel;
+
+  /// Правила партии (из SetupScreen); null — [defaultConfig].
+  final RuleConfig? cfg;
+
   /// Создаёт игровой экран.
-  const GameScreen({super.key, required this.modeRaw, this.resumeSeed});
+  const GameScreen({
+    super.key,
+    required this.modeRaw,
+    this.resumeSeed,
+    this.botLevel,
+    this.cfg,
+  });
 
   @override
   ConsumerState<GameScreen> createState() => _GameScreenState();
@@ -77,8 +90,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       _config = MatchConfig(mode: mode, seed: widget.resumeSeed!, resume: true);
     } else {
       // Новая игра: seed берётся во View (ядро остаётся детерминированным).
+      // Уровень бота и правила приходят из SetupScreen (или дефолт).
       final seed = DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
-      _config = MatchConfig(mode: mode, seed: seed);
+      _config = MatchConfig(
+        mode: mode,
+        seed: seed,
+        botLevel: widget.botLevel ?? BotLevel.medium,
+        cfg: widget.cfg ?? defaultConfig,
+      );
     }
   }
 

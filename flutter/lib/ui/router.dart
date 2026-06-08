@@ -22,6 +22,7 @@ import 'screens/online/online_game_screen.dart';
 import 'screens/online/online_menu_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/setup_screen.dart';
 
 /// Глобальный роутер приложения.
 final GoRouter appRouter = GoRouter(
@@ -29,14 +30,21 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const MenuScreen()),
     GoRoute(
+      path: '/setup/:mode',
+      builder: (context, state) =>
+          SetupScreen(modeRaw: state.pathParameters['mode'] ?? 'bot'),
+    ),
+    GoRoute(
       path: '/game/:mode',
       builder: (context, state) {
-        final resume = state.uri.queryParameters['resume'] == '1';
-        final seedStr = state.uri.queryParameters['seed'];
-        final resumeSeed = resume ? int.tryParse(seedStr ?? '') : null;
+        final q = state.uri.queryParameters;
+        final resume = q['resume'] == '1';
+        final resumeSeed = resume ? int.tryParse(q['seed'] ?? '') : null;
         return GameScreen(
           modeRaw: state.pathParameters['mode'] ?? 'bot',
           resumeSeed: resumeSeed,
+          botLevel: resume ? null : botLevelFromParams(q),
+          cfg: resume ? null : ruleConfigFromParams(q),
         );
       },
     ),
