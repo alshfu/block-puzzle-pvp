@@ -18,7 +18,20 @@ import '../design_tokens.dart';
 import '../widgets/screen_scaffold.dart';
 
 /// Набор аватаров для выбора.
-const List<String> _avatars = ['🙂', '😎', '🦊', '🐲', '🦄', '🤖', '👾', '🐱'];
+const List<String> _avatars = [
+  '🙂',
+  '😎',
+  '🦊',
+  '🐱',
+  '🦄',
+  '🐉',
+  '🤖',
+  '👾',
+  '🧙',
+  '🥷',
+  '👑',
+  '🌟',
+];
 
 /// Экран профиля.
 class ProfileScreen extends ConsumerWidget {

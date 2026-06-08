@@ -108,6 +108,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   // Итог последнего матча (для экрана результата).
   int _resultXp = 0;
   int _resultCoins = 0;
+  int _resultStreak = 0;
   List<AchievementDef> _resultAchievements = const [];
 
   // Накопители статистики текущего матча (ходы игрока 0 — «ты»).
@@ -351,6 +352,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
           _resultXp = gainedXp;
           _resultCoins = coins;
           _resultAchievements = fresh;
+          _resultStreak = won && !draw ? stats.currentWinStreak : 0;
         });
         ref
             .read(dailyControllerProvider.notifier)
@@ -514,6 +516,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               gainedXp: _resultXp,
               gainedCoins: _resultCoins,
               achievements: _resultAchievements,
+              winStreak: _resultStreak,
               solo: _config.isSolo,
               onNewGame: () {
                 _click();
@@ -824,6 +827,7 @@ class _GameOverOverlay extends StatelessWidget {
   final int gainedXp;
   final int gainedCoins;
   final List<AchievementDef> achievements;
+  final int winStreak;
   final bool solo;
   final VoidCallback onNewGame;
   final VoidCallback onMenu;
@@ -838,6 +842,7 @@ class _GameOverOverlay extends StatelessWidget {
     required this.achievements,
     required this.onNewGame,
     required this.onMenu,
+    this.winStreak = 0,
     this.solo = false,
   });
 
@@ -889,6 +894,29 @@ class _GameOverOverlay extends StatelessWidget {
                   fontFamily: theme.fontMono,
                 ),
               ),
+              // Баннер серии побед (от 2 подряд).
+              if (winStreak >= 2) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.p0.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(theme.btnRadius),
+                    border: Border.all(color: theme.p0),
+                  ),
+                  child: Text(
+                    '🔥 Серия побед ×$winStreak',
+                    style: TextStyle(
+                      color: theme.p0,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
               // Разблокированные за матч ачивки.
               if (achievements.isNotEmpty) ...[
                 const SizedBox(height: 10),
