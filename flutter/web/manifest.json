@@ -1,11 +1,11 @@
 {
-    "name": "block_duel",
-    "short_name": "block_duel",
+    "name": "BlockDuel 9×9",
+    "short_name": "BlockDuel",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0E1116",
+    "theme_color": "#0E1116",
+    "description": "Соревновательный блок-пазл на поле 9×9: ставь тетромино, очищай линии и боксы 3×3, побеждай.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
