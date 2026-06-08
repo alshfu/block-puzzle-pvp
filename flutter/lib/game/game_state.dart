@@ -95,6 +95,10 @@ class GameState {
   /// Стоит ли партия на паузе (таймеры остановлены, показан оверлей).
   final bool paused;
 
+  /// Следующая фигура каждого игрока (превью «дальше», индексы 0/1). Пусто —
+  /// нет данных (например, в онлайне сервер очередь мешка не присылает).
+  final List<PieceType> nextPieces;
+
   /// Создаёт снимок партии.
   const GameState({
     required this.board,
@@ -112,6 +116,7 @@ class GameState {
     this.lastClearCount = 0,
     this.lastPerfect = false,
     this.paused = false,
+    this.nextPieces = const [],
   });
 
   /// Текущий игрок.
@@ -169,6 +174,7 @@ class GameState {
     int? lastClearCount,
     bool? lastPerfect,
     bool? paused,
+    List<PieceType>? nextPieces,
   }) => GameState(
     board: board ?? this.board,
     players: players ?? this.players,
@@ -187,5 +193,6 @@ class GameState {
     lastClearCount: lastClearCount ?? this.lastClearCount,
     lastPerfect: lastPerfect ?? this.lastPerfect,
     paused: paused ?? this.paused,
+    nextPieces: nextPieces ?? this.nextPieces,
   );
 }

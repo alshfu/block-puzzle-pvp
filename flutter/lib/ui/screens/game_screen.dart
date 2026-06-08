@@ -41,6 +41,7 @@ import '../game/confetti_overlay.dart';
 import '../theme/theme_controller.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
+import '../widgets/mini_piece.dart';
 import '../widgets/scoreboard.dart';
 import '../widgets/turn_timer.dart';
 
@@ -99,6 +100,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
 
   /// Очередь тостов о вновь разблокированных ачивках.
   final List<AchievementDef> _toasts = [];
+
+  // Итог последнего матча (для экрана результата).
+  int _resultXp = 0;
+  int _resultCoins = 0;
+  List<AchievementDef> _resultAchievements = const [];
 
   // Накопители статистики текущего матча (ходы игрока 0 — «ты»).
   int _matchClears = 0;
@@ -256,6 +262,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
       if (justEnded && _config.mode != MatchMode.botvbot) {
         final won = next.winner == 0;
         final draw = next.winner == null;
+        final xpBefore = ref.read(profileControllerProvider).xp;
         final coins = ref
             .read(profileControllerProvider.notifier)
             .recordResult(won: won, draw: draw);
@@ -285,7 +292,14 @@ class _GameScreenState extends ConsumerState<GameScreen>
                 winStreak: stats.currentWinStreak,
               ),
             );
-        if (fresh.isNotEmpty) setState(() => _toasts.addAll(fresh));
+        // Прирост XP за матч (награды + XP ачивок) — для экрана результата.
+        final gainedXp = ref.read(profileControllerProvider).xp - xpBefore;
+        setState(() {
+          if (fresh.isNotEmpty) _toasts.addAll(fresh);
+          _resultXp = gainedXp;
+          _resultCoins = coins;
+          _resultAchievements = fresh;
+        });
         ref
             .read(dailyControllerProvider.notifier)
             .recordGame(DailyGameEvent(won: won && !draw, coinsEarned: coins));
@@ -357,7 +371,14 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           onRotate: vm.rotateSelected,
                           onDeselect: vm.deselect,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
+                        if (state.nextPieces.length > state.current)
+                          _NextPreview(
+                            theme: theme,
+                            type: state.nextPieces[state.current],
+                            owner: state.current,
+                          ),
+                        const SizedBox(height: 6),
                         HandView(
                           hand: state.currentPlayer.hand,
                           selectedId: state.selectedPieceId,
@@ -421,6 +442,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
                   ? null
                   : state.players[state.winner!].name,
               scores: [state.players[0].score, state.players[1].score],
+              gainedXp: _resultXp,
+              gainedCoins: _resultCoins,
+              achievements: _resultAchievements,
               onNewGame: () {
                 _click();
                 vm.newGame();
@@ -439,6 +463,50 @@ class _GameScreenState extends ConsumerState<GameScreen>
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Превью «дальше»: следующая фигура текущего игрока (ТЗ §8.1).
+class _NextPreview extends StatelessWidget {
+  final BlockDuelTheme theme;
+  final PieceType type;
+  final int owner;
+
+  const _NextPreview({
+    required this.theme,
+    required this.type,
+    required this.owner,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Дальше',
+          style: TextStyle(
+            color: theme.muted,
+            fontSize: 11,
+            fontFamily: theme.fontMono,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: theme.panel,
+            borderRadius: BorderRadius.circular(theme.btnRadius),
+            border: Border.all(color: theme.line),
+          ),
+          child: MiniPiece(
+            cells: baseShapes[type]!,
+            owner: owner,
+            cellSize: 10,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -683,6 +751,9 @@ class _GameOverOverlay extends StatelessWidget {
   final ThemeId themeId;
   final String? winnerName;
   final List<int> scores;
+  final int gainedXp;
+  final int gainedCoins;
+  final List<AchievementDef> achievements;
   final VoidCallback onNewGame;
   final VoidCallback onMenu;
 
@@ -691,6 +762,9 @@ class _GameOverOverlay extends StatelessWidget {
     required this.themeId,
     required this.winnerName,
     required this.scores,
+    required this.gainedXp,
+    required this.gainedCoins,
+    required this.achievements,
     required this.onNewGame,
     required this.onMenu,
   });
@@ -730,6 +804,34 @@ class _GameOverOverlay extends StatelessWidget {
                   fontFamily: theme.fontMono,
                 ),
               ),
+              const SizedBox(height: 10),
+              // Награды за матч (ТЗ §8.1): XP + монеты.
+              Text(
+                '+$gainedXp XP   ·   +$gainedCoins 🪙',
+                style: TextStyle(
+                  color: theme.good,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: theme.fontMono,
+                ),
+              ),
+              // Разблокированные за матч ачивки.
+              if (achievements.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Text(
+                  'Новые ачивки',
+                  style: TextStyle(color: theme.muted, fontSize: 11),
+                ),
+                const SizedBox(height: 4),
+                for (final a in achievements)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 1),
+                    child: Text(
+                      '${a.icon} ${a.title}',
+                      style: TextStyle(color: theme.ink, fontSize: 13),
+                    ),
+                  ),
+              ],
               const SizedBox(height: 20),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -738,7 +840,7 @@ class _GameOverOverlay extends StatelessWidget {
                   const SizedBox(width: 12),
                   _IconButton(
                     theme: theme,
-                    label: '↺ новая игра',
+                    label: '↺ Реванш',
                     onTap: onNewGame,
                   ),
                 ],

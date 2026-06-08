@@ -157,8 +157,12 @@ class GameNotifier extends Notifier<GameState> {
       turnLimit: limit,
       turnRemaining: limit,
       cfg: config.cfg,
+      nextPieces: _peekNext(),
     );
   }
+
+  /// Следующая фигура каждого мешка (для превью «дальше»).
+  List<PieceType> _peekNext() => [_bags[0].peek(), _bags[1].peek()];
 
   /// Раздаёт руку из [k] фигур, по возможности без повторов типов.
   List<PieceInstance> _dealHand(Bag bag, int k) {
@@ -207,6 +211,7 @@ class GameNotifier extends Notifier<GameState> {
       turnLimit: limit,
       turnRemaining: limit,
       cfg: config.cfg,
+      nextPieces: _peekNext(),
     );
   }
 
@@ -290,6 +295,7 @@ class GameNotifier extends Notifier<GameState> {
       moveSeq: state.moveSeq + 1,
       lastClearCount: clears.count,
       lastPerfect: perfect,
+      nextPieces: _peekNext(),
     );
 
     // Тупик: следующий игрок не может сходить — партия окончена.
