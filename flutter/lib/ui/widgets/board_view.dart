@@ -15,6 +15,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../../game/game_state.dart';
+import '../../shop/skins.dart';
 import '../design_tokens.dart';
 import '../game/board_game.dart';
 
@@ -32,6 +33,9 @@ class BoardView extends StatefulWidget {
   /// Показывать ли «призрак» (подсветку цели) под курсором.
   final bool showGhost;
 
+  /// Надетый скин клеток (косметика из магазина).
+  final SkinStyle skin;
+
   /// Создаёт интерактивную доску.
   const BoardView({
     super.key,
@@ -39,6 +43,7 @@ class BoardView extends StatefulWidget {
     required this.theme,
     required this.onPlace,
     this.showGhost = true,
+    this.skin = SkinStyle.plain,
   });
 
   @override
@@ -92,6 +97,7 @@ class _BoardViewState extends State<BoardView> {
       previewValid: valid,
       clearPreview: clearPreview,
       theme: widget.theme,
+      skin: widget.skin,
     );
 
     return AspectRatio(

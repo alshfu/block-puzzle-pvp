@@ -32,6 +32,8 @@ import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
 import '../../settings/settings.dart';
 import '../../settings/settings_controller.dart';
+import '../../shop/skins.dart';
+import '../../shop/skins_controller.dart';
 import '../decor/combo_flash.dart';
 import '../decor/mascot.dart';
 import '../decor/pause_overlay.dart';
@@ -365,6 +367,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           showGhost: ref
                               .watch(settingsControllerProvider)
                               .ghostEnabled,
+                          skin: skinStyleOf(
+                            ref.watch(skinsControllerProvider).equipped,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         _Controls(

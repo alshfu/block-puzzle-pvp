@@ -22,6 +22,8 @@ import '../../../online/online_models.dart';
 import '../../../online/online_to_game_state.dart';
 import '../../../profile/profile_controller.dart';
 import '../../../settings/settings_controller.dart';
+import '../../../shop/skins.dart';
+import '../../../shop/skins_controller.dart';
 import '../../design_tokens.dart';
 import '../../game/confetti_overlay.dart';
 import '../../theme/theme_controller.dart';
@@ -163,7 +165,14 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                         TurnTimer(state: gs, theme: theme),
                       ],
                       const SizedBox(height: 12),
-                      BoardView(state: gs, theme: theme, onPlace: vm.placeAt),
+                      BoardView(
+                        state: gs,
+                        theme: theme,
+                        onPlace: vm.placeAt,
+                        skin: skinStyleOf(
+                          ref.watch(skinsControllerProvider).equipped,
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       _Controls(
                         theme: theme,

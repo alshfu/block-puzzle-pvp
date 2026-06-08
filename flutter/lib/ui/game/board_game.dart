@@ -15,6 +15,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import '../../shop/skins.dart';
 import '../design_tokens.dart';
 
 /// Данные для отрисовки доски: что на поле, что в «призраке» и цвета темы.
@@ -34,6 +35,9 @@ class BoardRender {
   /// Токены темы (цвета и радиусы).
   final BlockDuelTheme theme;
 
+  /// Стиль скина занятых клеток (надетый игроком).
+  final SkinStyle skin;
+
   /// Создаёт данные отрисовки.
   const BoardRender({
     required this.board,
@@ -41,6 +45,7 @@ class BoardRender {
     required this.previewValid,
     required this.theme,
     this.clearPreview = const [],
+    this.skin = SkinStyle.plain,
   });
 }
 
@@ -75,7 +80,6 @@ class _BoardComponent extends Component with HasGameReference<BoardGame> {
       ..color = theme.cellLine
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
-    final filledPaint = Paint();
 
     for (int r = 0; r < boardSize; r++) {
       for (int c = 0; c < boardSize; c++) {
@@ -91,8 +95,7 @@ class _BoardComponent extends Component with HasGameReference<BoardGame> {
         );
         final boardCell = data.board[r][c];
         if (boardCell.filled) {
-          filledPaint.color = theme.playerColor(boardCell.owner ?? 0);
-          canvas.drawRRect(rrect, filledPaint);
+          _drawFilledCell(canvas, rect, theme, data.skin, boardCell.owner ?? 0);
         } else {
           canvas.drawRRect(rrect, fillEmpty);
           canvas.drawRRect(rrect, gridLine);
@@ -153,6 +156,116 @@ class _BoardComponent extends Component with HasGameReference<BoardGame> {
           ghost,
         );
       }
+    }
+  }
+
+  /// Рисует занятую клетку игрока [owner] согласно скину [skin] — порт
+  /// CSS-стилей `.skin-*` из TS `styles.css` на Canvas.
+  void _drawFilledCell(
+    Canvas canvas,
+    Rect rect,
+    BlockDuelTheme theme,
+    SkinStyle skin,
+    int owner,
+  ) {
+    final base = theme.playerColor(owner);
+    final dark = theme.playerColorDark(owner);
+    final radius = skin == SkinStyle.pixel
+        ? Radius.zero
+        : Radius.circular(theme.cellRadius);
+    final rrect = RRect.fromRectAndRadius(rect, radius);
+
+    switch (skin) {
+      case SkinStyle.plain:
+        canvas.drawRRect(rrect, Paint()..color = base);
+
+      case SkinStyle.gem:
+      case SkinStyle.candy:
+        // Радиальный градиент: блик у верх-лево → цвет → тёмный край.
+        final highlight = skin == SkinStyle.candy
+            ? const Color(0x66FFFFFF)
+            : const Color(0x33FFFFFF);
+        canvas.drawRRect(
+          rrect,
+          Paint()
+            ..shader = RadialGradient(
+              center: const Alignment(-0.4, -0.55),
+              radius: 1.1,
+              colors: [highlight, base, dark],
+              stops: const [0.0, 0.55, 1.0],
+            ).createShader(rect),
+        );
+        // Глянцевый верхний блик.
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(rect.left, rect.top, rect.width, rect.height * 0.4),
+            radius,
+          ),
+          Paint()..color = const Color(0x22FFFFFF),
+        );
+
+      case SkinStyle.bullet:
+        // Холодный металл: вертикальный градиент + цветная нижняя кромка.
+        canvas.drawRRect(
+          rrect,
+          Paint()
+            ..shader = const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFCFD6E2), Color(0xFF7F8B9C), Color(0xFF3A4150)],
+              stops: [0.0, 0.6, 1.0],
+            ).createShader(rect),
+        );
+        canvas.drawRect(
+          Rect.fromLTWH(rect.left, rect.bottom - 2, rect.width, 2),
+          Paint()..color = base,
+        );
+
+      case SkinStyle.neon:
+        // Тёмная клетка + светящаяся рамка в цвете игрока.
+        canvas.drawRRect(rrect, Paint()..color = theme.cell);
+        canvas.drawRRect(
+          rrect,
+          Paint()
+            ..color = base
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2
+            ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 3),
+        );
+        canvas.drawRRect(
+          rrect,
+          Paint()
+            ..color = base
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2,
+        );
+
+      case SkinStyle.pixel:
+        // Угловатый ретро-блок с бевелем (светлый верх-лево, тёмный низ-право).
+        canvas.drawRRect(rrect, Paint()..color = base);
+        final bevel = rect.width * 0.18;
+        canvas.drawPath(
+          Path()
+            ..moveTo(rect.left, rect.top)
+            ..lineTo(rect.right, rect.top)
+            ..lineTo(rect.right - bevel, rect.top + bevel)
+            ..lineTo(rect.left + bevel, rect.top + bevel)
+            ..lineTo(rect.left + bevel, rect.bottom - bevel)
+            ..lineTo(rect.left, rect.bottom)
+            ..close(),
+          Paint()..color = const Color(0x66FFFFFF),
+        );
+        canvas.drawPath(
+          Path()
+            ..moveTo(rect.right, rect.bottom)
+            ..lineTo(rect.left, rect.bottom)
+            ..lineTo(rect.left + bevel, rect.bottom - bevel)
+            ..lineTo(rect.right - bevel, rect.bottom - bevel)
+            ..lineTo(rect.right - bevel, rect.top + bevel)
+            ..lineTo(rect.right, rect.top)
+            ..close(),
+          Paint()..color = const Color(0x59000000),
+        );
     }
   }
 }
