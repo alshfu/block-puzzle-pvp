@@ -16,8 +16,10 @@ library;
 
 import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../settings/settings_controller.dart';
 import '../design_tokens.dart';
 import '../widgets/screen_scaffold.dart';
 
@@ -64,7 +66,7 @@ RuleConfig? ruleConfigFromParams(Map<String, String> q) {
 }
 
 /// Экран настройки матча.
-class SetupScreen extends StatefulWidget {
+class SetupScreen extends ConsumerStatefulWidget {
   /// Код режима из маршрута (`bot`/`hotseat`/`botvbot`).
   final String modeRaw;
 
@@ -72,16 +74,31 @@ class SetupScreen extends StatefulWidget {
   const SetupScreen({super.key, required this.modeRaw});
 
   @override
-  State<SetupScreen> createState() => _SetupScreenState();
+  ConsumerState<SetupScreen> createState() => _SetupScreenState();
 }
 
-class _SetupScreenState extends State<SetupScreen> {
-  BotLevel _bot = BotLevel.medium;
-  bool _rotation = defaultConfig.rotationEnabled;
-  bool _flip = defaultConfig.flipEnabled;
-  int _handSize = defaultConfig.handSize;
-  bool _blitz = defaultConfig.turnTimerEnabled;
-  String _blitzPreset = 'normal';
+class _SetupScreenState extends ConsumerState<SetupScreen> {
+  late BotLevel _bot;
+  late bool _rotation;
+  late bool _flip;
+  late int _handSize;
+  late bool _blitz;
+  late String _blitzPreset;
+
+  @override
+  void initState() {
+    super.initState();
+    // Стартовые значения — из настроек «Матч по умолчанию».
+    final s = ref.read(settingsControllerProvider);
+    _bot =
+        BotLevel.values.where((l) => l.name == s.defaultBotLevel).firstOrNull ??
+        BotLevel.medium;
+    _rotation = s.defaultRotation;
+    _flip = s.defaultFlip;
+    _handSize = s.defaultHandSize;
+    _blitz = s.defaultBlitz;
+    _blitzPreset = s.defaultBlitzPreset;
+  }
 
   bool get _hasBot => widget.modeRaw == 'bot' || widget.modeRaw == 'botvbot';
 

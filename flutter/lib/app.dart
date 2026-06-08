@@ -33,7 +33,12 @@ class BlockDuelApp extends ConsumerWidget {
     final musicOn = ref.watch(
       settingsControllerProvider.select((s) => s.musicOn),
     );
-    ref.read(musicServiceProvider).update(enabled: musicOn, theme: themeId);
+    final musicVolume = ref.watch(
+      settingsControllerProvider.select((s) => s.musicVolume),
+    );
+    ref
+        .read(musicServiceProvider)
+        .update(enabled: musicOn, theme: themeId, volume: musicVolume);
     // Поднимаем синхронизацию прогресса (no-op без Firebase/входа).
     ref.watch(syncControllerProvider);
     return MaterialApp.router(

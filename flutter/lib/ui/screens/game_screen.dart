@@ -12,6 +12,7 @@ library;
 
 import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,6 +26,7 @@ import '../../game/game_notifier.dart';
 import '../../game/game_state.dart';
 import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
+import '../../settings/settings.dart';
 import '../../settings/settings_controller.dart';
 import '../decor/combo_flash.dart';
 import '../decor/mascot.dart';
@@ -81,6 +83,19 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
 
+  /// Тактильная отдача по режиму [mode]; [clear] — была ли очистка (сильнее).
+  /// На web/десктопе без вибромотора — no-op.
+  void _vibrate(VibrationMode mode, bool clear) {
+    switch (mode) {
+      case VibrationMode.off:
+        return;
+      case VibrationMode.light:
+        HapticFeedback.lightImpact();
+      case VibrationMode.strong:
+        clear ? HapticFeedback.heavyImpact() : HapticFeedback.mediumImpact();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -129,15 +144,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
   }
 
-  /// Запускает визуальные эффекты на новом ходу: салют конфетти на perfect и
-  /// вспышку комбо при пересечении вех (3/5/10) ходившим человеком. Эффекты
-  /// гасятся при reduceMotion. [prev]/[next] — состояния до/после хода.
+  /// Запускает эффекты на новом ходу: вибрация, салют конфетти на perfect и
+  /// вспышку комбо при пересечении вех (3/5/10) ходившим человеком. Анимации
+  /// гасятся при reduceMotion / выключенных тогглах. [prev]/[next] — до/после.
   void _playMoveEffects(GameState? prev, GameState next) {
     if (prev == null || next.moveSeq <= prev.moveSeq) return;
-    if (ref.read(settingsControllerProvider).reduceMotion) return;
+    final settings = ref.read(settingsControllerProvider);
+
+    // Вибрация (тач-устройства; на web no-op) — независимо от reduceMotion.
+    _vibrate(settings.vibration, next.lastClearCount > 0 || next.lastPerfect);
+
+    if (settings.reduceMotion) return;
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
 
-    if (next.lastPerfect) {
+    if (next.lastPerfect && settings.confettiEnabled) {
       _confetti.burst([tokens.p0, tokens.p1, tokens.good]);
     }
 
@@ -235,6 +255,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         state: state,
                         theme: theme,
                         onPlace: vm.placeAt,
+                        showGhost: ref
+                            .watch(settingsControllerProvider)
+                            .ghostEnabled,
                       ),
                       const SizedBox(height: 10),
                       _Controls(

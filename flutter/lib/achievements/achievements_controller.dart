@@ -64,6 +64,12 @@ class AchievementsController extends Notifier<Set<String>> {
     return fresh;
   }
 
+  /// Сбрасывает все разблокированные достижения (сброс прогресса).
+  void reset() {
+    state = {};
+    ref.read(sharedPreferencesProvider).remove(_unlockedKey);
+  }
+
   /// Объединяет текущее множество с [ids] (например, из облака) и сохраняет.
   void mergeUnlocked(Set<String> ids) {
     final merged = {...state, ...ids};

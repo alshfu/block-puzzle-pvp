@@ -23,9 +23,6 @@ import 'music.dart';
 /// Базовый мастер-уровень музыки (как `VOLUME_BASE` в TS).
 const double _volumeBase = 0.55;
 
-/// Пользовательский множитель громкости (нет слайдера — фикс, как дефолт TS).
-const double _userVolume = 0.5;
-
 /// Сервис фоновой музыки: одна зацикленная тема за раз.
 class MusicService {
   /// Плеер петли (создаётся лениво при первом включении).
@@ -40,14 +37,29 @@ class MusicService {
   /// Текущая играющая тема (null — ничего не играет).
   ThemeId? _current;
 
+  /// Текущий пользовательский множитель громкости (0..1).
+  double _volume = 0.5;
+
   /// Освобождён ли сервис.
   bool _disposed = false;
 
-  /// Идемпотентно синхронизирует состояние: включённость и тему. Безопасно
-  /// звать на каждый build — ничего не делает, если ничего не изменилось.
-  void update({required bool enabled, required ThemeId theme}) {
+  /// Идемпотентно синхронизирует включённость, тему и громкость. Безопасно
+  /// звать на каждый build — действует только на изменения.
+  void update({
+    required bool enabled,
+    required ThemeId theme,
+    required double volume,
+  }) {
     if (_disposed) return;
-    if (enabled == _enabled && (!enabled || theme == _current)) return;
+    final volumeChanged = volume != _volume;
+    _volume = volume;
+    if (enabled == _enabled && (!enabled || theme == _current)) {
+      // Поменялась только громкость работающей музыки.
+      if (enabled && volumeChanged) {
+        _player?.setVolume(_volumeBase * _volume);
+      }
+      return;
+    }
     _enabled = enabled;
     if (!enabled) {
       _player?.stop();
@@ -64,7 +76,7 @@ class MusicService {
     final player = _ensurePlayer();
     // Сменить источник: стоп + старт нового цикла.
     player.stop();
-    player.setVolume(_volumeBase * _userVolume);
+    player.setVolume(_volumeBase * _volume);
     player.play(BytesSource(bytes)).catchError((_) {});
   }
 

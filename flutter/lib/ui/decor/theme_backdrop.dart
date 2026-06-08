@@ -49,6 +49,9 @@ class _ThemeBackdropState extends ConsumerState<ThemeBackdrop>
   /// Свободный тикер (репейнт-часы); null, когда анимация выключена.
   Ticker? _ticker;
 
+  /// Показывать ли декоративных пони (настройка «маскоты»).
+  bool _mascotsEnabled = true;
+
   /// Падающие candy-биты (засев `makeRng(7)`, как в TS).
   late final List<_CandyBit> _bits = _buildBits();
 
@@ -92,6 +95,9 @@ class _ThemeBackdropState extends ConsumerState<ThemeBackdrop>
     final themeId = ref.watch(themeControllerProvider);
     final reduceMotion = ref.watch(
       settingsControllerProvider.select((s) => s.reduceMotion),
+    );
+    _mascotsEnabled = ref.watch(
+      settingsControllerProvider.select((s) => s.mascotsEnabled),
     );
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     _syncTicker(reduceMotion: reduceMotion);
@@ -173,8 +179,8 @@ class _ThemeBackdropState extends ConsumerState<ThemeBackdrop>
             ),
           ),
           // Парящие пони в боковых зонах — только на широких экранах (как
-          // `.candy-pony-deco`, видимые на десктопе).
-          if (constraints.maxWidth >= 700)
+          // `.candy-pony-deco`) и при включённой настройке маскотов.
+          if (_mascotsEnabled && constraints.maxWidth >= 700)
             ..._candyPonies(constraints.maxWidth),
         ],
       ),

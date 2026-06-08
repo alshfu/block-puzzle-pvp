@@ -1,4 +1,4 @@
-  /// audio_service.dart — воспроизведение SFX (View/инфраструктурный слой).
+/// audio_service.dart — воспроизведение SFX (View/инфраструктурный слой).
 ///
 /// За что отвечает файл:
 ///   Единственное место, где живёт плагин `audioplayers`. Рендерит звук из
@@ -21,9 +21,6 @@ import '../settings/settings_controller.dart';
 import 'sfx.dart';
 import 'synth.dart';
 
-/// Общая громкость синтеза (как `soundVolume` в TS).
-const double _masterVolume = 0.7;
-
 /// Размер пула плееров для наложения коротких эффектов.
 const int _poolSize = 4;
 
@@ -31,6 +28,9 @@ const int _poolSize = 4;
 class AudioService {
   /// Включён ли звук сейчас (читается из настроек на каждый вызов).
   final bool Function() isSoundOn;
+
+  /// Текущая громкость эффектов 0..1 (читается на каждый эффект).
+  final double Function() volume;
 
   /// Кэш отрендеренных WAV-байтов по ключу эффекта.
   final Map<String, Uint8List> _cache = {};
@@ -44,8 +44,8 @@ class AudioService {
   /// Освобождён ли сервис.
   bool _disposed = false;
 
-  /// Создаёт сервис; [isSoundOn] — актуальное значение настройки звука.
-  AudioService({required this.isSoundOn});
+  /// Создаёт сервис; [isSoundOn]/[volume] читают актуальные настройки звука.
+  AudioService({required this.isSoundOn, required this.volume});
 
   /// Проигрывает параметр-независимый эффект [sfx].
   void play(Sfx sfx) => _playTones(sfx.name, tonesFor(sfx));
@@ -56,14 +56,13 @@ class AudioService {
     _playTones('clear_$count', sfxClear(count));
   }
 
-  /// Рендерит (с кэшем по [key]) и проигрывает тоны [tones].
+  /// Рендерит (с кэшем по [key], на полной громкости) и проигрывает тоны
+  /// [tones]; громкость задаётся плееру (слайдер не требует перерендера).
   void _playTones(String key, List<ToneSpec> tones) {
     if (_disposed || !isSoundOn()) return;
-    final bytes = _cache.putIfAbsent(
-      key,
-      () => renderWav(tones, volume: _masterVolume),
-    );
+    final bytes = _cache.putIfAbsent(key, () => renderWav(tones, volume: 1.0));
     final player = _player();
+    player.setVolume(volume().clamp(0.0, 1.0));
     // Ошибки воспроизведения (политика автоплея, отсутствие устройства) — глушим.
     player.play(BytesSource(bytes)).catchError((_) {});
   }
@@ -94,6 +93,7 @@ class AudioService {
 final audioServiceProvider = Provider<AudioService>((ref) {
   final service = AudioService(
     isSoundOn: () => ref.read(settingsControllerProvider).soundOn,
+    volume: () => ref.read(settingsControllerProvider).soundVolume,
   );
   ref.onDispose(service.dispose);
   return service;

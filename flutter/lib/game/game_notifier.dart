@@ -22,13 +22,14 @@ import 'dart:async';
 import 'package:block_duel/core/core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../settings/settings_controller.dart';
 import 'game_state.dart';
 import 'match_config.dart';
 import 'saved_game.dart';
 import 'saved_game_store.dart';
 
-/// Задержка перед ходом бота — чтобы ход был визуально читаем.
-const Duration _botThinkDelay = Duration(milliseconds: 350);
+/// Задержка перед ходом бота по умолчанию (если настройка недоступна).
+const Duration _botThinkDelayDefault = Duration(milliseconds: 350);
 
 /// Период тика blitz-таймера.
 const Duration _blitzTick = Duration(milliseconds: 100);
@@ -324,7 +325,11 @@ class GameNotifier extends Notifier<GameState> {
     _blitzTicker?.cancel();
     if (s.gameOver || s.paused) return;
     if (config.isBot(s.current)) {
-      _botTimer = Timer(_botThinkDelay, _botMove);
+      final delayMs = ref.read(settingsControllerProvider).botDelayMs;
+      _botTimer = Timer(
+        delayMs > 0 ? Duration(milliseconds: delayMs) : _botThinkDelayDefault,
+        _botMove,
+      );
       return;
     }
     if (!s.turnLimit.isFinite) return; // blitz выключен

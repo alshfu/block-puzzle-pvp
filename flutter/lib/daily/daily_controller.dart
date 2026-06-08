@@ -69,6 +69,14 @@ class DailyController extends Notifier<DailyState> {
     _persist(state);
   }
 
+  /// Сбрасывает квесты на сегодня (сброс прогресса): свежий набор, нулевой
+  /// прогресс.
+  void resetToday() {
+    final fresh = DailyState.fresh(_todayKey());
+    state = fresh;
+    _persist(fresh);
+  }
+
   /// Забирает награду за выполненный квест [id] (если выполнен и не получен).
   void claim(String id) {
     final q = questById(id);

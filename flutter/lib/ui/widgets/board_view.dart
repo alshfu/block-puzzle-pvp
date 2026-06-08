@@ -29,12 +29,16 @@ class BoardView extends StatefulWidget {
   /// Команда постановки фигуры с якорем `(r, c)`.
   final void Function(int r, int c) onPlace;
 
+  /// Показывать ли «призрак» (подсветку цели) под курсором.
+  final bool showGhost;
+
   /// Создаёт интерактивную доску.
   const BoardView({
     super.key,
     required this.state,
     required this.theme,
     required this.onPlace,
+    this.showGhost = true,
   });
 
   @override
@@ -69,7 +73,8 @@ class _BoardViewState extends State<BoardView> {
   Widget build(BuildContext context) {
     final state = widget.state;
     final hover = _hover;
-    final List<Coord> preview = (hover != null && state.activeCells != null)
+    final List<Coord> preview =
+        (widget.showGhost && hover != null && state.activeCells != null)
         ? state.previewCells(hover.r, hover.c)
         : const <Coord>[];
     _game.data = BoardRender(
