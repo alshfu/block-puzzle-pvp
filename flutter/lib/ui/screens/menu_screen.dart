@@ -25,10 +25,8 @@ import '../../profile/profile_controller.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
 import '../responsive.dart';
-import '../widgets/floating_theme.dart';
 import '../widgets/logo.dart';
 import '../widgets/mini_piece.dart';
-import '../widgets/theme_switch.dart';
 
 /// Режимы игры (как TS `GameMode`).
 enum GameMode { bot, hotseat, arcade, tutorial, botvbot, online }
@@ -168,8 +166,6 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                                 onStart: _start,
                               ),
                               const SizedBox(height: 16),
-                              const ThemeSwitch(),
-                              const SizedBox(height: 12),
                               GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: _onVersionTap,
@@ -191,12 +187,6 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                 ),
               ),
             ),
-          ),
-          // Плавающий переключатель темы снизу-справа.
-          const Positioned(
-            right: 14,
-            bottom: 14,
-            child: SafeArea(child: FloatingTheme()),
           ),
         ],
       ),
