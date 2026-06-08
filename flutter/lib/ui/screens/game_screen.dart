@@ -292,6 +292,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
                 winStreak: stats.currentWinStreak,
               ),
             );
+        // Кристаллы за очки (1 за 150) — премиум-валюта для power-ups.
+        ref
+            .read(profileControllerProvider.notifier)
+            .earnCrystalsFromScore(next.players[0].score);
         // Прирост XP за матч (награды + XP ачивок) — для экрана результата.
         final gainedXp = ref.read(profileControllerProvider).xp - xpBefore;
         setState(() {

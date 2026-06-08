@@ -23,6 +23,7 @@ import 'screens/online/online_menu_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/setup_screen.dart';
+import 'screens/shop_screen.dart';
 
 /// Глобальный роутер приложения.
 final GoRouter appRouter = GoRouter(
@@ -61,6 +62,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const AchievementsScreen(),
     ),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
+    GoRoute(path: '/shop', builder: (context, state) => const ShopScreen()),
     GoRoute(
       path: '/online',
       builder: (context, state) => const OnlineMenuScreen(),

@@ -89,6 +89,33 @@ class ProfileController extends Notifier<Profile> {
     _persist();
   }
 
+  /// Накапливает очки к кристаллу и конвертирует: 1 кристалл за 150 очков.
+  void earnCrystalsFromScore(int score) {
+    if (score <= 0) return;
+    final acc = state.scoreForCrystals + score;
+    state = state.copyWith(
+      crystals: state.crystals + acc ~/ 150,
+      scoreForCrystals: acc % 150,
+    );
+    _persist();
+  }
+
+  /// Списывает [amount] монет, если хватает. Возвращает успех.
+  bool spendCoins(int amount) {
+    if (state.coins < amount) return false;
+    state = state.copyWith(coins: state.coins - amount);
+    _persist();
+    return true;
+  }
+
+  /// Списывает [amount] кристаллов, если хватает. Возвращает успех.
+  bool spendCrystals(int amount) {
+    if (state.crystals < amount) return false;
+    state = state.copyWith(crystals: state.crystals - amount);
+    _persist();
+    return true;
+  }
+
   /// Начисляет результат партии: XP, монеты и счётчики. [won] — победа ли;
   /// [draw] — ничья (как поражение по наградам, но без инкремента wins).
   /// Возвращает число начисленных монет (для ежедневных квестов).

@@ -58,6 +58,12 @@ class Profile {
   /// Ничьих в онлайне.
   final int onlineDraws;
 
+  /// Кристаллы (премиум-валюта для power-ups).
+  final int crystals;
+
+  /// Накопитель очков к кристаллу (1 кристалл за каждые 150 очков).
+  final int scoreForCrystals;
+
   /// Создаёт профиль.
   const Profile({
     required this.nick,
@@ -70,6 +76,8 @@ class Profile {
     this.onlineWins = 0,
     this.onlineLosses = 0,
     this.onlineDraws = 0,
+    this.crystals = 0,
+    this.scoreForCrystals = 0,
   });
 
   /// Профиль по умолчанию для нового игрока.
@@ -103,6 +111,8 @@ class Profile {
     int? onlineWins,
     int? onlineLosses,
     int? onlineDraws,
+    int? crystals,
+    int? scoreForCrystals,
   }) => Profile(
     nick: nick ?? this.nick,
     avatar: avatar ?? this.avatar,
@@ -114,6 +124,8 @@ class Profile {
     onlineWins: onlineWins ?? this.onlineWins,
     onlineLosses: onlineLosses ?? this.onlineLosses,
     onlineDraws: onlineDraws ?? this.onlineDraws,
+    crystals: crystals ?? this.crystals,
+    scoreForCrystals: scoreForCrystals ?? this.scoreForCrystals,
   );
 
   /// JSON-представление для хранилища.
@@ -128,6 +140,8 @@ class Profile {
     'onlineWins': onlineWins,
     'onlineLosses': onlineLosses,
     'onlineDraws': onlineDraws,
+    'crystals': crystals,
+    'scoreForCrystals': scoreForCrystals,
   };
 
   /// Восстанавливает профиль из JSON; отсутствующие поля берутся из [initial].
@@ -139,6 +153,8 @@ class Profile {
     gamesPlayed: json['gamesPlayed'] as int? ?? 0,
     wins: json['wins'] as int? ?? 0,
     id: json['id'] as String? ?? '',
+    crystals: json['crystals'] as int? ?? 0,
+    scoreForCrystals: json['scoreForCrystals'] as int? ?? 0,
     onlineWins: json['onlineWins'] as int? ?? 0,
     onlineLosses: json['onlineLosses'] as int? ?? 0,
     onlineDraws: json['onlineDraws'] as int? ?? 0,

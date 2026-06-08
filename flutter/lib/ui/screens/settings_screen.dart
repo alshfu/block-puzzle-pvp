@@ -22,6 +22,8 @@ import '../../profile/profile.dart';
 import '../../profile/profile_controller.dart';
 import '../../settings/settings.dart';
 import '../../settings/settings_controller.dart';
+import '../../shop/inventory_controller.dart';
+import '../../shop/skins_controller.dart';
 import '../design_tokens.dart';
 import '../widgets/screen_scaffold.dart';
 import '../widgets/theme_switch.dart';
@@ -46,6 +48,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.read(settingsControllerProvider.notifier).replace(Settings.initial);
     ref.read(achievementsControllerProvider.notifier).reset();
     ref.read(statsControllerProvider.notifier).reset();
+    ref.read(skinsControllerProvider.notifier).reset();
+    ref.read(inventoryControllerProvider.notifier).reset();
     ref.read(dailyControllerProvider.notifier).resetToday();
     ref.read(savedGameStoreProvider).clear();
     setState(() => _confirmReset = false);

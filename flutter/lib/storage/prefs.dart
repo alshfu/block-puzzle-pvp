@@ -33,4 +33,10 @@ abstract final class PrefKeys {
 
   /// JSON накопительной статистики (для достижений).
   static const String stats = 'bd_stats';
+
+  /// JSON состояния скинов (разблокированные + надетый).
+  static const String skins = 'bd_skins';
+
+  /// JSON инвентаря power-ups (id → количество).
+  static const String inventory = 'bd_inventory';
 }

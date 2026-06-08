@@ -197,7 +197,7 @@ class _TopBar extends ConsumerWidget {
         const Spacer(),
         _Chip(
           tokens: tokens,
-          onTap: () => context.go('/profile'),
+          onTap: () => context.go('/shop'),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
