@@ -10,6 +10,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -35,127 +36,139 @@ class TutorialScreen extends ConsumerWidget {
     final last = st.stepIdx + 1 == tutorialSteps.length;
     final skin = skinStyleOf(ref.watch(skinsControllerProvider).equipped);
 
-    return Scaffold(
-      backgroundColor: theme.bg,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Шапка: назад + бейдж шага.
-                  Row(
-                    children: [
-                      _BackButton(theme: theme, onTap: () => context.go('/')),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Обучение · ${st.stepIdx + 1} / ${tutorialSteps.length}',
-                        style: TextStyle(
-                          color: theme.muted,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  // Прогресс-бар.
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: LinearProgressIndicator(
-                      value: st.progress.clamp(0.0, 1.0),
-                      minHeight: 8,
-                      backgroundColor: theme.panel,
-                      valueColor: AlwaysStoppedAnimation(theme.p0),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  // Карточка шага.
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: theme.panel,
-                      borderRadius: BorderRadius.circular(theme.cardRadius),
-                      border: Border.all(color: theme.line),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        // R — поворот выбранной фигуры (десктоп). Шаг 3 как раз про поворот.
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.keyR) {
+          vm.rotateSelected();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Scaffold(
+        backgroundColor: theme.bg,
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Шапка: назад + бейдж шага.
+                    Row(
                       children: [
+                        _BackButton(theme: theme, onTap: () => context.go('/')),
+                        const SizedBox(width: 10),
                         Text(
-                          step.title,
-                          style: TextStyle(
-                            color: theme.ink,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            fontFamily: theme.fontDisplay,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          step.description,
+                          'Обучение · ${st.stepIdx + 1} / ${tutorialSteps.length}',
                           style: TextStyle(
                             color: theme.muted,
                             fontSize: 13,
-                            height: 1.35,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  BoardView(
-                    state: st.game,
-                    theme: theme,
-                    onPlace: vm.placeAt,
-                    skin: skin,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    st.statusMsg,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: st.doneStep ? theme.good : theme.muted,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  HandView(
-                    hand: st.game.currentPlayer.hand,
-                    selectedId: st.game.selectedPieceId,
-                    selectedCells: st.game.activeCells,
-                    interactive: !st.doneStep,
-                    owner: 0,
-                    theme: theme,
-                    onSelect: vm.selectPiece,
-                    onRotate: vm.rotateSelected,
-                  ),
-                  const SizedBox(height: 16),
-                  // Действия.
-                  if (st.doneStep)
-                    _PrimaryButton(
-                      theme: theme,
-                      label: last
-                          ? '🪙 Завершить · +$tutorialRewardCoins'
-                          : 'Дальше →',
-                      onTap: () {
-                        if (vm.next()) context.go('/');
-                      },
-                    )
-                  else
-                    Center(
-                      child: TextButton(
-                        onPressed: vm.retry,
-                        child: Text(
-                          '↻ Заново',
-                          style: TextStyle(color: theme.muted),
-                        ),
+                    const SizedBox(height: 12),
+                    // Прогресс-бар.
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: st.progress.clamp(0.0, 1.0),
+                        minHeight: 8,
+                        backgroundColor: theme.panel,
+                        valueColor: AlwaysStoppedAnimation(theme.p0),
                       ),
                     ),
-                ],
+                    const SizedBox(height: 14),
+                    // Карточка шага.
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: theme.panel,
+                        borderRadius: BorderRadius.circular(theme.cardRadius),
+                        border: Border.all(color: theme.line),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            step.title,
+                            style: TextStyle(
+                              color: theme.ink,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              fontFamily: theme.fontDisplay,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            step.description,
+                            style: TextStyle(
+                              color: theme.muted,
+                              fontSize: 13,
+                              height: 1.35,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    BoardView(
+                      state: st.game,
+                      theme: theme,
+                      onPlace: vm.placeAt,
+                      skin: skin,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      st.statusMsg,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: st.doneStep ? theme.good : theme.muted,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    HandView(
+                      hand: st.game.currentPlayer.hand,
+                      selectedId: st.game.selectedPieceId,
+                      selectedCells: st.game.activeCells,
+                      interactive: !st.doneStep,
+                      owner: 0,
+                      theme: theme,
+                      onSelect: vm.selectPiece,
+                      onRotate: vm.rotateSelected,
+                    ),
+                    const SizedBox(height: 16),
+                    // Действия.
+                    if (st.doneStep)
+                      _PrimaryButton(
+                        theme: theme,
+                        label: last
+                            ? '🪙 Завершить · +$tutorialRewardCoins'
+                            : 'Дальше →',
+                        onTap: () {
+                          if (vm.next()) context.go('/');
+                        },
+                      )
+                    else
+                      Center(
+                        child: TextButton(
+                          onPressed: vm.retry,
+                          child: Text(
+                            '↻ Заново',
+                            style: TextStyle(color: theme.muted),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

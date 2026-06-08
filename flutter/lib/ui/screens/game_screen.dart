@@ -14,7 +14,8 @@ import 'dart:math' as math;
 
 import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show HapticFeedback;
+import 'package:flutter/services.dart'
+    show HapticFeedback, KeyDownEvent, KeyEvent, LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -162,6 +163,26 @@ class _GameScreenState extends ConsumerState<GameScreen>
       return;
     }
     ref.read(gameProvider(_config).notifier).placeAt(r, c);
+  }
+
+  /// Горячие клавиши (десктоп): R — поворот выбранной фигуры, Esc — снять
+  /// выбор/отменить активный power-up. Порт r/escape из TS-версии.
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    final k = event.logicalKey;
+    if (k == LogicalKeyboardKey.keyR) {
+      ref.read(gameProvider(_config).notifier).rotateSelected();
+      return KeyEventResult.handled;
+    }
+    if (k == LogicalKeyboardKey.escape) {
+      if (_activePowerup != null) {
+        setState(() => _activePowerup = null);
+      } else {
+        ref.read(gameProvider(_config).notifier).deselect();
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   /// Горизонтальное смещение встряски для фазы [t] (0..1): затухающая синусоида.
@@ -374,172 +395,178 @@ class _GameScreenState extends ConsumerState<GameScreen>
         state.selectedPiece != null &&
         (_config.cfg.rotationEnabled || _config.cfg.flipEnabled);
 
-    return Scaffold(
-      backgroundColor: theme.bg,
-      body: Stack(
-        children: [
-          // Контент с экранной встряской на больших комбо.
-          AnimatedBuilder(
-            animation: _shake,
-            builder: (context, child) => Transform.translate(
-              offset: Offset(_shakeDx(_shake.value), 0),
-              child: child,
-            ),
-            child: SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 460),
-                  // Прокрутка, если окно ниже контента (десктоп-ресайз/короткий
-                  // экран): иначе RenderFlex overflow по высоте.
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _TopBar(
-                            theme: theme,
-                            onNewGame: vm.newGame,
-                            onPause: () {
-                              _click();
-                              vm.setPaused(true);
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          Scoreboard(
-                            state: state,
-                            theme: theme,
-                            solo: _config.isSolo,
-                          ),
-                          if (humanTurn) ...[
+    return Focus(
+      autofocus: true,
+      onKeyEvent: _onKey,
+      child: Scaffold(
+        backgroundColor: theme.bg,
+        body: Stack(
+          children: [
+            // Контент с экранной встряской на больших комбо.
+            AnimatedBuilder(
+              animation: _shake,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(_shakeDx(_shake.value), 0),
+                child: child,
+              ),
+              child: SafeArea(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 460),
+                    // Прокрутка, если окно ниже контента (десктоп-ресайз/короткий
+                    // экран): иначе RenderFlex overflow по высоте.
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _TopBar(
+                              theme: theme,
+                              onNewGame: vm.newGame,
+                              onPause: () {
+                                _click();
+                                vm.setPaused(true);
+                              },
+                            ),
                             const SizedBox(height: 10),
-                            TurnTimer(state: state, theme: theme),
-                          ],
-                          const SizedBox(height: 12),
-                          BoardView(
-                            state: state,
-                            theme: theme,
-                            onPlace: _onBoardTap,
-                            showGhost: ref
-                                .watch(settingsControllerProvider)
-                                .ghostEnabled,
-                            skin: skinStyleOf(
-                              ref.watch(skinsControllerProvider).equipped,
+                            Scoreboard(
+                              state: state,
+                              theme: theme,
+                              solo: _config.isSolo,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          _Controls(
-                            theme: theme,
-                            humanTurn: humanTurn,
-                            canRotate: canRotate,
-                            hasSelection: state.selectedPiece != null,
-                            onRotate: vm.rotateSelected,
-                            onDeselect: vm.deselect,
-                          ),
-                          if (_config.mode != MatchMode.botvbot) ...[
+                            if (humanTurn) ...[
+                              const SizedBox(height: 10),
+                              TurnTimer(state: state, theme: theme),
+                            ],
+                            const SizedBox(height: 12),
+                            BoardView(
+                              state: state,
+                              theme: theme,
+                              onPlace: _onBoardTap,
+                              showGhost: ref
+                                  .watch(settingsControllerProvider)
+                                  .ghostEnabled,
+                              skin: skinStyleOf(
+                                ref.watch(skinsControllerProvider).equipped,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            _Controls(
+                              theme: theme,
+                              humanTurn: humanTurn,
+                              canRotate: canRotate,
+                              hasSelection: state.selectedPiece != null,
+                              onRotate: vm.rotateSelected,
+                              onDeselect: vm.deselect,
+                            ),
+                            if (_config.mode != MatchMode.botvbot) ...[
+                              const SizedBox(height: 8),
+                              PowerupsPanel(
+                                theme: theme,
+                                inventory: ref.watch(
+                                  inventoryControllerProvider,
+                                ),
+                                active: _activePowerup,
+                                enabled: humanTurn,
+                                onTap: _handlePowerup,
+                              ),
+                            ],
                             const SizedBox(height: 8),
-                            PowerupsPanel(
+                            if (state.nextPieces.length > state.current)
+                              _NextPreview(
+                                theme: theme,
+                                type: state.nextPieces[state.current],
+                                owner: state.current,
+                              ),
+                            const SizedBox(height: 6),
+                            HandView(
+                              hand: state.currentPlayer.hand,
+                              selectedId: state.selectedPieceId,
+                              selectedCells: state.activeCells,
+                              interactive: humanTurn,
+                              owner: state.current,
                               theme: theme,
-                              inventory: ref.watch(inventoryControllerProvider),
-                              active: _activePowerup,
-                              enabled: humanTurn,
-                              onTap: _handlePowerup,
+                              onSelect: vm.selectPiece,
+                              onRotate: vm.rotateSelected,
                             ),
                           ],
-                          const SizedBox(height: 8),
-                          if (state.nextPieces.length > state.current)
-                            _NextPreview(
-                              theme: theme,
-                              type: state.nextPieces[state.current],
-                              owner: state.current,
-                            ),
-                          const SizedBox(height: 6),
-                          HandView(
-                            hand: state.currentPlayer.hand,
-                            selectedId: state.selectedPieceId,
-                            selectedCells: state.activeCells,
-                            interactive: humanTurn,
-                            owner: state.current,
-                            theme: theme,
-                            onSelect: vm.selectPiece,
-                            onRotate: vm.rotateSelected,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          // Салют конфетти (perfect clear) — поверх поля, под оверлеями.
-          Positioned.fill(child: ConfettiOverlay(game: _confetti)),
-          // Всплывающие очки «+N».
-          if (_scorePopup != null)
-            _ScorePopup(
-              key: ValueKey(_scorePopup!.key),
-              gained: _scorePopup!.gained,
+            // Салют конфетти (perfect clear) — поверх поля, под оверлеями.
+            Positioned.fill(child: ConfettiOverlay(game: _confetti)),
+            // Всплывающие очки «+N».
+            if (_scorePopup != null)
+              _ScorePopup(
+                key: ValueKey(_scorePopup!.key),
+                gained: _scorePopup!.gained,
+                theme: theme,
+                onDone: () => setState(() => _scorePopup = null),
+              ),
+            // Вспышка комбо-вехи.
+            if (_comboFlash != null)
+              ComboFlash(
+                key: ValueKey(_comboFlash!.key),
+                themeId: ref.watch(themeControllerProvider),
+                level: _comboFlash!.level,
+                combo: _comboFlash!.combo,
+                message: _comboFlash!.message,
+                onComplete: () => setState(() => _comboFlash = null),
+              ),
+            // Оверлей паузы (таймеры остановлены в ViewModel).
+            if (state.paused && !state.gameOver)
+              PauseOverlay(
+                theme: theme,
+                onResume: () {
+                  _click();
+                  vm.setPaused(false);
+                },
+                onRestart: () {
+                  _click();
+                  vm.setPaused(false);
+                  vm.newGame();
+                },
+                onExit: () {
+                  _click();
+                  context.go('/');
+                },
+              ),
+            if (state.gameOver)
+              _GameOverOverlay(
+                theme: theme,
+                themeId: ref.watch(themeControllerProvider),
+                winnerName: state.winner == null
+                    ? null
+                    : state.players[state.winner!].name,
+                scores: [state.players[0].score, state.players[1].score],
+                gainedXp: _resultXp,
+                gainedCoins: _resultCoins,
+                achievements: _resultAchievements,
+                winStreak: _resultStreak,
+                solo: _config.isSolo,
+                onNewGame: () {
+                  _click();
+                  vm.newGame();
+                },
+                onMenu: () {
+                  _click();
+                  context.go('/');
+                },
+              ),
+            // Тосты о вновь разблокированных ачивках (поверх всего).
+            ToastStack(
+              toasts: _toasts,
               theme: theme,
-              onDone: () => setState(() => _scorePopup = null),
+              onDismiss: (id) =>
+                  setState(() => _toasts.removeWhere((a) => a.id == id)),
             ),
-          // Вспышка комбо-вехи.
-          if (_comboFlash != null)
-            ComboFlash(
-              key: ValueKey(_comboFlash!.key),
-              themeId: ref.watch(themeControllerProvider),
-              level: _comboFlash!.level,
-              combo: _comboFlash!.combo,
-              message: _comboFlash!.message,
-              onComplete: () => setState(() => _comboFlash = null),
-            ),
-          // Оверлей паузы (таймеры остановлены в ViewModel).
-          if (state.paused && !state.gameOver)
-            PauseOverlay(
-              theme: theme,
-              onResume: () {
-                _click();
-                vm.setPaused(false);
-              },
-              onRestart: () {
-                _click();
-                vm.setPaused(false);
-                vm.newGame();
-              },
-              onExit: () {
-                _click();
-                context.go('/');
-              },
-            ),
-          if (state.gameOver)
-            _GameOverOverlay(
-              theme: theme,
-              themeId: ref.watch(themeControllerProvider),
-              winnerName: state.winner == null
-                  ? null
-                  : state.players[state.winner!].name,
-              scores: [state.players[0].score, state.players[1].score],
-              gainedXp: _resultXp,
-              gainedCoins: _resultCoins,
-              achievements: _resultAchievements,
-              winStreak: _resultStreak,
-              solo: _config.isSolo,
-              onNewGame: () {
-                _click();
-                vm.newGame();
-              },
-              onMenu: () {
-                _click();
-                context.go('/');
-              },
-            ),
-          // Тосты о вновь разблокированных ачивках (поверх всего).
-          ToastStack(
-            toasts: _toasts,
-            theme: theme,
-            onDismiss: (id) =>
-                setState(() => _toasts.removeWhere((a) => a.id == id)),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

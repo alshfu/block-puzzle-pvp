@@ -11,6 +11,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -140,84 +141,96 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
         gs.selectedPiece != null &&
         (game.cfg.rotationEnabled || game.cfg.flipEnabled);
 
-    return Scaffold(
-      backgroundColor: theme.bg,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 460),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                  child: Column(
-                    children: [
-                      _TopBar(
-                        theme: theme,
-                        onMenu: () => context.go('/online'),
-                        onResign: game.isOver ? null : vm.resign,
-                        reconnecting: !match.connected && !game.isOver,
-                      ),
-                      const SizedBox(height: 10),
-                      Scoreboard(state: gs, theme: theme),
-                      if (myTurn) ...[
-                        const SizedBox(height: 10),
-                        TurnTimer(state: gs, theme: theme),
-                      ],
-                      const SizedBox(height: 12),
-                      BoardView(
-                        state: gs,
-                        theme: theme,
-                        onPlace: vm.placeAt,
-                        skin: skinStyleOf(
-                          ref.watch(skinsControllerProvider).equipped,
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.keyR) {
+          vm.rotateSelected();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Scaffold(
+        backgroundColor: theme.bg,
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 460),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                    child: Column(
+                      children: [
+                        _TopBar(
+                          theme: theme,
+                          onMenu: () => context.go('/online'),
+                          onResign: game.isOver ? null : vm.resign,
+                          reconnecting: !match.connected && !game.isOver,
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      _Controls(
-                        theme: theme,
-                        myTurn: myTurn,
-                        canRotate: canRotate,
-                        hasSelection: gs.selectedPiece != null,
-                        onRotate: vm.rotateSelected,
-                        onDeselect: vm.deselect,
-                      ),
-                      const SizedBox(height: 10),
-                      HandView(
-                        hand: gs.currentPlayer.hand,
-                        selectedId: gs.selectedPieceId,
-                        selectedCells: gs.activeCells,
-                        interactive: myTurn,
-                        owner: game.current,
-                        theme: theme,
-                        onSelect: vm.selectPiece,
-                        onRotate: vm.rotateSelected,
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        Scoreboard(state: gs, theme: theme),
+                        if (myTurn) ...[
+                          const SizedBox(height: 10),
+                          TurnTimer(state: gs, theme: theme),
+                        ],
+                        const SizedBox(height: 12),
+                        BoardView(
+                          state: gs,
+                          theme: theme,
+                          onPlace: vm.placeAt,
+                          skin: skinStyleOf(
+                            ref.watch(skinsControllerProvider).equipped,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        _Controls(
+                          theme: theme,
+                          myTurn: myTurn,
+                          canRotate: canRotate,
+                          hasSelection: gs.selectedPiece != null,
+                          onRotate: vm.rotateSelected,
+                          onDeselect: vm.deselect,
+                        ),
+                        const SizedBox(height: 10),
+                        HandView(
+                          hand: gs.currentPlayer.hand,
+                          selectedId: gs.selectedPieceId,
+                          selectedCells: gs.activeCells,
+                          interactive: myTurn,
+                          owner: game.current,
+                          theme: theme,
+                          onSelect: vm.selectPiece,
+                          onRotate: vm.rotateSelected,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned.fill(child: ConfettiOverlay(game: _confetti)),
-          if (match.opponentLeft && !game.isOver)
-            OpponentLeftBanner(
-              theme: theme,
-              timeoutMs: match.opponentTimeoutMs,
-            ),
-          if (game.isOver && game.result != null)
-            OnlineGameOverOverlay(
-              theme: theme,
-              themeId: ref.watch(themeControllerProvider),
-              result: game.result!,
-              you: match.you,
-              rematchYours: match.rematchYours,
-              rematchTheirs: match.rematchTheirs,
-              onToggleRematch: () =>
-                  match.rematchYours ? vm.cancelRematch() : vm.requestRematch(),
-              onMenu: () => context.go('/online'),
-            ),
-        ],
+            Positioned.fill(child: ConfettiOverlay(game: _confetti)),
+            if (match.opponentLeft && !game.isOver)
+              OpponentLeftBanner(
+                theme: theme,
+                timeoutMs: match.opponentTimeoutMs,
+              ),
+            if (game.isOver && game.result != null)
+              OnlineGameOverOverlay(
+                theme: theme,
+                themeId: ref.watch(themeControllerProvider),
+                result: game.result!,
+                you: match.you,
+                rematchYours: match.rematchYours,
+                rematchTheirs: match.rematchTheirs,
+                onToggleRematch: () => match.rematchYours
+                    ? vm.cancelRematch()
+                    : vm.requestRematch(),
+                onMenu: () => context.go('/online'),
+              ),
+          ],
+        ),
       ),
     );
   }
