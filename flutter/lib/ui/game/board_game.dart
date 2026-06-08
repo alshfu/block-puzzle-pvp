@@ -38,6 +38,9 @@ class BoardRender {
   /// Стиль скина занятых клеток (надетый игроком).
   final SkinStyle skin;
 
+  /// Подсветка лучшего хода (power-up «Подсказка»): абсолютные клетки цели.
+  final List<Coord> hintCells;
+
   /// Создаёт данные отрисовки.
   const BoardRender({
     required this.board,
@@ -46,6 +49,7 @@ class BoardRender {
     required this.theme,
     this.clearPreview = const [],
     this.skin = SkinStyle.plain,
+    this.hintCells = const [],
   });
 }
 
@@ -129,6 +133,34 @@ class _BoardComponent extends Component with HasGameReference<BoardGame> {
         );
         canvas.drawRRect(rr, glow);
         canvas.drawRRect(rr, border);
+      }
+    }
+
+    // Подсветка подсказки (power-up «Подсказка»): обводка цели цветом игрока.
+    if (data.hintCells.isNotEmpty) {
+      final fill = Paint()..color = theme.p0.withValues(alpha: 0.28);
+      final outline = Paint()
+        ..color = theme.p0
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5;
+      for (final coord in data.hintCells) {
+        if (coord.r < 0 ||
+            coord.r >= boardSize ||
+            coord.c < 0 ||
+            coord.c >= boardSize) {
+          continue;
+        }
+        final rr = RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            coord.c * cell + 1,
+            coord.r * cell + 1,
+            cell - 2,
+            cell - 2,
+          ),
+          Radius.circular(theme.cellRadius),
+        );
+        canvas.drawRRect(rr, fill);
+        canvas.drawRRect(rr, outline);
       }
     }
 

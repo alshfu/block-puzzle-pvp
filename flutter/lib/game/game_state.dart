@@ -99,6 +99,10 @@ class GameState {
   /// нет данных (например, в онлайне сервер очередь мешка не присылает).
   final List<PieceType> nextPieces;
 
+  /// Подсветка лучшего хода (power-up «Подсказка»): абсолютные клетки цели либо
+  /// пусто. Снимается по таймеру или следующим действием игрока.
+  final List<Coord> hintCells;
+
   /// Создаёт снимок партии.
   const GameState({
     required this.board,
@@ -117,6 +121,7 @@ class GameState {
     this.lastPerfect = false,
     this.paused = false,
     this.nextPieces = const [],
+    this.hintCells = const [],
   });
 
   /// Текущий игрок.
@@ -175,6 +180,8 @@ class GameState {
     bool? lastPerfect,
     bool? paused,
     List<PieceType>? nextPieces,
+    List<Coord>? hintCells,
+    bool clearHint = false,
   }) => GameState(
     board: board ?? this.board,
     players: players ?? this.players,
@@ -194,5 +201,6 @@ class GameState {
     lastPerfect: lastPerfect ?? this.lastPerfect,
     paused: paused ?? this.paused,
     nextPieces: nextPieces ?? this.nextPieces,
+    hintCells: clearHint ? const [] : (hintCells ?? this.hintCells),
   );
 }

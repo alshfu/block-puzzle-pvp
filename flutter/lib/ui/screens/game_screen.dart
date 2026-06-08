@@ -32,6 +32,7 @@ import '../../game/match_config.dart';
 import '../../profile/profile_controller.dart';
 import '../../settings/settings.dart';
 import '../../settings/settings_controller.dart';
+import '../../shop/inventory_controller.dart';
 import '../../shop/skins.dart';
 import '../../shop/skins_controller.dart';
 import '../decor/combo_flash.dart';
@@ -44,6 +45,7 @@ import '../theme/theme_controller.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/mini_piece.dart';
+import '../widgets/powerups_panel.dart';
 import '../widgets/scoreboard.dart';
 import '../widgets/turn_timer.dart';
 
@@ -114,8 +116,52 @@ class _GameScreenState extends ConsumerState<GameScreen>
   int _matchBestCombo = 0;
   bool _matchPerfect = false;
 
+  /// Активный power-up в режиме выбора клетки (палочка/бомба) или `null`.
+  String? _activePowerup;
+
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
+
+  /// Нажатие по power-up в панели: мгновенные эффекты применяются сразу,
+  /// палочка/бомба переводят доску в режим выбора клетки.
+  void _handlePowerup(String id) {
+    final inv = ref.read(inventoryControllerProvider.notifier);
+    if (inv.count(id) <= 0) return;
+    final vm = ref.read(gameProvider(_config).notifier);
+    _click();
+    switch (id) {
+      case 'swap_hand':
+        if (vm.powerSwapHand()) inv.consume(id);
+        setState(() => _activePowerup = null);
+      case 'auto_play':
+        if (vm.powerAutoPlay()) inv.consume(id);
+        setState(() => _activePowerup = null);
+      case 'hint':
+        if (vm.powerHint()) inv.consume(id);
+        setState(() => _activePowerup = null);
+      default:
+        // stick_row / stick_col / bomb_3x3 — режим выбора клетки (toggle).
+        setState(() => _activePowerup = _activePowerup == id ? null : id);
+    }
+  }
+
+  /// Тап по доске: либо применяем активный power-up к клетке, либо ставим фигуру.
+  void _onBoardTap(int r, int c) {
+    final active = _activePowerup;
+    if (active != null) {
+      final vm = ref.read(gameProvider(_config).notifier);
+      final used = switch (active) {
+        'stick_row' => vm.powerClearRow(r),
+        'stick_col' => vm.powerClearCol(c),
+        'bomb_3x3' => vm.powerBomb(r, c),
+        _ => false,
+      };
+      if (used) ref.read(inventoryControllerProvider.notifier).consume(active);
+      setState(() => _activePowerup = null);
+      return;
+    }
+    ref.read(gameProvider(_config).notifier).placeAt(r, c);
+  }
 
   /// Горизонтальное смещение встряски для фазы [t] (0..1): затухающая синусоида.
   double _shakeDx(double t) => math.sin(t * math.pi * 6) * (1 - t) * 9;
@@ -363,7 +409,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         BoardView(
                           state: state,
                           theme: theme,
-                          onPlace: vm.placeAt,
+                          onPlace: _onBoardTap,
                           showGhost: ref
                               .watch(settingsControllerProvider)
                               .ghostEnabled,
@@ -380,6 +426,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           onRotate: vm.rotateSelected,
                           onDeselect: vm.deselect,
                         ),
+                        if (_config.mode != MatchMode.botvbot) ...[
+                          const SizedBox(height: 8),
+                          PowerupsPanel(
+                            theme: theme,
+                            inventory: ref.watch(inventoryControllerProvider),
+                            active: _activePowerup,
+                            enabled: humanTurn,
+                            onTap: _handlePowerup,
+                          ),
+                        ],
                         const SizedBox(height: 8),
                         if (state.nextPieces.length > state.current)
                           _NextPreview(

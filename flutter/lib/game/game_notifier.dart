@@ -58,6 +58,9 @@ class GameNotifier extends Notifier<GameState> {
   /// Периодический тикер blitz-таймера хода человека.
   Timer? _blitzTicker;
 
+  /// Таймер снятия подсветки power-up «Подсказка».
+  Timer? _hintTimer;
+
   /// Создаёт ViewModel для конкретной партии [config].
   GameNotifier(this.config);
 
@@ -66,6 +69,7 @@ class GameNotifier extends Notifier<GameState> {
     ref.onDispose(() {
       _botTimer?.cancel();
       _blitzTicker?.cancel();
+      _hintTimer?.cancel();
     });
     // Resume: если просили продолжить и есть сохранёнка с тем же seed.
     if (config.resume) {
@@ -122,6 +126,144 @@ class GameNotifier extends Notifier<GameState> {
     final fresh = _freshState();
     state = fresh;
     _armTimers(fresh);
+  }
+
+  // ── Power-ups (одиночные режимы) ───────────────────────────────────────────
+  //
+  // Действуют на текущего игрока-человека. Возвращают `true`, если эффект
+  // применён (тогда View списывает 1 шт. из инвентаря). Порт `useGame.ts`
+  // (powerSwapHand/powerHint/powerAutoPlay/powerClearRow/Col/Bomb).
+
+  /// Доступны ли power-ups сейчас: ход человека и партия идёт.
+  bool get _powerReady => !state.gameOver && !config.isBot(state.current);
+
+  /// Обновляет всю руку текущего игрока новыми фигурами из его мешка.
+  bool powerSwapHand() {
+    if (!_powerReady) return false;
+    final p = state.current;
+    final players = [...state.players];
+    players[p] = players[p].copyWith(
+      hand: _dealHand(_bags[p], config.cfg.handSize),
+    );
+    state = state.copyWith(
+      players: players,
+      clearSelection: true,
+      orientIndex: 0,
+      clearHint: true,
+      nextPieces: _peekNext(),
+    );
+    return true;
+  }
+
+  /// Подсвечивает лучший ход: выбирает фигуру, подгоняет ориентацию и ставит
+  /// подсветку цели на 3 секунды. Возвращает `false`, если ходов нет.
+  bool powerHint() {
+    if (!_powerReady) return false;
+    final move = _bestMove();
+    if (move == null) return false;
+    final os = orientations(
+      move.type,
+      config.cfg.rotationEnabled,
+      config.cfg.flipEnabled,
+    );
+    final oi = _orientIndexOf(os, move.cells);
+    final hint = [
+      for (final cell in move.cells) Coord(move.r + cell.r, move.c + cell.c),
+    ];
+    state = state.copyWith(
+      selectedPieceId: move.pieceId,
+      orientIndex: oi,
+      hintCells: hint,
+    );
+    _hintTimer?.cancel();
+    _hintTimer = Timer(const Duration(seconds: 3), () {
+      _hintTimer = null;
+      if (!state.gameOver) state = state.copyWith(clearHint: true);
+    });
+    return true;
+  }
+
+  /// Сам находит и применяет лучший ход текущего игрока.
+  bool powerAutoPlay() {
+    if (!_powerReady) return false;
+    final move = _bestMove();
+    if (move == null) return false;
+    state = state.copyWith(clearHint: true);
+    _applyPlacement(move.pieceId, move.cells, move.r, move.c);
+    return true;
+  }
+
+  /// Очищает строку [row], начисляя очки текущему игроку.
+  bool powerClearRow(int row) =>
+      _applyArbitraryClear([for (int c = 0; c < boardSize; c++) Coord(row, c)]);
+
+  /// Очищает столбец [col], начисляя очки текущему игроку.
+  bool powerClearCol(int col) =>
+      _applyArbitraryClear([for (int r = 0; r < boardSize; r++) Coord(r, col)]);
+
+  /// Очищает квадрат 3×3 вокруг `(centerR, centerC)`.
+  bool powerBomb(int centerR, int centerC) => _applyArbitraryClear([
+    for (int dr = -1; dr <= 1; dr++)
+      for (int dc = -1; dc <= 1; dc++) Coord(centerR + dr, centerC + dc),
+  ]);
+
+  /// Лучший ход текущего игрока (оценка уровнем `hard`).
+  CandidateMove? _bestMove() => chooseBotMove(
+    state.board,
+    state.currentPlayer.hand,
+    BotLevel.hard,
+    config.cfg,
+    _botRng,
+  );
+
+  /// Индекс ориентации в [os], совпадающей с [cells] (или 0).
+  int _orientIndexOf(List<List<Coord>> os, List<Coord> cells) {
+    for (int i = 0; i < os.length; i++) {
+      if (_sameCells(os[i], cells)) return i;
+    }
+    return 0;
+  }
+
+  /// Поэлементное равенство наборов клеток (оба нормализованы ядром).
+  bool _sameCells(List<Coord> a, List<Coord> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].r != b[i].r || a[i].c != b[i].c) return false;
+    }
+    return true;
+  }
+
+  /// Очищает произвольный набор клеток (только заполненные), начисляя очки
+  /// текущему игроку как одиночную очистку. Ход НЕ передаётся. Возвращает
+  /// `false`, если очищать нечего.
+  bool _applyArbitraryClear(List<Coord> targets) {
+    if (!_powerReady) return false;
+    final cleared = <Coord>[
+      for (final t in targets)
+        if (t.r >= 0 &&
+            t.r < boardSize &&
+            t.c >= 0 &&
+            t.c < boardSize &&
+            state.board[t.r][t.c].filled)
+          t,
+    ];
+    if (cleared.isEmpty) return false;
+    final board = cloneBoard(state.board);
+    applyClears(board, cleared);
+    final p = state.current;
+    final gained = scoreForMove(1, 0, false, config.cfg);
+    final players = [...state.players];
+    players[p] = players[p].copyWith(score: players[p].score + gained);
+    state = state.copyWith(
+      board: board,
+      players: players,
+      moveSeq: state.moveSeq + 1,
+      lastClearCount: 0,
+      lastPerfect: false,
+      clearHint: true,
+    );
+    _autoSave();
+    return true;
   }
 
   // ── Старт партии ─────────────────────────────────────────────────────────

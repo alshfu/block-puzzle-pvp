@@ -98,6 +98,7 @@ class _BoardViewState extends State<BoardView> {
       clearPreview: clearPreview,
       theme: widget.theme,
       skin: widget.skin,
+      hintCells: state.hintCells,
     );
 
     return AspectRatio(
