@@ -28,6 +28,9 @@ class BoardRender {
   /// Допустима ли постановка превью (зелёный/красный призрак).
   final bool previewValid;
 
+  /// Клетки, которые ОЧИСТЯТСЯ при этой постановке (подсветка будущих очисток).
+  final List<Coord> clearPreview;
+
   /// Токены темы (цвета и радиусы).
   final BlockDuelTheme theme;
 
@@ -37,6 +40,7 @@ class BoardRender {
     required this.preview,
     required this.previewValid,
     required this.theme,
+    this.clearPreview = const [],
   });
 }
 
@@ -93,6 +97,35 @@ class _BoardComponent extends Component with HasGameReference<BoardGame> {
           canvas.drawRRect(rrect, fillEmpty);
           canvas.drawRRect(rrect, gridLine);
         }
+      }
+    }
+
+    // Подсветка будущих очисток (ТЗ §8.2): клетки, которые исчезнут.
+    if (data.clearPreview.isNotEmpty) {
+      final glow = Paint()..color = theme.good.withValues(alpha: 0.35);
+      final border = Paint()
+        ..color = theme.good
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+      for (final coord in data.clearPreview) {
+        if (coord.r < 0 ||
+            coord.r >= boardSize ||
+            coord.c < 0 ||
+            coord.c >= boardSize) {
+          continue;
+        }
+        final rect = Rect.fromLTWH(
+          coord.c * cell + 1,
+          coord.r * cell + 1,
+          cell - 2,
+          cell - 2,
+        );
+        final rr = RRect.fromRectAndRadius(
+          rect,
+          Radius.circular(theme.cellRadius),
+        );
+        canvas.drawRRect(rr, glow);
+        canvas.drawRRect(rr, border);
       }
     }
 

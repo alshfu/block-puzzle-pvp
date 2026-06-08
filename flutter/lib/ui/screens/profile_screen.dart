@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../achievements/stats_controller.dart';
 import '../../profile/profile_controller.dart';
 import '../design_tokens.dart';
 import '../widgets/screen_scaffold.dart';
@@ -28,7 +29,11 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).extension<BlockDuelTheme>()!;
     final profile = ref.watch(profileControllerProvider);
+    final stats = ref.watch(statsControllerProvider);
     final ctrl = ref.read(profileControllerProvider.notifier);
+    final winrate = stats.games == 0
+        ? 0
+        : (stats.wins * 100 / stats.games).round();
     final xpRatio = profile.xpForNextLevel == 0
         ? 0.0
         : (profile.xpInLevel / profile.xpForNextLevel).clamp(0.0, 1.0);
@@ -82,8 +87,14 @@ class ProfileScreen extends ConsumerWidget {
           rows: [
             ('Уровень', '${profile.level}'),
             ('Монеты', '${profile.coins} 🪙'),
-            ('Партий', '${profile.gamesPlayed}'),
-            ('Побед', '${profile.wins}'),
+            ('Партий', '${stats.games}'),
+            ('Побед', '${stats.wins}'),
+            ('Винрейт', '$winrate%'),
+            ('Рекорд за партию', '${stats.bestScore}'),
+            ('Лучшая мульти-очистка', '×${stats.maxMultiClear}'),
+            ('Очищено линий/боксов', '${stats.totalClears}'),
+            ('Серия побед', '${stats.currentWinStreak}'),
+            ('Лучшая серия', '${stats.bestWinStreak}'),
           ],
         ),
         const SizedBox(height: 16),

@@ -77,10 +77,20 @@ class _BoardViewState extends State<BoardView> {
         (widget.showGhost && hover != null && state.activeCells != null)
         ? state.previewCells(hover.r, hover.c)
         : const <Coord>[];
+    final valid = hover != null && state.canPlaceAt(hover.r, hover.c);
+    // Подсветка будущих очисток: симулируем постановку и ищем очистки (ТЗ §8.2).
+    List<Coord> clearPreview = const [];
+    final cells = state.activeCells;
+    if (valid && cells != null) {
+      final board = cloneBoard(state.board);
+      place(board, cells, hover.r, hover.c, state.current);
+      clearPreview = findClears(board).cleared;
+    }
     _game.data = BoardRender(
       board: state.board,
       preview: preview,
-      previewValid: hover != null && state.canPlaceAt(hover.r, hover.c),
+      previewValid: valid,
+      clearPreview: clearPreview,
       theme: widget.theme,
     );
 

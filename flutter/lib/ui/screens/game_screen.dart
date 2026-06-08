@@ -10,6 +10,8 @@
 /// результат-оверлей с XP — Фазы 3–4.
 library;
 
+import 'dart:math' as math;
+
 import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
@@ -69,7 +71,8 @@ class GameScreen extends ConsumerStatefulWidget {
   ConsumerState<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends ConsumerState<GameScreen> {
+class _GameScreenState extends ConsumerState<GameScreen>
+    with SingleTickerProviderStateMixin {
   /// Конфиг партии, созданный один раз (стабильный ключ провайдера).
   late final MatchConfig _config;
 
@@ -78,6 +81,21 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   /// Активная вспышка комбо (null — ничего не показываем).
   _ComboFlashData? _comboFlash;
+
+  /// Активный всплывающий «+N» (null — ничего не показываем).
+  _ScorePopupData? _scorePopup;
+
+  /// Контроллер экранной встряски (большие комбо/мульти-очистки).
+  late final AnimationController _shake = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 320),
+  );
+
+  @override
+  void dispose() {
+    _shake.dispose();
+    super.dispose();
+  }
 
   /// Очередь тостов о вновь разблокированных ачивках.
   final List<AchievementDef> _toasts = [];
@@ -90,6 +108,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
+
+  /// Горизонтальное смещение встряски для фазы [t] (0..1): затухающая синусоида.
+  double _shakeDx(double t) => math.sin(t * math.pi * 6) * (1 - t) * 9;
 
   /// Тактильная отдача по режиму [mode]; [clear] — была ли очистка (сильнее).
   /// На web/десктопе без вибромотора — no-op.
@@ -169,11 +190,22 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       _confetti.burst([tokens.p0, tokens.p1, tokens.good]);
     }
 
-    // Веха комбо: ходивший игрок — prev.current; его combo выросло после хода.
+    // Всплывающие очки «+N» на очистках (ТЗ §8.2).
     final mover = prev.current;
+    final gained = next.players[mover].score - prev.players[mover].score;
+    if (gained > 0) {
+      setState(() {
+        _scorePopup = _ScorePopupData(key: next.moveSeq, gained: gained);
+      });
+    }
+
+    // Экранная встряска на больших комбо/мульти-очистках (ТЗ §8.2).
+    final newC = next.players[mover].combo;
+    if (next.lastClearCount >= 4 || newC >= 5) _shake.forward(from: 0);
+
+    // Веха комбо: ходивший игрок — prev.current; его combo выросло после хода.
     if (_config.isBot(mover)) return;
     final oldC = prev.players[mover].combo;
-    final newC = next.players[mover].combo;
     var level = 0;
     if (oldC < 3 && newC >= 3) level = 1;
     if (oldC < 5 && newC >= 5) level = 2;
@@ -278,58 +310,66 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       backgroundColor: theme.bg,
       body: Stack(
         children: [
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 460),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                  child: Column(
-                    children: [
-                      _TopBar(
-                        theme: theme,
-                        onNewGame: vm.newGame,
-                        onPause: () {
-                          _click();
-                          vm.setPaused(true);
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Scoreboard(state: state, theme: theme),
-                      if (humanTurn) ...[
+          // Контент с экранной встряской на больших комбо.
+          AnimatedBuilder(
+            animation: _shake,
+            builder: (context, child) => Transform.translate(
+              offset: Offset(_shakeDx(_shake.value), 0),
+              child: child,
+            ),
+            child: SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 460),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                    child: Column(
+                      children: [
+                        _TopBar(
+                          theme: theme,
+                          onNewGame: vm.newGame,
+                          onPause: () {
+                            _click();
+                            vm.setPaused(true);
+                          },
+                        ),
                         const SizedBox(height: 10),
-                        TurnTimer(state: state, theme: theme),
+                        Scoreboard(state: state, theme: theme),
+                        if (humanTurn) ...[
+                          const SizedBox(height: 10),
+                          TurnTimer(state: state, theme: theme),
+                        ],
+                        const SizedBox(height: 12),
+                        BoardView(
+                          state: state,
+                          theme: theme,
+                          onPlace: vm.placeAt,
+                          showGhost: ref
+                              .watch(settingsControllerProvider)
+                              .ghostEnabled,
+                        ),
+                        const SizedBox(height: 10),
+                        _Controls(
+                          theme: theme,
+                          humanTurn: humanTurn,
+                          canRotate: canRotate,
+                          hasSelection: state.selectedPiece != null,
+                          onRotate: vm.rotateSelected,
+                          onDeselect: vm.deselect,
+                        ),
+                        const SizedBox(height: 10),
+                        HandView(
+                          hand: state.currentPlayer.hand,
+                          selectedId: state.selectedPieceId,
+                          selectedCells: state.activeCells,
+                          interactive: humanTurn,
+                          owner: state.current,
+                          theme: theme,
+                          onSelect: vm.selectPiece,
+                          onRotate: vm.rotateSelected,
+                        ),
                       ],
-                      const SizedBox(height: 12),
-                      BoardView(
-                        state: state,
-                        theme: theme,
-                        onPlace: vm.placeAt,
-                        showGhost: ref
-                            .watch(settingsControllerProvider)
-                            .ghostEnabled,
-                      ),
-                      const SizedBox(height: 10),
-                      _Controls(
-                        theme: theme,
-                        humanTurn: humanTurn,
-                        canRotate: canRotate,
-                        hasSelection: state.selectedPiece != null,
-                        onRotate: vm.rotateSelected,
-                        onDeselect: vm.deselect,
-                      ),
-                      const SizedBox(height: 10),
-                      HandView(
-                        hand: state.currentPlayer.hand,
-                        selectedId: state.selectedPieceId,
-                        selectedCells: state.activeCells,
-                        interactive: humanTurn,
-                        owner: state.current,
-                        theme: theme,
-                        onSelect: vm.selectPiece,
-                        onRotate: vm.rotateSelected,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -337,6 +377,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           ),
           // Салют конфетти (perfect clear) — поверх поля, под оверлеями.
           Positioned.fill(child: ConfettiOverlay(game: _confetti)),
+          // Всплывающие очки «+N».
+          if (_scorePopup != null)
+            _ScorePopup(
+              key: ValueKey(_scorePopup!.key),
+              gained: _scorePopup!.gained,
+              theme: theme,
+              onDone: () => setState(() => _scorePopup = null),
+            ),
           // Вспышка комбо-вехи.
           if (_comboFlash != null)
             ComboFlash(
@@ -390,6 +438,95 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 setState(() => _toasts.removeWhere((a) => a.id == id)),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Данные активного всплывающего «+N» ([key] перезапускает анимацию).
+class _ScorePopupData {
+  final int key;
+  final int gained;
+  const _ScorePopupData({required this.key, required this.gained});
+}
+
+/// Всплывающие очки «+N»: всплывает вверх и гаснет (~0.9с), затем [onDone].
+class _ScorePopup extends StatefulWidget {
+  final int gained;
+  final BlockDuelTheme theme;
+  final VoidCallback onDone;
+
+  const _ScorePopup({
+    super.key,
+    required this.gained,
+    required this.theme,
+    required this.onDone,
+  });
+
+  @override
+  State<_ScorePopup> createState() => _ScorePopupState();
+}
+
+class _ScorePopupState extends State<_ScorePopup>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _c.addStatusListener((s) {
+      if (s == AnimationStatus.completed) widget.onDone();
+    });
+    _c.forward();
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: SafeArea(
+        child: Align(
+          alignment: const Alignment(0, -0.45),
+          child: AnimatedBuilder(
+            animation: _c,
+            builder: (context, _) {
+              final t = _c.value;
+              final opacity = (t < 0.2 ? t / 0.2 : 1 - (t - 0.2) / 0.8).clamp(
+                0.0,
+                1.0,
+              );
+              return Opacity(
+                opacity: opacity,
+                child: Transform.translate(
+                  offset: Offset(0, -40 * t),
+                  child: Text(
+                    '+${widget.gained}',
+                    style: TextStyle(
+                      color: widget.theme.p0,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                      fontFamily: widget.theme.fontMono,
+                      shadows: [
+                        Shadow(
+                          color: widget.theme.p0.withValues(alpha: 0.5),
+                          blurRadius: 12,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
