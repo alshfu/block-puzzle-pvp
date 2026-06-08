@@ -41,6 +41,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// Показывать ли подтверждение сброса прогресса (2-й шаг).
   bool _confirmReset = false;
 
+  /// Активная категория настроек (0 — Звук, 1 — Вид, 2 — Игра, 3 — Аккаунт).
+  int _category = 0;
+
   void _resetAll() {
     ref
         .read(profileControllerProvider.notifier)
@@ -67,197 +70,284 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       theme: theme,
       onBack: () => context.go('/'),
       children: [
-        _SectionLabel(text: 'Тема', theme: theme),
-        const SizedBox(height: 8),
-        const ThemeSwitch(),
+        // Категории — переключение без длинной прокрутки.
+        _CategoryBar(
+          theme: theme,
+          active: _category,
+          onSelect: (i) => setState(() => _category = i),
+        ),
+        const SizedBox(height: 16),
+        ...switch (_category) {
+          0 => _soundSection(theme, s, update),
+          1 => _viewSection(theme, s, update),
+          2 => _gameSection(theme, s, update),
+          _ => _accountSection(theme),
+        },
+      ],
+    );
+  }
 
-        const SizedBox(height: 20),
-        _SectionLabel(text: 'Звук', theme: theme),
-        const SizedBox(height: 4),
-        _ToggleRow(
-          theme: theme,
-          label: 'Звуковые эффекты',
-          value: s.soundOn,
-          onChanged: (v) => update(s.copyWith(soundOn: v)),
-        ),
-        if (s.soundOn)
-          _SliderRow(
-            theme: theme,
-            label: 'Громкость эффектов',
-            value: s.soundVolume,
-            onChanged: (v) => update(s.copyWith(soundVolume: v)),
-          ),
-        _ToggleRow(
-          theme: theme,
-          label: 'Музыка',
-          value: s.musicOn,
-          onChanged: (v) => update(s.copyWith(musicOn: v)),
-        ),
-        if (s.musicOn)
-          _SliderRow(
-            theme: theme,
-            label: 'Громкость музыки',
-            value: s.musicVolume,
-            onChanged: (v) => update(s.copyWith(musicVolume: v)),
-          ),
+  /// Категория «Звук» — эффекты, музыка, вибрация.
+  List<Widget> _soundSection(
+    BlockDuelTheme theme,
+    Settings s,
+    void Function(Settings) update,
+  ) => [
+    _SectionLabel(text: 'Звук', theme: theme),
+    const SizedBox(height: 4),
+    _ToggleRow(
+      theme: theme,
+      label: 'Звуковые эффекты',
+      value: s.soundOn,
+      onChanged: (v) => update(s.copyWith(soundOn: v)),
+    ),
+    if (s.soundOn)
+      _SliderRow(
+        theme: theme,
+        label: 'Громкость эффектов',
+        value: s.soundVolume,
+        onChanged: (v) => update(s.copyWith(soundVolume: v)),
+      ),
+    _ToggleRow(
+      theme: theme,
+      label: 'Музыка',
+      value: s.musicOn,
+      onChanged: (v) => update(s.copyWith(musicOn: v)),
+    ),
+    if (s.musicOn)
+      _SliderRow(
+        theme: theme,
+        label: 'Громкость музыки',
+        value: s.musicVolume,
+        onChanged: (v) => update(s.copyWith(musicVolume: v)),
+      ),
+    const SizedBox(height: 20),
+    _SectionLabel(text: 'Вибрация', theme: theme),
+    const SizedBox(height: 8),
+    _SegmentRow<VibrationMode>(
+      theme: theme,
+      value: s.vibration,
+      options: const {
+        VibrationMode.off: 'Выкл',
+        VibrationMode.light: 'Лёгкая',
+        VibrationMode.strong: 'Сильная',
+      },
+      onChanged: (v) => update(s.copyWith(vibration: v)),
+    ),
+  ];
 
-        const SizedBox(height: 20),
-        _SectionLabel(text: 'Анимации и эффекты', theme: theme),
-        const SizedBox(height: 4),
-        _ToggleRow(
-          theme: theme,
-          label: 'Конфетти на perfect',
-          value: s.confettiEnabled,
-          onChanged: (v) => update(s.copyWith(confettiEnabled: v)),
-        ),
-        _ToggleRow(
-          theme: theme,
-          label: 'Маскоты и пони-декор',
-          value: s.mascotsEnabled,
-          onChanged: (v) => update(s.copyWith(mascotsEnabled: v)),
-        ),
-        _ToggleRow(
-          theme: theme,
-          label: 'Подсветка цели (призрак)',
-          value: s.ghostEnabled,
-          onChanged: (v) => update(s.copyWith(ghostEnabled: v)),
-        ),
-        _ToggleRow(
-          theme: theme,
-          label: 'Меньше анимаций',
-          value: s.reduceMotion,
-          onChanged: (v) => update(s.copyWith(reduceMotion: v)),
-        ),
+  /// Категория «Вид» — тема и анимации.
+  List<Widget> _viewSection(
+    BlockDuelTheme theme,
+    Settings s,
+    void Function(Settings) update,
+  ) => [
+    _SectionLabel(text: 'Тема', theme: theme),
+    const SizedBox(height: 8),
+    const ThemeSwitch(),
+    const SizedBox(height: 20),
+    _SectionLabel(text: 'Анимации и эффекты', theme: theme),
+    const SizedBox(height: 4),
+    _ToggleRow(
+      theme: theme,
+      label: 'Конфетти на perfect',
+      value: s.confettiEnabled,
+      onChanged: (v) => update(s.copyWith(confettiEnabled: v)),
+    ),
+    _ToggleRow(
+      theme: theme,
+      label: 'Маскоты и пони-декор',
+      value: s.mascotsEnabled,
+      onChanged: (v) => update(s.copyWith(mascotsEnabled: v)),
+    ),
+    _ToggleRow(
+      theme: theme,
+      label: 'Подсветка цели (призрак)',
+      value: s.ghostEnabled,
+      onChanged: (v) => update(s.copyWith(ghostEnabled: v)),
+    ),
+    _ToggleRow(
+      theme: theme,
+      label: 'Меньше анимаций',
+      value: s.reduceMotion,
+      onChanged: (v) => update(s.copyWith(reduceMotion: v)),
+    ),
+  ];
 
-        const SizedBox(height: 20),
-        _SectionLabel(text: 'Вибрация', theme: theme),
-        const SizedBox(height: 8),
-        _SegmentRow<VibrationMode>(
-          theme: theme,
-          value: s.vibration,
-          options: const {
-            VibrationMode.off: 'Выкл',
-            VibrationMode.light: 'Лёгкая',
-            VibrationMode.strong: 'Сильная',
-          },
-          onChanged: (v) => update(s.copyWith(vibration: v)),
-        ),
+  /// Категория «Игра» — задержка бота и параметры матча по умолчанию.
+  List<Widget> _gameSection(
+    BlockDuelTheme theme,
+    Settings s,
+    void Function(Settings) update,
+  ) => [
+    _SectionLabel(text: 'Геймплей', theme: theme),
+    const SizedBox(height: 8),
+    _SliderRow(
+      theme: theme,
+      label: 'Задержка хода бота',
+      value: (s.botDelayMs - 100) / 800,
+      valueLabel: '${s.botDelayMs} мс',
+      onChanged: (v) => update(s.copyWith(botDelayMs: (100 + v * 800).round())),
+    ),
+    const SizedBox(height: 16),
+    _SectionLabel(text: 'Матч по умолчанию', theme: theme),
+    const SizedBox(height: 8),
+    _SegmentRow<String>(
+      theme: theme,
+      value: s.defaultBotLevel,
+      options: const {'easy': 'Тупой', 'medium': 'Умный', 'hard': 'Сложный'},
+      onChanged: (v) => update(s.copyWith(defaultBotLevel: v)),
+    ),
+    const SizedBox(height: 8),
+    _ToggleRow(
+      theme: theme,
+      label: 'Повороты',
+      value: s.defaultRotation,
+      onChanged: (v) => update(s.copyWith(defaultRotation: v)),
+    ),
+    _ToggleRow(
+      theme: theme,
+      label: 'Отражения',
+      value: s.defaultFlip,
+      onChanged: (v) => update(s.copyWith(defaultFlip: v)),
+    ),
+    const SizedBox(height: 8),
+    _SegmentRow<int>(
+      theme: theme,
+      value: s.defaultHandSize,
+      options: const {1: 'Рука 1', 2: 'Рука 2', 3: 'Рука 3'},
+      onChanged: (v) => update(s.copyWith(defaultHandSize: v)),
+    ),
+    const SizedBox(height: 8),
+    _ToggleRow(
+      theme: theme,
+      label: s.defaultBlitz ? 'Блиц включён' : 'Без таймера',
+      value: s.defaultBlitz,
+      onChanged: (v) => update(s.copyWith(defaultBlitz: v)),
+    ),
+    if (s.defaultBlitz)
+      _SegmentRow<String>(
+        theme: theme,
+        value: s.defaultBlitzPreset,
+        options: const {
+          'hardcore': 'Хардкор',
+          'normal': 'Норма',
+          'casual': 'Казуал',
+        },
+        onChanged: (v) => update(s.copyWith(defaultBlitzPreset: v)),
+      ),
+  ];
 
-        const SizedBox(height: 20),
-        _SectionLabel(text: 'Геймплей', theme: theme),
-        const SizedBox(height: 8),
-        _SliderRow(
-          theme: theme,
-          label: 'Задержка хода бота',
-          value: (s.botDelayMs - 100) / 800, // 100..900 мс
-          valueLabel: '${s.botDelayMs} мс',
-          onChanged: (v) =>
-              update(s.copyWith(botDelayMs: (100 + v * 800).round())),
+  /// Категория «Аккаунт» — вход, данные, о приложении.
+  List<Widget> _accountSection(BlockDuelTheme theme) => [
+    _SectionLabel(text: 'Аккаунт', theme: theme),
+    const SizedBox(height: 8),
+    _AccountSection(theme: theme),
+    const SizedBox(height: 24),
+    _SectionLabel(text: 'Данные', theme: theme),
+    const SizedBox(height: 8),
+    if (!_confirmReset)
+      TextButton(
+        onPressed: () => setState(() => _confirmReset = true),
+        child: Text(
+          '⚠ Сбросить весь прогресс',
+          style: TextStyle(color: theme.bad, fontSize: 14),
         ),
-
-        const SizedBox(height: 20),
-        _SectionLabel(text: 'Матч по умолчанию', theme: theme),
-        const SizedBox(height: 8),
-        _SegmentRow<String>(
-          theme: theme,
-          value: s.defaultBotLevel,
-          options: const {
-            'easy': 'Тупой',
-            'medium': 'Умный',
-            'hard': 'Сложный',
-          },
-          onChanged: (v) => update(s.copyWith(defaultBotLevel: v)),
-        ),
-        const SizedBox(height: 8),
-        _ToggleRow(
-          theme: theme,
-          label: 'Повороты',
-          value: s.defaultRotation,
-          onChanged: (v) => update(s.copyWith(defaultRotation: v)),
-        ),
-        _ToggleRow(
-          theme: theme,
-          label: 'Отражения',
-          value: s.defaultFlip,
-          onChanged: (v) => update(s.copyWith(defaultFlip: v)),
-        ),
-        const SizedBox(height: 8),
-        _SegmentRow<int>(
-          theme: theme,
-          value: s.defaultHandSize,
-          options: const {1: 'Рука 1', 2: 'Рука 2', 3: 'Рука 3'},
-          onChanged: (v) => update(s.copyWith(defaultHandSize: v)),
-        ),
-        const SizedBox(height: 8),
-        _ToggleRow(
-          theme: theme,
-          label: s.defaultBlitz ? 'Блиц включён' : 'Без таймера',
-          value: s.defaultBlitz,
-          onChanged: (v) => update(s.copyWith(defaultBlitz: v)),
-        ),
-        if (s.defaultBlitz)
-          _SegmentRow<String>(
-            theme: theme,
-            value: s.defaultBlitzPreset,
-            options: const {
-              'hardcore': 'Хардкор',
-              'normal': 'Норма',
-              'casual': 'Казуал',
-            },
-            onChanged: (v) => update(s.copyWith(defaultBlitzPreset: v)),
-          ),
-
-        const SizedBox(height: 24),
-        _SectionLabel(text: 'Аккаунт', theme: theme),
-        const SizedBox(height: 8),
-        _AccountSection(theme: theme),
-
-        const SizedBox(height: 24),
-        _SectionLabel(text: 'Данные', theme: theme),
-        const SizedBox(height: 8),
-        if (!_confirmReset)
+      )
+    else ...[
+      Text(
+        'Удалит профиль, статистику, ачивки и сохранёнку. Необратимо.',
+        style: TextStyle(color: theme.bad, fontSize: 13),
+      ),
+      const SizedBox(height: 8),
+      Row(
+        children: [
           TextButton(
-            onPressed: () => setState(() => _confirmReset = true),
+            onPressed: _resetAll,
             child: Text(
-              '⚠ Сбросить весь прогресс',
-              style: TextStyle(color: theme.bad, fontSize: 14),
+              'Да, удалить всё',
+              style: TextStyle(color: theme.bad, fontWeight: FontWeight.w700),
             ),
-          )
-        else ...[
-          Text(
-            'Удалит профиль, статистику, ачивки и сохранёнку. Необратимо.',
-            style: TextStyle(color: theme.bad, fontSize: 13),
           ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              TextButton(
-                onPressed: _resetAll,
-                child: Text(
-                  'Да, удалить всё',
-                  style: TextStyle(
-                    color: theme.bad,
-                    fontWeight: FontWeight.w700,
+          TextButton(
+            onPressed: () => setState(() => _confirmReset = false),
+            child: Text('Отмена', style: TextStyle(color: theme.muted)),
+          ),
+        ],
+      ),
+    ],
+    const SizedBox(height: 24),
+    _SectionLabel(text: 'О приложении', theme: theme),
+    const SizedBox(height: 8),
+    Text(
+      'BlockDuel 9×9 · v2.0.0 (flutter)\n'
+      'Соревновательный блок-пазл на поле 9×9.',
+      style: TextStyle(color: theme.muted, fontSize: 13, height: 1.4),
+    ),
+  ];
+}
+
+/// Панель категорий настроек (вкладки).
+class _CategoryBar extends StatelessWidget {
+  final BlockDuelTheme theme;
+  final int active;
+  final ValueChanged<int> onSelect;
+
+  const _CategoryBar({
+    required this.theme,
+    required this.active,
+    required this.onSelect,
+  });
+
+  static const List<(String, String)> _cats = [
+    ('🔊', 'Звук'),
+    ('🎨', 'Вид'),
+    ('🎮', 'Игра'),
+    ('👤', 'Аккаунт'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: theme.panel,
+        borderRadius: BorderRadius.circular(theme.btnRadius),
+        border: Border.all(color: theme.line),
+      ),
+      child: Row(
+        children: [
+          for (int i = 0; i < _cats.length; i++)
+            Expanded(
+              child: GestureDetector(
+                onTap: () => onSelect(i),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 9),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: i == active ? theme.p0 : Colors.transparent,
+                    borderRadius: BorderRadius.circular(theme.btnRadius - 3),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_cats[i].$1, style: const TextStyle(fontSize: 18)),
+                      const SizedBox(height: 2),
+                      Text(
+                        _cats[i].$2,
+                        style: TextStyle(
+                          color: i == active ? theme.bg : theme.muted,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              TextButton(
-                onPressed: () => setState(() => _confirmReset = false),
-                child: Text('Отмена', style: TextStyle(color: theme.muted)),
-              ),
-            ],
-          ),
+            ),
         ],
-
-        const SizedBox(height: 24),
-        _SectionLabel(text: 'О приложении', theme: theme),
-        const SizedBox(height: 8),
-        Text(
-          'BlockDuel 9×9 · v2.0.0 (flutter)\n'
-          'Соревновательный блок-пазл на поле 9×9.',
-          style: TextStyle(color: theme.muted, fontSize: 13, height: 1.4),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -389,78 +389,83 @@ class _GameScreenState extends ConsumerState<GameScreen>
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 460),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                    child: Column(
-                      children: [
-                        _TopBar(
-                          theme: theme,
-                          onNewGame: vm.newGame,
-                          onPause: () {
-                            _click();
-                            vm.setPaused(true);
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Scoreboard(
-                          state: state,
-                          theme: theme,
-                          solo: _config.isSolo,
-                        ),
-                        if (humanTurn) ...[
+                  // Прокрутка, если окно ниже контента (десктоп-ресайз/короткий
+                  // экран): иначе RenderFlex overflow по высоте.
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _TopBar(
+                            theme: theme,
+                            onNewGame: vm.newGame,
+                            onPause: () {
+                              _click();
+                              vm.setPaused(true);
+                            },
+                          ),
                           const SizedBox(height: 10),
-                          TurnTimer(state: state, theme: theme),
-                        ],
-                        const SizedBox(height: 12),
-                        BoardView(
-                          state: state,
-                          theme: theme,
-                          onPlace: _onBoardTap,
-                          showGhost: ref
-                              .watch(settingsControllerProvider)
-                              .ghostEnabled,
-                          skin: skinStyleOf(
-                            ref.watch(skinsControllerProvider).equipped,
+                          Scoreboard(
+                            state: state,
+                            theme: theme,
+                            solo: _config.isSolo,
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        _Controls(
-                          theme: theme,
-                          humanTurn: humanTurn,
-                          canRotate: canRotate,
-                          hasSelection: state.selectedPiece != null,
-                          onRotate: vm.rotateSelected,
-                          onDeselect: vm.deselect,
-                        ),
-                        if (_config.mode != MatchMode.botvbot) ...[
+                          if (humanTurn) ...[
+                            const SizedBox(height: 10),
+                            TurnTimer(state: state, theme: theme),
+                          ],
+                          const SizedBox(height: 12),
+                          BoardView(
+                            state: state,
+                            theme: theme,
+                            onPlace: _onBoardTap,
+                            showGhost: ref
+                                .watch(settingsControllerProvider)
+                                .ghostEnabled,
+                            skin: skinStyleOf(
+                              ref.watch(skinsControllerProvider).equipped,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          _Controls(
+                            theme: theme,
+                            humanTurn: humanTurn,
+                            canRotate: canRotate,
+                            hasSelection: state.selectedPiece != null,
+                            onRotate: vm.rotateSelected,
+                            onDeselect: vm.deselect,
+                          ),
+                          if (_config.mode != MatchMode.botvbot) ...[
+                            const SizedBox(height: 8),
+                            PowerupsPanel(
+                              theme: theme,
+                              inventory: ref.watch(inventoryControllerProvider),
+                              active: _activePowerup,
+                              enabled: humanTurn,
+                              onTap: _handlePowerup,
+                            ),
+                          ],
                           const SizedBox(height: 8),
-                          PowerupsPanel(
+                          if (state.nextPieces.length > state.current)
+                            _NextPreview(
+                              theme: theme,
+                              type: state.nextPieces[state.current],
+                              owner: state.current,
+                            ),
+                          const SizedBox(height: 6),
+                          HandView(
+                            hand: state.currentPlayer.hand,
+                            selectedId: state.selectedPieceId,
+                            selectedCells: state.activeCells,
+                            interactive: humanTurn,
+                            owner: state.current,
                             theme: theme,
-                            inventory: ref.watch(inventoryControllerProvider),
-                            active: _activePowerup,
-                            enabled: humanTurn,
-                            onTap: _handlePowerup,
+                            onSelect: vm.selectPiece,
+                            onRotate: vm.rotateSelected,
                           ),
                         ],
-                        const SizedBox(height: 8),
-                        if (state.nextPieces.length > state.current)
-                          _NextPreview(
-                            theme: theme,
-                            type: state.nextPieces[state.current],
-                            owner: state.current,
-                          ),
-                        const SizedBox(height: 6),
-                        HandView(
-                          hand: state.currentPlayer.hand,
-                          selectedId: state.selectedPieceId,
-                          selectedCells: state.activeCells,
-                          interactive: humanTurn,
-                          owner: state.current,
-                          theme: theme,
-                          onSelect: vm.selectPiece,
-                          onRotate: vm.rotateSelected,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

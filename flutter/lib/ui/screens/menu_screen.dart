@@ -75,71 +75,88 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 460),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-                  child: Column(
-                    children: [
-                      const _TopBar(),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Logo(),
-                            const SizedBox(height: 12),
-                            Text(
-                              'дуэль на поле 9×9 · ставь, очищай, побеждай',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: tokens.muted,
-                                fontSize: clampVw(
-                                  context,
-                                  min: 12,
-                                  prefVw: 3.4,
-                                  max: 15,
+                // Центрируем при достаточной высоте, прокручиваем при коротком
+                // окне (десктоп-ресайз): минимальная высота = вьюпорт, иначе
+                // RenderFlex overflow по высоте на низком окне.
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                          child: Column(
+                            children: [
+                              const _TopBar(),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Logo(),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'дуэль на поле 9×9 · ставь, очищай, побеждай',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: tokens.muted,
+                                        fontSize: clampVw(
+                                          context,
+                                          min: 12,
+                                          prefVw: 3.4,
+                                          max: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    const _MiniDeco(),
+                                  ],
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            const _MiniDeco(),
-                          ],
-                        ),
-                      ),
-                      if (!_modeOpen && saved != null) ...[
-                        _ResumeCard(
-                          tokens: tokens,
-                          saved: saved,
-                          onResume: () => context.go(
-                            '/game/${saved.mode.name}'
-                            '?resume=1&seed=${saved.seed}',
+                              if (!_modeOpen && saved != null) ...[
+                                _ResumeCard(
+                                  tokens: tokens,
+                                  saved: saved,
+                                  onResume: () => context.go(
+                                    '/game/${saved.mode.name}'
+                                    '?resume=1&seed=${saved.seed}',
+                                  ),
+                                  onDiscard: () {
+                                    ref.read(savedGameStoreProvider).clear();
+                                    setState(() {});
+                                  },
+                                ),
+                                const SizedBox(height: 10),
+                              ],
+                              _Actions(
+                                tokens: tokens,
+                                modeOpen: _modeOpen,
+                                onOpenModes: () {
+                                  _click();
+                                  setState(() => _modeOpen = true);
+                                },
+                                onBack: () {
+                                  _click();
+                                  setState(() => _modeOpen = false);
+                                },
+                                onStart: _start,
+                              ),
+                              const SizedBox(height: 16),
+                              const ThemeSwitch(),
+                              const SizedBox(height: 12),
+                              Text(
+                                'v2.0 · flutter migration',
+                                style: TextStyle(
+                                  color: tokens.muted,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
                           ),
-                          onDiscard: () {
-                            ref.read(savedGameStoreProvider).clear();
-                            setState(() {});
-                          },
                         ),
-                        const SizedBox(height: 10),
-                      ],
-                      _Actions(
-                        tokens: tokens,
-                        modeOpen: _modeOpen,
-                        onOpenModes: () {
-                          _click();
-                          setState(() => _modeOpen = true);
-                        },
-                        onBack: () {
-                          _click();
-                          setState(() => _modeOpen = false);
-                        },
-                        onStart: _start,
                       ),
-                      const SizedBox(height: 16),
-                      const ThemeSwitch(),
-                      const SizedBox(height: 12),
-                      Text(
-                        'v2.0 · flutter migration',
-                        style: TextStyle(color: tokens.muted, fontSize: 11),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
