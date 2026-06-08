@@ -207,6 +207,30 @@ class GameNotifier extends Notifier<GameState> {
       for (int dc = -1; dc <= 1; dc++) Coord(centerR + dr, centerC + dc),
   ]);
 
+  // ── Pilot (скрытый авто-игрок для разработчиков) ───────────────────────────
+
+  /// Один ход «пилота»: за текущего игрока-человека выбирает лучший ход
+  /// (`chooseBotMove`), показывает выбор/ориентацию и ставит фигуру через
+  /// штатный путь. Аналог TS-пилота (`src/ui/pilot`), но драйвит ViewModel.
+  /// Возвращает `true`, если ход сделан.
+  bool pilotPlayTurn() {
+    if (state.gameOver || config.isBot(state.current)) return false;
+    final move = _bestMove();
+    if (move == null) return false;
+    final os = orientations(
+      move.type,
+      config.cfg.rotationEnabled,
+      config.cfg.flipEnabled,
+    );
+    // Показать выбор и ориентацию (наглядно, как реальные действия игрока).
+    state = state.copyWith(
+      selectedPieceId: move.pieceId,
+      orientIndex: _orientIndexOf(os, move.cells),
+    );
+    _applyPlacement(move.pieceId, move.cells, move.r, move.c);
+    return true;
+  }
+
   /// Лучший ход текущего игрока (оценка уровнем `hard`).
   CandidateMove? _bestMove() => chooseBotMove(
     state.board,

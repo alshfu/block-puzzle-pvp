@@ -42,4 +42,7 @@ abstract final class PrefKeys {
 
   /// Флаг выданной награды за обучение (`'1'` — уже выдана).
   static const String tutorialDone = 'bd_tutorial_done';
+
+  /// Флаг режима разработчика (`'1'` — включён скрытый pilot).
+  static const String pilotDev = 'bd_pilot';
 }

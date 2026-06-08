@@ -20,6 +20,7 @@ import '../../audio/audio_service.dart';
 import '../../audio/sfx.dart';
 import '../../game/saved_game.dart';
 import '../../game/saved_game_store.dart';
+import '../../pilot/developer.dart';
 import '../../profile/profile_controller.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
@@ -45,8 +46,32 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   /// Раскрыт ли список режимов (локальное состояние View).
   bool _modeOpen = false;
 
+  /// Счётчик тапов по версии — секретный жест для режима разработчика.
+  int _devTaps = 0;
+
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
+
+  /// Секретный жест: 7 тапов по версии включают/выключают режим разработчика
+  /// (скрытый pilot). Работает без Google-входа — нужно на macOS-десктопе.
+  void _onVersionTap() {
+    _devTaps++;
+    if (_devTaps < 7) return;
+    _devTaps = 0;
+    final dev = ref.read(isDeveloperProvider);
+    final ctrl = ref.read(isDeveloperProvider.notifier);
+    if (dev) {
+      ctrl.disable();
+    } else {
+      ctrl.enableViaSecret();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(dev ? 'Режим разработчика выключен' : '🛩 Pilot включён'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   /// Навигация к выбранному режиму. Для режимов с настройкой (bot/hotseat/
   /// botvbot) — через экран настройки матча; arcade пока напрямую.
@@ -145,11 +170,16 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                               const SizedBox(height: 16),
                               const ThemeSwitch(),
                               const SizedBox(height: 12),
-                              Text(
-                                'v2.0 · flutter migration',
-                                style: TextStyle(
-                                  color: tokens.muted,
-                                  fontSize: 11,
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: _onVersionTap,
+                                child: Text(
+                                  'v2.0 · flutter migration'
+                                  '${ref.watch(isDeveloperProvider) ? ' · dev' : ''}',
+                                  style: TextStyle(
+                                    color: tokens.muted,
+                                    fontSize: 11,
+                                  ),
                                 ),
                               ),
                             ],
