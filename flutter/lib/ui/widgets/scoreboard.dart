@@ -20,11 +20,22 @@ class Scoreboard extends StatelessWidget {
   /// Токены темы.
   final BlockDuelTheme theme;
 
+  /// Соло-режим (аркада): показываем только карточку игрока 0.
+  final bool solo;
+
   /// Создаёт скорборд.
-  const Scoreboard({super.key, required this.state, required this.theme});
+  const Scoreboard({
+    super.key,
+    required this.state,
+    required this.theme,
+    this.solo = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (solo) {
+      return _PlayerCard(state: state, player: 0, theme: theme);
+    }
     return Row(
       children: [
         Expanded(

@@ -274,7 +274,7 @@ class GameNotifier extends Notifier<GameState> {
     _botRng = makeRng(config.seed + 777);
     _forceRng = makeRng(config.seed + 999);
     final names = [
-      'Игрок 1',
+      config.isSolo ? 'Ты' : 'Игрок 1',
       config.mode == MatchMode.hotseat ? 'Игрок 2' : 'Бот',
     ];
     final players = [
@@ -421,8 +421,12 @@ class GameNotifier extends Notifier<GameState> {
       hand: newHand,
     );
 
-    final next = 1 - player;
-    final round = player == 1 ? state.round + 1 : state.round;
+    // В аркаде ход не передаётся (соло), раунд растёт каждым ходом; иначе —
+    // обычная передача и инкремент раунда после хода игрока 1.
+    final next = config.isSolo ? player : 1 - player;
+    final round = config.isSolo
+        ? state.round + 1
+        : (player == 1 ? state.round + 1 : state.round);
     final limit = turnTimeForRound(round, config.cfg);
 
     var nextState = state.copyWith(

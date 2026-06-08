@@ -21,6 +21,9 @@ enum MatchMode {
 
   /// Бот против бота (зрительский режим).
   botvbot,
+
+  /// Соло на рекорд (ходит только игрок 0; партия до собственного тупика).
+  arcade,
 }
 
 /// Параметры партии. Неизменяемые, со значимым равенством (для Riverpod family).
@@ -54,13 +57,18 @@ class MatchConfig {
     MatchMode.hotseat => false,
     MatchMode.bot => player == 1,
     MatchMode.botvbot => true,
+    MatchMode.arcade => false,
   };
 
-  /// Разбирает строковый код режима из маршрута (`bot`/`hotseat`/`botvbot`).
+  /// Соло-режим (ходит только игрок 0, ход никогда не передаётся).
+  bool get isSolo => mode == MatchMode.arcade;
+
+  /// Разбирает строковый код режима из маршрута.
   /// Неизвестные значения трактуются как [MatchMode.bot].
   static MatchMode modeFromString(String raw) => switch (raw) {
     'hotseat' => MatchMode.hotseat,
     'botvbot' => MatchMode.botvbot,
+    'arcade' => MatchMode.arcade,
     _ => MatchMode.bot,
   };
 

@@ -400,7 +400,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           },
                         ),
                         const SizedBox(height: 10),
-                        Scoreboard(state: state, theme: theme),
+                        Scoreboard(
+                          state: state,
+                          theme: theme,
+                          solo: _config.isSolo,
+                        ),
                         if (humanTurn) ...[
                           const SizedBox(height: 10),
                           TurnTimer(state: state, theme: theme),
@@ -510,6 +514,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               gainedXp: _resultXp,
               gainedCoins: _resultCoins,
               achievements: _resultAchievements,
+              solo: _config.isSolo,
               onNewGame: () {
                 _click();
                 vm.newGame();
@@ -819,6 +824,7 @@ class _GameOverOverlay extends StatelessWidget {
   final int gainedXp;
   final int gainedCoins;
   final List<AchievementDef> achievements;
+  final bool solo;
   final VoidCallback onNewGame;
   final VoidCallback onMenu;
 
@@ -832,6 +838,7 @@ class _GameOverOverlay extends StatelessWidget {
     required this.achievements,
     required this.onNewGame,
     required this.onMenu,
+    this.solo = false,
   });
 
   @override
@@ -852,7 +859,9 @@ class _GameOverOverlay extends StatelessWidget {
               Mascot(themeId: themeId, size: 96),
               const SizedBox(height: 8),
               Text(
-                winnerName == null ? 'Ничья' : 'Победил $winnerName',
+                solo
+                    ? 'Игра окончена'
+                    : (winnerName == null ? 'Ничья' : 'Победил $winnerName'),
                 style: TextStyle(
                   color: theme.ink,
                   fontSize: 22,
@@ -862,7 +871,7 @@ class _GameOverOverlay extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'счёт ${scores[0]} : ${scores[1]}',
+                solo ? 'счёт ${scores[0]}' : 'счёт ${scores[0]} : ${scores[1]}',
                 style: TextStyle(
                   color: theme.muted,
                   fontSize: 15,
