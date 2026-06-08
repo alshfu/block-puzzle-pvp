@@ -18,6 +18,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../achievements/achievement.dart';
 import '../../achievements/achievements_controller.dart';
+import '../../achievements/engine.dart';
+import '../../achievements/stats_controller.dart';
 import '../../audio/audio_service.dart';
 import '../../audio/sfx.dart';
 import '../../daily/daily.dart';
@@ -78,7 +80,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   _ComboFlashData? _comboFlash;
 
   /// Очередь тостов о вновь разблокированных ачивках.
-  final List<Achievement> _toasts = [];
+  final List<AchievementDef> _toasts = [];
+
+  // Накопители статистики текущего матча (ходы игрока 0 — «ты»).
+  int _matchClears = 0;
+  int _matchMaxMulti = 0;
+  int _matchBestCombo = 0;
+  bool _matchPerfect = false;
 
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
@@ -183,6 +191,26 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
+  /// Накапливает статистику матча по ходам игрока 0 («ты»); сбрасывает на новой
+  /// партии (когда [moveSeq] обнулился).
+  void _accumulateMatch(GameState? prev, GameState next) {
+    if (prev != null && next.moveSeq < prev.moveSeq) {
+      _matchClears = 0;
+      _matchMaxMulti = 0;
+      _matchBestCombo = 0;
+      _matchPerfect = false;
+    }
+    if (prev == null || next.moveSeq <= prev.moveSeq) return;
+    if (prev.current != 0) return; // считаем только свои ходы
+    _matchClears += next.lastClearCount;
+    if (next.lastClearCount > _matchMaxMulti) {
+      _matchMaxMulti = next.lastClearCount;
+    }
+    final combo = next.players[0].combo;
+    if (combo > _matchBestCombo) _matchBestCombo = combo;
+    if (next.lastPerfect) _matchPerfect = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<BlockDuelTheme>()!;
@@ -191,6 +219,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     ref.listen(gameProvider(_config), (prev, next) {
       _playMoveSfx(prev, next);
       _playMoveEffects(prev, next);
+      _accumulateMatch(prev, next);
       final justEnded = (prev == null || !prev.gameOver) && next.gameOver;
       if (justEnded && _config.mode != MatchMode.botvbot) {
         final won = next.winner == 0;
@@ -198,11 +227,32 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         final coins = ref
             .read(profileControllerProvider.notifier)
             .recordResult(won: won, draw: draw);
-        // Пересчёт достижений (вновь разблокированные → тосты) и прогресс
-        // ежедневных квестов.
+        // Статистика матча → достижения (вновь разблокированные → тосты).
+        final winner = draw ? -1 : (won ? 0 : 1);
+        final stats = ref
+            .read(statsControllerProvider.notifier)
+            .recordOffline(
+              winner: winner,
+              matchClears: _matchClears,
+              maxMulti: _matchMaxMulti,
+              bestScore: next.players[0].score,
+            );
         final fresh = ref
             .read(achievementsControllerProvider.notifier)
-            .evaluate();
+            .recordMatch(
+              MatchContext(
+                winner: winner,
+                hadPerfectClear: _matchPerfect,
+                maxMultiClear: _matchMaxMulti,
+                bestCombo: _matchBestCombo,
+                mode: _config.mode.name,
+                botLevel: _config.mode == MatchMode.bot
+                    ? _config.botLevel.name
+                    : null,
+                statsAfter: stats,
+                winStreak: stats.currentWinStreak,
+              ),
+            );
         if (fresh.isNotEmpty) setState(() => _toasts.addAll(fresh));
         ref
             .read(dailyControllerProvider.notifier)

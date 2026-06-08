@@ -75,6 +75,13 @@ class ProfileController extends Notifier<Profile> {
     _persist();
   }
 
+  /// Начисляет XP (например, награда за разблокированную ачивку).
+  void addXp(int amount) {
+    if (amount == 0) return;
+    state = state.copyWith(xp: state.xp + amount);
+    _persist();
+  }
+
   /// Начисляет монеты (например, награда за ежедневный квест).
   void addCoins(int amount) {
     if (amount == 0) return;

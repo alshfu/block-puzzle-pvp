@@ -1,88 +1,122 @@
 /// achievements_controller.dart — ViewModel достижений (MVVM, ViewModel).
 ///
 /// За что отвечает файл:
-///   Хранит множество разблокированных id, загружает/сохраняет его в хранилище и
-///   пересчитывает достижения по текущей статистике профиля ([evaluate]).
-///   Чистый Riverpod `Notifier` без UI. Движок оценки — здесь (а не во View).
+///   Хранит прогресс достижений (`{id: AchProgress}`), прогоняет движок
+///   ([engine.dart]) по итогам офлайн/онлайн-матчей, начисляет XP за впервые
+///   разблокированные и персистит. Чистый Riverpod `Notifier` без UI.
 ///
-/// Соответствие TS: `src/ui/achievements/engine.ts`.
+/// Совместимость хранилища: старый формат `bd_achievements` был списком id —
+/// читается как набор разблокированных.
+///
+/// Соответствие TS: `src/ui/achievements/engine.ts` + хранилище ачивок.
 library;
 
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../profile/profile.dart';
 import '../profile/profile_controller.dart';
 import '../storage/prefs.dart';
 import 'achievement.dart';
 import 'definitions.dart';
+import 'engine.dart';
 
-/// Ключ хранилища для разблокированных достижений.
-const String _unlockedKey = 'bd_achievements';
+/// Ключ хранилища прогресса достижений.
+const String _key = 'bd_achievements';
 
-/// ViewModel достижений: множество разблокированных id.
-class AchievementsController extends Notifier<Set<String>> {
+/// ViewModel достижений: прогресс по id.
+class AchievementsController extends Notifier<Map<String, AchProgress>> {
   @override
-  Set<String> build() {
-    final raw = ref.watch(sharedPreferencesProvider).getString(_unlockedKey);
+  Map<String, AchProgress> build() {
+    final raw = ref.watch(sharedPreferencesProvider).getString(_key);
     if (raw == null) return {};
     try {
-      return (jsonDecode(raw) as List<dynamic>).cast<String>().toSet();
+      final decoded = jsonDecode(raw);
+      if (decoded is List) {
+        // Старый формат: список id разблокированных.
+        return {
+          for (final id in decoded.cast<String>())
+            id: const AchProgress(current: 1, unlockedAt: 1),
+        };
+      }
+      return {
+        for (final e in (decoded as Map<String, dynamic>).entries)
+          e.key: AchProgress.fromJson((e.value as Map).cast<String, dynamic>()),
+      };
     } catch (_) {
       return {};
     }
   }
 
-  /// Снимок статистики из профиля для оценки условий.
-  AchievementStats _statsFrom(Profile p) => AchievementStats(
-    gamesPlayed: p.gamesPlayed,
-    wins: p.wins,
-    level: p.level,
-    coins: p.coins,
-    xp: p.xp,
-  );
+  /// Множество разблокированных id (для UI/синхронизации).
+  Set<String> get unlocked => {
+    for (final e in state.entries)
+      if (e.value.unlocked) e.key,
+  };
 
-  /// Пересчитывает достижения по текущему профилю: разблокирует выполненные и
-  /// сохраняет. Возвращает список ВНОВЬ разблокированных (для тостов).
-  List<Achievement> evaluate() {
-    final stats = _statsFrom(ref.read(profileControllerProvider));
-    final unlocked = {...state};
-    final fresh = <Achievement>[];
-    for (final def in achievementDefinitions) {
-      if (!unlocked.contains(def.id) && def.isUnlocked(stats)) {
-        unlocked.add(def.id);
-        fresh.add(def);
-      }
-    }
-    if (fresh.isNotEmpty) {
-      state = unlocked;
-      ref
-          .read(sharedPreferencesProvider)
-          .setString(_unlockedKey, jsonEncode(unlocked.toList()));
-    }
-    return fresh;
-  }
-
-  /// Сбрасывает все разблокированные достижения (сброс прогресса).
-  void reset() {
-    state = {};
-    ref.read(sharedPreferencesProvider).remove(_unlockedKey);
-  }
-
-  /// Объединяет текущее множество с [ids] (например, из облака) и сохраняет.
-  void mergeUnlocked(Set<String> ids) {
-    final merged = {...state, ...ids};
-    if (merged.length == state.length) return;
-    state = merged;
+  void _apply(EngineResult result) {
+    state = result.progress;
     ref
         .read(sharedPreferencesProvider)
-        .setString(_unlockedKey, jsonEncode(merged.toList()));
+        .setString(
+          _key,
+          jsonEncode({for (final e in state.entries) e.key: e.value.toJson()}),
+        );
+    // Начисляем XP за впервые разблокированные.
+    var xp = 0;
+    for (final def in result.unlocked) {
+      xp += def.rewardXp;
+    }
+    if (xp > 0) ref.read(profileControllerProvider.notifier).addXp(xp);
+  }
+
+  int _now() => DateTime.now().millisecondsSinceEpoch;
+
+  /// Применяет офлайн-партию; возвращает впервые разблокированные ачивки.
+  List<AchievementDef> recordMatch(MatchContext ctx) {
+    final result = processMatch(state, ctx, _now());
+    _apply(result);
+    return result.unlocked;
+  }
+
+  /// Применяет онлайн-матч; возвращает впервые разблокированные ачивки.
+  List<AchievementDef> recordOnlineMatch(Stats stats, OnlineMatchInfo info) {
+    final result = processOnlineMatch(state, stats, info, _now());
+    _apply(result);
+    return result.unlocked;
+  }
+
+  /// Объединяет с разблокированными из облака [ids].
+  void mergeUnlocked(Set<String> ids) {
+    final next = {...state};
+    var changed = false;
+    for (final id in ids) {
+      final before = next[id];
+      if (before == null || !before.unlocked) {
+        final total = achievementsById[id]?.total ?? 1;
+        next[id] = AchProgress(current: total, unlockedAt: _now());
+        changed = true;
+      }
+    }
+    if (!changed) return;
+    state = next;
+    ref
+        .read(sharedPreferencesProvider)
+        .setString(
+          _key,
+          jsonEncode({for (final e in state.entries) e.key: e.value.toJson()}),
+        );
+  }
+
+  /// Сбрасывает прогресс достижений.
+  void reset() {
+    state = {};
+    ref.read(sharedPreferencesProvider).remove(_key);
   }
 }
 
 /// Провайдер ViewModel достижений.
 final achievementsControllerProvider =
-    NotifierProvider<AchievementsController, Set<String>>(
+    NotifierProvider<AchievementsController, Map<String, AchProgress>>(
       AchievementsController.new,
     );

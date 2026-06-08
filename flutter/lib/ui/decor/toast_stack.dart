@@ -19,7 +19,7 @@ import '../design_tokens.dart';
 /// Стопка тостов, выровненная по верхнему краю.
 class ToastStack extends StatelessWidget {
   /// Текущие тосты (вновь разблокированные ачивки).
-  final List<Achievement> toasts;
+  final List<AchievementDef> toasts;
 
   /// Токены темы.
   final BlockDuelTheme theme;
@@ -63,7 +63,7 @@ class ToastStack extends StatelessWidget {
 
 /// Один тост: въезд сверху, авто-уезд через 4с, тап — убрать раньше.
 class _ToastItem extends StatefulWidget {
-  final Achievement achievement;
+  final AchievementDef achievement;
   final BlockDuelTheme theme;
   final VoidCallback onDismiss;
 

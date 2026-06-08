@@ -109,7 +109,9 @@ class SyncController extends Notifier<SyncStatus> {
     try {
       final snap = CloudSnapshot(
         profile: ref.read(profileControllerProvider),
-        achievements: ref.read(achievementsControllerProvider),
+        achievements: ref
+            .read(achievementsControllerProvider.notifier)
+            .unlocked,
         settings: ref.read(settingsControllerProvider),
         updatedAt: DateTime.now().millisecondsSinceEpoch,
       );

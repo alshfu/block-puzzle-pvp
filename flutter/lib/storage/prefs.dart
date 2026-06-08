@@ -30,4 +30,7 @@ abstract final class PrefKeys {
 
   /// JSON пользовательских настроек.
   static const String settings = 'bd_settings';
+
+  /// JSON накопительной статистики (для достижений).
+  static const String stats = 'bd_stats';
 }

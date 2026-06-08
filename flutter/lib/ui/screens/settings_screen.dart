@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../achievements/achievements_controller.dart';
+import '../../achievements/stats_controller.dart';
 import '../../auth/auth_controller.dart';
 import '../../daily/daily_controller.dart';
 import '../../game/saved_game_store.dart';
@@ -44,6 +45,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         .replace(Profile.initial.copyWith(id: newUuidV4()));
     ref.read(settingsControllerProvider.notifier).replace(Settings.initial);
     ref.read(achievementsControllerProvider.notifier).reset();
+    ref.read(statsControllerProvider.notifier).reset();
     ref.read(dailyControllerProvider.notifier).resetToday();
     ref.read(savedGameStoreProvider).clear();
     setState(() => _confirmReset = false);
