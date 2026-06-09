@@ -15,6 +15,10 @@ import 'package:flutter/services.dart' show KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../achievements/achievement.dart';
+import '../../../achievements/achievements_controller.dart';
+import '../../../achievements/engine.dart';
+import '../../../achievements/stats_controller.dart';
 import '../../../audio/audio_service.dart';
 import '../../../audio/sfx.dart';
 import '../../../online/online_game_notifier.dart';
@@ -25,6 +29,7 @@ import '../../../profile/profile_controller.dart';
 import '../../../settings/settings_controller.dart';
 import '../../../shop/skins.dart';
 import '../../../shop/skins_controller.dart';
+import '../../decor/toast_stack.dart';
 import '../../design_tokens.dart';
 import '../../game/confetti_overlay.dart';
 import '../../theme/theme_controller.dart';
@@ -63,7 +68,21 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     me: widget.me,
   );
   final ConfettiGame _confetti = ConfettiGame();
-  bool _recorded = false;
+
+  /// id матча, по которому уже записан результат — защита от двойной записи;
+  /// при ремаче приходит новый matchId, поэтому результат запишется снова.
+  String? _recordedMatchId;
+
+  /// Тосты о вновь разблокированных PvP-ачивках.
+  final List<AchievementDef> _toasts = [];
+
+  /// Сегодняшняя дата `YYYY-MM-DD` (клиентская) — для серии «дней подряд».
+  String _today() {
+    final d = DateTime.now();
+    final m = d.month.toString().padLeft(2, '0');
+    final day = d.day.toString().padLeft(2, '0');
+    return '${d.year}-$m-$day';
+  }
 
   /// Звук/эффекты по диффу состояния матча.
   void _reactToDiff(OnlineMatchState? prev, OnlineMatchState next) {
@@ -86,21 +105,84 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       }
     }
 
-    // Конец матча: звук исхода + запись результата (один раз).
+    // Конец матча: звук исхода + запись результата (один раз на matchId).
     final justOver =
         (prev?.game?.isOver != true) && (next.game?.isOver == true);
     if (justOver) {
-      final result = next.game!.result;
+      final game = next.game!;
+      final result = game.result;
       final winner = result?.winner ?? -1;
       final draw = winner < 0;
       audio.play(draw ? Sfx.draw : (winner == next.you ? Sfx.win : Sfx.lose));
-      if (!_recorded) {
-        _recorded = true;
-        final outcome = draw ? 0 : (winner == next.you ? 1 : -1);
-        ref
-            .read(profileControllerProvider.notifier)
-            .recordOnlineResult(outcome: outcome);
+      if (_recordedMatchId != game.matchId) {
+        _recordedMatchId = game.matchId;
+        _recordMatch(next);
       }
+    }
+  }
+
+  /// Записывает итог онлайн-матча: профильные W/L/D, накопительную статистику и
+  /// прогон движка PvP-ачивок (вновь разблокированные → тосты).
+  void _recordMatch(OnlineMatchState s) {
+    final game = s.game!;
+    final result = game.result;
+    final winner = result?.winner ?? -1;
+    final won = winner == s.you;
+    final drew = winner < 0;
+    final you = s.you;
+    final opIndex = 1 - you;
+
+    final scores = result?.scores ?? const [0, 0];
+    final myScore = you < scores.length ? scores[you] : 0;
+    final opScore = opIndex < scores.length ? scores[opIndex] : 0;
+    final scoreGap = myScore - opScore;
+    final opId = opIndex < game.players.length
+        ? game.players[opIndex].id
+        : 'unknown';
+    final themeId = ref.read(themeControllerProvider).name;
+
+    // Профильные счётчики (как раньше).
+    ref
+        .read(profileControllerProvider.notifier)
+        .recordOnlineResult(outcome: drew ? 0 : (won ? 1 : -1));
+
+    // Накопительная статистика → снимок ПОСЛЕ матча.
+    final stats = ref
+        .read(statsControllerProvider.notifier)
+        .recordOnline(
+          won: won,
+          drew: drew,
+          matchClears: s.matchClears,
+          perfects: s.matchPerfects,
+          maxMultiClear: s.matchMaxMulti,
+          bestCombo: s.matchBestCombo,
+          turnCount: game.turnCount,
+          themeId: themeId,
+          opponentId: opId,
+          today: _today(),
+        );
+
+    // PvP-ачивки. myElo пока неизвестен (ELO живёт в отдельном leaderboard-WS),
+    // поэтому ELO-ачивки (on_e_*/on_top) ждут пробрасывания рейтинга.
+    final fresh = ref
+        .read(achievementsControllerProvider.notifier)
+        .recordOnlineMatch(
+          stats,
+          OnlineMatchInfo(
+            won: won,
+            drew: drew,
+            scoreGap: scoreGap,
+            opponentScore: opScore,
+            turnCount: game.turnCount,
+            maxMultiClear: s.matchMaxMulti,
+            bestCombo: s.matchBestCombo,
+            themeId: themeId,
+            opponentId: opId,
+            reason: result?.reason,
+          ),
+        );
+    if (fresh.isNotEmpty && mounted) {
+      setState(() => _toasts.addAll(fresh));
     }
   }
 
@@ -232,6 +314,13 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                     : vm.requestRematch(),
                 onMenu: () => context.go('/online'),
               ),
+            // Тосты о вновь разблокированных PvP-ачивках (поверх всего).
+            ToastStack(
+              toasts: _toasts,
+              theme: theme,
+              onDismiss: (id) =>
+                  setState(() => _toasts.removeWhere((a) => a.id == id)),
+            ),
           ],
         ),
       ),

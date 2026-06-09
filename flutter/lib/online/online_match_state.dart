@@ -57,6 +57,19 @@ class OnlineMatchState {
   /// Счётчик отказов хода (триггер shake-анимации).
   final int rejectSeq;
 
+  // ── Накопители СВОИХ ходов за матч (для статистики/PvP-ачивок) ──
+  /// Сколько линий/боксов очищено моими ходами за матч.
+  final int matchClears;
+
+  /// Максимум линий/боксов одним моим ходом за матч.
+  final int matchMaxMulti;
+
+  /// Лучшее моё комбо за матч.
+  final int matchBestCombo;
+
+  /// Сколько моих ходов дали perfect clear за матч.
+  final int matchPerfects;
+
   const OnlineMatchState({
     this.game,
     this.you = 0,
@@ -73,6 +86,10 @@ class OnlineMatchState {
     this.selectedPieceId,
     this.orientIndex = 0,
     this.rejectSeq = 0,
+    this.matchClears = 0,
+    this.matchMaxMulti = 0,
+    this.matchBestCombo = 0,
+    this.matchPerfects = 0,
   });
 
   /// Копия с изменениями (флаги сброса для nullable-полей — явными булями).
@@ -95,6 +112,11 @@ class OnlineMatchState {
     bool clearSelection = false,
     int? orientIndex,
     int? rejectSeq,
+    int? matchClears,
+    int? matchMaxMulti,
+    int? matchBestCombo,
+    int? matchPerfects,
+    bool resetMatchAcc = false,
   }) => OnlineMatchState(
     game: game ?? this.game,
     you: you ?? this.you,
@@ -115,6 +137,10 @@ class OnlineMatchState {
         : (selectedPieceId ?? this.selectedPieceId),
     orientIndex: orientIndex ?? this.orientIndex,
     rejectSeq: rejectSeq ?? this.rejectSeq,
+    matchClears: resetMatchAcc ? 0 : (matchClears ?? this.matchClears),
+    matchMaxMulti: resetMatchAcc ? 0 : (matchMaxMulti ?? this.matchMaxMulti),
+    matchBestCombo: resetMatchAcc ? 0 : (matchBestCombo ?? this.matchBestCombo),
+    matchPerfects: resetMatchAcc ? 0 : (matchPerfects ?? this.matchPerfects),
   );
 }
 

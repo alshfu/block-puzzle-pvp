@@ -14,6 +14,7 @@ library;
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:block_duel/core/core.dart' show Coord;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'online_match_state.dart';
@@ -169,20 +170,39 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
           rematchYours: false,
           rematchTheirs: false,
           clearError: true,
+          resetMatchAcc: true, // новый матч (в т.ч. ремач) — обнуляем накопители
         );
       case 'state':
         final game = OnlineGameState.fromJson(
           msg['state'] as Map<String, dynamic>,
         );
+        final owner = (msg['lastMoveOwner'] as num?)?.toInt();
+        final perfect = msg['perfect'] as bool? ?? false;
+        // Накопители ведём только по СВОИМ ходам (для статистики/PvP-ачивок).
+        int? clears, maxMulti, bestCombo, perfects;
+        if (owner == state.you) {
+          final units = _countClearedUnits(game.lastClearedCells ?? const []);
+          clears = state.matchClears + units;
+          maxMulti = math.max(state.matchMaxMulti, units);
+          final combo = state.you < game.players.length
+              ? game.players[state.you].combo
+              : 0;
+          bestCombo = math.max(state.matchBestCombo, combo);
+          perfects = state.matchPerfects + (perfect ? 1 : 0);
+        }
         state = state.copyWith(
           game: game,
           moveSeq: state.moveSeq + 1,
-          lastMoveOwner: (msg['lastMoveOwner'] as num?)?.toInt(),
+          lastMoveOwner: owner,
           lastGained: (msg['gained'] as num?)?.toInt() ?? 0,
-          lastPerfect: msg['perfect'] as bool? ?? false,
+          lastPerfect: perfect,
           clearSelection: true,
           rematchYours: game.isOver ? state.rematchYours : false,
           rematchTheirs: game.isOver ? state.rematchTheirs : false,
+          matchClears: clears,
+          matchMaxMulti: maxMulti,
+          matchBestCombo: bestCombo,
+          matchPerfects: perfects,
         );
       case 'move_rejected':
         state = state.copyWith(
@@ -205,6 +225,54 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
         state = state.copyWith(lastError: msg['reason'] as String?);
     }
   }
+}
+
+/// Оценивает число очищенных линий/боксов по набору очищенных клеток.
+///
+/// Сервер присылает только объединённый набор `lastClearedCells` (без счётчика
+/// `count`), а протокол мы не меняем (кросс-протокол к старому Node-серверу).
+/// Поэтому реконструируем количество полных строк/столбцов/боксов 3×3 в наборе.
+/// В редких случаях наложения нескольких очисток оценка может слегка
+/// переоценить — для метрик статистики и порогов PvP-ачивок это допустимо.
+int _countClearedUnits(List<Coord> cells) {
+  if (cells.isEmpty) return 0;
+  final set = {for (final c in cells) c.r * 9 + c.c};
+  var units = 0;
+  for (var r = 0; r < 9; r++) {
+    var full = true;
+    for (var c = 0; c < 9; c++) {
+      if (!set.contains(r * 9 + c)) {
+        full = false;
+        break;
+      }
+    }
+    if (full) units++;
+  }
+  for (var c = 0; c < 9; c++) {
+    var full = true;
+    for (var r = 0; r < 9; r++) {
+      if (!set.contains(r * 9 + c)) {
+        full = false;
+        break;
+      }
+    }
+    if (full) units++;
+  }
+  for (var b = 0; b < 9; b++) {
+    final br = (b ~/ 3) * 3;
+    final bc = (b % 3) * 3;
+    var full = true;
+    for (var r = 0; r < 3 && full; r++) {
+      for (var c = 0; c < 3; c++) {
+        if (!set.contains((br + r) * 9 + (bc + c))) {
+          full = false;
+          break;
+        }
+      }
+    }
+    if (full) units++;
+  }
+  return units;
 }
 
 /// Провайдер ViewModel онлайн-матча (семейство по [OnlineMatchArgs]).

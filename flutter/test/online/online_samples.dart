@@ -67,9 +67,12 @@ Map<String, dynamic> sampleStateJson({
   String status = 'playing',
   int current = 0,
   Map<String, dynamic>? result,
+  String matchId = 'm_abc_def',
+  List<List<int>>? lastClearedCells,
 }) => {
-  'matchId': 'm_abc_def',
+  'matchId': matchId,
   'board': emptyBoardJson(),
+  if (lastClearedCells != null) 'lastClearedCells': lastClearedCells,
   'players': [
     {
       'id': 'u-a',

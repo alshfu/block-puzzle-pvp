@@ -120,6 +120,76 @@ void main() {
     expect((move['cells'] as List).first, isA<List<dynamic>>());
   });
 
+  test('накопители матча: свой ход с очисткой строки', () async {
+    final (c, fake) = _setup();
+    fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});
+    await _tick();
+    // Мой ход (owner 0) очистил всю строку 0 + был perfect.
+    fake.emit({
+      'type': 'state',
+      'state': sampleStateJson(
+        current: 1,
+        lastClearedCells: [for (var col = 0; col < 9; col++) [0, col]],
+      ),
+      'lastMoveOwner': 0,
+      'gained': 30,
+      'perfect': true,
+    });
+    await _tick();
+    final s = c.read(onlineGameProvider(_args));
+    expect(s.matchClears, 1); // одна очищенная линия
+    expect(s.matchMaxMulti, 1);
+    expect(s.matchPerfects, 1);
+    expect(s.matchBestCombo, 1); // players[0].combo в образце = 1
+  });
+
+  test('накопители матча: ход соперника не учитывается', () async {
+    final (c, fake) = _setup();
+    fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});
+    await _tick();
+    fake.emit({
+      'type': 'state',
+      'state': sampleStateJson(
+        current: 0,
+        lastClearedCells: [for (var col = 0; col < 9; col++) [0, col]],
+      ),
+      'lastMoveOwner': 1, // ход соперника
+      'perfect': true,
+    });
+    await _tick();
+    final s = c.read(onlineGameProvider(_args));
+    expect(s.matchClears, 0);
+    expect(s.matchPerfects, 0);
+  });
+
+  test('новый joined (ремач) обнуляет накопители матча', () async {
+    final (c, fake) = _setup();
+    fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});
+    await _tick();
+    fake.emit({
+      'type': 'state',
+      'state': sampleStateJson(
+        current: 1,
+        lastClearedCells: [for (var col = 0; col < 9; col++) [0, col]],
+      ),
+      'lastMoveOwner': 0,
+      'perfect': true,
+    });
+    await _tick();
+    expect(c.read(onlineGameProvider(_args)).matchClears, 1);
+    // Ремач: новый joined → накопители обнулены.
+    fake.emit({
+      'type': 'joined',
+      'you': 0,
+      'state': sampleStateJson(matchId: 'm_rematch'),
+    });
+    await _tick();
+    final s = c.read(onlineGameProvider(_args));
+    expect(s.matchClears, 0);
+    expect(s.matchMaxMulti, 0);
+    expect(s.matchPerfects, 0);
+  });
+
   test('on closed → connected=false', () async {
     final (c, fake) = _setup();
     fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});
