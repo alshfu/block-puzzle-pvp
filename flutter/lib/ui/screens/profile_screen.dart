@@ -128,6 +128,20 @@ class ProfileScreen extends ConsumerWidget {
             valueColor: AlwaysStoppedAnimation<Color>(theme.p0),
           ),
         ),
+        const SizedBox(height: 20),
+        OutlinedButton.icon(
+          onPressed: () => context.go('/stats'),
+          icon: const Text('📊', style: TextStyle(fontSize: 18)),
+          label: const Text('Подробная статистика'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: theme.ink,
+            side: BorderSide(color: theme.line),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(theme.btnRadius),
+            ),
+          ),
+        ),
       ],
     );
   }

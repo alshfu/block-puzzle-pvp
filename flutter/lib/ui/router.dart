@@ -24,6 +24,7 @@ import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/setup_screen.dart';
 import 'screens/shop_screen.dart';
+import 'screens/stats_screen.dart';
 import 'screens/tutorial_screen.dart';
 
 /// Глобальный роутер приложения.
@@ -54,6 +55,7 @@ final GoRouter appRouter = GoRouter(
       path: '/profile',
       builder: (context, state) => const ProfileScreen(),
     ),
+    GoRoute(path: '/stats', builder: (context, state) => const StatsScreen()),
     GoRoute(
       path: '/settings',
       builder: (context, state) => const SettingsScreen(),

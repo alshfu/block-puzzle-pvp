@@ -72,7 +72,7 @@ Map<String, dynamic> sampleStateJson({
 }) => {
   'matchId': matchId,
   'board': emptyBoardJson(),
-  if (lastClearedCells != null) 'lastClearedCells': lastClearedCells,
+  'lastClearedCells': ?lastClearedCells,
   'players': [
     {
       'id': 'u-a',
