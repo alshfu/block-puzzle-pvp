@@ -120,6 +120,29 @@ void main() {
       expect(r.progress['on_fast_15']!.unlocked, isTrue); // ≤15 ходов
     });
 
+    test('myElo → on_e_1100/on_e_1200 разблокируются', () {
+      final r = processOnlineMatch(
+        {},
+        const Stats(onlineGames: 1, onlineWins: 1),
+        const OnlineMatchInfo(
+          won: true,
+          drew: false,
+          scoreGap: 5,
+          opponentScore: 3,
+          turnCount: 20,
+          maxMultiClear: 0,
+          bestCombo: 0,
+          themeId: 'neutral',
+          opponentId: 'op',
+          myElo: 1200,
+        ),
+        1000,
+      );
+      expect(r.progress['on_e_1100']!.unlocked, isTrue);
+      expect(r.progress['on_e_1200']!.unlocked, isTrue);
+      expect(r.progress['on_e_1300']!.unlocked, isFalse);
+    });
+
     test('ничья → on_draw (hidden)', () {
       final r = processOnlineMatch(
         {},

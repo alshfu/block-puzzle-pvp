@@ -106,7 +106,16 @@ class OnlineResult {
   /// Причина окончания: deadlock / timeout / resign (может отсутствовать).
   final String? reason;
 
-  const OnlineResult({required this.winner, required this.scores, this.reason});
+  /// Рейтинги [p0, p1] ПОСЛЕ матча (только в финальном состоянии; для
+  /// ELO-ачивок). null у старого сервера до раскатки.
+  final List<int>? elos;
+
+  const OnlineResult({
+    required this.winner,
+    required this.scores,
+    this.reason,
+    this.elos,
+  });
 
   factory OnlineResult.fromJson(Map<String, dynamic> json) => OnlineResult(
     winner: (json['winner'] as num).toInt(),
@@ -114,6 +123,9 @@ class OnlineResult {
       for (final s in json['scores'] as List<dynamic>) (s as num).toInt(),
     ],
     reason: json['reason'] as String?,
+    elos: json['elos'] == null
+        ? null
+        : [for (final e in json['elos'] as List<dynamic>) (e as num).toInt()],
   );
 }
 

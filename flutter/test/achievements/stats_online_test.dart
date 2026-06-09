@@ -161,6 +161,25 @@ void main() {
       expect(s.onlineOpponents['rival']!.wins, 3);
     });
 
+    test('ник соперника сохраняется в записи', () async {
+      final c = await _container();
+      final ctrl = c.read(statsControllerProvider.notifier);
+      final s = ctrl.recordOnline(
+        won: true,
+        drew: false,
+        matchClears: 0,
+        perfects: 0,
+        maxMultiClear: 0,
+        bestCombo: 0,
+        turnCount: 10,
+        themeId: 'neutral',
+        opponentId: 'op-x',
+        opponentNick: 'Алиса',
+        today: '2026-06-09',
+      );
+      expect(s.onlineOpponents['op-x']!.nick, 'Алиса');
+    });
+
     test('серия реваншей растёт при победах подряд над одним', () async {
       final c = await _container();
       final ctrl = c.read(statsControllerProvider.notifier);

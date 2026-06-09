@@ -144,7 +144,13 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     final opId = opIndex < game.players.length
         ? game.players[opIndex].id
         : 'unknown';
+    final opNick = opIndex < game.players.length
+        ? game.players[opIndex].nick
+        : '';
     final themeId = ref.read(themeControllerProvider).name;
+    // Мой рейтинг ПОСЛЕ матча (сервер прислал в финальном result).
+    final elos = result?.elos;
+    final myElo = (elos != null && you < elos.length) ? elos[you] : null;
 
     // Профильные счётчики (как раньше).
     ref
@@ -164,11 +170,11 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
           turnCount: game.turnCount,
           themeId: themeId,
           opponentId: opId,
+          opponentNick: opNick,
           today: _today(),
         );
 
-    // PvP-ачивки. myElo пока неизвестен (ELO живёт в отдельном leaderboard-WS),
-    // поэтому ELO-ачивки (on_e_*/on_top) ждут пробрасывания рейтинга.
+    // PvP-ачивки. myElo приходит от сервера в финальном result (для on_e_*/on_top).
     final fresh = ref
         .read(achievementsControllerProvider.notifier)
         .recordOnlineMatch(
@@ -184,6 +190,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
             themeId: themeId,
             opponentId: opId,
             reason: result?.reason,
+            myElo: myElo,
           ),
         );
     if (fresh.isNotEmpty && mounted) {

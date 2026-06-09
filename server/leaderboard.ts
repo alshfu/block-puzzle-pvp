@@ -45,7 +45,8 @@ export class Leaderboard {
     }
   }
 
-  reportMatch(report: LeaderboardMatchReport): void {
+  /** Возвращает рейтинги [pa, pb] ПОСЛЕ матча (для доставки клиенту). */
+  reportMatch(report: LeaderboardMatchReport): [number, number] {
     const [pa, pb] = report.participants;
     const a = this.getOrCreate(pa);
     const b = this.getOrCreate(pb);
@@ -82,6 +83,7 @@ export class Leaderboard {
     this.entries.set(updB.id, updB);
     this.save();
     this.broadcastSnapshot();
+    return [newA, newB];
   }
 
   private getOrCreate(p: OnlineProfile): LeaderboardEntry {

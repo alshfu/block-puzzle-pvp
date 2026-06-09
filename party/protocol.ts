@@ -36,7 +36,8 @@ export interface OnlineGameState {
   current: 0 | 1;        // чей ход (индекс в players)
   turnCount: number;
   status: "playing" | "over";
-  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign" };
+  // elos — рейтинги [p0, p1] ПОСЛЕ матча (только в финальном state; для ELO-ачивок).
+  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign"; elos?: [number, number] };
   /** Последняя очистка (для flash на клиенте) — клетки, которые сервер только что очистил. */
   lastClearedCells?: Coord[];
   /** Оставшееся время хода (мс). Сервер тикает раз в N мс. */

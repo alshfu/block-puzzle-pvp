@@ -82,6 +82,7 @@ class StatsController extends Notifier<Stats> {
     required String themeId,
     required String opponentId,
     required String today,
+    String opponentNick = '',
   }) {
     final lost = !won && !drew;
     final winStreak = won ? state.onlineCurrentWinStreak + 1 : 0;
@@ -98,6 +99,7 @@ class StatsController extends Notifier<Stats> {
       count: op.count + 1,
       wins: op.wins + (won ? 1 : 0),
       lastResult: won ? 'win' : (drew ? 'draw' : 'loss'),
+      nick: opponentNick.isNotEmpty ? opponentNick : op.nick,
     );
     final opponents = {...state.onlineOpponents, opponentId: updatedOp};
 

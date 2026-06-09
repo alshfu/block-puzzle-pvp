@@ -232,8 +232,8 @@ class _Section extends StatelessWidget {
   }
 }
 
-/// Топ соперников по числу сыгранных матчей (ник недоступен — показываем
-/// короткий префикс id; полные ники соперников пока не сохраняются).
+/// Топ соперников по числу сыгранных матчей. Показываем ник (если сохранён),
+/// иначе короткий префикс id.
 class _TopOpponents extends StatelessWidget {
   final BlockDuelTheme theme;
   final Map<String, OnlineOpponentRecord> opponents;
@@ -247,7 +247,9 @@ class _TopOpponents extends StatelessWidget {
     final rows = <(String, String)>[
       for (final e in top.take(5))
         (
-          'Соперник ${e.key.length > 6 ? e.key.substring(0, 6) : e.key}',
+          e.value.nick.isNotEmpty
+              ? e.value.nick
+              : 'Соперник ${e.key.length > 6 ? e.key.substring(0, 6) : e.key}',
           '${e.value.count} матч., ${e.value.wins} поб.',
         ),
     ];

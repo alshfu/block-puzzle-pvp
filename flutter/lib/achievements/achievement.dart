@@ -90,16 +90,21 @@ class OnlineOpponentRecord {
   /// Последний исход: `win` / `loss` / `draw`.
   final String lastResult;
 
+  /// Ник соперника (последний известный) — для отображения в статистике.
+  final String nick;
+
   const OnlineOpponentRecord({
     this.count = 0,
     this.wins = 0,
     this.lastResult = 'draw',
+    this.nick = '',
   });
 
   Map<String, dynamic> toJson() => {
     'count': count,
     'wins': wins,
     'lastResult': lastResult,
+    if (nick.isNotEmpty) 'nick': nick,
   };
 
   factory OnlineOpponentRecord.fromJson(Map<String, dynamic> json) =>
@@ -107,6 +112,7 @@ class OnlineOpponentRecord {
         count: (json['count'] as num?)?.toInt() ?? 0,
         wins: (json['wins'] as num?)?.toInt() ?? 0,
         lastResult: json['lastResult'] as String? ?? 'draw',
+        nick: json['nick'] as String? ?? '',
       );
 }
 

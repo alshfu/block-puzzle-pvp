@@ -57,7 +57,7 @@ interface MatchState {
   current: 0 | 1;
   turnCount: number;
   status: "waiting" | "playing" | "over";
-  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign" };
+  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign"; elos?: [number, number] };
   lastClearedCells: Coord[];
   turnDeadline: number;
   rematchWanted: [boolean, boolean];
@@ -73,7 +73,7 @@ export class Room {
     public readonly id: string,
     seed: MatchSeed,
     private tokens: [string, string],
-    private onMatchOver: (report: LeaderboardMatchReport) => void,
+    private onMatchOver: (report: LeaderboardMatchReport) => [number, number],
     private onAllGone: () => void,
   ) {
     this.state = this.init(seed);
@@ -405,10 +405,12 @@ export class Room {
   // ─── helpers ───────────────────────────────────────────────────────────
   private reportToLeaderboard(winner: 0 | 1 | -1): void {
     const s = this.state;
-    this.onMatchOver({
+    const elos = this.onMatchOver({
       participants: [s.participants[0], s.participants[1]],
       winner,
     });
+    // Прокидываем новые рейтинги в финальный result (для ELO-ачивок клиента).
+    if (s.result) s.result.elos = elos;
   }
 
   private notifyOpponentLeft(slot: number): void {
