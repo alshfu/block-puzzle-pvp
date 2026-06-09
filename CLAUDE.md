@@ -4,7 +4,20 @@
 
 Полная спецификация: `TZ_BlockDuel_9x9.md` (RU, v1.0) — **источник истины** по правилам, балансу и фазам.
 
-**Принято решение (2026-06-05):** проект мигрирует на **Dart + Flutter (+ Flame)** под все платформы. План — `MIGRATION_FLUTTER.md`. Реализация миграции ещё не начата; TS-кодовая база живая до Фазы 8 cut-over. IDE для миграции — **IntelliJ IDEA Ultimate 2026.1.3**.
+**Принято решение (2026-06-05):** проект мигрирует на **Dart + Flutter (+ Flame)** под все платформы. План — `MIGRATION_FLUTTER.md`. IDE — **IntelliJ IDEA Ultimate 2026.1.3**.
+
+> ⚠️ **РЕСТРУКТУРИЗАЦИЯ РЕПО ВЫПОЛНЕНА (2026-06-09).** Flutter-проект теперь в
+> **корне** репозитория (`lib/`, `test/`, `web/`, `pubspec.yaml`, `android/`,
+> `ios/`, `macos/`, `integration_test/`, `assets/`). Старый TS/React-фронт
+> перенесён в **`legacy-ts/`** (был `src/`) и считается legacy. Многие пути в
+> разделах ниже (`src/core`, `flutter/lib/...`) **устарели** — читать как
+> `legacy-ts/core` и `lib/...` соответственно.
+>
+> Важно: **Node-сервер `server/` (живой прод-бэкенд) импортирует ядро из
+> `legacy-ts/core`** — TS-ядро остаётся живым как зависимость сервера, даже хотя
+> React-UI ретайрнут. Flutter-команды (`flutter test/analyze/build`) и
+> `npm run build:flutter`/`deploy:flutter` запускаются **из корня**.
+> Cut-over прода (Pages: TS→Flutter) — см. `DEPLOY.md`, раздел «Frontend cut-over».
 
 **Если ты новый AI-ассистент в этом проекте — прочитай `HANDOFF.md` перед началом работы.** Там карта проекта, хронология решений, правила работы, IDE setup.
 

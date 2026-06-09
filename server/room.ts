@@ -20,7 +20,7 @@ import {
   type Coord,
   type PieceInstance,
   type RuleConfig,
-} from "../src/core";
+} from "../legacy-ts/core";
 import type {
   LeaderboardMatchReport,
   MatchSeed,
@@ -30,9 +30,16 @@ import type {
   RoomClient2Server,
   RoomServer2Client,
 } from "../party/protocol";
+import { randomInt } from "node:crypto";
+import { isValidMoveInput, RateLimiter } from "./limits";
 import type { Conn } from "./types";
 
 const TURN_TIME_MS = 60_000;
+
+/** SEC-2: жёсткое требование roomToken в hello (включается на проде после
+ *  раскатки клиентов). По умолчанию off — токен валидируется, только если
+ *  прислан, чтобы не сломать ещё не обновлённые клиенты. */
+const REQUIRE_ROOM_TOKEN = process.env.REQUIRE_ROOM_TOKEN === "1";
 
 interface ServerPlayer {
   profile: OnlineProfile;
@@ -51,7 +58,7 @@ interface MatchState {
   current: 0 | 1;
   turnCount: number;
   status: "waiting" | "playing" | "over";
-  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign" };
+  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign"; elos?: [number, number] };
   lastClearedCells: Coord[];
   turnDeadline: number;
   rematchWanted: [boolean, boolean];
@@ -61,11 +68,13 @@ interface MatchState {
 export class Room {
   state: MatchState;
   private timer: NodeJS.Timeout | null = null;
+  private limiter = new RateLimiter();
 
   constructor(
     public readonly id: string,
     seed: MatchSeed,
-    private onMatchOver: (report: LeaderboardMatchReport) => void,
+    private tokens: [string, string],
+    private onMatchOver: (report: LeaderboardMatchReport) => [number, number],
     private onAllGone: () => void,
   ) {
     this.state = this.init(seed);
@@ -105,6 +114,7 @@ export class Room {
 
   handleConnection(conn: Conn): void {
     conn.on("message", (data) => {
+      if (!this.limiter.allow(conn)) return; // H4: дропаем флуд
       let msg: RoomClient2Server;
       try {
         msg = JSON.parse(String(data));
@@ -127,7 +137,7 @@ export class Room {
 
   private onMessage(conn: Conn, msg: RoomClient2Server): void {
     if (msg.type === "hello") {
-      this.handleHello(conn, msg.profile, msg.cfg);
+      this.handleHello(conn, msg.profile, msg.cfg, msg.token);
       return;
     }
     if (msg.type === "move") {
@@ -144,10 +154,38 @@ export class Room {
     }
   }
 
-  private handleHello(conn: Conn, profile: OnlineProfile, requestedCfg?: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }): void {
+  private handleHello(conn: Conn, profile: OnlineProfile, requestedCfg?: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }, token?: string): void {
     const idx = this.state.players.findIndex((p) => p.profile.id === profile.id);
     if (idx === -1) {
       this.send(conn, { type: "error", reason: "not a participant" });
+      return;
+    }
+    // SEC-2 (H1/H2/H3): аутентификация слота по roomToken из `matched`.
+    // Прислан токен → обязан совпасть. Не прислан → отказ только при жёстком
+    // режиме (REQUIRE_ROOM_TOKEN), иначе пропускаем (обратная совместимость со
+    // старыми клиентами на время раскатки).
+    const expected = this.tokens[idx];
+    if (token !== undefined) {
+      if (token !== expected) {
+        this.send(conn, { type: "error", reason: "invalid token" });
+        try { conn.close(); } catch { /* ignore */ }
+        return;
+      }
+    } else if (REQUIRE_ROOM_TOKEN) {
+      this.send(conn, { type: "error", reason: "auth required" });
+      try { conn.close(); } catch { /* ignore */ }
+      return;
+    }
+    // H3: не отдаём слот, если он уже занят ЖИВЫМ соединением (защита от угона
+    // чужим id). Разрешаем только реконнект — когда прежний conn мёртв/отсутствует.
+    const existing = this.state.players[idx].conn;
+    if (existing && existing !== conn && existing.readyState === 1 /* OPEN */) {
+      this.send(conn, { type: "error", reason: "slot already connected" });
+      try {
+        conn.close();
+      } catch {
+        /* ignore */
+      }
       return;
     }
     this.state.players[idx].conn = conn;
@@ -193,6 +231,12 @@ export class Room {
     const s = this.state;
     if (s.status !== "playing") {
       this.send(conn, { type: "move_rejected", reason: "match not active" });
+      return;
+    }
+    // M1: строгая валидация формы/диапазона ДО игровой логики (анти-DoS на
+    // гигантских/кривых cells; защита normalize/canPlace от мусора).
+    if (typeof pieceId !== "string" || pieceId.length > 64 || !isValidMoveInput(cells, r, c)) {
+      this.send(conn, { type: "move_rejected", reason: "malformed move" });
       return;
     }
     const idx = s.players.findIndex((p) => p.conn === conn);
@@ -306,7 +350,7 @@ export class Room {
       });
     });
     if (this.state.rematchWanted[0] && this.state.rematchWanted[1]) {
-      const newSeed = (Math.random() * 0xffffffff) | 0;
+      const newSeed = randomInt(0, 0x1_0000_0000); // L2: crypto-seed реванша
       const conns: [Conn | undefined, Conn | undefined] = [
         this.state.players[0].conn,
         this.state.players[1].conn,
@@ -362,10 +406,12 @@ export class Room {
   // ─── helpers ───────────────────────────────────────────────────────────
   private reportToLeaderboard(winner: 0 | 1 | -1): void {
     const s = this.state;
-    this.onMatchOver({
+    const elos = this.onMatchOver({
       participants: [s.participants[0], s.participants[1]],
       winner,
     });
+    // Прокидываем новые рейтинги в финальный result (для ELO-ачивок клиента).
+    if (s.result) s.result.elos = elos;
   }
 
   private notifyOpponentLeft(slot: number): void {

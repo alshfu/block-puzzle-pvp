@@ -3,7 +3,7 @@
  * Один и тот же файл импортируется из party/* и из src/ui/online/.
  */
 
-import type { Board, BotLevel, Coord, PieceInstance, RuleConfig } from "../src/core";
+import type { Board, BotLevel, Coord, PieceInstance, RuleConfig } from "../legacy-ts/core";
 
 // ─── Профиль игрока в онлайне ────────────────────────────────────────────
 export interface OnlineProfile {
@@ -36,7 +36,8 @@ export interface OnlineGameState {
   current: 0 | 1;        // чей ход (индекс в players)
   turnCount: number;
   status: "playing" | "over";
-  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign" };
+  // elos — рейтинги [p0, p1] ПОСЛЕ матча (только в финальном state; для ELO-ачивок).
+  result?: { winner: 0 | 1 | -1; scores: [number, number]; reason?: "deadlock" | "timeout" | "resign"; elos?: [number, number] };
   /** Последняя очистка (для flash на клиенте) — клетки, которые сервер только что очистил. */
   lastClearedCells?: Coord[];
   /** Оставшееся время хода (мс). Сервер тикает раз в N мс. */
@@ -55,14 +56,16 @@ export type LobbyClient2Server =
 
 export type LobbyServer2Client =
   | { type: "queued"; position: number; waitedSec: number }
-  | { type: "matched"; roomId: string; opponent: OnlineProfile }
+  // token — одноразовый секрет слота для аутентификации в комнате (SEC-2).
+  | { type: "matched"; roomId: string; opponent: OnlineProfile; token: string }
   | { type: "bot_fallback" } // ждал слишком долго — играй с ботом локально
   | { type: "error"; reason: string };
 
 // ─── Room (game) ────────────────────────────────────────────────────────
 
 export type RoomClient2Server =
-  | { type: "hello"; profile: OnlineProfile; cfg?: RequestedCfg }
+  // token — секрет слота из `matched` (SEC-2); проверяется сервером.
+  | { type: "hello"; profile: OnlineProfile; cfg?: RequestedCfg; token?: string }
   | {
       type: "move";
       pieceId: string;

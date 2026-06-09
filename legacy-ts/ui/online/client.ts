@@ -1,0 +1,123 @@
+import PartySocket from "partysocket";
+import type {
+  LeaderboardClient2Server,
+  LeaderboardServer2Client,
+  LobbyClient2Server,
+  LobbyServer2Client,
+  OnlineProfile,
+  RoomClient2Server,
+  RoomServer2Client,
+} from "../../../party/protocol";
+
+/**
+ * PartyKit host: можно переопределить через `VITE_PARTY_HOST`. В деве
+ * партикит поднимается на `localhost:1999`.
+ */
+export const PARTY_HOST: string =
+  (import.meta.env.VITE_PARTY_HOST as string | undefined) ?? "localhost:1999";
+
+function makeSocket(party: "lobby" | "room" | "leaderboard", room: string): PartySocket {
+  return new PartySocket({
+    host: PARTY_HOST,
+    party,
+    room,
+  });
+}
+
+// ─── Lobby client ────────────────────────────────────────────────────────
+
+export interface LobbyHandlers {
+  onQueued?: (position: number) => void;
+  onMatched?: (roomId: string, opponent: OnlineProfile, token: string) => void;
+  onBotFallback?: () => void;
+  onError?: (reason: string) => void;
+  onClose?: () => void;
+}
+
+export interface LobbyConnection {
+  send: (msg: LobbyClient2Server) => void;
+  close: () => void;
+}
+
+export function openLobby(handlers: LobbyHandlers): LobbyConnection {
+  const ws = makeSocket("lobby", "main");
+  ws.addEventListener("message", (e) => {
+    let m: LobbyServer2Client;
+    try {
+      m = JSON.parse(String(e.data));
+    } catch {
+      return;
+    }
+    if (m.type === "queued") handlers.onQueued?.(m.position);
+    else if (m.type === "matched") handlers.onMatched?.(m.roomId, m.opponent, m.token);
+    else if (m.type === "bot_fallback") handlers.onBotFallback?.();
+    else if (m.type === "error") handlers.onError?.(m.reason);
+  });
+  ws.addEventListener("close", () => handlers.onClose?.());
+  return {
+    send: (msg) => ws.send(JSON.stringify(msg)),
+    close: () => ws.close(),
+  };
+}
+
+// ─── Room client ─────────────────────────────────────────────────────────
+
+export interface RoomHandlers {
+  onMessage: (msg: RoomServer2Client) => void;
+  onClose?: () => void;
+  onOpen?: () => void;
+}
+
+export interface RoomConnection {
+  send: (msg: RoomClient2Server) => void;
+  close: () => void;
+}
+
+export function openRoom(roomId: string, handlers: RoomHandlers): RoomConnection {
+  const ws = makeSocket("room", roomId);
+  ws.addEventListener("open", () => handlers.onOpen?.());
+  ws.addEventListener("message", (e) => {
+    let m: RoomServer2Client;
+    try {
+      m = JSON.parse(String(e.data));
+    } catch {
+      return;
+    }
+    handlers.onMessage(m);
+  });
+  ws.addEventListener("close", () => handlers.onClose?.());
+  return {
+    send: (msg) => ws.send(JSON.stringify(msg)),
+    close: () => ws.close(),
+  };
+}
+
+// ─── Leaderboard client ──────────────────────────────────────────────────
+
+export interface LeaderboardHandlers {
+  onSnapshot: (data: Extract<LeaderboardServer2Client, { type: "snapshot" }>) => void;
+  onClose?: () => void;
+}
+
+export interface LeaderboardConnection {
+  send: (msg: LeaderboardClient2Server) => void;
+  close: () => void;
+}
+
+export function openLeaderboard(handlers: LeaderboardHandlers): LeaderboardConnection {
+  const ws = makeSocket("leaderboard", "main");
+  ws.addEventListener("message", (e) => {
+    let m: LeaderboardServer2Client;
+    try {
+      m = JSON.parse(String(e.data));
+    } catch {
+      return;
+    }
+    if (m.type === "snapshot") handlers.onSnapshot(m);
+  });
+  ws.addEventListener("close", () => handlers.onClose?.());
+  return {
+    send: (msg) => ws.send(JSON.stringify(msg)),
+    close: () => ws.close(),
+  };
+}

@@ -1,0 +1,32 @@
+# analysis_options.yaml — конфигурация анализатора и форматтера Dart.
+#
+# За что отвечает файл:
+#   Единые правила линтинга и форматирования для всего Flutter-проекта.
+#   За формат отвечает `dart format`, за проверки — `dart analyze`.
+#   Цель — чтобы стиль (отступы, длина строк, импорты) не был ручной заботой,
+#   а внимание оставалось на именах, структуре и архитектуре.
+#
+# Что включено:
+#   include              — базовый набор правил Flutter (flutter_lints).
+#   formatter.page_width — ширина строки 80 символов (стандарт Dart).
+#   linter.rules         — дополнительные правила сверх базового набора:
+#     prefer_final_locals — локальные переменные по умолчанию final.
+#     directives_ordering — авто-сортировка импортов по группам.
+
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    # Сгенерированные сборки и вендоренные исходники плагинов (напр.
+    # build/macos/SourcePackages/firebase_*/test/*) — не наш код.
+    - build/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
+formatter:
+  page_width: 80
+
+linter:
+  rules:
+    prefer_final_locals: true
+    directives_ordering: true

@@ -1,0 +1,6645 @@
+{
+  "meta": {
+    "description": "Golden determinism reference for the Dart core port. Produced by tools/dump-golden.ts from the live TS core (src/core). The Dart port must reproduce every section bit-for-bit. Board encoding: 81 chars, row-major, '.'=empty, '0'/'1'=owner.",
+    "sourceVersion": "1.6.1",
+    "generatedFrom": "src/core"
+  },
+  "rng": [
+    {
+      "seed": 1,
+      "count": 16,
+      "values": [
+        0.6270739405881613,
+        0.002735721180215478,
+        0.5274470399599522,
+        0.9810509674716741,
+        0.9683778982143849,
+        0.281103502959013,
+        0.6128388606011868,
+        0.7207431411370635,
+        0.425796952098608,
+        0.9948229456786066,
+        0.45527112716808915,
+        0.48878831742331386,
+        0.13893358339555562,
+        0.40374476509168744,
+        0.24752389639616013,
+        0.15449313493445516
+      ]
+    },
+    {
+      "seed": 1337,
+      "count": 16,
+      "values": [
+        0.1844118325971067,
+        0.18998925131745636,
+        0.8104719922412187,
+        0.6437488221563399,
+        0.430774615611881,
+        0.381045897025615,
+        0.5265626488253474,
+        0.5485863720532507,
+        0.5440049681346864,
+        0.5436235317029059,
+        0.6605437572579831,
+        0.19069375889375806,
+        0.45512870186939836,
+        0.39513605600222945,
+        0.20250066346488893,
+        0.7981366943567991
+      ]
+    },
+    {
+      "seed": 0,
+      "count": 16,
+      "values": [
+        0.26642920868471265,
+        0.0003297457005828619,
+        0.2232720274478197,
+        0.1462021479383111,
+        0.46732782293111086,
+        0.5450490827206522,
+        0.6152513844426721,
+        0.6489853798411787,
+        0.45600721263326705,
+        0.581218967679888,
+        0.24625753005966544,
+        0.09785169479437172,
+        0.9034309543203562,
+        0.40820372267626226,
+        0.7202955442480743,
+        0.6599067240022123
+      ]
+    },
+    {
+      "seed": 4294967295,
+      "count": 16,
+      "values": [
+        0.8964226141106337,
+        0.189478256739676,
+        0.7156526781618595,
+        0.9440599093213677,
+        0.8452364315744489,
+        0.5391399988438934,
+        0.6804977387655526,
+        0.4755720964167267,
+        0.13585773925296962,
+        0.9884445976931602,
+        0.8714674517977983,
+        0.18934845877811313,
+        0.3436866346746683,
+        0.7386848733294755,
+        0.4759919897187501,
+        0.7567116804420948
+      ]
+    },
+    {
+      "seed": 123456789,
+      "count": 16,
+      "values": [
+        0.2577907438389957,
+        0.9707721115555614,
+        0.7853280142880976,
+        0.20616457983851433,
+        0.30307188746519387,
+        0.7470660470426083,
+        0.7787336520850658,
+        0.2845096290111542,
+        0.016536934999749064,
+        0.1614646923262626,
+        0.36590091581456363,
+        0.43085755431093276,
+        0.567488876869902,
+        0.17708068271167576,
+        0.49461501417681575,
+        0.8179059789981693
+      ]
+    }
+  ],
+  "bag": [
+    {
+      "seed": 1,
+      "count": 21,
+      "types": [
+        "O",
+        "J",
+        "L",
+        "S",
+        "T",
+        "I",
+        "Z",
+        "J",
+        "I",
+        "O",
+        "S",
+        "T",
+        "L",
+        "Z",
+        "J",
+        "S",
+        "Z",
+        "L",
+        "O",
+        "T",
+        "I"
+      ]
+    },
+    {
+      "seed": 11,
+      "count": 21,
+      "types": [
+        "I",
+        "O",
+        "Z",
+        "T",
+        "J",
+        "L",
+        "S",
+        "L",
+        "T",
+        "Z",
+        "O",
+        "J",
+        "S",
+        "I",
+        "O",
+        "L",
+        "J",
+        "I",
+        "S",
+        "Z",
+        "T"
+      ]
+    },
+    {
+      "seed": 22,
+      "count": 21,
+      "types": [
+        "S",
+        "T",
+        "L",
+        "I",
+        "J",
+        "O",
+        "Z",
+        "O",
+        "T",
+        "J",
+        "I",
+        "L",
+        "Z",
+        "S",
+        "S",
+        "L",
+        "Z",
+        "J",
+        "I",
+        "T",
+        "O"
+      ]
+    },
+    {
+      "seed": 1337,
+      "count": 21,
+      "types": [
+        "S",
+        "I",
+        "J",
+        "T",
+        "Z",
+        "L",
+        "O",
+        "J",
+        "I",
+        "O",
+        "Z",
+        "T",
+        "L",
+        "S",
+        "I",
+        "J",
+        "Z",
+        "L",
+        "O",
+        "T",
+        "S"
+      ]
+    }
+  ],
+  "orientations": {
+    "I": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    ],
+    "O": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    ],
+    "T": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          0
+        ]
+      ]
+    ],
+    "S": [
+      [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          0
+        ]
+      ]
+    ],
+    "Z": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    ],
+    "J": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    ],
+    "L": [
+      [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    ]
+  },
+  "scoring": [
+    {
+      "input": {
+        "rows": 1,
+        "cols": 0,
+        "boxes": 0,
+        "pieceType": "I",
+        "combo": 0,
+        "perfect": false,
+        "timeRatio": 0
+      },
+      "scoreForMove": 10,
+      "detailed": {
+        "total": 15,
+        "base": 10,
+        "placement": 5,
+        "multiClearMult": 1,
+        "comboMult": 1,
+        "speedMult": 1,
+        "perfectBonus": 0
+      }
+    },
+    {
+      "input": {
+        "rows": 2,
+        "cols": 1,
+        "boxes": 0,
+        "pieceType": "L",
+        "combo": 2,
+        "perfect": false,
+        "timeRatio": 0.75
+      },
+      "scoreForMove": 47,
+      "detailed": {
+        "total": 59,
+        "base": 30,
+        "placement": 3,
+        "multiClearMult": 1.3,
+        "comboMult": 1.2,
+        "speedMult": 1.2,
+        "perfectBonus": 0
+      }
+    },
+    {
+      "input": {
+        "rows": 0,
+        "cols": 0,
+        "boxes": 1,
+        "pieceType": "O",
+        "combo": 5,
+        "perfect": false,
+        "timeRatio": 1
+      },
+      "scoreForMove": 16,
+      "detailed": {
+        "total": 33,
+        "base": 15,
+        "placement": 0,
+        "multiClearMult": 1,
+        "comboMult": 1.58,
+        "speedMult": 1.4,
+        "perfectBonus": 0
+      }
+    },
+    {
+      "input": {
+        "rows": 3,
+        "cols": 3,
+        "boxes": 3,
+        "pieceType": "T",
+        "combo": 8,
+        "perfect": true,
+        "timeRatio": 0.9
+      },
+      "scoreForMove": 480,
+      "detailed": {
+        "total": 727,
+        "base": 105,
+        "placement": 1,
+        "multiClearMult": 2.2,
+        "comboMult": 2.3,
+        "speedMult": 1.32,
+        "perfectBonus": 25
+      }
+    },
+    {
+      "input": {
+        "rows": 0,
+        "cols": 0,
+        "boxes": 0,
+        "pieceType": "S",
+        "combo": 0,
+        "perfect": false,
+        "timeRatio": 0.2
+      },
+      "scoreForMove": 0,
+      "detailed": {
+        "total": 1,
+        "base": 0,
+        "placement": 1,
+        "multiClearMult": 1,
+        "comboMult": 1,
+        "speedMult": 1,
+        "perfectBonus": 0
+      }
+    }
+  ],
+  "clears": [
+    {
+      "name": "row0",
+      "board": "000000000........................................................................",
+      "count": 1,
+      "rows": [
+        0
+      ],
+      "cols": [],
+      "boxes": [],
+      "clearedCount": 9
+    },
+    {
+      "name": "col4",
+      "board": "....1........1........1........1........1........1........1........1........1....",
+      "count": 1,
+      "rows": [],
+      "cols": [
+        4
+      ],
+      "boxes": [],
+      "clearedCount": 9
+    },
+    {
+      "name": "box0",
+      "board": "000......000......000............................................................",
+      "count": 1,
+      "rows": [],
+      "cols": [],
+      "boxes": [
+        0
+      ],
+      "clearedCount": 9
+    },
+    {
+      "name": "box8",
+      "board": "............................................................000......000......000",
+      "count": 1,
+      "rows": [],
+      "cols": [],
+      "boxes": [
+        8
+      ],
+      "clearedCount": 9
+    },
+    {
+      "name": "row8+col0",
+      "board": "1........1........1........1........1........1........1........1........100000000",
+      "count": 2,
+      "rows": [
+        8
+      ],
+      "cols": [
+        0
+      ],
+      "boxes": [],
+      "clearedCount": 17
+    }
+  ],
+  "game": [
+    {
+      "seedA": 11,
+      "seedB": 22,
+      "turns": 40,
+      "movesPlayed": 25,
+      "moves": [
+        {
+          "t": 0,
+          "player": 0,
+          "pieceId": "p0",
+          "type": "I",
+          "r": 0,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 1,
+          "player": 1,
+          "pieceId": "p0",
+          "type": "S",
+          "r": 0,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 2,
+          "player": 0,
+          "pieceId": "p1",
+          "type": "O",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 3,
+          "player": 1,
+          "pieceId": "p1",
+          "type": "T",
+          "r": 1,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 4,
+          "player": 0,
+          "pieceId": "p2",
+          "type": "Z",
+          "r": 2,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 5,
+          "player": 1,
+          "pieceId": "p2",
+          "type": "L",
+          "r": 1,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 6,
+          "player": 0,
+          "pieceId": "p3",
+          "type": "T",
+          "r": 3,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 7,
+          "player": 1,
+          "pieceId": "p3",
+          "type": "I",
+          "r": 3,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            3
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 10,
+          "comboAfter": 1
+        },
+        {
+          "t": 8,
+          "player": 0,
+          "pieceId": "p4",
+          "type": "J",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            0
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 10,
+          "comboAfter": 1
+        },
+        {
+          "t": 9,
+          "player": 1,
+          "pieceId": "p4",
+          "type": "J",
+          "r": 0,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 10,
+          "player": 0,
+          "pieceId": "p5",
+          "type": "L",
+          "r": 2,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 11,
+          "player": 1,
+          "pieceId": "p5",
+          "type": "O",
+          "r": 3,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 12,
+          "player": 0,
+          "pieceId": "p6",
+          "type": "S",
+          "r": 4,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 13,
+          "player": 1,
+          "pieceId": "p6",
+          "type": "Z",
+          "r": 4,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 14,
+          "player": 0,
+          "pieceId": "p7",
+          "type": "L",
+          "r": 5,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 15,
+          "player": 1,
+          "pieceId": "p7",
+          "type": "O",
+          "r": 5,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 16,
+          "player": 0,
+          "pieceId": "p8",
+          "type": "T",
+          "r": 6,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 17,
+          "player": 1,
+          "pieceId": "p8",
+          "type": "T",
+          "r": 7,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 18,
+          "player": 0,
+          "pieceId": "p9",
+          "type": "Z",
+          "r": 7,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 19,
+          "player": 1,
+          "pieceId": "p9",
+          "type": "J",
+          "r": 7,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            6
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 20,
+          "comboAfter": 1
+        },
+        {
+          "t": 20,
+          "player": 0,
+          "pieceId": "p11",
+          "type": "J",
+          "r": 6,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 2,
+          "rows": [
+            7
+          ],
+          "cols": [
+            7
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 23,
+          "scoreAfter": 33,
+          "comboAfter": 1
+        },
+        {
+          "t": 21,
+          "player": 1,
+          "pieceId": "p10",
+          "type": "I",
+          "r": 7,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 20,
+          "comboAfter": 0
+        },
+        {
+          "t": 22,
+          "player": 0,
+          "pieceId": "p10",
+          "type": "O",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 33,
+          "comboAfter": 0
+        },
+        {
+          "t": 23,
+          "player": 1,
+          "pieceId": "p11",
+          "type": "L",
+          "r": 3,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 20,
+          "comboAfter": 0
+        },
+        {
+          "t": 24,
+          "player": 0,
+          "pieceId": "p12",
+          "type": "S",
+          "r": 7,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 33,
+          "comboAfter": 0
+        }
+      ],
+      "finalBoard": "1..01100.11111.001...0.0..1000000..1.00011111.000.1..1.000000.11111...00.1..00001",
+      "scores": [
+        33,
+        20
+      ],
+      "combos": [
+        0,
+        0
+      ]
+    },
+    {
+      "seedA": 7,
+      "seedB": 99,
+      "turns": 60,
+      "movesPlayed": 57,
+      "moves": [
+        {
+          "t": 0,
+          "player": 0,
+          "pieceId": "p0",
+          "type": "S",
+          "r": 0,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 1,
+          "player": 1,
+          "pieceId": "p0",
+          "type": "S",
+          "r": 0,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 2,
+          "player": 0,
+          "pieceId": "p1",
+          "type": "J",
+          "r": 0,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 3,
+          "player": 1,
+          "pieceId": "p1",
+          "type": "L",
+          "r": 1,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 4,
+          "player": 0,
+          "pieceId": "p2",
+          "type": "O",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 5,
+          "player": 1,
+          "pieceId": "p2",
+          "type": "I",
+          "r": 2,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 2,
+          "rows": [
+            2
+          ],
+          "cols": [],
+          "boxes": [
+            1
+          ],
+          "perfect": false,
+          "gained": 23,
+          "scoreAfter": 23,
+          "comboAfter": 1
+        },
+        {
+          "t": 6,
+          "player": 0,
+          "pieceId": "p3",
+          "type": "T",
+          "r": 0,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 7,
+          "player": 1,
+          "pieceId": "p3",
+          "type": "J",
+          "r": 1,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 8,
+          "player": 0,
+          "pieceId": "p4",
+          "type": "Z",
+          "r": 2,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 9,
+          "player": 1,
+          "pieceId": "p4",
+          "type": "T",
+          "r": 2,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 10,
+          "player": 0,
+          "pieceId": "p5",
+          "type": "L",
+          "r": 3,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 11,
+          "player": 1,
+          "pieceId": "p5",
+          "type": "Z",
+          "r": 3,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 12,
+          "player": 0,
+          "pieceId": "p6",
+          "type": "I",
+          "r": 5,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 13,
+          "player": 1,
+          "pieceId": "p6",
+          "type": "O",
+          "r": 5,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 14,
+          "player": 0,
+          "pieceId": "p7",
+          "type": "J",
+          "r": 5,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 15,
+          "player": 1,
+          "pieceId": "p7",
+          "type": "S",
+          "r": 6,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 16,
+          "player": 0,
+          "pieceId": "p8",
+          "type": "L",
+          "r": 7,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            2
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 10,
+          "comboAfter": 1
+        },
+        {
+          "t": 17,
+          "player": 1,
+          "pieceId": "p8",
+          "type": "J",
+          "r": 6,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 18,
+          "player": 0,
+          "pieceId": "p9",
+          "type": "I",
+          "r": 7,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            7
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 11,
+          "scoreAfter": 21,
+          "comboAfter": 2
+        },
+        {
+          "t": 19,
+          "player": 1,
+          "pieceId": "p9",
+          "type": "Z",
+          "r": 7,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 20,
+          "player": 0,
+          "pieceId": "p10",
+          "type": "Z",
+          "r": 7,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            4
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 12,
+          "scoreAfter": 33,
+          "comboAfter": 3
+        },
+        {
+          "t": 21,
+          "player": 1,
+          "pieceId": "p10",
+          "type": "T",
+          "r": 7,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 22,
+          "player": 0,
+          "pieceId": "p11",
+          "type": "T",
+          "r": 3,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            1
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 13,
+          "scoreAfter": 46,
+          "comboAfter": 4
+        },
+        {
+          "t": 23,
+          "player": 1,
+          "pieceId": "p11",
+          "type": "O",
+          "r": 0,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 24,
+          "player": 0,
+          "pieceId": "p12",
+          "type": "O",
+          "r": 6,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 46,
+          "comboAfter": 0
+        },
+        {
+          "t": 25,
+          "player": 1,
+          "pieceId": "p12",
+          "type": "L",
+          "r": 2,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 26,
+          "player": 0,
+          "pieceId": "p14",
+          "type": "T",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 2,
+          "rows": [
+            2
+          ],
+          "cols": [
+            2
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 23,
+          "scoreAfter": 69,
+          "comboAfter": 1
+        },
+        {
+          "t": 27,
+          "player": 1,
+          "pieceId": "p13",
+          "type": "I",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 23,
+          "comboAfter": 0
+        },
+        {
+          "t": 28,
+          "player": 0,
+          "pieceId": "p13",
+          "type": "S",
+          "r": 0,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            5
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 11,
+          "scoreAfter": 80,
+          "comboAfter": 2
+        },
+        {
+          "t": 29,
+          "player": 1,
+          "pieceId": "p14",
+          "type": "S",
+          "r": 5,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            3
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 33,
+          "comboAfter": 1
+        },
+        {
+          "t": 30,
+          "player": 0,
+          "pieceId": "p15",
+          "type": "L",
+          "r": 1,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 80,
+          "comboAfter": 0
+        },
+        {
+          "t": 31,
+          "player": 1,
+          "pieceId": "p15",
+          "type": "L",
+          "r": 1,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            2
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 11,
+          "scoreAfter": 44,
+          "comboAfter": 2
+        },
+        {
+          "t": 32,
+          "player": 0,
+          "pieceId": "p16",
+          "type": "Z",
+          "r": 1,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            1
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 90,
+          "comboAfter": 1
+        },
+        {
+          "t": 33,
+          "player": 1,
+          "pieceId": "p16",
+          "type": "J",
+          "r": 0,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 44,
+          "comboAfter": 0
+        },
+        {
+          "t": 34,
+          "player": 0,
+          "pieceId": "p17",
+          "type": "O",
+          "r": 0,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 35,
+          "player": 1,
+          "pieceId": "p17",
+          "type": "I",
+          "r": 2,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            6
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 54,
+          "comboAfter": 1
+        },
+        {
+          "t": 36,
+          "player": 0,
+          "pieceId": "p18",
+          "type": "I",
+          "r": 4,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 37,
+          "player": 1,
+          "pieceId": "p18",
+          "type": "O",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 54,
+          "comboAfter": 0
+        },
+        {
+          "t": 38,
+          "player": 0,
+          "pieceId": "p19",
+          "type": "S",
+          "r": 5,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 39,
+          "player": 1,
+          "pieceId": "p19",
+          "type": "Z",
+          "r": 0,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            1
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 64,
+          "comboAfter": 1
+        },
+        {
+          "t": 40,
+          "player": 0,
+          "pieceId": "p20",
+          "type": "J",
+          "r": 0,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 41,
+          "player": 1,
+          "pieceId": "p20",
+          "type": "T",
+          "r": 2,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 64,
+          "comboAfter": 0
+        },
+        {
+          "t": 42,
+          "player": 0,
+          "pieceId": "p21",
+          "type": "Z",
+          "r": 2,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 43,
+          "player": 1,
+          "pieceId": "p21",
+          "type": "I",
+          "r": 7,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 64,
+          "comboAfter": 0
+        },
+        {
+          "t": 44,
+          "player": 0,
+          "pieceId": "p22",
+          "type": "L",
+          "r": 7,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 45,
+          "player": 1,
+          "pieceId": "p22",
+          "type": "Z",
+          "r": 5,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 2,
+          "rows": [
+            6
+          ],
+          "cols": [],
+          "boxes": [
+            3
+          ],
+          "perfect": false,
+          "gained": 23,
+          "scoreAfter": 87,
+          "comboAfter": 1
+        },
+        {
+          "t": 46,
+          "player": 0,
+          "pieceId": "p23",
+          "type": "I",
+          "r": 3,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 47,
+          "player": 1,
+          "pieceId": "p23",
+          "type": "J",
+          "r": 4,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 87,
+          "comboAfter": 0
+        },
+        {
+          "t": 48,
+          "player": 0,
+          "pieceId": "p26",
+          "type": "J",
+          "r": 5,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 49,
+          "player": 1,
+          "pieceId": "p24",
+          "type": "L",
+          "r": 5,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            5
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 97,
+          "comboAfter": 1
+        },
+        {
+          "t": 50,
+          "player": 0,
+          "pieceId": "p24",
+          "type": "S",
+          "r": 4,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 90,
+          "comboAfter": 0
+        },
+        {
+          "t": 51,
+          "player": 1,
+          "pieceId": "p25",
+          "type": "T",
+          "r": 4,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 97,
+          "comboAfter": 0
+        },
+        {
+          "t": 52,
+          "player": 0,
+          "pieceId": "p28",
+          "type": "Z",
+          "r": 5,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 2,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            3,
+            4
+          ],
+          "perfect": false,
+          "gained": 23,
+          "scoreAfter": 113,
+          "comboAfter": 1
+        },
+        {
+          "t": 53,
+          "player": 1,
+          "pieceId": "p26",
+          "type": "O",
+          "r": 3,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 97,
+          "comboAfter": 0
+        },
+        {
+          "t": 54,
+          "player": 0,
+          "pieceId": "p25",
+          "type": "O",
+          "r": 3,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 113,
+          "comboAfter": 0
+        },
+        {
+          "t": 55,
+          "player": 1,
+          "pieceId": "p27",
+          "type": "S",
+          "r": 4,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 97,
+          "comboAfter": 0
+        },
+        {
+          "t": 56,
+          "player": 0,
+          "pieceId": "p29",
+          "type": "J",
+          "r": 3,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 113,
+          "comboAfter": 0
+        }
+      ],
+      "finalBoard": "1110..11.11100011..11100.111100..010110011.10...11.100.0000011100111101.0...000..",
+      "scores": [
+        113,
+        97
+      ],
+      "combos": [
+        0,
+        0
+      ]
+    },
+    {
+      "seedA": 123,
+      "seedB": 456,
+      "turns": 80,
+      "movesPlayed": 80,
+      "moves": [
+        {
+          "t": 0,
+          "player": 0,
+          "pieceId": "p0",
+          "type": "S",
+          "r": 0,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 1,
+          "player": 1,
+          "pieceId": "p0",
+          "type": "J",
+          "r": 0,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 2,
+          "player": 0,
+          "pieceId": "p1",
+          "type": "Z",
+          "r": 0,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 3,
+          "player": 1,
+          "pieceId": "p1",
+          "type": "I",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 4,
+          "player": 0,
+          "pieceId": "p2",
+          "type": "L",
+          "r": 1,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 5,
+          "player": 1,
+          "pieceId": "p2",
+          "type": "Z",
+          "r": 2,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            2
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 10,
+          "comboAfter": 1
+        },
+        {
+          "t": 6,
+          "player": 0,
+          "pieceId": "p3",
+          "type": "I",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 7,
+          "player": 1,
+          "pieceId": "p3",
+          "type": "O",
+          "r": 2,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 8,
+          "player": 0,
+          "pieceId": "p4",
+          "type": "T",
+          "r": 3,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 9,
+          "player": 1,
+          "pieceId": "p4",
+          "type": "T",
+          "r": 4,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 10,
+          "player": 0,
+          "pieceId": "p5",
+          "type": "O",
+          "r": 4,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 0,
+          "comboAfter": 0
+        },
+        {
+          "t": 11,
+          "player": 1,
+          "pieceId": "p5",
+          "type": "S",
+          "r": 2,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            3
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 20,
+          "comboAfter": 1
+        },
+        {
+          "t": 12,
+          "player": 0,
+          "pieceId": "p6",
+          "type": "J",
+          "r": 2,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            2
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 10,
+          "comboAfter": 1
+        },
+        {
+          "t": 13,
+          "player": 1,
+          "pieceId": "p6",
+          "type": "L",
+          "r": 1,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            1
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 11,
+          "scoreAfter": 31,
+          "comboAfter": 2
+        },
+        {
+          "t": 14,
+          "player": 0,
+          "pieceId": "p7",
+          "type": "I",
+          "r": 1,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 15,
+          "player": 1,
+          "pieceId": "p7",
+          "type": "S",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 31,
+          "comboAfter": 0
+        },
+        {
+          "t": 16,
+          "player": 0,
+          "pieceId": "p8",
+          "type": "T",
+          "r": 2,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 17,
+          "player": 1,
+          "pieceId": "p8",
+          "type": "O",
+          "r": 4,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            5
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 41,
+          "comboAfter": 1
+        },
+        {
+          "t": 18,
+          "player": 0,
+          "pieceId": "p9",
+          "type": "Z",
+          "r": 2,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 19,
+          "player": 1,
+          "pieceId": "p9",
+          "type": "L",
+          "r": 4,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 41,
+          "comboAfter": 0
+        },
+        {
+          "t": 20,
+          "player": 0,
+          "pieceId": "p10",
+          "type": "O",
+          "r": 5,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 21,
+          "player": 1,
+          "pieceId": "p10",
+          "type": "I",
+          "r": 3,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 41,
+          "comboAfter": 0
+        },
+        {
+          "t": 22,
+          "player": 0,
+          "pieceId": "p11",
+          "type": "S",
+          "r": 6,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 10,
+          "comboAfter": 0
+        },
+        {
+          "t": 23,
+          "player": 1,
+          "pieceId": "p11",
+          "type": "T",
+          "r": 6,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 41,
+          "comboAfter": 0
+        },
+        {
+          "t": 24,
+          "player": 0,
+          "pieceId": "p12",
+          "type": "J",
+          "r": 7,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 2,
+          "rows": [],
+          "cols": [
+            1
+          ],
+          "boxes": [
+            6
+          ],
+          "perfect": false,
+          "gained": 23,
+          "scoreAfter": 33,
+          "comboAfter": 1
+        },
+        {
+          "t": 25,
+          "player": 1,
+          "pieceId": "p12",
+          "type": "J",
+          "r": 6,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 41,
+          "comboAfter": 0
+        },
+        {
+          "t": 26,
+          "player": 0,
+          "pieceId": "p13",
+          "type": "L",
+          "r": 6,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 33,
+          "comboAfter": 0
+        },
+        {
+          "t": 27,
+          "player": 1,
+          "pieceId": "p13",
+          "type": "Z",
+          "r": 3,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            5
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 51,
+          "comboAfter": 1
+        },
+        {
+          "t": 28,
+          "player": 0,
+          "pieceId": "p14",
+          "type": "J",
+          "r": 3,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 33,
+          "comboAfter": 0
+        },
+        {
+          "t": 29,
+          "player": 1,
+          "pieceId": "p14",
+          "type": "I",
+          "r": 8,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 51,
+          "comboAfter": 0
+        },
+        {
+          "t": 30,
+          "player": 0,
+          "pieceId": "p15",
+          "type": "Z",
+          "r": 4,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            4
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 43,
+          "comboAfter": 1
+        },
+        {
+          "t": 31,
+          "player": 1,
+          "pieceId": "p15",
+          "type": "J",
+          "r": 3,
+          "c": 1,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 51,
+          "comboAfter": 0
+        },
+        {
+          "t": 32,
+          "player": 0,
+          "pieceId": "p16",
+          "type": "S",
+          "r": 3,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            3
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 11,
+          "scoreAfter": 54,
+          "comboAfter": 2
+        },
+        {
+          "t": 33,
+          "player": 1,
+          "pieceId": "p16",
+          "type": "Z",
+          "r": 3,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 51,
+          "comboAfter": 0
+        },
+        {
+          "t": 34,
+          "player": 0,
+          "pieceId": "p17",
+          "type": "L",
+          "r": 2,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 54,
+          "comboAfter": 0
+        },
+        {
+          "t": 35,
+          "player": 1,
+          "pieceId": "p17",
+          "type": "L",
+          "r": 4,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            5
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 61,
+          "comboAfter": 1
+        },
+        {
+          "t": 36,
+          "player": 0,
+          "pieceId": "p18",
+          "type": "T",
+          "r": 3,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 54,
+          "comboAfter": 0
+        },
+        {
+          "t": 37,
+          "player": 1,
+          "pieceId": "p18",
+          "type": "T",
+          "r": 5,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 61,
+          "comboAfter": 0
+        },
+        {
+          "t": 38,
+          "player": 0,
+          "pieceId": "p19",
+          "type": "I",
+          "r": 8,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            6
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 64,
+          "comboAfter": 1
+        },
+        {
+          "t": 39,
+          "player": 1,
+          "pieceId": "p20",
+          "type": "S",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 61,
+          "comboAfter": 0
+        },
+        {
+          "t": 40,
+          "player": 0,
+          "pieceId": "p21",
+          "type": "L",
+          "r": 0,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [
+            5
+          ],
+          "boxes": [],
+          "perfect": false,
+          "gained": 11,
+          "scoreAfter": 75,
+          "comboAfter": 2
+        },
+        {
+          "t": 41,
+          "player": 1,
+          "pieceId": "p19",
+          "type": "O",
+          "r": 2,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            2
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 71,
+          "comboAfter": 1
+        },
+        {
+          "t": 42,
+          "player": 0,
+          "pieceId": "p20",
+          "type": "O",
+          "r": 4,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 75,
+          "comboAfter": 0
+        },
+        {
+          "t": 43,
+          "player": 1,
+          "pieceId": "p21",
+          "type": "I",
+          "r": 2,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 71,
+          "comboAfter": 0
+        },
+        {
+          "t": 44,
+          "player": 0,
+          "pieceId": "p22",
+          "type": "T",
+          "r": 7,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 75,
+          "comboAfter": 0
+        },
+        {
+          "t": 45,
+          "player": 1,
+          "pieceId": "p23",
+          "type": "L",
+          "r": 1,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            2
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 81,
+          "comboAfter": 1
+        },
+        {
+          "t": 46,
+          "player": 0,
+          "pieceId": "p23",
+          "type": "Z",
+          "r": 0,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 75,
+          "comboAfter": 0
+        },
+        {
+          "t": 47,
+          "player": 1,
+          "pieceId": "p22",
+          "type": "Z",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 81,
+          "comboAfter": 0
+        },
+        {
+          "t": 48,
+          "player": 0,
+          "pieceId": "p24",
+          "type": "I",
+          "r": 2,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            1
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 85,
+          "comboAfter": 1
+        },
+        {
+          "t": 49,
+          "player": 1,
+          "pieceId": "p24",
+          "type": "S",
+          "r": 0,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 81,
+          "comboAfter": 0
+        },
+        {
+          "t": 50,
+          "player": 0,
+          "pieceId": "p25",
+          "type": "J",
+          "r": 2,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 3,
+          "rows": [
+            4
+          ],
+          "cols": [
+            7
+          ],
+          "boxes": [
+            5
+          ],
+          "perfect": false,
+          "gained": 43,
+          "scoreAfter": 128,
+          "comboAfter": 2
+        },
+        {
+          "t": 51,
+          "player": 1,
+          "pieceId": "p25",
+          "type": "O",
+          "r": 3,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 81,
+          "comboAfter": 0
+        },
+        {
+          "t": 52,
+          "player": 0,
+          "pieceId": "p26",
+          "type": "S",
+          "r": 5,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 128,
+          "comboAfter": 0
+        },
+        {
+          "t": 53,
+          "player": 1,
+          "pieceId": "p26",
+          "type": "T",
+          "r": 4,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            4
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 91,
+          "comboAfter": 1
+        },
+        {
+          "t": 54,
+          "player": 0,
+          "pieceId": "p27",
+          "type": "O",
+          "r": 2,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 128,
+          "comboAfter": 0
+        },
+        {
+          "t": 55,
+          "player": 1,
+          "pieceId": "p27",
+          "type": "J",
+          "r": 3,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 91,
+          "comboAfter": 0
+        },
+        {
+          "t": 56,
+          "player": 0,
+          "pieceId": "p28",
+          "type": "I",
+          "r": 1,
+          "c": 5,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 128,
+          "comboAfter": 0
+        },
+        {
+          "t": 57,
+          "player": 1,
+          "pieceId": "p28",
+          "type": "L",
+          "r": 6,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 91,
+          "comboAfter": 0
+        },
+        {
+          "t": 58,
+          "player": 0,
+          "pieceId": "p29",
+          "type": "J",
+          "r": 0,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "clearCount": 3,
+          "rows": [
+            2
+          ],
+          "cols": [
+            7
+          ],
+          "boxes": [
+            2
+          ],
+          "perfect": false,
+          "gained": 39,
+          "scoreAfter": 167,
+          "comboAfter": 1
+        },
+        {
+          "t": 59,
+          "player": 1,
+          "pieceId": "p29",
+          "type": "S",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 91,
+          "comboAfter": 0
+        },
+        {
+          "t": 60,
+          "player": 0,
+          "pieceId": "p30",
+          "type": "L",
+          "r": 1,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 167,
+          "comboAfter": 0
+        },
+        {
+          "t": 61,
+          "player": 1,
+          "pieceId": "p30",
+          "type": "Z",
+          "r": 3,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 91,
+          "comboAfter": 0
+        },
+        {
+          "t": 62,
+          "player": 0,
+          "pieceId": "p31",
+          "type": "T",
+          "r": 1,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            1
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 177,
+          "comboAfter": 1
+        },
+        {
+          "t": 63,
+          "player": 1,
+          "pieceId": "p31",
+          "type": "O",
+          "r": 0,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 91,
+          "comboAfter": 0
+        },
+        {
+          "t": 64,
+          "player": 0,
+          "pieceId": "p32",
+          "type": "O",
+          "r": 1,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 177,
+          "comboAfter": 0
+        },
+        {
+          "t": 65,
+          "player": 1,
+          "pieceId": "p32",
+          "type": "J",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            2
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 101,
+          "comboAfter": 1
+        },
+        {
+          "t": 66,
+          "player": 0,
+          "pieceId": "p33",
+          "type": "Z",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 177,
+          "comboAfter": 0
+        },
+        {
+          "t": 67,
+          "player": 1,
+          "pieceId": "p33",
+          "type": "T",
+          "r": 2,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            3
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 11,
+          "scoreAfter": 112,
+          "comboAfter": 2
+        },
+        {
+          "t": 68,
+          "player": 0,
+          "pieceId": "p34",
+          "type": "S",
+          "r": 3,
+          "c": 0,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [
+            4
+          ],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 187,
+          "comboAfter": 1
+        },
+        {
+          "t": 69,
+          "player": 1,
+          "pieceId": "p34",
+          "type": "I",
+          "r": 3,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 112,
+          "comboAfter": 0
+        },
+        {
+          "t": 70,
+          "player": 0,
+          "pieceId": "p35",
+          "type": "Z",
+          "r": 4,
+          "c": 2,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 187,
+          "comboAfter": 0
+        },
+        {
+          "t": 71,
+          "player": 1,
+          "pieceId": "p35",
+          "type": "S",
+          "r": 3,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 112,
+          "comboAfter": 0
+        },
+        {
+          "t": 72,
+          "player": 0,
+          "pieceId": "p36",
+          "type": "J",
+          "r": 6,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 3,
+          "rows": [
+            8
+          ],
+          "cols": [
+            7
+          ],
+          "boxes": [
+            8
+          ],
+          "perfect": false,
+          "gained": 39,
+          "scoreAfter": 226,
+          "comboAfter": 1
+        },
+        {
+          "t": 73,
+          "player": 1,
+          "pieceId": "p36",
+          "type": "O",
+          "r": 4,
+          "c": 7,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 112,
+          "comboAfter": 0
+        },
+        {
+          "t": 74,
+          "player": 0,
+          "pieceId": "p37",
+          "type": "T",
+          "r": 6,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 226,
+          "comboAfter": 0
+        },
+        {
+          "t": 75,
+          "player": 1,
+          "pieceId": "p37",
+          "type": "J",
+          "r": 7,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 1,
+          "rows": [],
+          "cols": [],
+          "boxes": [
+            7
+          ],
+          "perfect": false,
+          "gained": 10,
+          "scoreAfter": 122,
+          "comboAfter": 1
+        },
+        {
+          "t": 76,
+          "player": 0,
+          "pieceId": "p38",
+          "type": "O",
+          "r": 6,
+          "c": 3,
+          "cells": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 226,
+          "comboAfter": 0
+        },
+        {
+          "t": 77,
+          "player": 1,
+          "pieceId": "p38",
+          "type": "T",
+          "r": 0,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 122,
+          "comboAfter": 0
+        },
+        {
+          "t": 78,
+          "player": 0,
+          "pieceId": "p39",
+          "type": "S",
+          "r": 7,
+          "c": 4,
+          "cells": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "clearCount": 0,
+          "rows": [],
+          "cols": [],
+          "boxes": [],
+          "perfect": false,
+          "gained": 0,
+          "scoreAfter": 226,
+          "comboAfter": 0
+        },
+        {
+          "t": 79,
+          "player": 1,
+          "pieceId": "p39",
+          "type": "L",
+          "r": 7,
+          "c": 6,
+          "cells": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "clearCount": 3,
+          "rows": [
+            7
+          ],
+          "cols": [
+            6
+          ],
+          "boxes": [
+            8
+          ],
+          "perfect": false,
+          "gained": 39,
+          "scoreAfter": 161,
+          "comboAfter": 1
+        }
+      ],
+      "finalBoard": "110.11.1.11.00..1000000..11.00111..1..00...1100000..111..00.................00...",
+      "scores": [
+        226,
+        161
+      ],
+      "combos": [
+        0,
+        1
+      ]
+    }
+  ]
+}

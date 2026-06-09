@@ -36,7 +36,7 @@ import {
   type BotWeights,
   type PieceInstance,
   type RuleConfig,
-} from "../src/core";
+} from "../legacy-ts/core";
 
 interface SimResult {
   p0Wins: number;

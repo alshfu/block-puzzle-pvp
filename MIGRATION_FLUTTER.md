@@ -41,9 +41,26 @@
 | Сборка Web | Vite | Flutter Web (CanvasKit или WASM-renderer когда стабилизируется) |
 | CI/CD Web | gh-pages branch | gh-pages branch (то же — `flutter build web` → `build/web` → push) |
 
-### Почему Riverpod, а не Bloc/GetX/Provider
+### Архитектурный паттерн: MVVM (обязателен)
 
-Текущий `useGame.ts` — это reducer с side-effects (бот, blitz tick, force-place). Riverpod даёт `StateNotifier` (reducer-ish) + `AsyncNotifier` (для онлайна) + удобный DI без BuildContext, что упрощает unit-тесты ядра и UI отдельно.
+Весь Flutter-код строится по **MVVM** (Model–View–ViewModel) поверх Riverpod.
+Это решение пользователя; отклоняться нельзя.
+
+| Слой MVVM | Что это у нас | Где живёт | Правила |
+|-----------|---------------|-----------|---------|
+| **Model** | Pure-ядро игры + модели данных + репозитории (storage, online-клиент, auth, shop, achievements) | `lib/core/`, `lib/*/storage/`, `lib/online/client.dart`, `lib/auth/`, `lib/shop/`, `lib/achievements/` | Без Flutter/BuildContext. Ядро — детерминированное (ТЗ §6.1). |
+| **ViewModel** | Riverpod-нотифайеры: держат UI-состояние, выставляют команды, дёргают Model. Аналог `useGame.ts` | `lib/game/game_notifier.dart`, `lib/online/online_notifier.dart`, и по нотифайеру на экран при необходимости | **Никакого `BuildContext`, виджетов, `dart:ui`.** Только Riverpod (`Notifier`/`AsyncNotifier`) + Model. Тестируется без виджетов. |
+| **View** | Flutter-виджеты: только рисуют состояние ViewModel и пробрасывают намерения пользователя | `lib/ui/screens/`, `lib/ui/widgets/`, Flame-компоненты Board | **Никакой бизнес-логики.** `ConsumerWidget`/`ConsumerStatefulWidget` читают провайдеры. UI — классами-виджетами, не методами `_buildXxx()`. |
+
+Поток данных однонаправленный: **View → (intent) → ViewModel → (вызов) → Model
+→ (новое состояние) → ViewModel → (rebuild) → View**. View не обращается к
+Model напрямую; ViewModel не знает о конкретных виджетах.
+
+Почему MVVM + Riverpod, а не Bloc/GetX/Provider: текущий `useGame.ts` — это
+reducer с side-effects (бот, blitz tick, force-place), что ровно ложится на
+ViewModel-нотифайер. Riverpod даёт `Notifier`/`AsyncNotifier` + DI без
+BuildContext, что и обеспечивает чистое разделение слоёв MVVM и раздельные
+unit-тесты Model и ViewModel.
 
 ### Почему Flame, а не чистый Flutter
 
@@ -817,10 +834,10 @@ npm run server:dev
 - [ ] §5 pubspec.yaml зафиксирован
 - [ ] §6 дизайн-стратегия одобрена; эталонные screenshot-ы и шрифты собраны
 - [ ] Фаза 0: skeleton + IDE настроена + golden dump из TS + дизайн-эталоны
-- [ ] Фаза 1: ядро Dart + golden детерминизма зелёный
-- [ ] Фаза 2: UI shell + design tokens + Board + golden MenuScreen зелёный + hot-seat играется
-- [ ] Фаза 3: бот + blitz
-- [ ] Фаза 4: storage + ачивки
+- [x] Фаза 1: ядро Dart + golden детерминизма зелёный
+- [x] Фаза 2: UI shell + design tokens + Board + hot-seat играется (golden MenuScreen — отложен)
+- [x] Фаза 3: бот + blitz
+- [x] Фаза 4: storage + ачивки + daily + resume
 - [ ] Фаза 5: декор + анимации + звук + **полный pixel-parity дизайна**
 - [ ] Фаза 6: online + auth + sync, кросс-протокол OK
 - [ ] Фаза 7: shop + powerups
@@ -855,7 +872,9 @@ npm run server:dev
 
 **Закрыто:**
 - ~~IDE~~ — **IntelliJ IDEA Ultimate** + плагины Flutter/Dart/Android (см. memory `user_ide`).
-- ~~State management~~ — **Riverpod 2.5** (codegen).
+- ~~State management~~ — **Riverpod** (codegen).
+- ~~Архитектурный паттерн~~ — **MVVM** (Model=ядро/репозитории, ViewModel=
+  Riverpod-нотифайеры, View=виджеты). См. §2 «Архитектурный паттерн: MVVM».
 - ~~Дизайн~~ — **100% pixel-parity**, см. §6.
 
 **Остаются:**
