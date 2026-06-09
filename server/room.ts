@@ -30,6 +30,7 @@ import type {
   RoomClient2Server,
   RoomServer2Client,
 } from "../party/protocol";
+import { randomInt } from "node:crypto";
 import { isValidMoveInput, RateLimiter } from "./limits";
 import type { Conn } from "./types";
 
@@ -349,7 +350,7 @@ export class Room {
       });
     });
     if (this.state.rematchWanted[0] && this.state.rematchWanted[1]) {
-      const newSeed = (Math.random() * 0xffffffff) | 0;
+      const newSeed = randomInt(0, 0x1_0000_0000); // L2: crypto-seed реванша
       const conns: [Conn | undefined, Conn | undefined] = [
         this.state.players[0].conn,
         this.state.players[1].conn,
