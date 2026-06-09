@@ -34,3 +34,22 @@ tools/debug-page.ts
 /build/
 firebase-debug.log
 firebase-debug.*.log
+
+# Flutter/Dart (проект в корне после реструктуризации)
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+*.iml
+*.ipr
+*.iws
+.swiftpm/
+migrate_working_dir/
+app.*.symbols
+app.*.map.json
+/android/app/debug
+/android/app/profile
+/android/app/release
