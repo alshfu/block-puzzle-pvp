@@ -167,6 +167,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
   int _matchBestCombo = 0;
   bool _matchPerfect = false;
 
+  // Разбивка очков игрока 0 за матч (для экрана результата): база+placement /
+  // бонусы (комбо+мульти+скорость) / perfect.
+  int _matchBase = 0;
+  int _matchBonus = 0;
+  int _matchPerfectPts = 0;
+
   /// Активный power-up в режиме выбора клетки (палочка/бомба) или `null`.
   String? _activePowerup;
 
@@ -356,6 +362,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
       _matchMaxMulti = 0;
       _matchBestCombo = 0;
       _matchPerfect = false;
+      _matchBase = 0;
+      _matchBonus = 0;
+      _matchPerfectPts = 0;
     }
     if (prev == null || next.moveSeq <= prev.moveSeq) return;
     if (prev.current != 0) return; // считаем только свои ходы
@@ -366,6 +375,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final combo = next.players[0].combo;
     if (combo > _matchBestCombo) _matchBestCombo = combo;
     if (next.lastPerfect) _matchPerfect = true;
+    // Разбивка очков последнего хода (для экрана результата).
+    _matchBase += next.lastBaseGain;
+    _matchBonus += next.lastBonusGain;
+    _matchPerfectPts += next.lastPerfectGain;
   }
 
   @override
@@ -598,6 +611,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
                 achievements: _resultAchievements,
                 winStreak: _resultStreak,
                 solo: _config.isSolo,
+                baseGain: _matchBase,
+                bonusGain: _matchBonus,
+                perfectGain: _matchPerfectPts,
                 onNewGame: () {
                   _click();
                   vm.newGame();
@@ -1029,6 +1045,74 @@ class _IconButton extends StatelessWidget {
   }
 }
 
+/// Разбивка очков игрока за матч: база / бонусы (комбо+мульти+скорость) /
+/// perfect / итого. Показывается на экране результата (паритет с TS).
+class _ScoreBreakdownBlock extends StatelessWidget {
+  final BlockDuelTheme theme;
+  final int base;
+  final int bonus;
+  final int perfect;
+
+  const _ScoreBreakdownBlock({
+    required this.theme,
+    required this.base,
+    required this.bonus,
+    required this.perfect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final total = base + bonus + perfect;
+    Widget row(String label, int value, {bool strong = false}) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: strong ? theme.ink : theme.muted,
+                fontSize: 12,
+                fontWeight: strong ? FontWeight.w800 : FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Text(
+            '$value',
+            style: TextStyle(
+              color: strong ? theme.ink : theme.muted,
+              fontSize: 12,
+              fontWeight: strong ? FontWeight.w800 : FontWeight.w700,
+              fontFamily: theme.fontMono,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Container(
+      width: 220,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.panel2,
+        borderRadius: BorderRadius.circular(theme.btnRadius),
+        border: Border.all(color: theme.line),
+      ),
+      child: Column(
+        children: [
+          row('База', base),
+          row('Бонусы (комбо/мульти/скорость)', bonus),
+          if (perfect > 0) row('Perfect', perfect),
+          Divider(color: theme.line, height: 12),
+          row('Итого (ты)', total, strong: true),
+        ],
+      ),
+    );
+  }
+}
+
 /// Оверлей конца партии: результат + кнопки.
 class _GameOverOverlay extends StatelessWidget {
   final BlockDuelTheme theme;
@@ -1040,6 +1124,10 @@ class _GameOverOverlay extends StatelessWidget {
   final List<AchievementDef> achievements;
   final int winStreak;
   final bool solo;
+  // Разбивка очков игрока 0 за матч (база+placement / бонусы / perfect).
+  final int baseGain;
+  final int bonusGain;
+  final int perfectGain;
   final VoidCallback onNewGame;
   final VoidCallback onMenu;
 
@@ -1055,6 +1143,9 @@ class _GameOverOverlay extends StatelessWidget {
     required this.onMenu,
     this.winStreak = 0,
     this.solo = false,
+    this.baseGain = 0,
+    this.bonusGain = 0,
+    this.perfectGain = 0,
   });
 
   @override
@@ -1094,6 +1185,16 @@ class _GameOverOverlay extends StatelessWidget {
                   fontFamily: theme.fontMono,
                 ),
               ),
+              // Разбивка очков игрока 0 за матч (база / бонусы / perfect).
+              if (baseGain + bonusGain + perfectGain > 0) ...[
+                const SizedBox(height: 10),
+                _ScoreBreakdownBlock(
+                  theme: theme,
+                  base: baseGain,
+                  bonus: bonusGain,
+                  perfect: perfectGain,
+                ),
+              ],
               const SizedBox(height: 10),
               // Награды за матч (ТЗ §8.1): XP + монеты.
               Text(

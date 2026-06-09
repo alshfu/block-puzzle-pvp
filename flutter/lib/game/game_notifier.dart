@@ -284,6 +284,9 @@ class GameNotifier extends Notifier<GameState> {
       moveSeq: state.moveSeq + 1,
       lastClearCount: 0,
       lastPerfect: false,
+      lastBaseGain: gained,
+      lastBonusGain: 0,
+      lastPerfectGain: 0,
       clearHint: true,
     );
     _autoSave();
@@ -426,12 +429,30 @@ class GameNotifier extends Notifier<GameState> {
     final perfect = clears.count > 0 && isPerfectClear(board);
 
     final before = state.players[player];
-    final gained = scoreForMove(
-      clears.count,
-      before.combo,
-      perfect,
-      config.cfg,
+    // Полная формула очков (паритет с TS-офлайн `useGame.ts` и онлайн-сервером):
+    // box-бонус, placement за тип фигуры, speed-бонус по остатку времени. Раньше
+    // офлайн считал упрощённым scoreForMove (без них) — расхождение паритета.
+    final piece = before.hand.firstWhere((p) => p.id == pieceId);
+    final timeRatio = (config.cfg.turnTimerEnabled && state.turnLimit > 0)
+        ? (state.turnRemaining / state.turnLimit).clamp(0.0, 1.0)
+        : null;
+    final breakdown = scoreMoveDetailed(
+      ScoreInput(
+        rows: clears.rows.length,
+        cols: clears.cols.length,
+        boxes: clears.boxes.length,
+        pieceType: piece.type,
+        combo: before.combo,
+        perfect: perfect,
+        timeRatio: timeRatio,
+        cfg: config.cfg,
+      ),
     );
+    final gained = breakdown.total;
+    // Разбивка для накопления и экрана результата.
+    final baseGain = breakdown.base + breakdown.placement;
+    final perfectGain = breakdown.perfectBonus;
+    final bonusGain = gained - baseGain - perfectGain;
     final newHand = [
       for (final p in before.hand)
         if (p.id != pieceId) p,
@@ -465,6 +486,9 @@ class GameNotifier extends Notifier<GameState> {
       moveSeq: state.moveSeq + 1,
       lastClearCount: clears.count,
       lastPerfect: perfect,
+      lastBaseGain: baseGain,
+      lastBonusGain: bonusGain,
+      lastPerfectGain: perfectGain,
       nextPieces: _peekNext(),
     );
 

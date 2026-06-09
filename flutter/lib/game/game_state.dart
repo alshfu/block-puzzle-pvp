@@ -92,6 +92,17 @@ class GameState {
   /// Был ли последний ход perfect clear.
   final bool lastPerfect;
 
+  /// Разбивка очков ПОСЛЕДНЕГО хода (для накопления и экрана результата):
+  /// база + placement.
+  final int lastBaseGain;
+
+  /// Бонус-часть очков последнего хода (комбо + multi-clear + speed —
+  /// total − base − placement − perfect).
+  final int lastBonusGain;
+
+  /// Бонус за perfect clear в последнем ходе.
+  final int lastPerfectGain;
+
   /// Стоит ли партия на паузе (таймеры остановлены, показан оверлей).
   final bool paused;
 
@@ -119,6 +130,9 @@ class GameState {
     this.moveSeq = 0,
     this.lastClearCount = 0,
     this.lastPerfect = false,
+    this.lastBaseGain = 0,
+    this.lastBonusGain = 0,
+    this.lastPerfectGain = 0,
     this.paused = false,
     this.nextPieces = const [],
     this.hintCells = const [],
@@ -178,6 +192,9 @@ class GameState {
     int? moveSeq,
     int? lastClearCount,
     bool? lastPerfect,
+    int? lastBaseGain,
+    int? lastBonusGain,
+    int? lastPerfectGain,
     bool? paused,
     List<PieceType>? nextPieces,
     List<Coord>? hintCells,
@@ -199,6 +216,9 @@ class GameState {
     moveSeq: moveSeq ?? this.moveSeq,
     lastClearCount: lastClearCount ?? this.lastClearCount,
     lastPerfect: lastPerfect ?? this.lastPerfect,
+    lastBaseGain: lastBaseGain ?? this.lastBaseGain,
+    lastBonusGain: lastBonusGain ?? this.lastBonusGain,
+    lastPerfectGain: lastPerfectGain ?? this.lastPerfectGain,
     paused: paused ?? this.paused,
     nextPieces: nextPieces ?? this.nextPieces,
     hintCells: clearHint ? const [] : (hintCells ?? this.hintCells),
