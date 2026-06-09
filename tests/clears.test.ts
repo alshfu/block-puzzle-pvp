@@ -8,7 +8,7 @@ import {
   isPerfectClear,
   type Board,
   type Coord,
-} from "../src/core";
+} from "../legacy-ts/core";
 
 function fillRow(board: Board, r: number) {
   for (let c = 0; c < SIZE; c++) board[r][c] = { filled: true, owner: 0 };

@@ -8,8 +8,8 @@ import {
   orientations,
   rotate90,
   type Coord,
-} from "../src/core";
-import { transformPath } from "../src/ui/pilot/pilot";
+} from "../legacy-ts/core";
+import { transformPath } from "../legacy-ts/ui/pilot/pilot";
 
 function key(cells: Coord[]): string {
   return normalize(cells)

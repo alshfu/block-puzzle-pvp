@@ -9,7 +9,7 @@ import {
   makeRng,
   type PieceInstance,
   type Board,
-} from "../src/core";
+} from "../legacy-ts/core";
 
 function makePiece(id: string, type: PieceInstance["type"]): PieceInstance {
   // cells здесь не используются enumerateMoves (он берёт ориентации от type),

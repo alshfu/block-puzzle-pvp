@@ -12,7 +12,7 @@ import {
   hasAnyMove,
   type Board,
   type PieceInstance,
-} from "../src/core";
+} from "../legacy-ts/core";
 
 /**
  * Golden test: один и тот же matchSeed + один и тот же набор детерминированных

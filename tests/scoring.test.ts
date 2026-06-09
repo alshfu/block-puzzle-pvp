@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_CONFIG, scoreForMove, scoreMoveDetailed, type RuleConfig } from "../src/core";
+import { DEFAULT_CONFIG, scoreForMove, scoreMoveDetailed, type RuleConfig } from "../legacy-ts/core";
 
 const cfg = (over: Partial<RuleConfig> = {}): RuleConfig => ({ ...DEFAULT_CONFIG, ...over });
 

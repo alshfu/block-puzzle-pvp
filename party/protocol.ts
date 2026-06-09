@@ -3,7 +3,7 @@
  * Один и тот же файл импортируется из party/* и из src/ui/online/.
  */
 
-import type { Board, BotLevel, Coord, PieceInstance, RuleConfig } from "../src/core";
+import type { Board, BotLevel, Coord, PieceInstance, RuleConfig } from "../legacy-ts/core";
 
 // ─── Профиль игрока в онлайне ────────────────────────────────────────────
 export interface OnlineProfile {

@@ -8,7 +8,7 @@
  * Чистый модуль без состояния сервера — переиспользуется лобби/комнатой/
  * лидербордом.
  */
-import type { Coord } from "../src/core";
+import type { Coord } from "../legacy-ts/core";
 import type { Conn } from "./types";
 
 /** Параметры рейт-лимита по умолчанию: не более 40 сообщений за 1 c на conn. */

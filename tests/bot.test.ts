@@ -13,7 +13,7 @@ import {
   type PieceInstance,
   type Board,
   type BotLevel,
-} from "../src/core";
+} from "../legacy-ts/core";
 
 function drawHand(seed: number, n: number): PieceInstance[] {
   const bag = new Bag(seed);

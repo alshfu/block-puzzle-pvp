@@ -55,7 +55,7 @@ import {
   scoreForMove,
   scoreMoveDetailed,
   SIZE,
-} from "../src/core";
+} from "../legacy-ts/core";
 
 // ── Параметры эталона ───────────────────────────────────────────────────────
 

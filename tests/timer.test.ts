@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_CONFIG, turnTimeForRound, type RuleConfig } from "../src/core";
+import { DEFAULT_CONFIG, turnTimeForRound, type RuleConfig } from "../legacy-ts/core";
 
 describe("turnTimeForRound", () => {
   it("без таймера → Infinity", () => {

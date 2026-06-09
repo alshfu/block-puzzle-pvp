@@ -20,7 +20,7 @@ import {
   type Coord,
   type PieceInstance,
   type RuleConfig,
-} from "../src/core";
+} from "../legacy-ts/core";
 import type {
   LeaderboardMatchReport,
   MatchSeed,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ALL_TYPES, Bag, makeRng } from "../src/core";
+import { ALL_TYPES, Bag, makeRng } from "../legacy-ts/core";
 
 describe("Bag (7-bag)", () => {
   it("первые 7 фигур содержат каждую ровно один раз", () => {
