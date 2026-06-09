@@ -30,6 +30,7 @@ import type {
   RoomClient2Server,
   RoomServer2Client,
 } from "../party/protocol";
+import { isValidMoveInput, RateLimiter } from "./limits";
 import type { Conn } from "./types";
 
 const TURN_TIME_MS = 60_000;
@@ -61,6 +62,7 @@ interface MatchState {
 export class Room {
   state: MatchState;
   private timer: NodeJS.Timeout | null = null;
+  private limiter = new RateLimiter();
 
   constructor(
     public readonly id: string,
@@ -105,6 +107,7 @@ export class Room {
 
   handleConnection(conn: Conn): void {
     conn.on("message", (data) => {
+      if (!this.limiter.allow(conn)) return; // H4: дропаем флуд
       let msg: RoomClient2Server;
       try {
         msg = JSON.parse(String(data));
@@ -150,6 +153,18 @@ export class Room {
       this.send(conn, { type: "error", reason: "not a participant" });
       return;
     }
+    // H3: не отдаём слот, если он уже занят ЖИВЫМ соединением (защита от угона
+    // чужим id). Разрешаем только реконнект — когда прежний conn мёртв/отсутствует.
+    const existing = this.state.players[idx].conn;
+    if (existing && existing !== conn && existing.readyState === 1 /* OPEN */) {
+      this.send(conn, { type: "error", reason: "slot already connected" });
+      try {
+        conn.close();
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
     this.state.players[idx].conn = conn;
 
     // Первый hello в waiting-комнате может задать cfg (handSize / rotation / flip).
@@ -193,6 +208,12 @@ export class Room {
     const s = this.state;
     if (s.status !== "playing") {
       this.send(conn, { type: "move_rejected", reason: "match not active" });
+      return;
+    }
+    // M1: строгая валидация формы/диапазона ДО игровой логики (анти-DoS на
+    // гигантских/кривых cells; защита normalize/canPlace от мусора).
+    if (typeof pieceId !== "string" || pieceId.length > 64 || !isValidMoveInput(cells, r, c)) {
+      this.send(conn, { type: "move_rejected", reason: "malformed move" });
       return;
     }
     const idx = s.players.findIndex((p) => p.conn === conn);

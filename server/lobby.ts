@@ -3,9 +3,13 @@ import type {
   LobbyServer2Client,
   OnlineProfile,
 } from "../party/protocol";
+import { isValidProfile, RateLimiter } from "./limits";
 import type { Conn } from "./types";
 
 const BOT_FALLBACK_AFTER_MS = 25_000;
+
+/** Потолок очереди (M2): защита от безграничного роста при флуде постановок. */
+const MAX_QUEUE = 500;
 
 interface QueueEntry {
   conn: Conn;
@@ -16,24 +20,27 @@ interface QueueEntry {
 export class Lobby {
   private queue: QueueEntry[] = [];
   private tickTimer: NodeJS.Timeout | null = null;
+  private limiter = new RateLimiter();
 
   constructor(private onCreateMatch: (a: OnlineProfile, b: OnlineProfile) => string) {}
 
   handleConnection(conn: Conn): void {
     conn.on("message", (data) => {
+      if (!this.limiter.allow(conn)) return; // H4: дропаем флуд
       let msg: LobbyClient2Server;
       try {
         msg = JSON.parse(String(data));
       } catch {
         return;
       }
-      if (msg.type === "queue") this.onQueue(conn, msg.profile);
+      if (msg.type === "queue" && isValidProfile(msg.profile)) this.onQueue(conn, msg.profile);
       else if (msg.type === "cancel") this.onCancel(conn);
     });
     conn.on("close", () => this.onCancel(conn));
   }
 
   private onQueue(conn: Conn, profile: OnlineProfile): void {
+    if (this.queue.length >= MAX_QUEUE) return; // M2: потолок очереди
     if (!this.queue.some((q) => q.conn === conn)) {
       this.queue.push({ conn, profile, enqueuedAt: Date.now() });
     }

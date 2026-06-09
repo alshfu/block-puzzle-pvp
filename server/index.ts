@@ -16,6 +16,7 @@ import { createServer, type IncomingMessage } from "node:http";
 import { WebSocketServer, type WebSocket } from "ws";
 import type { OnlineProfile } from "../party/protocol";
 import { Leaderboard } from "./leaderboard";
+import { RateLimiter } from "./limits";
 import { Lobby } from "./lobby";
 import { Room } from "./room";
 
@@ -55,7 +56,11 @@ const httpServer = createServer((req, res) => {
   res.end("not found");
 });
 
-const wss = new WebSocketServer({ noServer: true });
+// maxPayload (H4): кадр > 16 KiB отвергается на уровне ws — отсекает oversized.
+const wss = new WebSocketServer({ noServer: true, maxPayload: 16 * 1024 });
+
+// Rate-limit подписок лидерборда (H4); лобби/комната держат свои лимитеры.
+const leaderboardLimiter = new RateLimiter();
 
 httpServer.on("upgrade", (req, socket, head) => {
   const route = parseRoute(req);
@@ -70,6 +75,17 @@ httpServer.on("upgrade", (req, socket, head) => {
 });
 
 wss.on("connection", (ws: WebSocket, _req: IncomingMessage, route: Route) => {
+  // ОБЯЗАТЕЛЬНО: без обработчика 'error' любая ошибка сокета (в т.ч.
+  // превышение maxPayload, code 1009) эмитит unhandled 'error' и роняет ВЕСЬ
+  // процесс. Гасим на уровне соединения — закрываем только этот сокет.
+  ws.on("error", () => {
+    try {
+      ws.close();
+    } catch {
+      /* ignore */
+    }
+  });
+
   if (route.party === "lobby") {
     lobby.handleConnection(ws);
     return;
@@ -91,9 +107,12 @@ wss.on("connection", (ws: WebSocket, _req: IncomingMessage, route: Route) => {
   }
   if (route.party === "leaderboard") {
     ws.on("message", (data) => {
+      if (!leaderboardLimiter.allow(ws)) return; // H4: дропаем флуд
       try {
         const msg = JSON.parse(String(data)) as { type: string; myId?: string };
-        if (msg.type === "subscribe") leaderboard.subscribe(ws, msg.myId ?? null);
+        // myId должен быть строкой ограниченной длины (анти-мусор).
+        const myId = typeof msg.myId === "string" && msg.myId.length <= 64 ? msg.myId : null;
+        if (msg.type === "subscribe") leaderboard.subscribe(ws, myId);
       } catch {
         /* ignore */
       }
