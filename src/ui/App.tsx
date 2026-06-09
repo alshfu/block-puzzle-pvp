@@ -106,7 +106,7 @@ export function App() {
   const [restoring, setRestoring] = useState(false);
   const [achievements, setAchievements] = useState<PlayerAchievements>(loadAchievements);
   const [toasts, setToasts] = useState<AchievementDef[]>([]);
-  const [onlineMatch, setOnlineMatch] = useState<{ roomId: string; opponent: OnlineProfile } | null>(null);
+  const [onlineMatch, setOnlineMatch] = useState<{ roomId: string; opponent: OnlineProfile; token?: string } | null>(null);
   const [wallet, setWallet] = useState<Wallet>(loadWallet);
   const [inventory, setInventory] = useState<Inventory>(loadInventory);
   const [playerSkins, setPlayerSkins] = useState<PlayerSkins>(loadPlayerSkins);
@@ -576,8 +576,8 @@ export function App() {
             setCfg={setCfg}
             onBack={() => setScreen("menu")}
             onOpenLeaderboard={() => setScreen("leaderboard")}
-            onMatched={(roomId, opponent) => {
-              setOnlineMatch({ roomId, opponent });
+            onMatched={(roomId, opponent, token) => {
+              setOnlineMatch({ roomId, opponent, token });
               setScreen("online-game");
             }}
             onBotFallback={() => {
@@ -597,6 +597,7 @@ export function App() {
             roomId={onlineMatch.roomId}
             profile={{ id: profile.id, nick: profile.nick, avatar: profile.avatar }}
             opponent={onlineMatch.opponent}
+            token={onlineMatch.token}
             requestedCfg={{
               handSize: cfg.handSize,
               rotationEnabled: cfg.rotationEnabled,

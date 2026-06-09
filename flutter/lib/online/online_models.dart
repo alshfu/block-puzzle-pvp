@@ -56,7 +56,11 @@ class OnlineGameArgs {
   /// Свой профиль (для `hello`).
   final OnlineProfile me;
 
-  const OnlineGameArgs({required this.opponent, required this.me});
+  /// Токен слота из `matched` (SEC-2) — отправляется в `hello`. Может быть null
+  /// (старый сервер / фолбэк deep-link).
+  final String? token;
+
+  const OnlineGameArgs({required this.opponent, required this.me, this.token});
 }
 
 /// Представление игрока в состоянии матча (с сервера).

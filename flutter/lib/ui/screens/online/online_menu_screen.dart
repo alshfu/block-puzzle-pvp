@@ -38,7 +38,11 @@ class OnlineMenuScreen extends ConsumerWidget {
         );
         context.go(
           '/online/game/${next.roomId}',
-          extra: OnlineGameArgs(opponent: next.opponent, me: me),
+          extra: OnlineGameArgs(
+            opponent: next.opponent,
+            me: me,
+            token: next.token,
+          ),
         );
       } else if (next is LobbyBotFallback) {
         context.go('/game/bot');

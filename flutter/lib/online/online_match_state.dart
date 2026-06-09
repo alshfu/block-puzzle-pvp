@@ -149,7 +149,11 @@ class OnlineMatchArgs {
   final String roomId;
   final OnlineProfile me;
 
-  const OnlineMatchArgs({required this.roomId, required this.me});
+  /// Токен слота (SEC-2) для `hello`. Не входит в равенство/hash — ключ
+  /// провайдера стабилен по (roomId, me.id), токен константен в рамках матча.
+  final String? token;
+
+  const OnlineMatchArgs({required this.roomId, required this.me, this.token});
 
   @override
   bool operator ==(Object other) =>

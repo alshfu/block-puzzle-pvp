@@ -34,11 +34,16 @@ class LobbyQueued extends LobbyState {
   const LobbyQueued(this.position, this.waitedSec);
 }
 
-/// Найден соперник: комната и его профиль.
+/// Найден соперник: комната, его профиль и токен слота (SEC-2, для hello).
 class LobbyMatched extends LobbyState {
   final String roomId;
   final OnlineProfile opponent;
-  const LobbyMatched(this.roomId, this.opponent);
+
+  /// Одноразовый секрет слота из `matched` (может отсутствовать у старого
+  /// сервера до раскатки SEC-2).
+  final String? token;
+
+  const LobbyMatched(this.roomId, this.opponent, {this.token});
 }
 
 /// Ждали слишком долго — предлагаем игру с ботом локально.
@@ -97,6 +102,7 @@ class LobbyNotifier extends Notifier<LobbyState> {
         state = LobbyMatched(
           msg['roomId'] as String,
           OnlineProfile.fromJson(msg['opponent'] as Map<String, dynamic>),
+          token: msg['token'] as String?,
         );
       case 'bot_fallback':
         state = const LobbyBotFallback();

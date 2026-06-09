@@ -42,6 +42,8 @@ interface Props {
   roomId: string;
   profile: OnlineProfile;
   opponent: OnlineProfile;
+  /** Токен слота из `matched` (SEC-2) — для аутентификации в `hello`. */
+  token?: string;
   /** Запрос параметров комнаты у сервера (применяется только если этот клиент подключился первым). */
   requestedCfg?: RequestedCfg;
   onExit: () => void;
@@ -64,8 +66,8 @@ interface DragState {
 
 const DRAG_THRESHOLD_PX = 6;
 
-export function OnlineGameScreen({ theme, roomId, profile, opponent, requestedCfg, onExit, onMatchEnded }: Props) {
-  const { state: onlineState, sendMove, resign, requestRematch } = useOnlineGame(roomId, profile, requestedCfg);
+export function OnlineGameScreen({ theme, roomId, profile, opponent, token, requestedCfg, onExit, onMatchEnded }: Props) {
+  const { state: onlineState, sendMove, resign, requestRematch } = useOnlineGame(roomId, profile, requestedCfg, token);
   const matchEndedRef = useRef<string | null>(null);
 
   // Авторитативный cfg от сервера (после joined). До joined используем DEFAULT_CONFIG как placeholder.

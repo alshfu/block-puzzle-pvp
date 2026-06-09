@@ -11,7 +11,7 @@ interface Props {
   cfg: RuleConfig;
   setCfg: (c: RuleConfig) => void;
   onBack: () => void;
-  onMatched: (roomId: string, opponent: OnlineProfile) => void;
+  onMatched: (roomId: string, opponent: OnlineProfile, token: string) => void;
   /** Lobby ответил bot_fallback — никого нет, играем с ботом локально. */
   onBotFallback: () => void;
   onOpenLeaderboard: () => void;
@@ -42,9 +42,9 @@ export function OnlineMenuScreen({ profile, cfg, setCfg, onBack, onMatched, onBo
         setPhase("queued");
         setPosition(pos);
       },
-      onMatched: (roomId, opponent) => {
+      onMatched: (roomId, opponent, token) => {
         lobby.close();
-        onMatched(roomId, opponent);
+        onMatched(roomId, opponent, token);
       },
       onBotFallback: () => {
         lobby.close();

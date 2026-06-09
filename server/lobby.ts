@@ -3,6 +3,7 @@ import type {
   LobbyServer2Client,
   OnlineProfile,
 } from "../party/protocol";
+import { randomUUID } from "node:crypto";
 import { isValidProfile, RateLimiter } from "./limits";
 import type { Conn } from "./types";
 
@@ -22,7 +23,14 @@ export class Lobby {
   private tickTimer: NodeJS.Timeout | null = null;
   private limiter = new RateLimiter();
 
-  constructor(private onCreateMatch: (a: OnlineProfile, b: OnlineProfile) => string) {}
+  constructor(
+    private onCreateMatch: (
+      a: OnlineProfile,
+      b: OnlineProfile,
+      tokenA: string,
+      tokenB: string,
+    ) => string,
+  ) {}
 
   handleConnection(conn: Conn): void {
     conn.on("message", (data) => {
@@ -85,9 +93,12 @@ export class Lobby {
       const a = this.queue.shift()!;
       const b = this.queue.shift()!;
       try {
-        const roomId = this.onCreateMatch(a.profile, b.profile);
-        this.send(a.conn, { type: "matched", roomId, opponent: b.profile });
-        this.send(b.conn, { type: "matched", roomId, opponent: a.profile });
+        // SEC-2: одноразовые секреты слотов для аутентификации в комнате.
+        const tokenA = randomUUID();
+        const tokenB = randomUUID();
+        const roomId = this.onCreateMatch(a.profile, b.profile, tokenA, tokenB);
+        this.send(a.conn, { type: "matched", roomId, opponent: b.profile, token: tokenA });
+        this.send(b.conn, { type: "matched", roomId, opponent: a.profile, token: tokenB });
       } catch (err) {
         console.error("[lobby] tryMatch failed:", err);
         this.queue.unshift(b, a);

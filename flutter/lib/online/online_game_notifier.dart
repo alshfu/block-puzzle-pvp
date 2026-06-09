@@ -74,7 +74,11 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
       case TransportStatus.open:
         _attempt = 0;
         state = state.copyWith(connected: true, clearError: true);
-        _transport?.send({'type': 'hello', 'profile': args.me.toJson()});
+        _transport?.send({
+          'type': 'hello',
+          'profile': args.me.toJson(),
+          if (args.token != null) 'token': args.token,
+        });
       case TransportStatus.connecting:
         break;
       case TransportStatus.closed:

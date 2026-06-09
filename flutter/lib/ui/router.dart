@@ -88,6 +88,7 @@ final GoRouter appRouter = GoRouter(
             roomId: roomId,
             me: extra.me,
             opponent: extra.opponent,
+            token: extra.token,
           );
         }
         // Фолбэк (deep-link / hot-reload без extra): профиль из провайдера,

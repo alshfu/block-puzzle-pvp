@@ -27,7 +27,7 @@ const leaderboard = new Leaderboard(LEADERBOARD_FILE);
 
 const rooms = new Map<string, Room>();
 
-const lobby = new Lobby((a, b) => {
+const lobby = new Lobby((a, b, tokenA, tokenB) => {
   const roomId = `m_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
   const seed = (Math.random() * 0xffffffff) | 0;
   rooms.set(
@@ -35,6 +35,7 @@ const lobby = new Lobby((a, b) => {
     new Room(
       roomId,
       { matchSeed: seed, participants: [a, b] },
+      [tokenA, tokenB],
       (report) => leaderboard.reportMatch(report),
       () => {
         // оба отвалились → удаляем room

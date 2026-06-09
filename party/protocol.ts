@@ -55,14 +55,16 @@ export type LobbyClient2Server =
 
 export type LobbyServer2Client =
   | { type: "queued"; position: number; waitedSec: number }
-  | { type: "matched"; roomId: string; opponent: OnlineProfile }
+  // token — одноразовый секрет слота для аутентификации в комнате (SEC-2).
+  | { type: "matched"; roomId: string; opponent: OnlineProfile; token: string }
   | { type: "bot_fallback" } // ждал слишком долго — играй с ботом локально
   | { type: "error"; reason: string };
 
 // ─── Room (game) ────────────────────────────────────────────────────────
 
 export type RoomClient2Server =
-  | { type: "hello"; profile: OnlineProfile; cfg?: RequestedCfg }
+  // token — секрет слота из `matched` (SEC-2); проверяется сервером.
+  | { type: "hello"; profile: OnlineProfile; cfg?: RequestedCfg; token?: string }
   | {
       type: "move";
       pieceId: string;

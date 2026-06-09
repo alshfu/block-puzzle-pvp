@@ -35,6 +35,11 @@ import type { Conn } from "./types";
 
 const TURN_TIME_MS = 60_000;
 
+/** SEC-2: жёсткое требование roomToken в hello (включается на проде после
+ *  раскатки клиентов). По умолчанию off — токен валидируется, только если
+ *  прислан, чтобы не сломать ещё не обновлённые клиенты. */
+const REQUIRE_ROOM_TOKEN = process.env.REQUIRE_ROOM_TOKEN === "1";
+
 interface ServerPlayer {
   profile: OnlineProfile;
   score: number;
@@ -67,6 +72,7 @@ export class Room {
   constructor(
     public readonly id: string,
     seed: MatchSeed,
+    private tokens: [string, string],
     private onMatchOver: (report: LeaderboardMatchReport) => void,
     private onAllGone: () => void,
   ) {
@@ -130,7 +136,7 @@ export class Room {
 
   private onMessage(conn: Conn, msg: RoomClient2Server): void {
     if (msg.type === "hello") {
-      this.handleHello(conn, msg.profile, msg.cfg);
+      this.handleHello(conn, msg.profile, msg.cfg, msg.token);
       return;
     }
     if (msg.type === "move") {
@@ -147,10 +153,26 @@ export class Room {
     }
   }
 
-  private handleHello(conn: Conn, profile: OnlineProfile, requestedCfg?: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }): void {
+  private handleHello(conn: Conn, profile: OnlineProfile, requestedCfg?: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }, token?: string): void {
     const idx = this.state.players.findIndex((p) => p.profile.id === profile.id);
     if (idx === -1) {
       this.send(conn, { type: "error", reason: "not a participant" });
+      return;
+    }
+    // SEC-2 (H1/H2/H3): аутентификация слота по roomToken из `matched`.
+    // Прислан токен → обязан совпасть. Не прислан → отказ только при жёстком
+    // режиме (REQUIRE_ROOM_TOKEN), иначе пропускаем (обратная совместимость со
+    // старыми клиентами на время раскатки).
+    const expected = this.tokens[idx];
+    if (token !== undefined) {
+      if (token !== expected) {
+        this.send(conn, { type: "error", reason: "invalid token" });
+        try { conn.close(); } catch { /* ignore */ }
+        return;
+      }
+    } else if (REQUIRE_ROOM_TOKEN) {
+      this.send(conn, { type: "error", reason: "auth required" });
+      try { conn.close(); } catch { /* ignore */ }
       return;
     }
     // H3: не отдаём слот, если он уже занят ЖИВЫМ соединением (защита от угона

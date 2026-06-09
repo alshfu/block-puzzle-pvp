@@ -24,7 +24,7 @@ export interface UseOnlineGameApi {
   close: () => void;
 }
 
-export function useOnlineGame(roomId: string, profile: OnlineProfile, requestedCfg?: RequestedCfg): UseOnlineGameApi {
+export function useOnlineGame(roomId: string, profile: OnlineProfile, requestedCfg?: RequestedCfg, token?: string): UseOnlineGameApi {
   const [s, setS] = useState<State>({
     state: null,
     you: null,
@@ -41,7 +41,7 @@ export function useOnlineGame(roomId: string, profile: OnlineProfile, requestedC
     const conn = openRoom(roomId, {
       onOpen: () => {
         setS((p) => ({ ...p, connected: true, lastError: null }));
-        conn.send({ type: "hello", profile, cfg: requestedCfg });
+        conn.send({ type: "hello", profile, cfg: requestedCfg, token });
       },
       onClose: () => {
         setS((p) => ({ ...p, connected: false }));

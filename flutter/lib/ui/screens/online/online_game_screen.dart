@@ -50,12 +50,16 @@ class OnlineGameScreen extends ConsumerStatefulWidget {
   /// Профиль соперника (для отображения до `joined`).
   final OnlineProfile opponent;
 
+  /// Токен слота из `matched` (SEC-2) — для аутентификации в `hello`.
+  final String? token;
+
   /// Создаёт экран.
   const OnlineGameScreen({
     super.key,
     required this.roomId,
     required this.me,
     required this.opponent,
+    this.token,
   });
 
   @override
@@ -66,6 +70,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   late final OnlineMatchArgs _args = OnlineMatchArgs(
     roomId: widget.roomId,
     me: widget.me,
+    token: widget.token,
   );
   final ConfettiGame _confetti = ConfettiGame();
 
