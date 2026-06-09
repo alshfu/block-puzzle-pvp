@@ -77,6 +77,39 @@ class AchProgress {
   );
 }
 
+/// Запись о сопернике в онлайне: сколько матчей сыграно, побед и каков был
+/// последний исход (для серии реваншей и счётчика «постоянного соперника»).
+/// Соответствие TS: `Stats.onlineOpponents[id]` в `stats.ts`.
+class OnlineOpponentRecord {
+  /// Сколько матчей сыграно против этого соперника.
+  final int count;
+
+  /// Сколько из них выиграно.
+  final int wins;
+
+  /// Последний исход: `win` / `loss` / `draw`.
+  final String lastResult;
+
+  const OnlineOpponentRecord({
+    this.count = 0,
+    this.wins = 0,
+    this.lastResult = 'draw',
+  });
+
+  Map<String, dynamic> toJson() => {
+    'count': count,
+    'wins': wins,
+    'lastResult': lastResult,
+  };
+
+  factory OnlineOpponentRecord.fromJson(Map<String, dynamic> json) =>
+      OnlineOpponentRecord(
+        count: (json['count'] as num?)?.toInt() ?? 0,
+        wins: (json['wins'] as num?)?.toInt() ?? 0,
+        lastResult: json['lastResult'] as String? ?? 'draw',
+      );
+}
+
 /// Накопительная статистика игрока (офлайн + онлайн). Поля, которые ещё не
 /// заполняются Flutter-портом, остаются нулевыми (достижения по ним просто
 /// заблокированы — как и должно быть).
@@ -108,6 +141,19 @@ class Stats {
   final int onlineConsecutiveDays;
   final List<String> onlineThemesPlayed;
 
+  // ── Онлайн: «богатые» метрики (для экрана статистики и max-достижений) ──
+  final int onlineBestNoLossStreak;
+  final int onlineMaxMultiClear;
+  final int onlineBestCombo;
+  final int onlineLongestMatchTurns;
+  final int onlineMaxConsecutiveDays;
+
+  /// Дата последнего онлайн-матча `YYYY-MM-DD` (для подсчёта дней подряд).
+  final String onlineLastPlayedDate;
+
+  /// Карта соперник→запись (для уникальных/постоянных соперников и реваншей).
+  final Map<String, OnlineOpponentRecord> onlineOpponents;
+
   const Stats({
     this.games = 0,
     this.wins = 0,
@@ -132,6 +178,13 @@ class Stats {
     this.onlineMostVsSingleOpponent = 0,
     this.onlineConsecutiveDays = 0,
     this.onlineThemesPlayed = const [],
+    this.onlineBestNoLossStreak = 0,
+    this.onlineMaxMultiClear = 0,
+    this.onlineBestCombo = 0,
+    this.onlineLongestMatchTurns = 0,
+    this.onlineMaxConsecutiveDays = 0,
+    this.onlineLastPlayedDate = '',
+    this.onlineOpponents = const {},
   });
 
   /// Снимок по умолчанию.
@@ -161,6 +214,13 @@ class Stats {
     int? onlineMostVsSingleOpponent,
     int? onlineConsecutiveDays,
     List<String>? onlineThemesPlayed,
+    int? onlineBestNoLossStreak,
+    int? onlineMaxMultiClear,
+    int? onlineBestCombo,
+    int? onlineLongestMatchTurns,
+    int? onlineMaxConsecutiveDays,
+    String? onlineLastPlayedDate,
+    Map<String, OnlineOpponentRecord>? onlineOpponents,
   }) => Stats(
     games: games ?? this.games,
     wins: wins ?? this.wins,
@@ -189,6 +249,16 @@ class Stats {
         onlineMostVsSingleOpponent ?? this.onlineMostVsSingleOpponent,
     onlineConsecutiveDays: onlineConsecutiveDays ?? this.onlineConsecutiveDays,
     onlineThemesPlayed: onlineThemesPlayed ?? this.onlineThemesPlayed,
+    onlineBestNoLossStreak:
+        onlineBestNoLossStreak ?? this.onlineBestNoLossStreak,
+    onlineMaxMultiClear: onlineMaxMultiClear ?? this.onlineMaxMultiClear,
+    onlineBestCombo: onlineBestCombo ?? this.onlineBestCombo,
+    onlineLongestMatchTurns:
+        onlineLongestMatchTurns ?? this.onlineLongestMatchTurns,
+    onlineMaxConsecutiveDays:
+        onlineMaxConsecutiveDays ?? this.onlineMaxConsecutiveDays,
+    onlineLastPlayedDate: onlineLastPlayedDate ?? this.onlineLastPlayedDate,
+    onlineOpponents: onlineOpponents ?? this.onlineOpponents,
   );
 
   Map<String, dynamic> toJson() => {
@@ -215,6 +285,15 @@ class Stats {
     'onlineMostVsSingleOpponent': onlineMostVsSingleOpponent,
     'onlineConsecutiveDays': onlineConsecutiveDays,
     'onlineThemesPlayed': onlineThemesPlayed,
+    'onlineBestNoLossStreak': onlineBestNoLossStreak,
+    'onlineMaxMultiClear': onlineMaxMultiClear,
+    'onlineBestCombo': onlineBestCombo,
+    'onlineLongestMatchTurns': onlineLongestMatchTurns,
+    'onlineMaxConsecutiveDays': onlineMaxConsecutiveDays,
+    'onlineLastPlayedDate': onlineLastPlayedDate,
+    'onlineOpponents': {
+      for (final e in onlineOpponents.entries) e.key: e.value.toJson(),
+    },
   };
 
   factory Stats.fromJson(Map<String, dynamic> json) {
@@ -245,6 +324,20 @@ class Stats {
       onlineThemesPlayed:
           (json['onlineThemesPlayed'] as List<dynamic>?)?.cast<String>() ??
           const [],
+      onlineBestNoLossStreak: i('onlineBestNoLossStreak'),
+      onlineMaxMultiClear: i('onlineMaxMultiClear'),
+      onlineBestCombo: i('onlineBestCombo'),
+      onlineLongestMatchTurns: i('onlineLongestMatchTurns'),
+      onlineMaxConsecutiveDays: i('onlineMaxConsecutiveDays'),
+      onlineLastPlayedDate: json['onlineLastPlayedDate'] as String? ?? '',
+      onlineOpponents: {
+        for (final e
+            in (json['onlineOpponents'] as Map<String, dynamic>? ?? const {})
+                .entries)
+          e.key: OnlineOpponentRecord.fromJson(
+            (e.value as Map).cast<String, dynamic>(),
+          ),
+      },
     );
   }
 }

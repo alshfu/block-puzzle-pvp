@@ -62,12 +62,26 @@ class StatsController extends Notifier<Stats> {
   }
 
   /// Наращивает статистику по онлайн-матчу и возвращает снимок ПОСЛЕ.
+  ///
+  /// Порт `applyOnlineMatchToStats` (`src/ui/storage/stats.ts`): кроме общих
+  /// счётчиков ведёт карту соперников (уникальные/постоянный соперник/серия
+  /// реваншей), дни подряд (через [today] = `YYYY-MM-DD`, передаётся снаружи —
+  /// без `DateTime.now()` внутри, ядро/Model остаётся детерминированным) и
+  /// «богатые» max-метрики (комбо/мульти-клир/длина матча).
+  ///
+  /// [today] — текущая дата клиента; [opponentId] — стабильный id соперника;
+  /// [scoreGap] — мой перевес при победе; [turnCount] — число ходов в матче.
   Stats recordOnline({
     required bool won,
     required bool drew,
     required int matchClears,
     required int perfects,
+    required int maxMultiClear,
+    required int bestCombo,
+    required int turnCount,
     required String themeId,
+    required String opponentId,
+    required String today,
   }) {
     final lost = !won && !drew;
     final winStreak = won ? state.onlineCurrentWinStreak + 1 : 0;
@@ -75,6 +89,45 @@ class StatsController extends Notifier<Stats> {
     final themes = state.onlineThemesPlayed.contains(themeId)
         ? state.onlineThemesPlayed
         : [...state.onlineThemesPlayed, themeId];
+
+    // Соперник: запись до матча → обновлённая.
+    final prevOp = state.onlineOpponents[opponentId];
+    final isNewOpponent = prevOp == null;
+    final op = prevOp ?? const OnlineOpponentRecord();
+    final updatedOp = OnlineOpponentRecord(
+      count: op.count + 1,
+      wins: op.wins + (won ? 1 : 0),
+      lastResult: won ? 'win' : (drew ? 'draw' : 'loss'),
+    );
+    final opponents = {...state.onlineOpponents, opponentId: updatedOp};
+
+    // Серия реваншей: подряд побед против того же соперника (приближение TS —
+    // если в прошлый раз с ним тоже выиграли, берём накопленные победы).
+    var rematchStreak = state.onlineMaxRematchWinStreak;
+    if (won && !isNewOpponent) {
+      rematchStreak = math.max(
+        rematchStreak,
+        op.lastResult == 'win' ? updatedOp.wins : 1,
+      );
+    }
+
+    // Дни подряд: сравниваем today с датой последнего матча.
+    var consecutiveDays = state.onlineConsecutiveDays;
+    var lastPlayed = state.onlineLastPlayedDate;
+    if (today != state.onlineLastPlayedDate) {
+      if (state.onlineLastPlayedDate.isEmpty) {
+        consecutiveDays = 1;
+      } else {
+        final prevD = DateTime.tryParse(state.onlineLastPlayedDate);
+        final todayD = DateTime.tryParse(today);
+        final diff = (prevD != null && todayD != null)
+            ? todayD.difference(prevD).inDays
+            : 0;
+        consecutiveDays = diff == 1 ? state.onlineConsecutiveDays + 1 : 1;
+      }
+      lastPlayed = today;
+    }
+
     state = state.copyWith(
       onlineGames: state.onlineGames + 1,
       onlineWins: state.onlineWins + (won ? 1 : 0),
@@ -83,9 +136,30 @@ class StatsController extends Notifier<Stats> {
       onlineCurrentWinStreak: winStreak,
       onlineBestWinStreak: math.max(state.onlineBestWinStreak, winStreak),
       onlineCurrentNoLossStreak: noLoss,
+      onlineBestNoLossStreak: math.max(state.onlineBestNoLossStreak, noLoss),
       onlineTotalClears: state.onlineTotalClears + matchClears,
       onlineTotalPerfects: state.onlineTotalPerfects + perfects,
+      onlineMaxMultiClear: math.max(state.onlineMaxMultiClear, maxMultiClear),
+      onlineBestCombo: math.max(state.onlineBestCombo, bestCombo),
+      onlineLongestMatchTurns: math.max(
+        state.onlineLongestMatchTurns,
+        turnCount,
+      ),
       onlineThemesPlayed: themes,
+      onlineOpponents: opponents,
+      onlineUniqueOpponents:
+          state.onlineUniqueOpponents + (isNewOpponent ? 1 : 0),
+      onlineMostVsSingleOpponent: math.max(
+        state.onlineMostVsSingleOpponent,
+        updatedOp.count,
+      ),
+      onlineMaxRematchWinStreak: rematchStreak,
+      onlineConsecutiveDays: consecutiveDays,
+      onlineMaxConsecutiveDays: math.max(
+        state.onlineMaxConsecutiveDays,
+        consecutiveDays,
+      ),
+      onlineLastPlayedDate: lastPlayed,
     );
     _persist();
     return state;
