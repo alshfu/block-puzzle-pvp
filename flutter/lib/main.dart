@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'firebase_options.dart';
 import 'storage/prefs.dart';
+import 'storage/ts_import.dart';
 
 /// Запускает приложение: грузит хранилище, поднимает Firebase (мягко) и
 /// DI-корень MVVM. Сбой инициализации Firebase не валит приложение — авторизация
@@ -25,6 +26,9 @@ import 'storage/prefs.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  // Cut-over: один раз переносим локальный прогресс старой TS-версии (web-only;
+  // на других платформах no-op). До build() ViewModel — чтобы они прочитали.
+  await importLegacyTsData(prefs);
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

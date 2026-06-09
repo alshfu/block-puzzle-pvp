@@ -205,3 +205,75 @@ sudo ufw enable
 | Высокий CPU | один процесс, ws connections не лимитируются — добавить `pm2`/cluster если надо |
 
 В случае непонятной ошибки — пришлите вывод `journalctl -u blockduel-pvp -n 200` мне в чат, я разберу.
+
+---
+
+# Frontend cut-over (Фаза 8): TS/React → Flutter Web
+
+Прод-фронт переключается с TS/React (Vite → `dist/`) на Flutter Web. Оба
+публикуются на GitHub Pages в ветку `gh-pages`; различается только источник
+сборки. Сервер PvP не трогаем — Flutter-клиент говорит с ним по тому же
+WS-протоколу.
+
+## Подготовка (уже в репо)
+
+- Версия Flutter-приложения: `2.0.0+1` (major bump).
+- Прод-хост и TLS вшиваются при сборке: `--dart-define=PARTY_HOST=pvp.alshfu.com
+  --dart-define=PARTY_TLS=true`.
+- `--base-href /block-puzzle-pvp/` (тот же путь, что у TS-версии на Pages).
+- Роутинг Flutter-web — hash (`/#/...`), поэтому deep-link и F5 работают на
+  Pages без `404.html`.
+- One-shot миграция: при первом запуске Flutter-web автоматически переносит
+  локальный прогресс старой TS-версии из `localStorage` (`storage/ts_import.dart`).
+
+## Go-live
+
+```bash
+npm test                 # TS (Vitest) — зелёные
+( cd flutter && flutter test )   # Flutter — зелёные
+npm run deploy:flutter   # build web (prod-флаги) + .nojekyll + gh-pages
+```
+
+`deploy:flutter` собирает `flutter/build/web` и публикует в `gh-pages`. Через
+~30–60 c обновится https://alshfu.github.io/block-puzzle-pvp/.
+
+## Проверка после go-live
+
+Открыть https://alshfu.github.io/block-puzzle-pvp/ и проверить:
+- офлайн-игра (vs Bot / hot-seat / аркада), звук, темы;
+- онлайн: матчмейкинг → матч → лидерборд (нужен запущенный сервер);
+- Google вход + синк (Firebase);
+- deep-link: `…/block-puzzle-pvp/#/stats`, `#/shop` открываются и переживают F5;
+- консоль без критических ошибок; перенос локального профиля сработал.
+
+## Post-cutover (на VPS, когда уверены, что старых TS-вкладок больше нет — ~1–2 дня)
+
+Теперь прод обслуживает только Flutter-клиент (шлёт `roomToken`, Origin =
+`https://alshfu.github.io`). Можно включить жёсткие проверки в systemd unit:
+
+```ini
+Environment=REQUIRE_ROOM_TOKEN=1
+Environment=ALLOWED_ORIGINS=https://alshfu.github.io
+```
+
+```bash
+sudo systemctl daemon-reload && sudo systemctl restart blockduel-pvp
+```
+
+> ⚠️ Не включать `REQUIRE_ROOM_TOKEN=1` ДО того, как старые TS-клиенты (которые
+> не шлют токен) перестанут подключаться — иначе их `hello` отклонится. Нативные
+> клиенты (iOS/Android/desktop) Origin не шлют — `ALLOWED_ORIGINS` их не блокирует.
+
+## Откат (мгновенный)
+
+```bash
+npm run deploy           # пере-публикует TS-сборку (dist/) в gh-pages
+```
+
+Если уже включали `REQUIRE_ROOM_TOKEN=1` — снять его и перезапустить сервер
+(старый TS-клиент токен не шлёт).
+
+## Дальше (отдельной задачей)
+
+Реструктуризация репо: `flutter/` → корень, `src/` → `legacy-ts/`. Делать после
+стабильного прода на Flutter, не в момент cut-over.
