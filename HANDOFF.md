@@ -40,7 +40,7 @@
 - **Прод cut-over** — ✅ выполнен 2026-06-10 (Pages на Flutter Web). Осталось: post-cutover hardening сервера на VPS (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS`, см. `DEPLOY.md`), когда старых TS-вкладок не останется.
 - Визуальный **gate pixel-parity** во всех 3 темах (приёмка пользователя, вне кода).
 - Ручная проверка онлайна / Google-входа / Firestore-синка (`flutter run -d chrome`).
-- Нативный Google-вход (Android/iOS — `flutterfire configure`), `firestore.rules` в `blockduel-web`, богатая облачная схема.
+- Нативный Google-вход (Android/iOS — `flutterfire configure`); **применить `firestore.rules`** (файл написан с валидацией схемы — нужно задеплоить в `blockduel-web`); богатая облачная схема.
 - Android SDK + iOS Simulator runtime (для нативных сборок).
 - ~~Снять/архивировать ветку `flutter-migration`~~ — сделано 2026-06-10 (тег `archive/flutter-migration` → `49a813e`, ветка удалена local + origin).
 - **Фаза 9 (Dart-сервер) НЕ делается** — решено остаться на Node/VPS-сервере.

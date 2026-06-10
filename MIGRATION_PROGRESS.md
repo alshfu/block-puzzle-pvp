@@ -402,8 +402,9 @@ Post-cutover hardening сервера (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS
 - [ ] Post-cutover hardening сервера (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS`) — на VPS.
 - [ ] Визуальный **gate pixel-parity** во всех 3 темах (приёмка пользователя).
 - [ ] Ручная проверка онлайна / Google-входа / Firestore-синка (`flutter run`).
-- [ ] Нативный Google-вход (Android/iOS — `flutterfire configure`), применить
-      `firestore.rules` в `blockduel-web`, богатая облачная схема.
+- [ ] Нативный Google-вход (Android/iOS — `flutterfire configure`); **применить
+      `firestore.rules`** в `blockduel-web` (файл написан 2026-06-10 с валидацией
+      схемы `users/{uid}` — осталось задеплоить в консоли/CLI); богатая схема.
 - [ ] Android SDK + iOS Simulator runtime (для нативных сборок).
 - [x] **2026-06-10** — ветка `flutter-migration` заархивирована (тег
       `archive/flutter-migration` → `49a813e`) и удалена (local + origin).

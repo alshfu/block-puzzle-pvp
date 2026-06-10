@@ -1,11 +1,58 @@
 rules_version = '2';
 
-// Каждый пользователь может читать и писать только в свою запись users/{uid}.
-// Никаких других коллекций пока не нужно.
+// Правила доступа Firestore для проекта `blockduel-web`.
+//
+// Модель данных: единственная коллекция `users/{uid}` — облачный снимок
+// прогресса игрока (см. lib/auth/cloud_snapshot.dart). Документ:
+//   { profile: map, achievements: string[], settings: map, updatedAt: int }
+// Запись идёт через set(..., merge: true) из lib/auth/sync_controller.dart,
+// поэтому request.resource.data — ПОЛНЫЙ результирующий документ после слияния
+// (валидируем его как целый документ).
+//
+// Лидерборд/ELO в Firestore НЕ хранится — он на Node/VPS-сервере (JSON), так
+// что других коллекций здесь нет. Всё, что не описано ниже, запрещено
+// по умолчанию (rules v2 = deny-by-default).
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Владелец — это аутентифицированный пользователь, чей uid совпадает с
+    // идентификатором документа.
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Проверка формы документа `users/{uid}`. Допускаем частичный набор полей
+    // (merge-запись может прислать не все ключи), но запрещаем посторонние
+    // ключи и неверные типы. Размеры ограничиваем как анти-абьюз
+    // (раздувание документа / спуфинг ника).
+    function isValidUserDoc(data) {
+      return data.keys().hasOnly(['profile', 'achievements', 'settings', 'updatedAt'])
+        // profile: map; ник/аватар (если заданы) — строки в разумных пределах.
+        && (!('profile' in data) || (
+              data.profile is map
+              && (!('nick' in data.profile)
+                    || (data.profile.nick is string && data.profile.nick.size() <= 40))
+              && (!('avatar' in data.profile)
+                    || (data.profile.avatar is string && data.profile.avatar.size() <= 32))
+           ))
+        // achievements: список строк, ограниченный по длине.
+        && (!('achievements' in data) || (
+              data.achievements is list && data.achievements.size() <= 1000
+           ))
+        // settings: map.
+        && (!('settings' in data) || data.settings is map)
+        // updatedAt: целое число (мс epoch).
+        && (!('updatedAt' in data) || data.updatedAt is int);
+    }
+
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if isOwner(uid);
+      allow write: if isOwner(uid) && isValidUserDoc(request.resource.data);
+    }
+
+    // Любые другие документы/коллекции — запрещены.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
