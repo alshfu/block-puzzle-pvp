@@ -4,105 +4,103 @@
 
 Полная спецификация: `TZ_BlockDuel_9x9.md` (RU, v1.0) — **источник истины** по правилам, балансу и фазам.
 
-**Принято решение (2026-06-05):** проект мигрирует на **Dart + Flutter (+ Flame)** под все платформы. План — `MIGRATION_FLUTTER.md`. IDE — **IntelliJ IDEA Ultimate 2026.1.3**.
-
-> ⚠️ **РЕСТРУКТУРИЗАЦИЯ РЕПО ВЫПОЛНЕНА (2026-06-09).** Flutter-проект теперь в
-> **корне** репозитория (`lib/`, `test/`, `web/`, `pubspec.yaml`, `android/`,
-> `ios/`, `macos/`, `integration_test/`, `assets/`). Старый TS/React-фронт
-> перенесён в **`legacy-ts/`** (был `src/`) и считается legacy. Многие пути в
-> разделах ниже (`src/core`, `flutter/lib/...`) **устарели** — читать как
-> `legacy-ts/core` и `lib/...` соответственно.
->
-> Важно: **Node-сервер `server/` (живой прод-бэкенд) импортирует ядро из
-> `legacy-ts/core`** — TS-ядро остаётся живым как зависимость сервера, даже хотя
-> React-UI ретайрнут. Flutter-команды (`flutter test/analyze/build`) и
-> `npm run build:flutter`/`deploy:flutter` запускаются **из корня**.
-> Cut-over прода (Pages: TS→Flutter) — см. `DEPLOY.md`, раздел «Frontend cut-over».
-
 **Если ты новый AI-ассистент в этом проекте — прочитай `HANDOFF.md` перед началом работы.** Там карта проекта, хронология решений, правила работы, IDE setup.
 
 ## Текущий статус
 
-Фазы 1–4 ТЗ реализованы: ядро, UI, vs Bot (3 уровня), Hot-seat, онлайн PvP, прогрессия, магазин, ачивки. Продакшн-сборка живёт на GitHub Pages, онлайн-сервер — на VPS.
+- **Основное приложение — Dart + Flutter** (миграция с TS/React завершена, фазы 0–8 в `MIGRATION_FLUTTER.md` закрыты). Flutter-проект живёт в **корне** репозитория (`lib/`, `test/`, `web/`, `pubspec.yaml`, `android/`, `ios/`, `macos/`, `integration_test/`, `assets/`). Версия `2.0.0+1`, Flutter 3.44 / Riverpod 3.3 / Flame 1.37. IDE — **IntelliJ IDEA Ultimate**.
+- **Прод переключён на Flutter Web (cut-over 2026-06-10):** GitHub Pages отдаёт сборку `npm run deploy:flutter`. Откат на TS-сборку — `npm run deploy` (см. `DEPLOY.md`).
+- **Старый TS/React-фронт** — в `legacy-ts/` (бывший `src/`), ретайрнут как UI, **но `legacy-ts/core` остаётся живой зависимостью Node-сервера** `server/` (прод-бэкенд PvP на VPS).
+- Фазы 1–4 ТЗ реализованы: ядро, UI, vs Bot (3 уровня), Hot-seat, онлайн PvP, прогрессия, магазин, ~120 ачивок. В работе — macOS-сборка (auth ждёт значений из Firebase Console, см. `MACOS_AUTH_SETUP.md`); релиз v2.0.0 отложен.
 
-### Слои и ключевые файлы
+### Слои и ключевые файлы (Flutter, актуально)
 
-- **Ядро** (`src/core/index.ts`) — pure-TS: типы, PRNG `mulberry32`, 7-bag, доска, очистка, очки, перебор ходов, бот 3 уровней с `BOT_WEIGHTS`, дешёвый `opponentThreatGain` (missing=1), blitz-таймер (`turnTimeForRound`), `forcePlace`. **Единственный** источник правды по логике игры; импортируется и клиентом, и сервером.
-- **Entry** — `src/main.tsx` + `src/ui/App.tsx` (роутинг экранов).
-- **Главный хук** — `src/ui/useGame.ts` (useReducer + Bag/rng в refs, бот через setTimeout, blitz tick 100мс).
-- **Экраны** (`src/ui/screens/`) — Menu, Setup, Game, Profile, Settings, Tutorial, Daily, Shop, Achievements, Leaderboard, OnlineMenu, OnlineGame, ResultOverlay.
-- **Компоненты** (`src/ui/components/`) — Board, Hand, Scoreboard, PlayerCard, TurnTimer, TransformControls, Confetti, ComboFlash, ToastStack, PowerupsPanel, PauseOverlay, DragLayer, маскоты/декор (CartoonPony, Mascot, FloatingTheme, ThemeBackdrop, ThemeSwitch) и пр.
-- **Темы** (`src/ui/themes.ts` + `styles.css`) — `neutral`, `candy`, `night`. CSS-переменные на `.app-root`.
-- **Звук** — `src/ui/audio.ts` (синтез Web Audio) + `src/ui/music.ts` (фоновые темы).
-- **Онлайн PvP** — `src/ui/online/{client.ts,useOnlineGame.ts}` (PartySocket-совместимый WS) ↔ `server/{index.ts,lobby.ts,room.ts,leaderboard.ts}` (Node WS на VPS, server-authoritative, ELO K=24).
-- **Auth + sync** — `src/ui/auth/{auth.ts,firebase.ts,sync.ts}` (Google sign-in через Firebase + Firestore cross-device).
-- **Магазин** — `src/ui/shop/{powerups.ts,skins.ts}` (валюта = кристаллы, без реальных платежей).
-- **Ачивки** — `src/ui/achievements/{definitions.ts,engine.ts}` (~120: 15 базовых + 105 PvP).
-- **Сохранение** — `src/ui/storage/*` (profile, stats, settings, saveGame с drawCounts для детерминистичного resume 7-bag).
-- **Tests** — `tests/` Vitest, 7 файлов, **46 тестов**: clears, scoring, 7-bag, deadlock+forcePlace, бот (validity + timing + BOT_WEIGHTS), детерминизм (golden), таймер.
-- **Tools** — `tools/bot-sim.ts` для калибровки бота.
+- **Ядро** (`lib/core/`) — pure Dart, порт TS-ядра бит-в-бит: `rng.dart` (mulberry32), `bag.dart` (7-bag), `pieces.dart`, `board.dart` (постановка/очистки), `scoring.dart`, `moves.dart` (перебор ходов), `bot.dart` (3 уровня, `botWeights`), `timer.dart` (blitz `turnTimeForRound`), `types.dart` (включая `RuleConfig`/`defaultConfig`), фасад `core.dart`. **Единственный** источник правды по игровой логике на Dart-стороне.
+- **Entry** — `lib/main.dart` + `lib/app.dart`; роутинг — `lib/ui/router.dart`.
+- **ViewModel-слой (Riverpod-нотифайеры, без `BuildContext`)** — `lib/game/game_notifier.dart` (офлайн-матч: бот, blitz tick, save/resume), `lib/online/online_game_notifier.dart` (онлайн-матч, reconnect), контроллеры в `lib/{achievements,audio,auth,daily,profile,settings,shop,tutorial}/`.
+- **View-слой** (`lib/ui/`) — `screens/` (Menu, Setup, Game, Profile, Settings, Tutorial, Daily, Shop, Achievements, Leaderboard, OnlineMenu, OnlineGame, Stats…), `widgets/` (BoardView, HandView, TurnTimer, MiniPiece…), `decor/` (маскоты, конфетти, ComboFlash), `theme/` + `design_tokens.dart` (темы `neutral`, `candy`, `night`), `responsive.dart`.
+- **Звук** — `lib/audio/` (синтез, фоновые темы; порт Web Audio-подхода).
+- **Онлайн PvP** — `lib/online/` (wire-протокол, маппинг в GameState) ↔ `server/{index.ts,lobby.ts,room.ts,leaderboard.ts,limits.ts}` (Node WS на VPS, server-authoritative, ELO K=24, **импортирует `legacy-ts/core`**).
+- **Auth + sync** — `lib/auth/` + `lib/firebase_options.dart` (Google sign-in через Firebase, проект `blockduel-web`, Firestore cross-device sync; правила — `firestore.rules`).
+- **Хранилище** — `lib/storage/` (profile, stats, settings, saveGame; детерминистичный resume 7-bag).
+- **Tests** — `test/` — **176 тестов** в 32 файлах (core, game, online, achievements, audio, decor, pilot…), включая golden-тесты детерминизма **бит-в-бит с TS-ядром** (`test/golden/determinism_golden_test.dart`, `test/core/rng_golden_test.dart`). Плюс `integration_test/`.
+- **Legacy-TS тесты** — `tests/` Vitest, 8 файлов, **55 тестов** (покрывают `legacy-ts/core` + серверную логику; гоняются `npm test`).
+- **Tools** — `tools/bot-sim.ts` (калибровка бота, по TS-ядру), `tools/gen_test_plan.py` (QA-планы в `qa/`), `tools/pentest_local.mjs`.
 - **PartyKit-вариант** — `party/*.ts` + `partykit.json` сохранены как опция, не задействованы (онлайн крутится на собственном VPS).
-- **Legacy** — `legacy/blockduel-demo.html` и `legacy/blockduel-jsx-prototype/` инертный референс по визуалу. **Не подключены к сборке.** См. `legacy/README.md`.
-- **Конфиги** — `vite.config.ts`, `vitest.config.ts`, `tsconfig.{app,node}.json`.
+- **Legacy** — `legacy/blockduel-demo.html` и `legacy/blockduel-jsx-prototype/` — инертный визуальный референс, не в сборке (`legacy/README.md`); `legacy-ts/` — бывший фронт, см. выше.
+- **Конфиги** — `pubspec.yaml`, `analysis_options.yaml`, `firebase.json`; TS-обвязка: `vite.config.ts`, `vitest.config.ts`, `tsconfig.{app,node}.json`.
 
 ## Команды
 
 ```bash
-npm run dev          # Vite dev server на http://localhost:5173
-npm run build        # tsc -b && vite build → dist/
-npm test             # Vitest (one-shot, 46 тестов)
-npm run test:watch   # Vitest watch
-npm run typecheck    # tsc -b --noEmit
-npm run deploy       # build + gh-pages → Pages обновится ~30 сек
-npm run server:dev   # локальный WS-сервер (PORT=1999)
-npm run server:start # то же, для прода
-npm run party:dev    # PartyKit-вариант (опционально, не используется)
+# Flutter (основное приложение) — из корня
+flutter run -d chrome          # dev-запуск Web
+flutter test                   # 176 тестов
+flutter analyze                # статический анализ
+npm run build:flutter          # release-сборка Web (PARTY_HOST=pvp.alshfu.com)
+npm run deploy:flutter         # build + gh-pages → прод Pages (~30 сек)
+npm run build:macos            # release-сборка macOS
+npm run run:macos:prod         # flutter run -d macos с прод PARTY_HOST
+npm run deploy:rules           # firebase deploy --only firestore:rules
+
+# Legacy-TS ядро + сервер
+npm test                       # Vitest (one-shot, 55 тестов: ядро + сервер)
+npm run typecheck              # tsc -b --noEmit
+npm run server:dev             # локальный WS-сервер (PORT=1999)
+npm run server:start           # то же, для прода (systemd на VPS)
+npm run dev / build / deploy   # старый TS-фронт (только как откат прода)
 npx tsx tools/bot-sim.ts --games 1000   # симулятор калибровки бота
 ```
 
 ## Архитектура
 
-Жёсткое разделение слоёв (ТЗ § 6.1):
+Жёсткое разделение слоёв (ТЗ § 6.1) + **MVVM** на Flutter-стороне:
 
 ```
-Презентация (UI, ввод, анимации)              ← src/ui/
+View (lib/ui/ — widgets, без логики)
+    ↓ props / callbacks
+ViewModel (Riverpod-нотифайеры: lib/game, lib/online, контроллеры; без BuildContext)
     ↓
-Игровое ядро (pure, детерминированное)         ← src/core/
+Model: игровое ядро (lib/core/, pure Dart) + репозитории (lib/storage/, lib/auth/)
     ↑
-Сетевой слой (server-authoritative онлайн)     ← server/  (импортирует src/core)
+Сетевой слой (server-authoritative онлайн)  ← server/ (Node, импортирует legacy-ts/core)
 ```
 
-**Ядро (`src/core/`) обязано оставаться pure и детерминированным:**
-- никаких `Math.random()` — только переданный `rng: () => number` от `makeRng(seed)`;
-- никакого `Date.now()`, `fetch`, `localStorage`, DOM, импортов UI-фреймворков;
-- одинаковый `(matchSeed, RuleConfig, moveLog)` → одинаковое состояние (нужно для реплеев, server-authoritative онлайна, golden-тестов, анти-чита).
+**Ядро (`lib/core/`, зеркально `legacy-ts/core`) обязано оставаться pure и детерминированным:**
+- никаких `Random()`/`Math.random()` — только переданный `rng` от `makeRng(seed)` (mulberry32);
+- никакого `DateTime.now()`/`Date.now()`, I/O, таймеров, импортов Flutter/DOM;
+- одинаковый `(matchSeed, RuleConfig, moveLog)` → одинаковое состояние (нужно для реплеев, server-authoritative онлайна, golden-тестов, анти-чита);
+- **два ядра (Dart и TS) должны совпадать бит-в-бит** — паритет охраняют golden-тесты; правишь логику в одном — правь во втором и обновляй golden.
 
-Презентационный код (drag-and-drop, анимации, звук, тикание таймера) — только в `src/ui/`. Серверный авторитет (таймер, anti-cheat ориентаций, ELO) — в `server/`, но игровая механика — через импорт из `src/core/`, не дублировать.
+Презентационный код (drag-and-drop, анимации, звук, тикание таймера) — только в `lib/ui/` + нотифайерах. Серверный авторитет (таймер, anti-cheat ориентаций, ELO) — в `server/`, но игровая механика — через импорт из `legacy-ts/core`, не дублировать.
 
 ## Деплой
 
-- **Frontend** — GitHub Pages, ветка `gh-pages`. После значимых изменений: `npm test && npm run deploy`. Actions workflow выключен (`.github/workflows/deploy.yml.disabled`) — биллинг.
-- **Backend (PvP)** — VPS `pvp.alshfu.com`, Ubuntu 24.04, systemd unit `blockduel-pvp.service`, nginx + Let's Encrypt. Клиент указывает на сервер через `VITE_PARTY_HOST` в `.env.local` (gitignored). После правок `server/*.ts` нужен `git pull && systemctl restart blockduel-pvp` на VPS (делает пользователь).
-- Подробности — в `DEPLOY.md`.
+- **Frontend** — GitHub Pages, ветка `gh-pages`, **Flutter Web**. После значимых изменений: `flutter test && npm run deploy:flutter`. Actions workflow выключен (`.github/workflows/deploy.yml.disabled`) — биллинг.
+- **Backend (PvP)** — VPS `pvp.alshfu.com`, Ubuntu 24.04, systemd unit `blockduel-pvp.service`, nginx + Let's Encrypt. Flutter-клиент получает адрес через `--dart-define=PARTY_HOST/PARTY_TLS` (зашиты в npm-скрипты); TS-клиент — через `VITE_PARTY_HOST` в `.env.local` (gitignored). После правок `server/*.ts` нужен `git pull && systemctl restart blockduel-pvp` на VPS (делает пользователь).
+- Подробности — в `DEPLOY.md` (включая post-cutover hardening: `REQUIRE_ROOM_TOKEN=1`, `ALLOWED_ORIGINS`).
 
 ## Конвенции
 
-- Идентификаторы и комментарии в коде — английский (`BoardCell`, `enumerateMoves`, `RuleConfig`).
+- Идентификаторы и комментарии в коде — английский (`BoardCell`, `enumerateMoves`, `RuleConfig`); константы в Dart — `lowerCamelCase`.
+- Каждый Dart-файл начинается с подробной шапки-комментария (что за модуль, ключевые функции/классы).
 - Документация и общение с пользователем — русский; технические термины можно оставлять английскими.
-- Дефолты конфига зафиксированы в `DEFAULT_CONFIG` (`src/core/index.ts`) и в ТЗ § 15 — должны совпадать.
+- MVVM обязателен: логика — в ядре/репозиториях, состояние — в нотифайерах, виджеты — тупые.
+- Дефолты конфига зафиксированы в `defaultConfig` (`lib/core/types.dart`), `DEFAULT_CONFIG` (`legacy-ts/core/index.ts`) и ТЗ § 15 — должны совпадать.
 - Формула очков: `base = N*(N+1)/2`, `mult = 1 + 0.1·min(combo, comboCap)`, `+15` за perfect clear.
 - 7-bag: у каждого игрока свой мешок (`sharedBag = false`).
 - Blitz: `turnTimeStart=12`, `turnTimeDecay=0.4`, `turnTimeMin=3`, `onTimeout="forcePlace"`.
 
 ## Стек
 
-ТЗ рекомендует **Flutter + Flame** как целевой стек. Текущая реализация — **TypeScript + React + Vite + Vitest** (фронт), **Node + ws + tsx** (сервер), **Firebase Auth + Firestore** (sync). Не предлагай миграцию на Flutter без явного запроса.
+**Основной:** Dart + Flutter (+ Flame) + Riverpod — все платформы (Web в проде, macOS в работе, Android/iOS собираются). **Сервер:** Node + ws + tsx (`server/`, ядро из `legacy-ts/core`). **Auth/sync:** Firebase Auth + Firestore (проект `blockduel-web`). **Тесты:** flutter_test + Vitest (legacy-ядро/сервер).
 
 ## Чего НЕ делать самостоятельно
 
-- Не дублировать игровую логику в `src/ui/` или `server/` — всё через импорт из `src/core/`.
-- Не править файлы в `legacy/` — они инертные.
+- Не дублировать игровую логику в `lib/ui/`, нотифайерах или `server/` — всё через ядро (`lib/core/` / `legacy-ts/core`).
+- Не ломать паритет ядер: правка игровой логики только синхронно в обоих ядрах + golden-тесты.
+- Не править файлы в `legacy/` — они инертные. `legacy-ts/ui` тоже не развивать (только критические фиксы для отката прода).
 - Не отходить от ТЗ по правилам/балансу без явного запроса.
 - Не возвращать `.github/workflows/deploy.yml.disabled` обратно в `deploy.yml` без подтверждения, что биллинг разблокирован.
-- Не пушить с красными тестами — Pages закэширует сломанный сайт.
+- Не пушить с красными тестами и не деплоить без `flutter test` — Pages закэширует сломанный сайт.
 - Не трогать `/etc/nginx/sites-enabled/alshfu-arena.conf` на VPS (это сторонний сайт пользователя).
