@@ -405,7 +405,8 @@ Post-cutover hardening сервера (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS
 - [ ] Нативный Google-вход (Android/iOS — `flutterfire configure`), применить
       `firestore.rules` в `blockduel-web`, богатая облачная схема.
 - [ ] Android SDK + iOS Simulator runtime (для нативных сборок).
-- [ ] Снять/архивировать устаревшую ветку `flutter-migration`.
+- [x] **2026-06-10** — ветка `flutter-migration` заархивирована (тег
+      `archive/flutter-migration` → `49a813e`) и удалена (local + origin).
 
 **Решённые открытые вопросы (`MIGRATION_FLUTTER.md` §17):** версия = **2.0.0**;
 web renderer — дефолтный; звук — **синтез в Dart** (не запекать .wav); сервер

@@ -42,7 +42,7 @@
 - Ручная проверка онлайна / Google-входа / Firestore-синка (`flutter run -d chrome`).
 - Нативный Google-вход (Android/iOS — `flutterfire configure`), `firestore.rules` в `blockduel-web`, богатая облачная схема.
 - Android SDK + iOS Simulator runtime (для нативных сборок).
-- Снять/архивировать устаревшую ветку `flutter-migration` (и `origin/`).
+- ~~Снять/архивировать ветку `flutter-migration`~~ — сделано 2026-06-10 (тег `archive/flutter-migration` → `49a813e`, ветка удалена local + origin).
 - **Фаза 9 (Dart-сервер) НЕ делается** — решено остаться на Node/VPS-сервере.
 
 ---

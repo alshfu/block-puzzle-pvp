@@ -49,7 +49,8 @@
       Flutter Web (gh-pages `e6c30a1`, live отдаёт `flutter_bootstrap.js`).
 - [ ] Post-cutover (на VPS, когда старых TS-вкладок не осталось): включить
       `REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS` (см. DEPLOY.md).
-- [ ] Снять/архивировать устаревшую ветку `flutter-migration`.
+- [x] **2026-06-10** — ветка `flutter-migration` заархивирована: тег
+      `archive/flutter-migration` (→ `49a813e`), ветка удалена (local + origin).
 
 ---
 
