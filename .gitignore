@@ -34,6 +34,13 @@ tools/debug-page.ts
 /build/
 firebase-debug.log
 firebase-debug.*.log
+# Firebase эмулятор (логи/экспорт/кэш) — генерятся при `firebase emulators:*`
+firestore-debug.log
+ui-debug.log
+database-debug.log
+pubsub-debug.log
+.firebase/
+firebase-export-*/
 
 # Flutter/Dart (проект в корне после реструктуризации)
 .dart_tool/
