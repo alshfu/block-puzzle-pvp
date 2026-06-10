@@ -1,8 +1,22 @@
 # Миграция BlockDuel 9×9 → Dart + Flutter
 
-**Статус:** план, не реализация. Источник правды по правилам и балансу — `TZ_BlockDuel_9x9.md`.
-**Дата:** 2026-06-05.
-**Целевая версия Dart/Flutter:** Dart 3.5+, Flutter 3.24+ (stable channel).
+**Статус:** ✅ **ВЫПОЛНЕНО (фазы 0–8) и влито в `main`** (merge `8a63a82`,
+2026-06-09). Этот документ — исходный **план**; журнал фактически сделанного
+с датами и коммитами — `MIGRATION_PROGRESS.md`. Источник правды по правилам и
+балансу — `TZ_BlockDuel_9x9.md`.
+**Дата плана:** 2026-06-05. **Дата завершения миграции:** 2026-06-09.
+**Фактический стек:** Dart 3.12 / Flutter 3.44.1 / Flame 1.37 / Riverpod 3.3.1
+(в плане ниже встречаются более ранние пины — это исходные оценки).
+
+---
+
+> ⚠️ **СТАТУС НА 2026-06-10.** Миграция завершена: Flutter-проект в **корне** репо
+> (`lib/`, `test/`, `web/`, `pubspec.yaml`), старый TS/React → **`legacy-ts/`**
+> (ядро `legacy-ts/core` живо как зависимость Node-сервера). 176 тестов зелёные,
+> `flutter analyze` чист. **Прод ещё на TS** — остался cut-over Pages на Flutter
+> Web (`npm run deploy:flutter`, см. `DEPLOY.md`). Фаза 9 (Dart-сервер) — НЕ
+> делается (решено: остаёмся на Node/VPS-сервере). Пути вида `flutter/lib/...`
+> ниже теперь читать как `lib/...`. Подробности — `MIGRATION_PROGRESS.md`.
 
 ---
 
@@ -657,7 +671,7 @@ CSS-transitions/keyframes → `flutter_animate` (декларативный API,
 - [ ] `src/` → `legacy-ts/` (или удалить — git хранит историю).
 - [ ] Обновить `package.json` → удалить frontend-зависимости, оставить только серверные (если оставляем Node).
 - [ ] Обновить `CLAUDE.md`: новый стек, новые команды, новая структура.
-- [ ] Обновить `DEPLOY.md`: `flutter build web --release --base-href /block_puzzle_pvp/` → `build/web` → `gh-pages`.
+- [ ] Обновить `DEPLOY.md`: `flutter build web --release --base-href /block-puzzle-pvp/` → `build/web` → `gh-pages`. *(сделано: `npm run build:flutter`/`deploy:flutter`)*
 - [ ] Обновить `ROADMAP.md`: фазы 5-11 переписать под Dart.
 - [ ] Закрыть ветку `legacy-ts` тегом `v1.6.1-final-ts` для отката.
 
@@ -675,7 +689,7 @@ CSS-transitions/keyframes → `flutter_animate` (декларативный API,
 
 ### 9.1 Web
 - **Renderer:** CanvasKit (по умолчанию) — даёт стабильный рендер Flame, но +2МБ к бандлу. Альтернатива — HTML renderer (легче, но Flame работает хуже). Когда Flutter WASM-renderer стабилизируется (вероятно 2026) — переключиться.
-- **Base href:** `/block_puzzle_pvp/` для GitHub Pages.
+- **Base href:** `/block-puzzle-pvp/` для GitHub Pages.
 - **PWA:** Flutter Web из коробки даёт `manifest.json` + service worker. Сохранить иконки/manifest от текущей версии.
 - **Firebase Auth Web:** требует `firebase-auth-compat.js` + popup-flow. Проверить cross-origin для Pages.
 
@@ -830,19 +844,24 @@ npm run server:dev
 
 ## 15. Чеклист (top-level)
 
-- [ ] §3 структура проекта согласована
-- [ ] §5 pubspec.yaml зафиксирован
-- [ ] §6 дизайн-стратегия одобрена; эталонные screenshot-ы и шрифты собраны
-- [ ] Фаза 0: skeleton + IDE настроена + golden dump из TS + дизайн-эталоны
-- [x] Фаза 1: ядро Dart + golden детерминизма зелёный
-- [x] Фаза 2: UI shell + design tokens + Board + hot-seat играется (golden MenuScreen — отложен)
+- [x] §3 структура проекта согласована
+- [x] §5 pubspec.yaml зафиксирован (flame 1.37, riverpod 3.3.1)
+- [x] §6 дизайн-стратегия одобрена; шрифты/SVG собраны (golden MenuScreen отложен)
+- [x] Фаза 0: skeleton + IDE настроена + golden dump из TS
+- [x] Фаза 1: ядро Dart + golden детерминизма зелёный (bit-for-bit, VM + Web)
+- [x] Фаза 2: UI shell + design tokens + Board + hot-seat играется
 - [x] Фаза 3: бот + blitz
 - [x] Фаза 4: storage + ачивки + daily + resume
-- [ ] Фаза 5: декор + анимации + звук + **полный pixel-parity дизайна**
-- [ ] Фаза 6: online + auth + sync, кросс-протокол OK
-- [ ] Фаза 7: shop + powerups
-- [ ] Фаза 8: cut-over, CLAUDE/ROADMAP/DEPLOY обновлены
-- [ ] Фаза 9 (опц.): Dart-сервер + monorepo shared core
+- [x] Фаза 5: декор + анимации + звук (визуальный pixel-parity gate — приёмка пользователя)
+- [x] Фаза 6: online (6A) + auth + sync (6B), кросс-протокол к Node-серверу OK
+- [x] Фаза 7: shop + powerups (+ arcade + tutorial + hardening)
+- [x] Фаза 3b: богатая онлайн-статистика + PvP-ачивки + экран /stats
+- [x] Security: аудит PvP-сервера + SEC-1..3
+- [x] Фаза 8: обвязка cut-over + реструктуризация (Flutter→корень, src/→legacy-ts/), merge в main
+- [ ] **Прод cut-over:** `npm run deploy:flutter` (Pages TS → Flutter Web) — остаётся
+- [ ] ~~Фаза 9 (опц.): Dart-сервер~~ — **НЕ делаем**, остаёмся на Node/VPS-сервере
+
+> Детальный журнал по каждой фазе с датами/коммитами — `MIGRATION_PROGRESS.md`.
 
 ---
 
@@ -877,11 +896,16 @@ npm run server:dev
   Riverpod-нотифайеры, View=виджеты). См. §2 «Архитектурный паттерн: MVVM».
 - ~~Дизайн~~ — **100% pixel-parity**, см. §6.
 
-**Остаются:**
-1. **Сервер мигрируем или нет?** Рекомендация: на Этапе 1 — нет; Фаза 9 опциональна, но даёт shared core (большой плюс).
-2. **Desktop в первом релизе?** Рекомендация: нет, только Web + iOS + Android. Desktop позже.
-3. **Web renderer:** CanvasKit (по умолчанию, +2МБ) или HTML (меньше, хуже Flame и шрифты могут «поплыть» — риск для дизайна §6). Рекомендация: **CanvasKit** — это критично для соблюдения §6 (одинаковый рендер шрифтов и SVG на всех платформах).
-4. **Звук:** запекать .wav (теряем процедурный синтез) или искать Dart-обёртку Web Audio. Рекомендация: запечь.
-5. **Версия после миграции:** `2.0.0` (major bump). OK?
-6. **Сохранёнки/профили существующих игроков:** Firestore-схема та же, Hive начнётся с нуля для локальных профилей — нужен миграционный шаг? Большинство активных игроков уже синкаются через Firebase, локальные потеряются. Рекомендация: добавить one-shot import из `localStorage` на Web при первом запуске Flutter-версии (читать window.localStorage из dart:html, маппить в Hive).
-7. **Эталонные screenshot-ы дизайна (§6.8):** делать руками из браузера в фиксированных состояниях или скриптом на Playwright? Рекомендация: Playwright (детерминированно, воспроизводимо).
+**Все вопросы закрыты (по итогам миграции):**
+1. ~~Сервер мигрируем?~~ — **Нет.** Остаёмся на существующем Node/VPS-сервере;
+   Flutter-клиент говорит с ним по кросс-протоколу. Фаза 9 (Dart-сервер) не делается.
+2. ~~Desktop в первом релизе?~~ — Только Web + iOS + Android; macOS поддержан
+   «as-is» (тёмный фон/иконки/брендинг), но в публичный релиз не выкладывается.
+3. ~~Web renderer?~~ — **дефолтный** (без принудительного HTML-рендерера).
+4. ~~Звук?~~ — **синтезируется в Dart** (порт Web Audio, без запекания .wav).
+   Решение оказалось лучше плана — процедурный синтез сохранён.
+5. ~~Версия?~~ — **2.0.0** (зафиксировано в `pubspec.yaml`).
+6. ~~Миграция профилей?~~ — one-shot импорт из `localStorage` реализован
+   (`lib/storage/ts_import*.dart`); персист на `shared_preferences` (не Hive).
+7. ~~Эталонные screenshot-ы?~~ — детерминизм закрыт golden-дампом ядра; полный
+   визуальный pixel-parity остаётся ручной приёмкой пользователя.

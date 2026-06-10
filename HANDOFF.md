@@ -1,152 +1,120 @@
 # HANDOFF — заметка для следующего AI-ассистента
 
 **Кому:** Claude (или любой AI-ассистент), которого пользователь подключит к этому проекту в следующих сессиях.
-**От кого:** Claude Opus 4.7, сессия 2026-06-05.
-**Зачем:** чтобы ты с порога понимал **что** было сделано, **где** искать актуальное, **когда** какое решение было принято и **почему**. Не надо переоткрывать то, что уже зафиксировано.
+**От кого:** обновлено Claude Opus 4.8, сессия 2026-06-10 (исходная версия — Opus 4.7, 2026-06-05).
+**Зачем:** чтобы ты с порога понимал **что** сделано, **где** искать актуальное, **когда** какое решение принято и **почему**. Не переоткрывай то, что уже зафиксировано.
 
-> Этот документ — не план и не ТЗ. План миграции в `MIGRATION_FLUTTER.md`, правила игры в `TZ_BlockDuel_9x9.md`. Это страница «как тут жить и не наломать дров».
+> Это не план и не ТЗ. План миграции — `MIGRATION_FLUTTER.md`, журнал фактически сделанного — `MIGRATION_PROGRESS.md`, правила игры — `TZ_BlockDuel_9x9.md`. Здесь — «как тут жить и не наломать дров».
 
 ---
 
 ## 1. TL;DR за 30 секунд
 
-- Проект **BlockDuel 9×9** — соревновательный блок-пазл; Фазы 1–4 ТЗ уже реализованы на **TypeScript + React + Vite + Node**.
-- **Принято решение (2026-06-05):** полная миграция на **Dart + Flutter (+ Flame)** под все платформы. См. `MIGRATION_FLUTTER.md`.
-- **Реализация миграции ЕЩЁ НЕ НАЧАТА.** На момент написания этого хэндоффа существует только план (документ) и обновлённые memory-записи. Кодовая база TS пока живая и единственная.
-- **IDE пользователя:** **IntelliJ IDEA Ultimate 2026.1.3** + плагины Flutter / Dart / Android. Бесплатные альтернативы (VS Code, Android Studio как «бесплатная», Cursor) **не предлагать** — у пользователя оплачена полная JetBrains All Products подписка.
-- **Сервер онлайна** живёт на VPS `pvp.alshfu.com` и работает; на Этапе 1 миграции не трогаем.
-- **Источник правды по правилам** — `TZ_BlockDuel_9x9.md` (786 строк, RU, v1.0).
+- Проект **BlockDuel 9×9** — соревновательный блок-пазл (тетромино на доске 9×9, очистка строк/столбцов/боксов).
+- **Миграция на Dart + Flutter (+ Flame + Riverpod) ЗАВЕРШЕНА и влита в `main`** (merge `8a63a82`, 2026-06-09). Flutter-проект — в **корне** репозитория.
+- Старый TS/React-фронт перенесён в **`legacy-ts/`** и ретайрнут. **НО:** его pure-TS ядро `legacy-ts/core` ещё **живое** — это зависимость Node PvP-сервера (`server/`).
+- **Прод ещё на TS.** GitHub Pages отдаёт старую TS-сборку до cut-over (`npm run deploy:flutter`). VPS-сервер не трогался.
+- **Архитектура — строго MVVM** (Model=ядро/репозитории, ViewModel=Riverpod-нотифайеры без `BuildContext`, View=виджеты без логики).
+- **Стек:** Dart 3.12 / Flutter 3.44.1 / Flame 1.37 / Riverpod 3.3.1. **176 тестов** зелёные, `flutter analyze` чист.
+- **IDE пользователя:** **IntelliJ IDEA Ultimate 2026.1.3** + плагины Flutter/Dart/Android. Бесплатные альтернативы (VS Code, Android Studio как «бесплатная», Cursor) **не предлагать** — оплачена JetBrains All Products подписка.
+- **Источник правды по правилам** — `TZ_BlockDuel_9x9.md` (RU, v1.0).
 
 ---
 
-## 2. Что (что сделано, что в процессе, что не сделано)
+## 2. Что (сделано / осталось)
 
-### 2.1 Что уже реализовано (в TS-коде, прод)
+### 2.1 Что реализовано (Flutter, в `main`)
 
-- Ядро игры (`src/core/index.ts`, 611 строк): доска, 7-bag, очистка, scoring, бот 3 уровней, blitz-таймер, forcePlace, детерминизм.
-- UI (`src/ui/` — экраны, компоненты, темы, drag-and-drop, анимации, звук).
-- Vs Bot, Hot-seat, Online PvP, прогрессия, магазин, ~120 ачивок, daily quests.
-- Firebase Google sign-in + Firestore cross-device sync.
-- Сервер `server/` (Node + ws + tsx) — server-authoritative, ELO K=24, лидерборд.
-- 46 Vitest-тестов.
-- Деплой: GitHub Pages (gh-pages branch) + VPS (systemd + nginx + Let's Encrypt).
+- **Ядро** (`lib/core/`) — pure-Dart порт TS-ядра, **bit-for-bit детерминизм** доказан golden-тестами (VM + Web): PRNG, 7-bag, доска/очистки, scoring v1.6, бот 3 уровней, blitz/force-place.
+- **UI/Flame** (`lib/ui/`, `lib/game/`) — доска/рука/score, drag-and-place + tap-to-rotate, 3 темы (neutral/candy/night) с дизайн-токенами 1:1, маскоты/ponies (`flutter_svg`), Confetti (Flame), ComboFlash, Toast/Pause.
+- **Звук/музыка** (`lib/audio/`) — синтезируются в Dart (порт Web Audio), без аудиофайлов.
+- **Контент** — Storage/Profile/Settings, ~120 ачивок (15 базовых + 105 PvP), Daily quests, детерминистичный resume, Arcade, Tutorial (5 шагов), магазин (две валюты, скины доски, power-ups), 12 аватаров.
+- **Онлайн PvP** (`lib/online/`) — Dart-клиент к существующему Node/VPS-серверу (кросс-протокол): лобби, матчмейкинг, живой матч (reconnect+ремач), ELO-лидерборд, богатая онлайн-статистика, экран `/stats`.
+- **Auth+sync** (`lib/auth/`) — Google sign-in (Firebase `blockduel-web`, web popup) + Firestore cross-device sync.
+- **Сервер** (`server/`, Node+ws+tsx) — server-authoritative, ELO K=24; импортирует ядро из `legacy-ts/core`. Проведён аудит безопасности + SEC-1..3.
 
-Детальный снимок репо — в memory `[[project_state]]` (на 2026-06-02), также см. `CLAUDE.md`.
+Снимок репо — memory `[[project_state]]`; прогресс по фазам — `MIGRATION_PROGRESS.md`.
 
-### 2.2 Что зафиксировано в этой сессии (2026-06-05)
+### 2.2 Что осталось
 
-| Артефакт | Где | Коммит |
-|----------|-----|--------|
-| План миграции на Flutter (17 разделов, ~870 строк) | `MIGRATION_FLUTTER.md` | `479b694` |
-| Memory: project Flutter migration | `~/.claude/projects/.../memory/project_flutter_migration.md` | не в git |
-| Memory: IDE = IDEA Ultimate 2026.1.3 | `~/.claude/projects/.../memory/user_ide.md` | не в git |
-| Memory: стиль коммитов (что/где/когда/почему) | `~/.claude/projects/.../memory/feedback_commit_style.md` | не в git |
-| Этот хэндофф | `HANDOFF.md` | (текущий коммит) |
-
-### 2.3 Что ещё НЕ сделано
-
-- **Никакого Dart-кода ещё нет.** Папка `flutter/` не создана. `pubspec.yaml` не существует.
-- Эталонные screenshot-ы текущего дизайна не сняты.
-- TTF-шрифты для дизайна (6 семейств) не скачаны.
-- SVG-маскоты не экспортированы.
-- Golden-дамп TS-ядра для проверки детерминизма Dart-порта не сгенерирован.
-- Run Configurations для IDEA не созданы.
-
-Всё это — задачи Фазы 0 миграции, см. `MIGRATION_FLUTTER.md` §8.
-
-### 2.4 Открытые вопросы (требуют решения пользователя ДО старта Фазы 0)
-
-См. `MIGRATION_FLUTTER.md` §17. На момент хэндоффа закрыты:
-- ✅ IDE = IntelliJ IDEA Ultimate 2026.1.3
-- ✅ State management = Riverpod 2.5
-- ✅ Дизайн = 100% pixel-parity
-
-Остаются открытыми 7 вопросов: сервер мигрируем или нет; desktop в первом релизе; web renderer (CanvasKit vs HTML); звук (запекать или искать обёртку); версия (`2.0.0`); миграция профилей; метод снятия эталонных скриншотов.
-
-**Не начинай Фазу 0, пока пользователь не ответит на эти вопросы** — иначе можно поехать не туда.
+- **Прод cut-over:** `npm run deploy:flutter` (Pages: TS → Flutter Web). См. `DEPLOY.md`.
+- Визуальный **gate pixel-parity** во всех 3 темах (приёмка пользователя, вне кода).
+- Ручная проверка онлайна / Google-входа / Firestore-синка (`flutter run -d chrome`).
+- Нативный Google-вход (Android/iOS — `flutterfire configure`), `firestore.rules` в `blockduel-web`, богатая облачная схема.
+- Android SDK + iOS Simulator runtime (для нативных сборок).
+- Снять/архивировать устаревшую ветку `flutter-migration` (и `origin/`).
+- **Фаза 9 (Dart-сервер) НЕ делается** — решено остаться на Node/VPS-сервере.
 
 ---
 
 ## 3. Где (карта проекта)
 
-### 3.1 Корень репо
+### 3.1 Корень репо (после реструктуризации 2026-06-09)
 
 ```
-block_puzzle_pvp/
+block_puzzle_pvp/   (= Flutter-проект block_duel в корне)
 ├── CLAUDE.md                # ← project instructions (ВСЕГДА читай первым)
-├── HANDOFF.md               # ← этот файл, для тебя
-├── TZ_BlockDuel_9x9.md      # ← источник правды по правилам игры (786 строк, RU)
-├── MIGRATION_FLUTTER.md     # ← план миграции на Dart/Flutter (17 разделов, ~870 строк)
-├── ROADMAP.md               # ← фазы развития 0-11 (TS-эра, частично применимо к Flutter-эре)
-├── CHANGELOG.md             # ← релизы по версиям
-├── DEPLOY.md                # ← инструкции деплоя Pages + VPS
-├── package.json             # ← TS зависимости (пока единственная сборка)
-├── server/                  # ← Node WS сервер (живой, прод)
-├── src/                     # ← TS frontend (живой, прод)
-├── tests/                   # ← 46 Vitest тестов
-├── tools/                   # ← bot-sim.ts (калибровка бота)
-├── public/                  # ← favicon.svg, манифест
-├── party/                   # ← опц. PartyKit-вариант сервера (не используется)
-├── legacy/                  # ← инертный референс (НЕ ТРОГАТЬ)
-└── .github/workflows/deploy.yml.disabled  # ← Actions выключен (биллинг)
+├── HANDOFF.md               # ← этот файл
+├── TZ_BlockDuel_9x9.md      # ← источник правды по правилам игры (RU)
+├── MIGRATION_FLUTTER.md     # ← план миграции (выполнен)
+├── MIGRATION_PROGRESS.md    # ← журнал фактически сделанного (с датами/коммитами)
+├── ROADMAP.md               # ← фазы развития (Фаза M = миграция; дальше — фичи)
+├── CHANGELOG.md             # ← релизы (верхний — 2.0.0, Flutter-порт)
+├── DEPLOY.md                # ← деплой Pages + VPS + frontend cut-over
+├── INTERFACE_PARITY.md      # ← чеклист UI-паритета с TS
+├── SECURITY_AUDIT_SERVER.md # ← аудит PvP-сервера
+├── pubspec.yaml             # ← Flutter/Flame/Riverpod (version 2.0.0)
+├── lib/                     # ← Dart-код: core/game/ui/online/auth/storage/...
+├── test/                    # ← flutter_test (176)
+├── integration_test/        # ← E2E pilot (app_test.dart)
+├── web/ android/ ios/ macos/ assets/   # ← Flutter-платформы/ассеты
+├── server/                  # ← Node WS сервер (живой, прод; тянет legacy-ts/core)
+├── legacy-ts/               # ← бывший src/: TS/React-фронт (ретайрнут; core живо)
+├── party/                   # ← опц. PartyKit-вариант (не используется)
+├── tools/                   # ← bot-sim.ts, gen_test_plan.py, pentest_local.mjs
+├── qa/                      # ← QA-тест-планы по платформам
+├── legacy/                  # ← инертный визуальный референс (НЕ ТРОГАТЬ)
+├── package.json index.html vite.config.ts  # ← TS/Vite сборка (legacy/откат)
+└── .github/workflows/deploy.yml.disabled    # ← Actions выключен (биллинг)
 ```
 
-### 3.2 Где будет жить Flutter-код (после Фазы 0)
+> ⚠️ Многие старые доки/комментарии всё ещё говорят `src/...` или `flutter/lib/...` — читать как `legacy-ts/...` и `lib/...` соответственно.
 
-```
-flutter/                     # ← создаётся в Фазе 0
-├── pubspec.yaml             # см. MIGRATION_FLUTTER.md §5
-├── lib/{core,game,ui,online,auth,shop,achievements,storage}/
-├── test/{core,bot,golden}/
-├── assets/{audio,images,fonts,pieces}/
-├── ios/ android/ web/ macos/ windows/ linux/  # генерится flutter create
-└── tools/bot_sim.dart
-```
-
-После Фазы 8 (cut-over) содержимое `flutter/` переезжает в корень репо, `src/` → `legacy-ts/`.
-
-### 3.3 Где жить твоей памяти
+### 3.2 Где жить твоей памяти
 
 ```
 ~/.claude/projects/-Users-al-sh-WebstormProjects-block-puzzle-pvp/memory/
-├── MEMORY.md                # индекс — всегда подгружается в твой контекст
+├── MEMORY.md                # индекс — всегда в твоём контексте
 ├── project_*.md             # снимки и решения по проекту
 ├── user_*.md                # профиль пользователя (язык, IDE)
-├── reference_*.md           # указатели на внешние ресурсы (TZ, GitHub, VPS)
-├── feedback_*.md            # правила работы (стиль ответов, коммиты, push)
+├── reference_*.md           # внешние ресурсы (TZ, GitHub, VPS, Firebase, QA)
+├── feedback_*.md            # правила работы (ответы, коммиты, push, docs-sync, стиль Dart, MVVM)
 └── behavior_*.md            # инварианты (core determinism)
 ```
 
-**Важно:** memory обновляется как только узнаёшь что-то новое о пользователе/проекте. Не дублируй то, что можно прочитать из git/файлов.
+**Важно:** обновляй memory, как только узнаёшь новое о пользователе/проекте. Не дублируй то, что читается из git/файлов.
 
-### 3.4 Где запущенный сервер
+### 3.3 Где запущенный сервер
 
-- **VPS:** `pvp.alshfu.com`, Ubuntu 24.04
-- **systemd unit:** `blockduel-pvp.service`
-- **nginx + Let's Encrypt** (HTTPS / WSS)
-- **Перезапуск:** `git pull && systemctl restart blockduel-pvp` — **делает пользователь сам**, ты не имеешь SSH-доступа.
+- **VPS:** `pvp.alshfu.com`, Ubuntu 24.04 · **systemd unit:** `blockduel-pvp.service` · **nginx + Let's Encrypt** (WSS).
+- **Перезапуск:** `git pull && systemctl restart blockduel-pvp` — **делает пользователь сам**, у тебя нет SSH-доступа.
 - ⚠️ **Не трогать** `/etc/nginx/sites-enabled/alshfu-arena.conf` на VPS — это сторонний сайт пользователя.
 
 ---
 
-## 4. Когда (хронология решений и точки во времени)
+## 4. Когда (хронология решений)
 
 | Дата | Событие | Где зафиксировано |
 |------|---------|--------------------|
-| ранее | Реализованы Фазы 1–4 ТЗ (ядро, UI, vs Bot, Hot-seat, Online PvP, прогрессия, магазин, ачивки) | git log + `CLAUDE.md` |
-| 2026-06-02 | Снимок текущего состояния репо (последний на момент хэндоффа) | memory `[[project_state]]` |
-| ~2026-06-04 | Коммит `4c8a38d` — `ROADMAP.md` actionable checklist (Фазы 0–11) | git log |
-| ~2026-06-04 | Коммит `eb31fa8` — TZ v2 vision + roadmap фазы 5-11 | git log |
-| **2026-06-05** | Пользователь явно запросил миграцию на Dart/Flutter под все платформы | этот разговор |
-| 2026-06-05 | Создан `MIGRATION_FLUTTER.md` v1 (план миграции) — коммит `479b694` | git + memory `[[project_flutter_migration]]` |
-| 2026-06-05 | Пользователь зафиксировал IDE = IntelliJ IDEA Ultimate 2026.1.3 | memory `[[user_ide]]` |
-| 2026-06-05 | `MIGRATION_FLUTTER.md` усилен разделом §6 «Сохранение дизайна 1:1» (требование pixel-parity) | коммит `479b694` |
-| 2026-06-05 | Пользователь зафиксировал правило: каждый этап = детальный коммит (что/где/когда/почему) | memory `[[feedback_commit_style]]` |
-| 2026-06-05 | Написан этот HANDOFF.md | (текущий коммит) |
-| **TBD** | Старт Фазы 0 миграции (после ответов на 7 открытых вопросов) | будущее |
+| ранее | Реализованы Фазы 1–4 ТЗ на TS (ядро, UI, vs Bot, Hot-seat, Online PvP, прогрессия, магазин, ачивки) | git log + `CLAUDE.md` |
+| **2026-06-05** | Пользователь запросил миграцию на Dart/Flutter; создан `MIGRATION_FLUTTER.md` (`479b694`); зафиксированы IDE (IDEA Ultimate), Riverpod, MVVM, pixel-parity, стиль коммитов | memory + git |
+| 2026-06-05…07 | Фазы 0–5 (ядро+golden, UI shell, бот/blitz, storage/ачивки/daily/resume, декор/звук/музыка) | `MIGRATION_PROGRESS.md` |
+| 2026-06-07…08 | Фаза 6 (6A online + 6B auth/sync), UI-паритет §8/§4, Фаза 7 (shop/powerups/arcade/tutorial/hardening) | `MIGRATION_PROGRESS.md` |
+| 2026-06-09 | Фаза 3b (онлайн-статистика+PvP-ачивки+/stats), security-аудит + SEC-1..3, обвязка Фазы 8 cut-over, реструктуризация (Flutter→корень, src/→legacy-ts/), **merge в `main`** (`8a63a82`) | git log |
+| 2026-06-10 | Актуализация доков (README, ROADMAP, CHANGELOG 2.0.0, MIGRATION_PROGRESS, MIGRATION_FLUTTER, этот HANDOFF) | git log |
+| **TBD** | Прод cut-over Pages на Flutter Web (`npm run deploy:flutter`) | будущее |
 
-Текущая стабильная версия TS-приложения: **v1.6.1** (см. `package.json`).
-Целевая версия после миграции: **v2.0.0** (требует подтверждения пользователя).
+Текущая версия: **v2.0.0** (`pubspec.yaml`). Legacy TS-версия — `v1.6.1` (`package.json`).
 
 ---
 
@@ -156,36 +124,36 @@ flutter/                     # ← создаётся в Фазе 0
 
 - **Идентификаторы и комментарии в коде — английский** (`BoardCell`, `enumerateMoves`, `RuleConfig`).
 - **Документация и общение — русский**; технические термины можно оставлять английскими.
-- **Не дублировать игровую логику** в `src/ui/` или `server/` — всё через импорт из `src/core/` (в Flutter будет аналогично: всё из `lib/core/`).
-- **Не править файлы в `legacy/`** — они инертные.
+- **Не дублировать игровую логику** — всё через ядро: в Flutter `lib/core/`, на сервере — импорт из `legacy-ts/core`. Держать оба ядра bit-for-bit идентичными (golden-gate).
+- **Не править `legacy/`** — инертный референс.
 - **Не отходить от ТЗ** по правилам/балансу без явного запроса.
 - **Не возвращать `deploy.yml.disabled`** в `deploy.yml` без подтверждения (биллинг).
 - **Не пушить с красными тестами** — Pages закэширует сломанный сайт.
 - **Не трогать nginx-конфиг чужого сайта** на VPS.
-- **Не предлагать миграцию на Flutter без явного запроса** — *запрос уже получен 2026-06-05, миграция в плане*.
 
-### 5.2 Из memory (правила пользователя, важно)
+### 5.2 Из memory (правила пользователя)
 
 - **`[[user_language]]`** — пользователь пишет по-русски, отвечай по-русски.
-- **`[[user_ide]]`** — IDE = JetBrains, **никаких** VS Code / Android Studio / Cursor / Zed как «лучшей альтернативы». Если пользователь явно не попросит — рекомендуй JetBrains-варианты (IDEA Ultimate, WebStorm, DataGrip, RustRover).
-- **`[[feedback_response_style]]`** — пользователь просит сразу создавать файлы без лишних вопросов. Но **не путать** с destructive actions (см. ниже).
+- **`[[user_ide]]`** — IDE = JetBrains; **никаких** VS Code / Android Studio / Cursor / Zed как «лучшей альтернативы».
+- **`[[feedback_response_style]]`** — сразу создавать файлы без лишних вопросов (но не путать с destructive actions, §5.3).
 - **`[[feedback_git_push_workflow]]`** — пушить в `origin main` после значимых изменений.
-- **`[[feedback_commit_style]]`** (новое, 2026-06-05) — **каждый этап = подробный коммит**: заголовок + тело со структурой Что/Где/Когда/Почему. Не «docs: update plan» однострочно.
-- **`[[behavior_core_determinism]]`** — ядро (TS сейчас, Dart после миграции) обязано оставаться чистым и детерминированным.
+- **`[[feedback_keep_docs_updated]]`** — при значимых изменениях держать актуальными ВСЕ важные файлы (README/ROADMAP/CHANGELOG/доки) и синхронизировать git — без отдельного напоминания.
+- **`[[feedback_commit_style]]`** — каждый этап = подробный коммит (заголовок + тело Что/Где/Когда/Почему).
+- **`[[feedback_dart_style]]`** — свод правил Dart + подробная шапка в каждом файле; константы lowerCamelCase.
+- **`[[feedback_mvvm_architecture]]`** — строгий MVVM (см. §1).
+- **`[[behavior_core_determinism]]`** — ядро обязано оставаться чистым и детерминированным.
 
 ### 5.3 Destructive actions — стоп-сигналы
 
-Несмотря на правило «без лишних вопросов», **всегда подтверждай** перед:
+Несмотря на «без лишних вопросов», **всегда подтверждай** перед:
 - `git reset --hard`, `git push --force` (особенно в `main`)
-- удалением файлов/веток
-- `rm -rf`
-- коммитом, который **удаляет** содержимое source-of-truth файлов (TZ, CLAUDE.md, MIGRATION_FLUTTER.md) — это уже случилось 2026-06-05 (TZ оказался пустым в working tree, я остановился и спросил, пользователь выбрал restore)
-- модификацией CI/деплой (особенно `deploy.yml.disabled`)
-- любыми действиями на VPS (у тебя нет доступа, но даже инструкции пользователю — с предупреждением)
+- удалением файлов/веток, `rm -rf`
+- коммитом, который **удаляет** содержимое source-of-truth файлов (TZ, CLAUDE.md и т.п.) — такое уже было 2026-06-05 (TZ оказался пуст в working tree, я остановился и спросил → restore)
+- модификацией CI/деплоя (особенно `deploy.yml.disabled`)
+- любыми действиями на VPS (доступа нет; даже инструкции — с предупреждением)
 
-### 5.4 Стиль коммитов (правило 2026-06-05)
+### 5.4 Стиль коммитов
 
-Формат:
 ```
 <type>(<scope>): <subject под 70 символов>
 
@@ -197,92 +165,54 @@ flutter/                     # ← создаётся в Фазе 0
 Co-Authored-By: Claude <model-name> <noreply@anthropic.com>
 ```
 
-Не применять для опечаток/lint/bump зависимостей — там короткий заголовок OK.
+Для опечаток/lint/bump — короткий заголовок OK.
 
 ---
 
-## 6. IDE: IntelliJ IDEA Ultimate 2026.1.3 — что знать
+## 6. IDE: IntelliJ IDEA Ultimate 2026.1.3
 
 ### 6.1 Версия и лицензия
 
-- **IntelliJ IDEA Ultimate 2026.1.3** (зафиксировано пользователем 2026-06-05).
-- Лицензия: **JetBrains All Products Pack** (платная подписка, действующая).
-- Все JetBrains IDE доступны; пользователь сейчас работает в WebStorm для TS-проекта; для Flutter-миграции переходит на IDEA Ultimate.
+- **IntelliJ IDEA Ultimate 2026.1.3** (зафиксировано 2026-06-05). Лицензия **JetBrains All Products Pack** (платная). Для Flutter пользователь работает в IDEA Ultimate (не Android Studio).
 
-### 6.2 Что должно быть установлено и настроено (Фаза 0 миграции)
+### 6.2 Что установлено/настроено
 
-- **Плагины (Settings → Plugins → Marketplace):**
-  - `Flutter` (от Google) — основной плагин
-  - `Dart` (от JetBrains) — подтягивается автоматически с Flutter, но проверь что включён
-  - `Android` (от Google) — для AVD Manager и Android-сборки без отдельной Android Studio
-- **Flutter SDK путь:** Settings → Languages & Frameworks → Flutter → Flutter SDK path (`flutter doctor` сначала должен показать зелёное)
-- **Dart SDK путь:** обычно подхватывается из Flutter SDK
-- **Run Configurations** (положить в `.idea/runConfigurations/` и закоммитить):
-  - `Flutter (Web)` — target Chrome, `--web-port 5173`
-  - `Flutter (iOS)` — target iPhone 15 simulator (Xcode обязателен на macOS)
-  - `Flutter (Android)` — target Pixel 5 emulator
-  - `Flutter Test (all)` — `flutter test`
-  - `Flutter Test (core)` — `dart test test/core`
-  - `Generate (build_runner)` — `flutter pub run build_runner build --delete-conflicting-outputs`
-  - `Update Goldens` — `flutter test --update-goldens`
-- **Hot Reload:** Cmd+\\ (macOS) / Ctrl+\\
-- **Hot Restart:** Shift+Cmd+\\ / Shift+Ctrl+\\
-- **Flutter Inspector:** View → Tool Windows → Flutter Inspector
+- **Плагины:** `Flutter` (Google), `Dart` (JetBrains, подтягивается с Flutter), `Android` (Google) — для AVD/Android без отдельной Android Studio.
+- **Flutter SDK path:** Settings → Languages & Frameworks → Flutter (`flutter doctor` сначала зелёный).
+- **Run Configurations** (`.idea/runConfigurations/`): Flutter (Web, Chrome), Flutter Test (all/core), Generate (build_runner), Update Goldens.
+- **Hot Reload:** Cmd+\\ / Ctrl+\\ · **Hot Restart:** Shift+Cmd+\\ · **Flutter Inspector:** View → Tool Windows.
 
-### 6.3 Что НЕ предлагать пользователю
+### 6.3 Что НЕ предлагать
 
-- ❌ Не предлагай Android Studio как «бесплатную альтернативу» — у пользователя оплачена IDEA Ultimate, она делает всё то же самое.
-- ❌ Не предлагай VS Code / Cursor / Zed «потому что легче».
-- ❌ Не предлагай ставить `code` / `cursor` CLI команды.
-
-### 6.4 Полезные инструменты внутри IDEA для этого проекта
-
-- **Database tool** (DataGrip-функционал) — пригодится если решим логировать матчи в PostgreSQL.
-- **HTTP Client** (`.http` файлы) — для тестов WS/REST если добавим REST API.
-- **Markdown preview** — для просмотра TZ, MIGRATION_FLUTTER, ROADMAP без выхода из IDE.
-- **Git integration** — встроенный diff/merge tool (предпочитай его над командной строкой при многофайловых merge-конфликтах).
+- ❌ Android Studio как «бесплатную альтернативу», ❌ VS Code / Cursor / Zed, ❌ установку `code`/`cursor` CLI.
 
 ---
 
 ## 7. Если ты пришёл начать работу — пошагово
 
-### Шаг 1: прочти контекст (5 минут)
-1. `CLAUDE.md` — project instructions, что можно/нельзя.
-2. Этот файл — `HANDOFF.md`.
-3. Memory index (`MEMORY.md`) — все ссылки уже в твоём контексте при старте.
-
-### Шаг 2: проверь актуальность памяти
-- Memory может быть старой; перед утверждениями про код — сделай `git status` / `git log -5` / `Read` нужный файл.
-
-### Шаг 3: пойми текущее намерение пользователя
-- Если просит конкретное действие — выполняй (с учётом правил §5).
-- Если просит «продолжить миграцию» — открой `MIGRATION_FLUTTER.md`, посмотри чеклист фаз §8, проверь по `git log` где остановились, пройди gate-условия предыдущей фазы.
-- Если просит «доработать TS-фичу» — окей, TS-кодовая база ещё живая до Фазы 8.
-
-### Шаг 4: работай согласно правилам
-- Маленькие правки → сразу делай (правило `[[feedback_response_style]]`).
-- Деструктивные → подтверди (§5.3).
-- Коммитишь → детальный коммит (§5.4), пушишь в `origin main` (`[[feedback_git_push_workflow]]`).
-
-### Шаг 5: обновляй артефакты
-- Новые решения пользователя → memory.
-- Новые архитектурные сдвиги → обнови `CLAUDE.md`.
-- Закончил фазу миграции → обнови чеклист в `MIGRATION_FLUTTER.md` §15 и историю в этом `HANDOFF.md` §4.
+1. **Прочти контекст:** `CLAUDE.md` → этот `HANDOFF.md` → memory index (`MEMORY.md`, уже в контексте).
+2. **Проверь актуальность:** перед утверждениями про код — `git status` / `git log -5` / `Read` нужный файл. Память отражает прошлое, файлы — настоящее.
+3. **Пойми намерение:**
+   - конкретное действие — выполняй (правила §5);
+   - «продолжить» — открой `MIGRATION_PROGRESS.md` (где остановились) + `ROADMAP.md` (что дальше);
+   - «починить прод» — это TS-сборка на Pages (`legacy-ts/`), пока cut-over не сделан.
+4. **Работай по правилам:** мелкие правки — сразу; деструктивные — подтверди (§5.3); коммит — детальный (§5.4); пуш — в `origin main`.
+5. **Обновляй артефакты:** новые решения → memory; архитектурные сдвиги → `CLAUDE.md`; прогресс → `MIGRATION_PROGRESS.md`; релиз → `CHANGELOG.md`; держи доки в актуальном состоянии (`[[feedback_keep_docs_updated]]`).
 
 ---
 
 ## 8. Контакты и внешние ресурсы
 
-- **GitHub:** `alshfu/block-puzzle-pvp` (см. memory `[[reference_github]]`)
-- **VPS:** `pvp.alshfu.com` (см. memory `[[reference_vps_server]]`)
-- **Email пользователя:** `alshfu@gmail.com`
-- **Имя в git:** `Alexander Shchetinin`
-- **Pages URL:** через `gh-pages` ветку, base href `/block_puzzle_pvp/`
+- **GitHub:** `alshfu/block-puzzle-pvp` (memory `[[reference_github]]`)
+- **VPS:** `pvp.alshfu.com` (memory `[[reference_vps_server]]`)
+- **Firebase:** проект `blockduel-web` (memory `[[reference_firebase]]`)
+- **Email:** `alshfu@gmail.com` · **git:** `Alexander Shchetinin`
+- **Pages:** через `gh-pages` ветку, base href `/block-puzzle-pvp/`
 
 ---
 
 ## 9. Конец заметки
 
-Если что-то в этом документе устарело или противоречит реальности — **обнови сам** и пересохрани. Не оставляй следующему ассистенту устаревший хэндофф; это будет хуже, чем его отсутствие. Дату последнего обновления и подпись модели — в конце:
+Если что-то здесь устарело или противоречит реальности — **обнови сам** и пересохрани. Устаревший хэндофф хуже его отсутствия.
 
-> Last updated: 2026-06-05 by Claude Opus 4.7. План миграции — `479b694`. Реализация Flutter ещё не начата.
+> Last updated: 2026-06-10 by Claude Opus 4.8. Миграция на Flutter завершена и влита в `main` (`8a63a82`). Прод ещё на TS — остался cut-over (`npm run deploy:flutter`). 176 тестов зелёные.
