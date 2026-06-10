@@ -21,6 +21,38 @@
 
 ---
 
+## 1.5. ТЕКУЩАЯ РАБОТА (2026-06-10) — довести macOS-версию
+
+> Активная задача: чтобы на **macOS** работали **PvP** и **Google-авторизация**,
+> затем выпустить **неподписанный `.app`.zip как GitHub Release `v2.0.0`**.
+> Полный живой контекст — memory `[[project-macos-finish]]`. Кратко:
+
+- **PvP на macOS — код починен ✅** (проверено локально). Было: `flutter build
+  macos` не получал адрес сервера → дефолт `localhost:1999`. Добавлены
+  `npm run build:macos` / `run:macos:prod` (вшивают `PARTY_HOST=pvp.alshfu.com`
+  + `PARTY_TLS=true`). Проверено против локального сервера: WS-смоук `SMOKE_PASS`
+  + живое соединение из приложения. PvP на macOS рабочий при доступном сервере.
+- **Прод-сервер `pvp.alshfu.com` — чинится 🔧** (инфра, НЕ код; онлайн лежит и на
+  web, и на macOS). Node жив на :1999, но nginx:443 не слушал → пользователь
+  поднял nginx. На момент записи `46.30.211.38` (SSH-VPS) и `81.88.23.207`
+  (DNS-таргет, TTL 3600) принимают TCP:443, но **TLS извне не завершается**.
+  Осталось пользователю: `curl -sk https://localhost/healthz`→`ok` (иначе
+  `certbot --nginx -d pvp.alshfu.com`); сверить `curl ifconfig.me` с DNS
+  `81.88.23.207` (иначе поправить A-запись). Цель: `/healthz` отдаёт `ok` снаружи.
+- **Google-auth на macOS — код готов, ждёт консоль ⏳**. Реализовано
+  (`auth_controller._signInWithGoogleNative` через google_sign_in 7.x,
+  `firebase_options.macos`, `Info.plist`). БЛОКЕР: зарегистрировать macOS-app в
+  Firebase `blockduel-web` и вписать 4 значения (`apiKey`/`appId`/`CLIENT_ID`/
+  `REVERSED_CLIENT_ID`) — заглушки `REPLACE_ME`. Инструкция — **`MACOS_AUTH_SETUP.md`**.
+- **Релиз v2.0.0 macOS — отложен** до проверки auth+PvP на Mac.
+- **Не забыть:** `firestore.rules` написаны/провалидированы, но **не задеплоены**
+  (`npm run deploy:rules`).
+- **Напоминание:** у ассистента нет SSH/DNS/Firebase-console доступа; egress
+  sandbox к VPS ограничен — внешние проверки доступности недостоверны, реальную
+  проверку делает пользователь (браузер/сервер).
+
+---
+
 ## 2. Что (сделано / осталось)
 
 ### 2.1 Что реализовано (Flutter, в `main`)
