@@ -168,8 +168,9 @@ against `legacy-ts/`).
 - **flutter_test + integration_test** — unit / widget / E2E tests
 - **Node + `ws` + tsx** (`server/`) — online PvP backend, server-authoritative
 - **Firebase Auth + Firestore** — Google sign-in + cross-device sync
-- **GitHub Pages** — static hosting via `gh-pages` (Actions workflow kept in
-  `.disabled` form pending restored billing)
+- **GitHub Pages** — static hosting via the `gh-pages` branch; auto-deployed
+  by GitHub Actions on every push to `main` (`.github/workflows/deploy.yml`:
+  analyze + test + build web; manual `npm run deploy:flutter` kept as fallback)
 
 ---
 

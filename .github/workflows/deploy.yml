@@ -1,0 +1,62 @@
+# Автодеплой Flutter Web на GitHub Pages.
+#
+# Триггер: push в main (кроме изменений, не влияющих на web-сборку) или запуск
+# вручную (workflow_dispatch). Гейты перед деплоем: flutter analyze + flutter test.
+# Публикация — пушем build/web в ветку gh-pages (Pages работает в режиме
+# «deploy from branch»), поэтому ручные пути остаются рабочими как и раньше:
+#   npm run deploy:flutter  — ручной деплой Flutter-сборки
+#   npm run deploy          — откат на legacy TS-сборку
+#
+# Флаги сборки должны совпадать со скриптом build:flutter в package.json.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "legacy/**"
+      - "legacy-ts/**"
+      - "server/**"
+      - "party/**"
+      - "tests/**"
+      - "tools/**"
+      - "qa/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write # пуш в ветку gh-pages
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.44.1" # синхронно с локальной средой (HANDOFF.md)
+          cache: true
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      - run: >
+          flutter build web --release
+          --base-href /block-puzzle-pvp/
+          --dart-define=PARTY_HOST=pvp.alshfu.com
+          --dart-define=PARTY_TLS=true
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/web

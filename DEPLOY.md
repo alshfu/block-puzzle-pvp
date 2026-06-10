@@ -242,14 +242,30 @@ WS-протоколу.
 
 ## Go-live
 
+### Автодеплой через GitHub Actions (основной путь с 2026-06-10)
+
+Каждый push в `main` запускает `.github/workflows/deploy.yml`:
+`flutter analyze` → `flutter test` → `flutter build web` (те же prod-флаги,
+что в `build:flutter`) → публикация `build/web` в ветку `gh-pages`.
+Через ~30–60 c обновится https://alshfu.github.io/block-puzzle-pvp/.
+
+- Правки только доков (`**.md`), `legacy*/`, `server/`, `party/`, `tests/`,
+  `tools/`, `qa/` деплой **не** триггерят (`paths-ignore`).
+- Запуск вручную: вкладка Actions → «Deploy to GitHub Pages» → Run workflow,
+  либо `gh workflow run deploy.yml`.
+- Красные analyze/test останавливают деплой — прод не получит сломанную сборку.
+- Actions бесплатны: репозиторий публичный.
+
+### Ручной деплой (запасной путь)
+
 ```bash
 npm test                 # TS (Vitest) — зелёные
 flutter test                     # Flutter — зелёные
 npm run deploy:flutter   # build web (prod-флаги) + .nojekyll + gh-pages
 ```
 
-`deploy:flutter` собирает `build/web` и публикует в `gh-pages`. Через
-~30–60 c обновится https://alshfu.github.io/block-puzzle-pvp/.
+`deploy:flutter` собирает `build/web` и публикует в `gh-pages` — тот же
+механизм «deploy from branch», что и у Actions, конфликтов нет.
 
 ## Проверка после go-live
 

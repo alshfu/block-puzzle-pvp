@@ -76,7 +76,7 @@ Model: игровое ядро (lib/core/, pure Dart) + репозитории (
 
 ## Деплой
 
-- **Frontend** — GitHub Pages, ветка `gh-pages`, **Flutter Web**. После значимых изменений: `flutter test && npm run deploy:flutter`. Actions workflow выключен (`.github/workflows/deploy.yml.disabled`) — биллинг.
+- **Frontend** — GitHub Pages, ветка `gh-pages`, **Flutter Web**. **Автодеплой через GitHub Actions** (включён 2026-06-10, репо публичный → Actions бесплатны): push в `main` → `.github/workflows/deploy.yml` (analyze + test + build web + публикация в `gh-pages`); правки только доков/legacy/server деплой не триггерят (`paths-ignore`). Ручной деплой `npm run deploy:flutter` остаётся как запасной путь.
 - **Backend (PvP)** — VPS `pvp.alshfu.com`, Ubuntu 24.04, systemd unit `blockduel-pvp.service`, nginx + Let's Encrypt. Flutter-клиент получает адрес через `--dart-define=PARTY_HOST/PARTY_TLS` (зашиты в npm-скрипты); TS-клиент — через `VITE_PARTY_HOST` в `.env.local` (gitignored). После правок `server/*.ts` нужен `git pull && systemctl restart blockduel-pvp` на VPS (делает пользователь).
 - Подробности — в `DEPLOY.md` (включая post-cutover hardening: `REQUIRE_ROOM_TOKEN=1`, `ALLOWED_ORIGINS`).
 
@@ -102,6 +102,5 @@ Model: игровое ядро (lib/core/, pure Dart) + репозитории (
 - Не ломать паритет ядер: правка игровой логики только синхронно в обоих ядрах + golden-тесты.
 - Не править файлы в `legacy/` — они инертные. `legacy-ts/ui` тоже не развивать (только критические фиксы для отката прода).
 - Не отходить от ТЗ по правилам/балансу без явного запроса.
-- Не возвращать `.github/workflows/deploy.yml.disabled` обратно в `deploy.yml` без подтверждения, что биллинг разблокирован.
-- Не пушить с красными тестами и не деплоить без `flutter test` — Pages закэширует сломанный сайт.
+- Не пушить в `main` с красными тестами: push автодеплоит прод (CI-гейты analyze+test это ловят, но не насилуй их). Не отключать workflow `deploy.yml` без запроса пользователя.
 - Не трогать `/etc/nginx/sites-enabled/alshfu-arena.conf` на VPS (это сторонний сайт пользователя).
