@@ -145,6 +145,7 @@ block_puzzle_pvp/   (= Flutter-проект block_duel в корне)
 | 2026-06-09 | Фаза 3b (онлайн-статистика+PvP-ачивки+/stats), security-аудит + SEC-1..3, обвязка Фазы 8 cut-over, реструктуризация (Flutter→корень, src/→legacy-ts/), **merge в `main`** (`8a63a82`) | git log |
 | 2026-06-10 | Актуализация доков (README, ROADMAP, CHANGELOG 2.0.0, MIGRATION_PROGRESS, MIGRATION_FLUTTER, этот HANDOFF) | git log |
 | 2026-06-10 | **Прод cut-over**: Pages переключён на Flutter Web (`npm run deploy:flutter`, gh-pages `e6c30a1`) | git log + DEPLOY.md |
+| 2026-06-10 | **Полный аудит проекта** (вердикт: архитектура/ядро/MVVM чистые, сервер закрыл все HIGH). По итогам: CLAUDE.md переписан под Flutter, npm-уязвимости закрыты (partykit удалён, vite 8 / vitest 4), гигиена репо (снос `flutter/`, iOS `Package.resolved`), минорный pub upgrade (riverpod 3.3.2) | git log (5 коммитов после `956910a`) |
 
 Текущая версия: **v2.0.0** (`pubspec.yaml`). Legacy TS-версия — `v1.6.1` (`package.json`).
 
