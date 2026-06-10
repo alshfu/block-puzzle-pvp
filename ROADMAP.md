@@ -9,10 +9,51 @@
 - ⬜ — запланировано.
 - 🔒 — заблокировано зависимостью.
 
-Текущая версия: **v1.6.1** (2026-06-04, см. [CHANGELOG.md](CHANGELOG.md)).
+Текущая версия: **v2.0.0** (Flutter-порт; см. [CHANGELOG.md](CHANGELOG.md)).
 Источник истины по фичам и балансу — [TZ_BlockDuel_9x9.md](TZ_BlockDuel_9x9.md).
 
+> **Миграция на Dart/Flutter (2026-06-09).** Проект портирован с TypeScript +
+> React на **Dart + Flutter (+ Flame + Riverpod)** и **влит в `main`**. Flutter-
+> проект теперь в **корне** репозитория (`lib/`, `test/`, `web/`, `pubspec.yaml`),
+> старый TS/React-фронт перенесён в **`legacy-ts/`** (ретайрнут, но его pure-TS
+> ядро `legacy-ts/core` ещё **живо** как зависимость Node PvP-сервера). Фазы
+> миграции 0–7 + обвязка Фазы 8 закрыты по коду, 176 тестов зелёные. **Прод ещё
+> на TS** — следующий шаг — cut-over Pages на Flutter Web (см. ниже и
+> [DEPLOY.md](DEPLOY.md)).
+>
+> ⚠️ Пути `src/core`, `src/ui`, `src/modes`, `party/` в фазах ниже **устаревшие**.
+> Читать как `lib/core`, `lib/ui`, `lib/modes`, `server/` соответственно;
+> «React/Vite/PartyKit» → «Flutter/Flame/Node-WS на VPS».
+
 ---
+
+## Фаза M — Миграция на Flutter ✅ (влита в main)
+
+- [x] Pure-Dart порт ядра `lib/core/` — bit-for-bit детерминизм с TS-ядром
+      (golden-gate).
+- [x] Flame-рендер доски/руки, drag-and-place, blitz/force-place.
+- [x] Дизайн-токены 1:1 с TS (3 темы), маскоты через `flutter_svg`, Confetti/
+      ComboFlash, Toast/Pause, фоновая музыка — в `lib/audio/`/`lib/ui/`.
+- [x] Storage/Profile/Settings/Achievements (~120)/Daily/Save-Resume/Arcade/
+      Tutorial/Pilot — паритет с TS (чеклист `INTERFACE_PARITY.md`).
+- [x] Онлайн PvP: Dart-клиент `lib/online/` к существующему Node/VPS-серверу
+      (кросс-протокол), лобби, живой матч (reconnect+ремач), ELO, онлайн-стата.
+- [x] Auth + sync: `lib/auth/` — Google sign-in (Firebase `blockduel-web`) +
+      Firestore cross-device sync.
+- [x] Реструктуризация репо: Flutter → корень, `src/` → `legacy-ts/`.
+- [x] Security-аудит PvP-сервера (`SECURITY_AUDIT_SERVER.md`) + SEC-1..3.
+- [x] 176 тестов зелёные, `flutter analyze` чист, `flutter build web` собирается.
+
+### Near-term — прод cut-over 🟨
+- [ ] `npm run deploy:flutter` — переключить GitHub Pages на Flutter Web.
+- [ ] Снять/архивировать устаревшую ветку `flutter-migration`.
+- [ ] Обновить `MIGRATION_PROGRESS.md` (отстал на 2026-06-08).
+
+---
+
+> **Фазы 0–4 ниже** описывают исходную фичу-базу (реализована в TS, в проде на
+> Pages) — она **портирована на Flutter** в рамках Фазы M (см. выше). Пути в них
+> читать как `lib/...`.
 
 ## Фаза 0 — Прототип ядра ✅
 
@@ -338,21 +379,22 @@
 
 ## Кросс-фазовые задачи (постоянные)
 
-- [ ] **E2E на всех релизах:** прогон `tools/e2e-mobile.ts` на 60 viewport-ах
-      перед каждым деплоем.
+- [ ] **E2E на всех релизах:** прогон `integration_test/app_test.dart` (pilot)
+      перед каждым деплоем; QA-планы по платформам — в `qa/`.
 - [ ] **Bot-calibration:** периодически (раз в квартал) запуск
       `tools/bot-sim.ts` для проверки балансa.
 - [ ] **Lighthouse:** ≥ 95 / 100 / 100 (Perf / BP / SEO) на каждом деплое.
 - [ ] **CHANGELOG.md:** обновлять при каждом значимом релизе.
-- [ ] **Версионирование:** semver bump в `package.json` перед deploy.
+- [ ] **Версионирование:** semver bump в `pubspec.yaml` (`version:`) перед deploy.
 
 ---
 
 ## Принципы реализации
 
 1. **Ядро остаётся pure и детерминированным.** Любая новая логика — через
-   расширение `GameRules` или per-mode модуль. Никаких `Date.now()`,
-   `Math.random()`, `fetch`/DOM в `src/core/`.
+   расширение `GameRules` или per-mode модуль. Никаких `DateTime.now()`,
+   незасеянного RNG, I/O или импортов UI в `lib/core/`. TS-ядро `legacy-ts/core`
+   держим bit-for-bit идентичным Dart-ядру (golden-gate), пока оно питает сервер.
 2. **Server-authoritative для ranked.** Все режимы с ELO должны иметь
    server-side validation (anti-cheat).
 3. **Backward compat при изменениях scoring.** Legacy `scoreForMove`
@@ -369,5 +411,8 @@
 - [TZ_BlockDuel_9x9.md](TZ_BlockDuel_9x9.md) — источник истины по фичам.
 - [CHANGELOG.md](CHANGELOG.md) — история релизов.
 - [CLAUDE.md](CLAUDE.md) — инструкции для AI-помощника.
+- [HANDOFF.md](HANDOFF.md) — карта проекта и хронология решений.
+- [MIGRATION_FLUTTER.md](MIGRATION_FLUTTER.md) — план миграции; [MIGRATION_PROGRESS.md](MIGRATION_PROGRESS.md) — живой чеклист.
+- [DEPLOY.md](DEPLOY.md) — деплой Pages + VPS, frontend cut-over.
 - Live: [alshfu.github.io/block-puzzle-pvp/](https://alshfu.github.io/block-puzzle-pvp/)
 - Repo: [github.com/alshfu/block-puzzle-pvp](https://github.com/alshfu/block-puzzle-pvp)
