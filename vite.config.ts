@@ -17,8 +17,10 @@ export default defineConfig(({ command }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ["react", "react-dom"],
+        // Vite 8 (Rolldown) принимает только функциональную форму manualChunks.
+        manualChunks(id) {
+          if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "react";
+          return undefined;
         },
       },
     },

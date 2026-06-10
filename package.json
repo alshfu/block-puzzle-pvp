@@ -16,14 +16,11 @@
     "deploy:rules": "firebase deploy --only firestore:rules --project blockduel-web",
     "build:macos": "flutter build macos --release --dart-define=PARTY_HOST=pvp.alshfu.com --dart-define=PARTY_TLS=true",
     "run:macos:prod": "flutter run -d macos --dart-define=PARTY_HOST=pvp.alshfu.com --dart-define=PARTY_TLS=true",
-    "party:dev": "partykit dev",
-    "party:deploy": "partykit deploy",
     "server:dev": "tsx server/index.ts",
     "server:start": "tsx server/index.ts"
   },
   "dependencies": {
     "firebase": "^12.14.0",
-    "partykit": "^0.0.115",
     "partysocket": "^1.1.19",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -35,10 +32,10 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/ws": "^8.18.1",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.0.2",
     "gh-pages": "^6.3.0",
     "typescript": "^5.5.3",
-    "vite": "^5.4.10",
-    "vitest": "^2.1.4"
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
   }
 }

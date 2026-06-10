@@ -26,7 +26,7 @@
 - **Tests** — `test/` — **176 тестов** в 32 файлах (core, game, online, achievements, audio, decor, pilot…), включая golden-тесты детерминизма **бит-в-бит с TS-ядром** (`test/golden/determinism_golden_test.dart`, `test/core/rng_golden_test.dart`). Плюс `integration_test/`.
 - **Legacy-TS тесты** — `tests/` Vitest, 8 файлов, **55 тестов** (покрывают `legacy-ts/core` + серверную логику; гоняются `npm test`).
 - **Tools** — `tools/bot-sim.ts` (калибровка бота, по TS-ядру), `tools/gen_test_plan.py` (QA-планы в `qa/`), `tools/pentest_local.mjs`.
-- **PartyKit-вариант** — `party/*.ts` + `partykit.json` сохранены как опция, не задействованы (онлайн крутится на собственном VPS).
+- **PartyKit-вариант** — `party/*.ts` + `partykit.json` сохранены как инертная опция, не задействованы (онлайн крутится на собственном VPS). Пакет `partykit` удалён из зависимостей (тянул уязвимый undici); для реанимации варианта — `npm i -D partykit` и вернуть скрипты `party:dev`/`party:deploy`.
 - **Legacy** — `legacy/blockduel-demo.html` и `legacy/blockduel-jsx-prototype/` — инертный визуальный референс, не в сборке (`legacy/README.md`); `legacy-ts/` — бывший фронт, см. выше.
 - **Конфиги** — `pubspec.yaml`, `analysis_options.yaml`, `firebase.json`; TS-обвязка: `vite.config.ts`, `vitest.config.ts`, `tsconfig.{app,node}.json`.
 
