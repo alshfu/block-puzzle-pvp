@@ -90,6 +90,7 @@ Model: игровое ядро (lib/core/, pure Dart) + репозитории (
 - Формула очков: `base = N*(N+1)/2`, `mult = 1 + 0.1·min(combo, comboCap)`, `+15` за perfect clear.
 - 7-bag: у каждого игрока свой мешок (`sharedBag = false`).
 - Blitz: `turnTimeStart=12`, `turnTimeDecay=0.4`, `turnTimeMin=3`, `onTimeout="forcePlace"`.
+- Версия приложения — в `pubspec.yaml` (`2.0.0+1`). `version` в `package.json` **намеренно** остаётся `1.6.1`: это версия legacy TS-фронта (прокидывается в его About через `__APP_VERSION__`), не поднимать при релизах Flutter.
 
 ## Стек
 
