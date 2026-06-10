@@ -28,5 +28,22 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<!-- Google Sign-In (Фаза auth для macOS). Значения REPLACE_ME взять из
+	     OAuth-клиента в Google Cloud / GoogleService-Info.plist проекта
+	     blockduel-web. См. MACOS_AUTH_SETUP.md. GIDClientID — это CLIENT_ID
+	     OAuth-клиента типа iOS/macOS; URL-схема — его REVERSED_CLIENT_ID. -->
+	<key>GIDClientID</key>
+	<string>REPLACE_ME.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.REPLACE_ME</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

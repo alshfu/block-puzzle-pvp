@@ -41,6 +41,9 @@ database-debug.log
 pubsub-debug.log
 .firebase/
 firebase-export-*/
+# Нативные Firebase-конфиги (содержат ключи приложения) — не коммитим
+**/GoogleService-Info.plist
+**/google-services.json
 
 # Flutter/Dart (проект в корне после реструктуризации)
 .dart_tool/

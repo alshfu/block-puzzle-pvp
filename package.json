@@ -14,6 +14,8 @@
     "build:flutter": "flutter build web --release --base-href /block-puzzle-pvp/ --dart-define=PARTY_HOST=pvp.alshfu.com --dart-define=PARTY_TLS=true",
     "deploy:flutter": "npm run build:flutter && touch build/web/.nojekyll && gh-pages -d build/web --dotfiles -m \"deploy(flutter): $(date -u +%FT%TZ)\"",
     "deploy:rules": "firebase deploy --only firestore:rules --project blockduel-web",
+    "build:macos": "flutter build macos --release --dart-define=PARTY_HOST=pvp.alshfu.com --dart-define=PARTY_TLS=true",
+    "run:macos:prod": "flutter run -d macos --dart-define=PARTY_HOST=pvp.alshfu.com --dart-define=PARTY_TLS=true",
     "party:dev": "partykit dev",
     "party:deploy": "partykit deploy",
     "server:dev": "tsx server/index.ts",

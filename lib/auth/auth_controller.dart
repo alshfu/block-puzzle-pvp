@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 /// Минимальные данные вошедшего пользователя.
 class AuthUser {
@@ -106,7 +107,8 @@ class AuthController extends Notifier<AuthState> {
     );
   }
 
-  /// Вход через Google (web — popup; нативные платформы — позже).
+  /// Вход через Google. Web — popup; нативные платформы (macOS/iOS/Android) —
+  /// через `google_sign_in` → Firebase-credential по OpenID ID-token.
   Future<void> signInWithGoogle() async {
     if (!state.available) return;
     state = state.copyWith(busy: true, clearError: true);
@@ -114,20 +116,50 @@ class AuthController extends Notifier<AuthState> {
       if (kIsWeb) {
         await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
       } else {
-        // Нативный Google sign-in (google_sign_in) добавим вместе с
-        // конфигурацией платформ; пока недоступно.
-        throw UnsupportedError('вход доступен только в web-сборке');
+        await _signInWithGoogleNative();
       }
       // authStateChanges обновит user и снимет busy.
+    } on GoogleSignInException catch (e) {
+      // Пользователь закрыл диалог — не показываем как ошибку.
+      final canceled = e.code == GoogleSignInExceptionCode.canceled;
+      state = state.copyWith(busy: false, error: canceled ? null : _humanError(e));
     } catch (e) {
       state = state.copyWith(busy: false, error: _humanError(e));
     }
   }
 
-  /// Выход из аккаунта.
+  /// Нативный вход: получает ID-token у Google и меняет его на сессию Firebase.
+  /// clientId/URL-схема берутся из платформенной конфигурации (на macOS/iOS —
+  /// `GIDClientID` + `CFBundleURLTypes` в Info.plist; см. MACOS_AUTH_SETUP.md).
+  Future<void> _signInWithGoogleNative() async {
+    final google = GoogleSignIn.instance;
+    if (!google.supportsAuthenticate()) {
+      throw UnsupportedError('Google sign-in не поддержан на этой платформе');
+    }
+    if (!_googleSignInInitialized) {
+      await google.initialize();
+      _googleSignInInitialized = true;
+    }
+    final account = await google.authenticate();
+    final idToken = account.authentication.idToken;
+    if (idToken == null) {
+      throw StateError('Google не вернул idToken');
+    }
+    await FirebaseAuth.instance.signInWithCredential(
+      GoogleAuthProvider.credential(idToken: idToken),
+    );
+  }
+
+  /// Инициализация `GoogleSignIn` идемпотентна — флаг защищает от повторной.
+  static bool _googleSignInInitialized = false;
+
+  /// Выход из аккаунта (на нативных платформах — и из Google-сессии).
   Future<void> signOut() async {
     if (!state.available) return;
     try {
+      if (!kIsWeb && _googleSignInInitialized) {
+        await GoogleSignIn.instance.signOut();
+      }
       await FirebaseAuth.instance.signOut();
     } catch (_) {
       // игнорируем — состояние обновит authStateChanges
