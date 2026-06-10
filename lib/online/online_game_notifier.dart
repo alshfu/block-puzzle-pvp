@@ -7,6 +7,8 @@
 ///   `hello`). Выбор фигуры — локальное состояние; постановка считает клетки
 ///   через адаптер [onlineToGameState] (путь ядра `orientations`), поэтому
 ///   серверный anti-cheat проходит по построению. Без BuildContext.
+///   Для разработчиков есть скрытый авто-игрок: [OnlineGameNotifier.pilotPlayTurn]
+///   (зеркало офлайн-пилота, паритет с TS `PilotMode = "online"`).
 ///
 /// Соответствие TS: `src/ui/online/useOnlineGame.ts`.
 library;
@@ -14,7 +16,8 @@ library;
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:block_duel/core/core.dart' show Coord;
+import 'package:block_duel/core/core.dart'
+    show BotLevel, Coord, RandomSource, chooseBotMove, makeRng, orientations;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'online_match_state.dart';
@@ -146,6 +149,60 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
   /// Сдаётся (моментальное поражение).
   void resign() => _transport?.send({'type': 'resign'});
 
+  // ── Pilot (скрытый авто-игрок для разработчиков) ───────────────────────────
+
+  /// Детерминированный rng пилота (свой на инстанс матча, не PRNG партии).
+  late final RandomSource _pilotRng = makeRng(31337);
+
+  /// Один ход «пилота» в онлайн-матче: выбирает лучший ход (`chooseBotMove`,
+  /// уровень hard) за локального игрока, показывает выбор/ориентацию и шлёт
+  /// `move` штатным путём [placeAt] — клетки считаются через `orientations`
+  /// ядра, поэтому серверный anti-cheat проходит по построению. Зеркало
+  /// офлайн-пилота `GameNotifier.pilotPlayTurn`; TS: `src/ui/pilot` (online).
+  /// Возвращает `true`, если ход отправлен.
+  bool pilotPlayTurn() {
+    if (!_myTurn) return false;
+    final game = state.game!;
+    final gs = onlineToGameState(game, you: state.you);
+    final move = chooseBotMove(
+      gs.board,
+      gs.currentPlayer.hand,
+      BotLevel.hard,
+      gs.cfg,
+      _pilotRng,
+    );
+    if (move == null) return false;
+    final os = orientations(
+      move.type,
+      gs.cfg.rotationEnabled,
+      gs.cfg.flipEnabled,
+    );
+    // Показать выбор и ориентацию (наглядно, как реальные действия игрока).
+    state = state.copyWith(
+      selectedPieceId: move.pieceId,
+      orientIndex: _orientIndexOf(os, move.cells),
+    );
+    placeAt(move.r, move.c);
+    return true;
+  }
+
+  /// Индекс ориентации в [os], совпадающей с [cells] (или 0).
+  int _orientIndexOf(List<List<Coord>> os, List<Coord> cells) {
+    for (int i = 0; i < os.length; i++) {
+      if (_sameCells(os[i], cells)) return i;
+    }
+    return 0;
+  }
+
+  /// Поэлементное равенство наборов клеток (оба нормализованы ядром).
+  bool _sameCells(List<Coord> a, List<Coord> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].r != b[i].r || a[i].c != b[i].c) return false;
+    }
+    return true;
+  }
+
   /// Запрашивает ремач.
   void requestRematch() {
     state = state.copyWith(rematchYours: true);
@@ -174,7 +231,8 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
           rematchYours: false,
           rematchTheirs: false,
           clearError: true,
-          resetMatchAcc: true, // новый матч (в т.ч. ремач) — обнуляем накопители
+          resetMatchAcc:
+              true, // новый матч (в т.ч. ремач) — обнуляем накопители
         );
       case 'state':
         final game = OnlineGameState.fromJson(

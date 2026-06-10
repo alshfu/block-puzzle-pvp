@@ -48,6 +48,7 @@ import '../theme/theme_controller.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
 import '../widgets/mini_piece.dart';
+import '../widgets/pilot_hud.dart';
 import '../widgets/powerups_panel.dart';
 import '../widgets/scoreboard.dart';
 import '../widgets/turn_timer.dart';
@@ -99,7 +100,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
     duration: const Duration(milliseconds: 320),
   );
 
-  // ── Скрытый pilot (локально для экрана, см. _PilotHud) ────────────────────
+  // ── Скрытый pilot (таймер у экрана; HUD — общий PilotHud) ──────────────────
   /// Таймер цикла пилота (null — выключен).
   Timer? _pilotTimer;
 
@@ -635,7 +636,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               Positioned(
                 left: 12,
                 bottom: 12,
-                child: _PilotHud(
+                child: PilotHud(
                   theme: theme,
                   running: _pilotTimer != null,
                   paused: _pilotPaused,
@@ -650,121 +651,6 @@ class _GameScreenState extends ConsumerState<GameScreen>
       ),
     );
   }
-}
-
-/// HUD скрытого пилота (виден только разработчику). Запуск/пауза/стоп + счётчик.
-class _PilotHud extends StatelessWidget {
-  final BlockDuelTheme theme;
-  final bool running;
-  final bool paused;
-  final int moves;
-  final VoidCallback onStart;
-  final VoidCallback onPause;
-  final VoidCallback onStop;
-
-  const _PilotHud({
-    required this.theme,
-    required this.running,
-    required this.paused,
-    required this.moves,
-    required this.onStart,
-    required this.onPause,
-    required this.onStop,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (!running) {
-      return _PillButton(theme: theme, label: '🛩 Pilot', onTap: onStart);
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: theme.panel.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(theme.btnRadius),
-        border: Border.all(color: theme.p0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '🛩 $moves',
-            style: TextStyle(
-              color: theme.ink,
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-              fontFamily: theme.fontMono,
-            ),
-          ),
-          const SizedBox(width: 8),
-          _MiniIcon(theme: theme, icon: paused ? '▶' : '⏸', onTap: onPause),
-          const SizedBox(width: 4),
-          _MiniIcon(theme: theme, icon: '⏹', onTap: onStop),
-        ],
-      ),
-    );
-  }
-}
-
-/// Маленькая иконка-кнопка пилот-HUD.
-class _MiniIcon extends StatelessWidget {
-  final BlockDuelTheme theme;
-  final String icon;
-  final VoidCallback onTap;
-
-  const _MiniIcon({
-    required this.theme,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(6),
-    child: Padding(
-      padding: const EdgeInsets.all(2),
-      child: Text(icon, style: TextStyle(color: theme.ink, fontSize: 14)),
-    ),
-  );
-}
-
-/// Пилюля-кнопка запуска пилота.
-class _PillButton extends StatelessWidget {
-  final BlockDuelTheme theme;
-  final String label;
-  final VoidCallback onTap;
-
-  const _PillButton({
-    required this.theme,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => Material(
-    color: theme.panel.withValues(alpha: 0.85),
-    borderRadius: BorderRadius.circular(theme.btnRadius),
-    child: InkWell(
-      borderRadius: BorderRadius.circular(theme.btnRadius),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(theme.btnRadius),
-          border: Border.all(color: theme.line),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: theme.muted,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    ),
-  );
 }
 
 /// Превью «дальше»: следующая фигура текущего игрока (ТЗ §8.1).

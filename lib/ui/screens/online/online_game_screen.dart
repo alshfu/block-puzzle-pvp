@@ -10,6 +10,8 @@
 /// Соответствие TS: `screens/OnlineGame.tsx`.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +27,7 @@ import '../../../online/online_game_notifier.dart';
 import '../../../online/online_match_state.dart';
 import '../../../online/online_models.dart';
 import '../../../online/online_to_game_state.dart';
+import '../../../pilot/developer.dart';
 import '../../../profile/profile_controller.dart';
 import '../../../settings/settings_controller.dart';
 import '../../../shop/skins.dart';
@@ -35,6 +38,7 @@ import '../../game/confetti_overlay.dart';
 import '../../theme/theme_controller.dart';
 import '../../widgets/board_view.dart';
 import '../../widgets/hand_view.dart';
+import '../../widgets/pilot_hud.dart';
 import '../../widgets/scoreboard.dart';
 import '../../widgets/turn_timer.dart';
 import 'online_overlays.dart';
@@ -80,6 +84,53 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
 
   /// Тосты о вновь разблокированных PvP-ачивках.
   final List<AchievementDef> _toasts = [];
+
+  // ── Скрытый pilot (таймер у экрана; HUD — общий PilotHud) ──────────────────
+  /// Таймер цикла пилота (null — выключен).
+  Timer? _pilotTimer;
+
+  /// На паузе ли пилот.
+  bool _pilotPaused = false;
+
+  /// Сколько ходов сделал пилот за сессию.
+  int _pilotMoves = 0;
+
+  /// Период хода пилота (как у офлайн-пилота).
+  static const Duration _pilotTick = Duration(milliseconds: 650);
+
+  /// Запускает пилота: по таймеру играет за нас, когда наш ход.
+  void _startPilot() {
+    if (_pilotTimer != null) return;
+    setState(() {
+      _pilotPaused = false;
+      _pilotMoves = 0;
+    });
+    _pilotTimer = Timer.periodic(_pilotTick, (_) => _pilotStep());
+  }
+
+  /// Один тик пилота: ход, если сейчас наш ход. Ремач не запрашивает —
+  /// в онлайне на него нужно согласие соперника (в отличие от офлайн-цикла).
+  void _pilotStep() {
+    if (_pilotPaused || !mounted) return;
+    final vm = ref.read(onlineGameProvider(_args).notifier);
+    if (vm.pilotPlayTurn()) {
+      setState(() => _pilotMoves++);
+    }
+  }
+
+  void _togglePilotPause() => setState(() => _pilotPaused = !_pilotPaused);
+
+  void _stopPilot() {
+    _pilotTimer?.cancel();
+    _pilotTimer = null;
+    setState(() => _pilotPaused = false);
+  }
+
+  @override
+  void dispose() {
+    _pilotTimer?.cancel();
+    super.dispose();
+  }
 
   /// Сегодняшняя дата `YYYY-MM-DD` (клиентская) — для серии «дней подряд».
   String _today() {
@@ -333,6 +384,21 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
               onDismiss: (id) =>
                   setState(() => _toasts.removeWhere((a) => a.id == id)),
             ),
+            // Скрытый pilot — только в режиме разработчика.
+            if (ref.watch(isDeveloperProvider))
+              Positioned(
+                left: 12,
+                bottom: 12,
+                child: PilotHud(
+                  theme: theme,
+                  running: _pilotTimer != null,
+                  paused: _pilotPaused,
+                  moves: _pilotMoves,
+                  onStart: _startPilot,
+                  onPause: _togglePilotPause,
+                  onStop: _stopPilot,
+                ),
+              ),
           ],
         ),
       ),
