@@ -30,6 +30,9 @@ lighthouse-*.json
 tools/screens/
 tools/debug-page.ts
 
+# Рантайм-данные локального PvP-сервера (лидерборд из server:dev / E2E-прогонов)
+/data/
+
 # Flutter — сборочные артефакты вне flutter/ (на случай запуска из корня)
 /build/
 firebase-debug.log
