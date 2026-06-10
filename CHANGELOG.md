@@ -33,8 +33,9 @@ View = виджеты без логики). Подробный журнал — 
   `legacy-ts/core` остаётся живым как зависимость Node-сервера.
 - **Сборка/деплой**: `npm run build:flutter` / `deploy:flutter` (Flutter Web →
   GitHub Pages). **176 тестов** зелёные, `flutter analyze` чист.
-- **NB:** прод Pages ещё на TS-сборке — cut-over на Flutter Web выполняется
-  отдельно (`deploy:flutter`); см. `DEPLOY.md`.
+- **Cut-over прода выполнен 2026-06-10**: GitHub Pages переключён на Flutter
+  Web (`deploy:flutter`, gh-pages `e6c30a1`); откат — `npm run deploy`
+  (TS-сборка). См. `DEPLOY.md`.
 
 ## 1.6.1 — 2026-06-03
 
