@@ -402,9 +402,17 @@ Post-cutover hardening сервера (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS
 - [ ] Post-cutover hardening сервера (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS`) — на VPS.
 - [ ] Визуальный **gate pixel-parity** во всех 3 темах (приёмка пользователя).
 - [ ] Ручная проверка онлайна / Google-входа / Firestore-синка (`flutter run`).
-- [ ] Нативный Google-вход (Android/iOS — `flutterfire configure`); **применить
-      `firestore.rules`** в `blockduel-web` (файл написан 2026-06-10 с валидацией
-      схемы `users/{uid}` — осталось задеплоить в консоли/CLI); богатая схема.
+- [~] Нативный Google-вход: **код готов для macOS/iOS/Android** (2026-06-10,
+      `auth_controller._signInWithGoogleNative` через google_sign_in 7.x +
+      `firebase_options.macos` + Info.plist URL-схема) — остались **консольные
+      шаги** (регистрация macOS-app в `blockduel-web`, заполнить REPLACE_ME);
+      инструкция `MACOS_AUTH_SETUP.md`.
+- [x] **2026-06-10** — PvP на macOS починен: `npm run build:macos`/`run:macos:prod`
+      прокидывают PARTY_HOST/PARTY_TLS (раньше шёл на localhost:1999).
+- [ ] **Применить `firestore.rules`** в `blockduel-web` (файл написан с
+      валидацией схемы `users/{uid}` — `npm run deploy:rules` или консоль).
+- [ ] **Релиз v2.0.0 macOS** (.app.zip, неподписанный, GitHub Release) — после
+      проверки auth+PvP на Mac.
 - [ ] Android SDK + iOS Simulator runtime (для нативных сборок).
 - [x] **2026-06-10** — ветка `flutter-migration` заархивирована (тег
       `archive/flutter-migration` → `49a813e`) и удалена (local + origin).
