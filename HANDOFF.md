@@ -13,7 +13,7 @@
 - Проект **BlockDuel 9×9** — соревновательный блок-пазл (тетромино на доске 9×9, очистка строк/столбцов/боксов).
 - **Миграция на Dart + Flutter (+ Flame + Riverpod) ЗАВЕРШЕНА и влита в `main`** (merge `8a63a82`, 2026-06-09). Flutter-проект — в **корне** репозитория.
 - Старый TS/React-фронт перенесён в **`legacy-ts/`** и ретайрнут. **НО:** его pure-TS ядро `legacy-ts/core` ещё **живое** — это зависимость Node PvP-сервера (`server/`).
-- **Прод ещё на TS.** GitHub Pages отдаёт старую TS-сборку до cut-over (`npm run deploy:flutter`). VPS-сервер не трогался.
+- **Прод на Flutter Web.** Cut-over выполнен 2026-06-10 (`npm run deploy:flutter`) — GitHub Pages отдаёт Flutter-сборку. VPS-сервер не трогался (Flutter-клиент говорит по тому же WS-протоколу).
 - **Архитектура — строго MVVM** (Model=ядро/репозитории, ViewModel=Riverpod-нотифайеры без `BuildContext`, View=виджеты без логики).
 - **Стек:** Dart 3.12 / Flutter 3.44.1 / Flame 1.37 / Riverpod 3.3.1. **176 тестов** зелёные, `flutter analyze` чист.
 - **IDE пользователя:** **IntelliJ IDEA Ultimate 2026.1.3** + плагины Flutter/Dart/Android. Бесплатные альтернативы (VS Code, Android Studio как «бесплатная», Cursor) **не предлагать** — оплачена JetBrains All Products подписка.
@@ -37,7 +37,7 @@
 
 ### 2.2 Что осталось
 
-- **Прод cut-over:** `npm run deploy:flutter` (Pages: TS → Flutter Web). См. `DEPLOY.md`.
+- **Прод cut-over** — ✅ выполнен 2026-06-10 (Pages на Flutter Web). Осталось: post-cutover hardening сервера на VPS (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS`, см. `DEPLOY.md`), когда старых TS-вкладок не останется.
 - Визуальный **gate pixel-parity** во всех 3 темах (приёмка пользователя, вне кода).
 - Ручная проверка онлайна / Google-входа / Firestore-синка (`flutter run -d chrome`).
 - Нативный Google-вход (Android/iOS — `flutterfire configure`), `firestore.rules` в `blockduel-web`, богатая облачная схема.
@@ -112,7 +112,7 @@ block_puzzle_pvp/   (= Flutter-проект block_duel в корне)
 | 2026-06-07…08 | Фаза 6 (6A online + 6B auth/sync), UI-паритет §8/§4, Фаза 7 (shop/powerups/arcade/tutorial/hardening) | `MIGRATION_PROGRESS.md` |
 | 2026-06-09 | Фаза 3b (онлайн-статистика+PvP-ачивки+/stats), security-аудит + SEC-1..3, обвязка Фазы 8 cut-over, реструктуризация (Flutter→корень, src/→legacy-ts/), **merge в `main`** (`8a63a82`) | git log |
 | 2026-06-10 | Актуализация доков (README, ROADMAP, CHANGELOG 2.0.0, MIGRATION_PROGRESS, MIGRATION_FLUTTER, этот HANDOFF) | git log |
-| **TBD** | Прод cut-over Pages на Flutter Web (`npm run deploy:flutter`) | будущее |
+| 2026-06-10 | **Прод cut-over**: Pages переключён на Flutter Web (`npm run deploy:flutter`, gh-pages `e6c30a1`) | git log + DEPLOY.md |
 
 Текущая версия: **v2.0.0** (`pubspec.yaml`). Legacy TS-версия — `v1.6.1` (`package.json`).
 
@@ -195,7 +195,7 @@ Co-Authored-By: Claude <model-name> <noreply@anthropic.com>
 3. **Пойми намерение:**
    - конкретное действие — выполняй (правила §5);
    - «продолжить» — открой `MIGRATION_PROGRESS.md` (где остановились) + `ROADMAP.md` (что дальше);
-   - «починить прод» — это TS-сборка на Pages (`legacy-ts/`), пока cut-over не сделан.
+   - «починить прод» — теперь это **Flutter-сборка** на Pages (`lib/`, деплой `npm run deploy:flutter`); TS-сборка (`legacy-ts/`) — путь отката (`npm run deploy`).
 4. **Работай по правилам:** мелкие правки — сразу; деструктивные — подтверди (§5.3); коммит — детальный (§5.4); пуш — в `origin main`.
 5. **Обновляй артефакты:** новые решения → memory; архитектурные сдвиги → `CLAUDE.md`; прогресс → `MIGRATION_PROGRESS.md`; релиз → `CHANGELOG.md`; держи доки в актуальном состоянии (`[[feedback_keep_docs_updated]]`).
 
@@ -215,4 +215,4 @@ Co-Authored-By: Claude <model-name> <noreply@anthropic.com>
 
 Если что-то здесь устарело или противоречит реальности — **обнови сам** и пересохрани. Устаревший хэндофф хуже его отсутствия.
 
-> Last updated: 2026-06-10 by Claude Opus 4.8. Миграция на Flutter завершена и влита в `main` (`8a63a82`). Прод ещё на TS — остался cut-over (`npm run deploy:flutter`). 176 тестов зелёные.
+> Last updated: 2026-06-10 by Claude Opus 4.8. Миграция на Flutter завершена и влита в `main` (`8a63a82`); **прод переключён на Flutter Web** (cut-over `deploy:flutter`, gh-pages `e6c30a1`). 176 тестов зелёные. Остаётся post-cutover hardening сервера на VPS.

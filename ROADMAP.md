@@ -17,8 +17,8 @@
 > проект теперь в **корне** репозитория (`lib/`, `test/`, `web/`, `pubspec.yaml`),
 > старый TS/React-фронт перенесён в **`legacy-ts/`** (ретайрнут, но его pure-TS
 > ядро `legacy-ts/core` ещё **живо** как зависимость Node PvP-сервера). Фазы
-> миграции 0–7 + обвязка Фазы 8 закрыты по коду, 176 тестов зелёные. **Прод ещё
-> на TS** — следующий шаг — cut-over Pages на Flutter Web (см. ниже и
+> миграции 0–8 закрыты, 176 тестов зелёные. **Прод переключён на Flutter Web
+> (cut-over выполнен 2026-06-10)** — GitHub Pages отдаёт Flutter-сборку (см.
 > [DEPLOY.md](DEPLOY.md)).
 >
 > ⚠️ Пути `src/core`, `src/ui`, `src/modes`, `party/` в фазах ниже **устаревшие**.
@@ -44,10 +44,12 @@
 - [x] Security-аудит PvP-сервера (`SECURITY_AUDIT_SERVER.md`) + SEC-1..3.
 - [x] 176 тестов зелёные, `flutter analyze` чист, `flutter build web` собирается.
 
-### Near-term — прод cut-over 🟨
-- [ ] `npm run deploy:flutter` — переключить GitHub Pages на Flutter Web.
+### Near-term — прод cut-over ✅
+- [x] **2026-06-10** — `npm run deploy:flutter`: GitHub Pages переключён на
+      Flutter Web (gh-pages `e6c30a1`, live отдаёт `flutter_bootstrap.js`).
+- [ ] Post-cutover (на VPS, когда старых TS-вкладок не осталось): включить
+      `REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS` (см. DEPLOY.md).
 - [ ] Снять/архивировать устаревшую ветку `flutter-migration`.
-- [ ] Обновить `MIGRATION_PROGRESS.md` (отстал на 2026-06-08).
 
 ---
 

@@ -385,13 +385,21 @@ flutterfire CLI — у него был сломан токен). apiKey web пу
       `lib/...` (`49a813e`).
 - [x] **2026-06-09** — **merge `flutter-migration` → `main`** (`8a63a82`): `main`
       содержит всю миграцию.
+- [x] **2026-06-10** — **ПРОД CUT-OVER ВЫПОЛНЕН**: `npm run deploy:flutter`
+      (тесты-гейт зелёные: Flutter 176 + TS Vitest 55) → GitHub Pages переключён
+      с TS на Flutter Web (gh-pages `e6c30a1`). Live
+      https://alshfu.github.io/block-puzzle-pvp/ отдаёт Flutter-сборку
+      (`flutter_bootstrap.js`/`main.dart.js`/canvaskit, HTTP 200).
 
-**Прод ещё НЕ переключён:** Pages на TS до `npm run deploy:flutter`, VPS-сервер —
-до `git pull` + `systemctl restart blockduel-pvp` (делает пользователь).
+**VPS-сервер не трогался** (Flutter-клиент говорит по тому же WS-протоколу).
+Post-cutover hardening сервера (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS`) —
+включить, когда старых TS-вкладок не останется; делает пользователь (`git pull`
++ `systemctl restart blockduel-pvp`). См. `DEPLOY.md`.
 
 ## Открытые / оставшиеся пункты
 
-- [ ] **Прод cut-over**: `npm run deploy:flutter` (Pages → Flutter Web).
+- [x] **Прод cut-over** выполнен (2026-06-10).
+- [ ] Post-cutover hardening сервера (`REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS`) — на VPS.
 - [ ] Визуальный **gate pixel-parity** во всех 3 темах (приёмка пользователя).
 - [ ] Ручная проверка онлайна / Google-входа / Firestore-синка (`flutter run`).
 - [ ] Нативный Google-вход (Android/iOS — `flutterfire configure`), применить
@@ -406,9 +414,9 @@ Node/VPS-сервером по кросс-протоколу; эталонные
 
 ---
 
-_Last updated: 2026-06-10 — миграция влита в `main` (merge `8a63a82`,
-2026-06-09). Закрыты по коду фазы 0–7 + 3b + security (SEC-1..3) + обвязка
-Фазы 8 + реструктуризация репо (Flutter в корне, TS → `legacy-ts/`). **176
-тестов зелёные**, `flutter analyze` чист, `flutter build web` собирается. Прод
-ещё на TS — следующий шаг — cut-over Pages на Flutter Web (`deploy:flutter`).
-Открыт визуальный gate pixel-parity и ручная проверка онлайна/входа/синка._
+_Last updated: 2026-06-10 — миграция влита в `main` (merge `8a63a82`) и **прод
+переключён на Flutter Web** (cut-over `deploy:flutter`, gh-pages `e6c30a1`).
+Закрыты фазы 0–8 + 3b + security (SEC-1..3) + реструктуризация репо (Flutter в
+корне, TS → `legacy-ts/`). **176 тестов зелёные** (+ TS Vitest 55), `flutter
+analyze` чист. Остаётся: post-cutover hardening сервера на VPS, визуальный gate
+pixel-parity и ручная проверка онлайна/входа/синка._

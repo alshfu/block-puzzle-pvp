@@ -16,8 +16,8 @@
 > `web/`, `pubspec.yaml`, `android/ios/macos/`). The original TS/React front-end
 > moved to **`legacy-ts/`** and is retired — but its **pure TS core
 > (`legacy-ts/core`) is still live** as the dependency of the Node PvP server.
-> Production cut-over (GitHub Pages: TS → Flutter Web) is pending; see
-> [`DEPLOY.md`](./DEPLOY.md).
+> Production cut-over is **DONE (2026-06-10)** — GitHub Pages now serves the
+> Flutter Web build; see [`DEPLOY.md`](./DEPLOY.md).
 
 ---
 
@@ -202,10 +202,10 @@ ROADMAP.md  CHANGELOG.md  CLAUDE.md  HANDOFF.md  DEPLOY.md
 
 ## Roadmap
 
-See [`ROADMAP.md`](./ROADMAP.md) for the full phased checklist. Near-term:
-production cut-over of GitHub Pages from the TS build to Flutter Web; then the
-platform-expansion phases (extra game modes, LAN PvP, social system, deeper
-progression, monetization v2, native mobile rollout).
+See [`ROADMAP.md`](./ROADMAP.md) for the full phased checklist. Production
+cut-over to Flutter Web is done (2026-06-10). Next: platform-expansion phases
+(extra game modes, LAN PvP, social system, deeper progression, monetization v2,
+native mobile rollout).
 
 ---
 

@@ -13,10 +13,11 @@
 > ⚠️ **СТАТУС НА 2026-06-10.** Миграция завершена: Flutter-проект в **корне** репо
 > (`lib/`, `test/`, `web/`, `pubspec.yaml`), старый TS/React → **`legacy-ts/`**
 > (ядро `legacy-ts/core` живо как зависимость Node-сервера). 176 тестов зелёные,
-> `flutter analyze` чист. **Прод ещё на TS** — остался cut-over Pages на Flutter
-> Web (`npm run deploy:flutter`, см. `DEPLOY.md`). Фаза 9 (Dart-сервер) — НЕ
-> делается (решено: остаёмся на Node/VPS-сервере). Пути вида `flutter/lib/...`
-> ниже теперь читать как `lib/...`. Подробности — `MIGRATION_PROGRESS.md`.
+> `flutter analyze` чист. **Прод переключён на Flutter Web** (cut-over
+> `npm run deploy:flutter` выполнен 2026-06-10, gh-pages `e6c30a1`; см. `DEPLOY.md`).
+> Фаза 9 (Dart-сервер) — НЕ делается (решено: остаёмся на Node/VPS-сервере). Пути
+> вида `flutter/lib/...` ниже теперь читать как `lib/...`. Подробности —
+> `MIGRATION_PROGRESS.md`.
 
 ---
 
@@ -858,7 +859,7 @@ npm run server:dev
 - [x] Фаза 3b: богатая онлайн-статистика + PvP-ачивки + экран /stats
 - [x] Security: аудит PvP-сервера + SEC-1..3
 - [x] Фаза 8: обвязка cut-over + реструктуризация (Flutter→корень, src/→legacy-ts/), merge в main
-- [ ] **Прод cut-over:** `npm run deploy:flutter` (Pages TS → Flutter Web) — остаётся
+- [x] **Прод cut-over:** `npm run deploy:flutter` — Pages переключён на Flutter Web (2026-06-10)
 - [ ] ~~Фаза 9 (опц.): Dart-сервер~~ — **НЕ делаем**, остаёмся на Node/VPS-сервере
 
 > Детальный журнал по каждой фазе с датами/коммитами — `MIGRATION_PROGRESS.md`.
