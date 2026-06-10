@@ -2,6 +2,40 @@
 
 История значимых релизов BlockDuel 9×9. Формат — обратный хронологический.
 
+## 2.0.0 — 2026-06-09 — Миграция на Dart/Flutter
+
+Полный порт приложения с TypeScript + React на **Dart + Flutter (+ Flame +
+Riverpod)**, влитый в `main` (merge `8a63a82`). Архитектура — строго **MVVM**
+(Model = ядро/репозитории, ViewModel = Riverpod-нотифайеры без `BuildContext`,
+View = виджеты без логики). Подробный журнал — `MIGRATION_PROGRESS.md`.
+
+- **Ядро портировано** в pure-Dart `lib/core/` — **bit-for-bit детерминизм** с
+  TS-ядром доказан golden-тестами (VM + Web): PRNG `mulberry32`, 7-bag, доска/
+  очистки, scoring v1.6, перебор ходов, бот 3 уровней, blitz/force-place.
+- **UI на Flutter/Flame**: доска/рука/score, drag-and-place + tap-to-rotate,
+  3 темы (neutral/candy/night) с дизайн-токенами 1:1, маскоты/ponies через
+  `flutter_svg`, Confetti на Flame, ComboFlash, Toast/Pause-оверлеи.
+- **Звук и музыка синтезируются в Dart** (порт Web Audio): SFX-каталог +
+  зацикленные фоновые треки тем, без аудиофайлов.
+- **Контент-паритет**: Storage/Profile/Settings, ~120 ачивок (15 базовых + 105
+  PvP), Daily quests, детерминистичный resume сохранёнки, Arcade, Tutorial
+  (5 шагов), магазин (две валюты, скины доски, power-ups в игре), 12 аватаров.
+- **Онлайн PvP**: Dart-клиент `lib/online/` к существующему **Node/VPS-серверу**
+  по кросс-протоколу (лобби, матчмейкинг, живой матч с reconnect+ремачом, ELO-
+  лидерборд K=24), богатая онлайн-статистика + экран `/stats`, `myElo` для
+  ELO-ачивок.
+- **Auth + sync**: Google sign-in (Firebase `blockduel-web`, web popup) +
+  Firestore cross-device sync (`users/{uid}`, merge).
+- **Безопасность сервера**: аудит (`SECURITY_AUDIT_SERVER.md`) + SEC-1..3
+  (hardening, аутентификация `roomToken` end-to-end, добивка хвостов).
+- **Реструктуризация репо**: Flutter-проект → **корень** (`lib/`, `test/`,
+  `web/`, `pubspec.yaml`), старый TS/React-фронт → **`legacy-ts/`**. TS-ядро
+  `legacy-ts/core` остаётся живым как зависимость Node-сервера.
+- **Сборка/деплой**: `npm run build:flutter` / `deploy:flutter` (Flutter Web →
+  GitHub Pages). **176 тестов** зелёные, `flutter analyze` чист.
+- **NB:** прод Pages ещё на TS-сборке — cut-over на Flutter Web выполняется
+  отдельно (`deploy:flutter`); см. `DEPLOY.md`.
+
 ## 1.6.1 — 2026-06-03
 
 - **handSize=4 удалён.** В SetupScreen и OnlineMenuScreen остались только
