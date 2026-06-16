@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import '../online/online_models.dart';
 import '../profile/profile_controller.dart';
 import 'screens/achievements_screen.dart';
+import 'screens/coop_screen.dart';
 import 'screens/daily_screen.dart';
 import 'screens/game_screen.dart';
 import 'screens/memory_solo_screen.dart';
@@ -69,6 +70,7 @@ final GoRouter appRouter = GoRouter(
       path: '/memory',
       builder: (context, state) => const MemorySoloScreen(),
     ),
+    GoRoute(path: '/coop', builder: (context, state) => const CoopScreen()),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
     GoRoute(path: '/shop', builder: (context, state) => const ShopScreen()),
     GoRoute(

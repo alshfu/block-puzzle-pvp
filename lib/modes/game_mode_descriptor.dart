@@ -130,6 +130,15 @@ const List<GameModeDescriptor> gameModes = [
     status: GameModeStatus.beta,
   ),
   GameModeDescriptor(
+    id: 'coop',
+    icon: '🧱',
+    title: 'Co-op Tetris',
+    subtitle: 'поле 10×20, ходы по очереди',
+    route: '/coop',
+    category: GameModeCategory.coop,
+    status: GameModeStatus.beta,
+  ),
+  GameModeDescriptor(
     id: 'tutorial',
     icon: '🎓',
     title: 'Обучение',

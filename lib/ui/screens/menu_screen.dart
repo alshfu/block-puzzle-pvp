@@ -29,7 +29,16 @@ import '../widgets/logo.dart';
 import '../widgets/mini_piece.dart';
 
 /// Режимы игры (как TS `GameMode`).
-enum GameMode { bot, hotseat, arcade, tutorial, botvbot, memorySolo, online }
+enum GameMode {
+  bot,
+  hotseat,
+  arcade,
+  tutorial,
+  botvbot,
+  memorySolo,
+  coop,
+  online,
+}
 
 /// Главное меню игры.
 class MenuScreen extends ConsumerStatefulWidget {
@@ -80,6 +89,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
       context.go('/tutorial');
     } else if (mode == GameMode.memorySolo) {
       context.go('/memory');
+    } else if (mode == GameMode.coop) {
+      context.go('/coop');
     } else if (setupModes.contains(mode)) {
       context.go('/setup/${mode.name}');
     } else {
@@ -368,6 +379,13 @@ class _Actions extends StatelessWidget {
           title: 'Память: соло',
           sub: 'запомни раскладку и собери её',
           onTap: () => onStart(GameMode.memorySolo),
+        ),
+        _ModeButton(
+          tokens: tokens,
+          icon: '🧱',
+          title: 'Co-op Tetris',
+          sub: 'поле 10×20, ходы по очереди',
+          onTap: () => onStart(GameMode.coop),
         ),
         _ModeButton(
           tokens: tokens,
