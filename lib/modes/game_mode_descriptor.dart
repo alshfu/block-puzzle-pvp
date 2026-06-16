@@ -148,6 +148,15 @@ const List<GameModeDescriptor> gameModes = [
     status: GameModeStatus.beta,
   ),
   GameModeDescriptor(
+    id: 'match3',
+    icon: '🍬',
+    title: 'Match-3 PvP',
+    subtitle: 'три в ряд, ходы по очереди',
+    route: '/match3',
+    category: GameModeCategory.coop,
+    status: GameModeStatus.beta,
+  ),
+  GameModeDescriptor(
     id: 'tutorial',
     icon: '🎓',
     title: 'Обучение',
