@@ -12,18 +12,7 @@
 Текущая версия: **v2.0.0** (Flutter-порт; см. [CHANGELOG.md](CHANGELOG.md)).
 Источник истины по фичам и балансу — [TZ_BlockDuel_9x9.md](TZ_BlockDuel_9x9.md).
 
-> **Миграция на Dart/Flutter (2026-06-09).** Проект портирован с TypeScript +
-> React на **Dart + Flutter (+ Flame + Riverpod)** и **влит в `main`**. Flutter-
-> проект теперь в **корне** репозитория (`lib/`, `test/`, `web/`, `pubspec.yaml`),
-> старый TS/React-фронт перенесён в **`legacy-ts/`** (ретайрнут, но его pure-TS
-> ядро `legacy-ts/core` ещё **живо** как зависимость Node PvP-сервера). Фазы
-> миграции 0–8 закрыты, 176 тестов зелёные. **Прод переключён на Flutter Web
-> (cut-over выполнен 2026-06-10)** — GitHub Pages отдаёт Flutter-сборку (см.
-> [DEPLOY.md](DEPLOY.md)).
->
-> ⚠️ Пути `src/core`, `src/ui`, `src/modes`, `party/` в фазах ниже **устаревшие**.
-> Читать как `lib/core`, `lib/ui`, `lib/modes`, `server/` соответственно;
-> «React/Vite/PartyKit» → «Flutter/Flame/Node-WS на VPS».
+
 
 ---
 
@@ -128,22 +117,28 @@
 **Цель:** превратить BlockDuel из одной игры в платформу с несколькими
 жанрами поверх общего ядра.
 
-### 5.1. Архитектурный рефакторинг ⬜
-- [ ] Извлечь интерфейс `GameRules` из текущего `src/core/index.ts`:
-      `legalMoves`, `applyMove`, `scoreMove`, `endConditions`.
-- [ ] Перенести 9×9 в `src/modes/blockduel/`.
-- [ ] Создать `src/modes/<id>/index.ts` шаблон.
-- [ ] Адаптировать `useGame` / `useOnlineGame` через `GameRules` injection.
-- [ ] Тесты на back-compat: 55 текущих тестов проходят без изменений.
+### 5.1. Архитектурный рефакторинг 🟨
+- [x] **2026-06-17** — реестр режимов `lib/modes/game_mode_descriptor.dart`
+      (`GameModeDescriptor`/`gameModes`: id/иконка/заголовок/маршрут/категория/
+      статус) — единый источник правды для меню/роутера, аддитивно поверх ядра,
+      без правок 9×9/онлайна.
+- [ ] Извлечь интерфейс `GameRules` из `lib/core/`:
+      `legalMoves`, `applyMove`, `scoreMove`, `endConditions` (отложено — чтобы
+      не ломать работающий путь дуэли/онлайна).
+- [ ] Перенести 9×9 в `lib/modes/blockduel/`.
+- [ ] Адаптировать `GameNotifier` / `OnlineGameNotifier` через injection.
 
-### 5.2. Memory Solo ⬜
-- [ ] Реализация в `src/modes/memory-solo/`:
-      pre-show раскладку на 3 сек → очистка → reconstruct phase.
-- [ ] UI: countdown 3-2-1, hint «запомни», timer reconstruct.
-- [ ] Scoring: точность (correctly placed / total) × time-bonus.
-- [ ] Сохранение high-score в `storage/memory-solo.ts`.
-- [ ] 5 уровней сложности (3 / 5 / 7 / 9 / 12 фигур).
-- [ ] Тесты ядра mode (legalMoves, scoreMove).
+### 5.2. Memory Solo ✅ (2026-06-17)
+- [x] Реализация `lib/modes/memory_solo/` (pure-ядро `memory_solo_puzzle.dart`):
+      pre-show раскладку → очистка → reconstruct, детерминированная генерация.
+- [x] UI `lib/ui/screens/memory_solo_screen.dart`: показ с обратным отсчётом,
+      hint «запомни», timer сборки, экран итога; ViewModel `memory_solo_notifier`.
+- [x] Scoring `scoreMemory`: точность (correctly placed / total) × time-bonus,
+      штраф за лишние клетки, perfect-бонус.
+- [x] Сохранение high-score `lib/modes/memory_solo/memory_solo_store.dart`
+      (per-difficulty в SharedPreferences).
+- [x] 5 уровней сложности (3 / 5 / 7 / 9 / 12 фигур).
+- [x] Тесты `test/modes/` (16: генерация-детерминизм, скоринг, фазы notifier).
 
 ### 5.3. Memory Duel ⬜
 - [ ] Сетевой протокол: `memory-place` / `memory-show` / `memory-recall`.

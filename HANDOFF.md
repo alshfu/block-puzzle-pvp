@@ -96,7 +96,7 @@ block_puzzle_pvp/   (= Flutter-проект block_duel в корне)
 ├── INTERFACE_PARITY.md      # ← чеклист UI-паритета с TS
 ├── SECURITY_AUDIT_SERVER.md # ← аудит PvP-сервера
 ├── pubspec.yaml             # ← Flutter/Flame/Riverpod (version 2.0.0)
-├── lib/                     # ← Dart-код: core/game/ui/online/auth/storage/...
+├── lib/                     # ← Dart-код: core/modes/game/ui/online/auth/storage/...
 ├── test/                    # ← flutter_test (176)
 ├── integration_test/        # ← E2E pilot (app_test.dart)
 ├── web/ android/ ios/ macos/ assets/   # ← Flutter-платформы/ассеты
@@ -148,6 +148,8 @@ block_puzzle_pvp/   (= Flutter-проект block_duel в корне)
 | 2026-06-10 | **Полный аудит проекта** (вердикт: архитектура/ядро/MVVM чистые, сервер закрыл все HIGH). По итогам: CLAUDE.md переписан под Flutter, npm-уязвимости закрыты (partykit удалён, vite 8 / vitest 4), гигиена репо (снос `flutter/`, iOS `Package.resolved`), минорный pub upgrade (riverpod 3.3.2) | git log (5 коммитов после `956910a`) |
 | 2026-06-10 | **Автодеплой через GitHub Actions включён**: `deploy.yml.disabled` → `deploy.yml`, переписан под Flutter (analyze+test+build web → пуш в `gh-pages` через peaceiris). Репо публичный → Actions бесплатны, биллинг-блокер снят. Ручной `deploy:flutter` — запасной путь | git log + DEPLOY.md «Go-live» |
 | 2026-06-10 | **Онлайн-пилот + E2E PvP на macOS**: `OnlineGameNotifier.pilotPlayTurn()` + общий `PilotHud` (паритет с TS `PilotMode="online"`); headless-оппонент `tools/online-bot-client.ts` (lobby→room, ходы ядром, MAX_TURNS→resign — два сильных бота иначе играют бесконечно). Живой матч: macOS-сборка (пилот) vs бот на локальном сервере — 120 ходов, 0 реджектов, resign-финал 516:486, ELO записан. 179 Flutter-тестов | git log + INTERFACE_PARITY.md |
+| 2026-06-17 | **Старт Фазы 5 (мультирежимная платформа)**: реестр режимов `lib/modes/game_mode_descriptor.dart` (5.1, частично — без полного `GameRules`-рефактора); новый одиночный режим **«Память: соло»** `lib/modes/memory_solo/` (5.2: pure-генерация+скоринг, ViewModel-фазы, экран, рекорды, маршрут `/memory`, пункт меню). Локален и детерминирован, не требует сервера. +16 тестов → **194** зелёных | git log + ROADMAP § 5 + CHANGELOG Unreleased |
+| 2026-06-17 | **macOS-релиз v2.0.0 — артефакт готов**: `npm run build:macos` → universal `.app`, упакован в `BlockDuel-macos-v2.0.0.zip` (34МБ, smoke-запуск ✓); `RELEASE_NOTES_v2.0.0.md`. Публикация `gh release` за пользователем (отложена до проверки auth+PvP на Mac) | git log + memory `[[project-macos-finish]]` |
 
 Текущая версия: **v2.0.0** (`pubspec.yaml`). Legacy TS-версия — `v1.6.1` (`package.json`).
 
@@ -250,4 +252,4 @@ Co-Authored-By: Claude <model-name> <noreply@anthropic.com>
 
 Если что-то здесь устарело или противоречит реальности — **обнови сам** и пересохрани. Устаревший хэндофф хуже его отсутствия.
 
-> Last updated: 2026-06-10 by Claude Opus 4.8. Миграция на Flutter завершена и влита в `main` (`8a63a82`); **прод переключён на Flutter Web** (cut-over `deploy:flutter`, gh-pages `e6c30a1`). 176 тестов зелёные. Остаётся post-cutover hardening сервера на VPS.
+> Last updated: 2026-06-17 by Claude Opus 4.8. Миграция на Flutter завершена и влита в `main` (`8a63a82`); **прод на Flutter Web** (cut-over `deploy:flutter`). Стартовала **Фаза 5** (мультирежимная платформа): добавлены реестр режимов и режим «Память: соло» (`lib/modes/`). **194 теста** зелёные, `flutter analyze` чист. macOS-релиз v2.0.0 — артефакт собран, публикация `gh release` за пользователем.

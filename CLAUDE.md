@@ -16,6 +16,7 @@
 ### Слои и ключевые файлы (Flutter, актуально)
 
 - **Ядро** (`lib/core/`) — pure Dart, порт TS-ядра бит-в-бит: `rng.dart` (mulberry32), `bag.dart` (7-bag), `pieces.dart`, `board.dart` (постановка/очистки), `scoring.dart`, `moves.dart` (перебор ходов), `bot.dart` (3 уровня, `botWeights`), `timer.dart` (blitz `turnTimeForRound`), `types.dart` (включая `RuleConfig`/`defaultConfig`), фасад `core.dart`. **Единственный** источник правды по игровой логике на Dart-стороне.
+- **Режимы-платформа** (`lib/modes/`) — расширение поверх ядра (ROADMAP Фаза 5): реестр режимов `game_mode_descriptor.dart` (каталог для меню/роутера) + per-mode модули, напр. `memory_solo/` («Память: соло»: pure `memory_solo_puzzle.dart` + ViewModel `memory_solo_notifier.dart` + `memory_solo_store.dart`). Режимы переиспользуют примитивы `lib/core/`, но **не** зеркалятся в TS и **не** входят в golden-паритет 9×9.
 - **Entry** — `lib/main.dart` + `lib/app.dart`; роутинг — `lib/ui/router.dart`.
 - **ViewModel-слой (Riverpod-нотифайеры, без `BuildContext`)** — `lib/game/game_notifier.dart` (офлайн-матч: бот, blitz tick, save/resume), `lib/online/online_game_notifier.dart` (онлайн-матч, reconnect), контроллеры в `lib/{achievements,audio,auth,daily,profile,settings,shop,tutorial}/`.
 - **View-слой** (`lib/ui/`) — `screens/` (Menu, Setup, Game, Profile, Settings, Tutorial, Daily, Shop, Achievements, Leaderboard, OnlineMenu, OnlineGame, Stats…), `widgets/` (BoardView, HandView, TurnTimer, MiniPiece…), `decor/` (маскоты, конфетти, ComboFlash), `theme/` + `design_tokens.dart` (темы `neutral`, `candy`, `night`), `responsive.dart`.
@@ -23,7 +24,7 @@
 - **Онлайн PvP** — `lib/online/` (wire-протокол, маппинг в GameState) ↔ `server/{index.ts,lobby.ts,room.ts,leaderboard.ts,limits.ts}` (Node WS на VPS, server-authoritative, ELO K=24, **импортирует `legacy-ts/core`**).
 - **Auth + sync** — `lib/auth/` + `lib/firebase_options.dart` (Google sign-in через Firebase, проект `blockduel-web`, Firestore cross-device sync; правила — `firestore.rules`).
 - **Хранилище** — `lib/storage/` (profile, stats, settings, saveGame; детерминистичный resume 7-bag).
-- **Tests** — `test/` — **176 тестов** в 32 файлах (core, game, online, achievements, audio, decor, pilot…), включая golden-тесты детерминизма **бит-в-бит с TS-ядром** (`test/golden/determinism_golden_test.dart`, `test/core/rng_golden_test.dart`). Плюс `integration_test/`.
+- **Tests** — `test/` — **194 теста** (core, modes, game, online, achievements, audio, decor, pilot…), включая golden-тесты детерминизма **бит-в-бит с TS-ядром** (`test/golden/determinism_golden_test.dart`, `test/core/rng_golden_test.dart`) и тесты режимов (`test/modes/`). Плюс `integration_test/`.
 - **Legacy-TS тесты** — `tests/` Vitest, 8 файлов, **55 тестов** (покрывают `legacy-ts/core` + серверную логику; гоняются `npm test`).
 - **Tools** — `tools/bot-sim.ts` (калибровка бота, по TS-ядру), `tools/gen_test_plan.py` (QA-планы в `qa/`), `tools/pentest_local.mjs`.
 - **PartyKit-вариант** — `party/*.ts` + `partykit.json` сохранены как инертная опция, не задействованы (онлайн крутится на собственном VPS). Пакет `partykit` удалён из зависимостей (тянул уязвимый undici); для реанимации варианта — `npm i -D partykit` и вернуть скрипты `party:dev`/`party:deploy`.
@@ -35,7 +36,7 @@
 ```bash
 # Flutter (основное приложение) — из корня
 flutter run -d chrome          # dev-запуск Web
-flutter test                   # 176 тестов
+flutter test                   # 194 теста
 flutter analyze                # статический анализ
 npm run build:flutter          # release-сборка Web (PARTY_HOST=pvp.alshfu.com)
 npm run deploy:flutter         # build + gh-pages → прод Pages (~30 сек)
