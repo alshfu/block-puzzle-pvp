@@ -16,6 +16,7 @@ import '../profile/profile_controller.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/daily_screen.dart';
 import 'screens/game_screen.dart';
+import 'screens/memory_solo_screen.dart';
 import 'screens/menu_screen.dart';
 import 'screens/online/leaderboard_screen.dart';
 import 'screens/online/online_game_screen.dart';
@@ -63,6 +64,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/achievements',
       builder: (context, state) => const AchievementsScreen(),
+    ),
+    GoRoute(
+      path: '/memory',
+      builder: (context, state) => const MemorySoloScreen(),
     ),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
     GoRoute(path: '/shop', builder: (context, state) => const ShopScreen()),

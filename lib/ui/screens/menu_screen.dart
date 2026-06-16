@@ -29,7 +29,7 @@ import '../widgets/logo.dart';
 import '../widgets/mini_piece.dart';
 
 /// Режимы игры (как TS `GameMode`).
-enum GameMode { bot, hotseat, arcade, tutorial, botvbot, online }
+enum GameMode { bot, hotseat, arcade, tutorial, botvbot, memorySolo, online }
 
 /// Главное меню игры.
 class MenuScreen extends ConsumerStatefulWidget {
@@ -78,6 +78,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
     const setupModes = {GameMode.bot, GameMode.hotseat, GameMode.botvbot};
     if (mode == GameMode.tutorial) {
       context.go('/tutorial');
+    } else if (mode == GameMode.memorySolo) {
+      context.go('/memory');
     } else if (setupModes.contains(mode)) {
       context.go('/setup/${mode.name}');
     } else {
@@ -362,6 +364,13 @@ class _Actions extends StatelessWidget {
         ),
         _ModeButton(
           tokens: tokens,
+          icon: '🧠',
+          title: 'Память: соло',
+          sub: 'запомни раскладку и собери её',
+          onTap: () => onStart(GameMode.memorySolo),
+        ),
+        _ModeButton(
+          tokens: tokens,
           icon: '🎓',
           title: 'Обучение',
           sub: '5 шагов · награда +50 🪙',
@@ -458,22 +467,24 @@ class _ModeButton extends StatelessWidget {
               children: [
                 Text(icon, style: const TextStyle(fontSize: 22)),
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: tokens.ink,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: tokens.ink,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    Text(
-                      sub,
-                      style: TextStyle(color: tokens.muted, fontSize: 12),
-                    ),
-                  ],
+                      Text(
+                        sub,
+                        style: TextStyle(color: tokens.muted, fontSize: 12),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -45,4 +45,7 @@ abstract final class PrefKeys {
 
   /// Флаг режима разработчика (`'1'` — включён скрытый pilot).
   static const String pilotDev = 'bd_pilot';
+
+  /// JSON рекордов режима «Память: соло» (уровень сложности → лучший счёт).
+  static const String memorySoloBest = 'bd_memory_solo_best';
 }
