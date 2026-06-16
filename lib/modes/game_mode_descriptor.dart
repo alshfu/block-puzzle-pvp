@@ -130,6 +130,15 @@ const List<GameModeDescriptor> gameModes = [
     status: GameModeStatus.beta,
   ),
   GameModeDescriptor(
+    id: 'memoryDuel',
+    icon: '🃏',
+    title: 'Memory Duel',
+    subtitle: 'расставь · запомни · повтори',
+    route: '/memory-duel',
+    category: GameModeCategory.memory,
+    status: GameModeStatus.beta,
+  ),
+  GameModeDescriptor(
     id: 'coop',
     icon: '🧱',
     title: 'Co-op Tetris',

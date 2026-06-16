@@ -36,6 +36,7 @@ enum GameMode {
   tutorial,
   botvbot,
   memorySolo,
+  memoryDuel,
   coop,
   online,
 }
@@ -91,6 +92,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
       context.go('/memory');
     } else if (mode == GameMode.coop) {
       context.go('/coop');
+    } else if (mode == GameMode.memoryDuel) {
+      context.go('/memory-duel');
     } else if (setupModes.contains(mode)) {
       context.go('/setup/${mode.name}');
     } else {
@@ -386,6 +389,13 @@ class _Actions extends StatelessWidget {
           title: 'Co-op Tetris',
           sub: 'поле 10×20, ходы по очереди',
           onTap: () => onStart(GameMode.coop),
+        ),
+        _ModeButton(
+          tokens: tokens,
+          icon: '🃏',
+          title: 'Memory Duel',
+          sub: 'расставь · запомни · повтори',
+          onTap: () => onStart(GameMode.memoryDuel),
         ),
         _ModeButton(
           tokens: tokens,

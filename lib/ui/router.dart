@@ -17,6 +17,7 @@ import 'screens/achievements_screen.dart';
 import 'screens/coop_screen.dart';
 import 'screens/daily_screen.dart';
 import 'screens/game_screen.dart';
+import 'screens/memory_duel_screen.dart';
 import 'screens/memory_solo_screen.dart';
 import 'screens/menu_screen.dart';
 import 'screens/online/leaderboard_screen.dart';
@@ -71,6 +72,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const MemorySoloScreen(),
     ),
     GoRoute(path: '/coop', builder: (context, state) => const CoopScreen()),
+    GoRoute(
+      path: '/memory-duel',
+      builder: (context, state) => const MemoryDuelScreen(),
+    ),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
     GoRoute(path: '/shop', builder: (context, state) => const ShopScreen()),
     GoRoute(
