@@ -36,7 +36,7 @@
 ### Near-term — прод cut-over ✅
 - [x] **2026-06-10** — `npm run deploy:flutter`: GitHub Pages переключён на
       Flutter Web (gh-pages `e6c30a1`, live отдаёт `flutter_bootstrap.js`).
-- [ ] Post-cutover (на VPS, когда старых TS-вкладок не осталось): включить
+- [x] Post-cutover (на VPS, когда старых TS-вкладок не осталось): включить
       `REQUIRE_ROOM_TOKEN=1` + `ALLOWED_ORIGINS` (см. DEPLOY.md).
 - [x] **2026-06-10** — ветка `flutter-migration` заархивирована: тег
       `archive/flutter-migration` (→ `49a813e`), ветка удалена (local + origin).
@@ -140,35 +140,47 @@
 - [x] 5 уровней сложности (3 / 5 / 7 / 9 / 12 фигур).
 - [x] Тесты `test/modes/` (16: генерация-детерминизм, скоринг, фазы notifier).
 
-### 5.3. Memory Duel ⬜
-- [ ] Сетевой протокол: `memory-place` / `memory-show` / `memory-recall`.
-- [ ] UI: фаза «расставь» (A) → фаза «смотри» (B) → фаза «повтори» (B).
-- [ ] Server-authoritative scoring (защита от cheat).
-- [ ] Отдельный ELO ladder «Memory Duel».
-- [ ] Анти-чит на time-budget показа.
+### 5.3. Memory Duel 🟨 (локальный hot-seat готов 2026-06-17)
+- [x] UI-поток: «расставь» (A) → «смотри» (B) → «повтори» (B), смена ролей,
+      сравнение точности (`lib/modes/memory_duel/`, экран `memory_duel_screen`).
+- [x] Локальный scoring через `scoreMemory` (reuse Memory Solo). Маршрут
+      `/memory-duel`, пункт меню «🃏 Memory Duel».
+- [ ] 🔒 Сетевой протокол `memory-place` / `memory-show` / `memory-recall`
+      (инфра-блокер: требует Node-сервер на VPS).
+- [ ] 🔒 Server-authoritative scoring + анти-чит на time-budget показа.
+- [ ] 🔒 Отдельный ELO ladder «Memory Duel».
 
-### 5.4. Co-op Tetris (turn-based 10×20) ⬜
-- [ ] Поле 10×20 (вертикальный layout на мобиле).
-- [ ] Тот же набор тетромино, но без падения — pure puzzle.
-- [ ] Hand с 3 фигурами на каждого, по очереди.
-- [ ] Очистка строк (НЕ боксов): row complete → clear, очки тому, кто
-      сделал ход.
-- [ ] UI-адаптация: на мобиле board теперь высокий, обвязка по бокам.
-- [ ] Отдельный ELO ladder.
+### 5.4. Co-op Tetris (turn-based 10×20) ✅ (2026-06-17, локально)
+- [x] Поле 10×20 (`lib/modes/coop/coop_core.dart`, generic W×H).
+- [x] Тот же набор тетромино без падения — pure puzzle.
+- [x] Hand из 3 фигур у каждого, ходы по очереди (`coop_notifier`).
+- [x] Очистка строк (НЕ боксов): row complete → clear, очки ходившему.
+- [x] UI: высокое поле `CoopBoardView` (CustomPaint), табло, экран `coop_screen`.
+- [ ] 🔒 Отдельный ELO ladder (инфра-блокер: онлайн-надстройка).
 
-### 5.5. Match-3 PvP (зарезервировано) ⬜
-- [ ] Поле 8×8 c 6 цветами.
-- [ ] Ход = swap двух соседних.
-- [ ] Серии ≥ 3 одного цвета → clear.
-- [ ] По очереди, очки за каждую серию.
-- [ ] Базовая графика «леденцов».
+### 5.5. Match-3 PvP ✅ (2026-06-17, локально)
+- [x] Поле 8×8 c 6 цветами (`lib/modes/match3/match3_core.dart`).
+- [x] Ход = swap двух соседних (легален лишь создающий серию).
+- [x] Серии ≥ 3 одного цвета → clear, каскады (гравитация + досыпка).
+- [x] По очереди, очки за серию с каскад-бонусом (`match3_notifier`).
+- [x] Графика «леденцов» `Match3BoardView`, экран `match3_screen`, маршрут
+      `/match3`.
 
-### 5.6. Composite-score и ladder-листы ⬜
-- [ ] `src/ui/storage/ladders.ts` — снапшоты ELO по каждому моду.
-- [ ] Сезонный сброс ELO ±20% к 1000 каждые 90 дней.
-- [ ] UI: `LeaderboardScreen` с табами (General / 9×9 / Memory / Co-op / ...).
-- [ ] Composite-score формула: `floor(0.4·E_general + 0.6·avg(E_modes))`.
-- [ ] Server-side endpoint `/leaderboard/<mode-id>`.
+### 5.6. Composite-score и ladder-листы 🟨
+- [x] Composite-score формула `floor(0.4·E_general + 0.6·avg(E_modes))`
+      (`lib/modes/ladder/composite_score.dart`, pure + тесты).
+- [ ] 🔒 Снапшоты ELO по каждому моду + сезонный сброс (инфра: серверный ELO).
+- [ ] 🔒 UI `LeaderboardScreen` с табами (General / 9×9 / Memory / Co-op / …).
+- [ ] 🔒 Server-side endpoint `/leaderboard/<mode-id>`.
+
+> **Статус Фазы 5 (2026-06-17):** все локальные/офлайн-проверяемые части
+> закрыты — реестр режимов (5.1) и четыре новых режима (Memory Solo, Memory
+> Duel, Co-op Tetris, Match-3) играбельны и покрыты тестами (233 Flutter-теста
+> зелёные). **Остаток — сетевые надстройки** (🔒): server-authoritative
+> scoring, анти-чит и per-mode ELO-ladders требуют живого Node-сервера на VPS
+> (сейчас в ремонте, см. `[[project-macos-finish]]`), поэтому реализуются и
+> верифицируются отдельно. Полный `GameRules`-рефактор (5.1) отложен, чтобы не
+> дестабилизировать работающую 9×9-дуэль/онлайн.
 
 ---
 

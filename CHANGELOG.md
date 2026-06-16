@@ -21,8 +21,24 @@
   per-difficulty в `SharedPreferences`. Маршрут `/memory`, пункт меню
   «🧠 Память: соло». Полностью локален и детерминирован — не требует сервера.
   16 новых тестов; всего **194** Flutter-теста зелёные, `flutter analyze` чист.
-- Попутно: `_ModeButton` в меню обёрнут в `Expanded` — длинные подписи не дают
-  RenderFlex overflow в узком вьюпорте.
+- **5.4 — режим «Co-op Tetris»** (`lib/modes/coop/`): turn-based hot-seat на
+  поле 10×20 с очисткой только полных строк (без боксов/падения). Pure-ядро
+  generic-доски W×H, ViewModel хода по очереди (очки ходившему, финал по
+  тупику), виджет высокого поля `CoopBoardView` (CustomPaint), экран. Маршрут
+  `/coop`, пункт меню «🧱 Co-op Tetris».
+- **5.3 — режим «Memory Duel» (локальный)** (`lib/modes/memory_duel/`): hot-seat
+  дуэль «A расставляет → B запоминает → B повторяет» со сменой ролей; reuse
+  `scoreMemory`/`BoardView`/`HandView`. Маршрут `/memory-duel`. Сетевые
+  server-authoritative/анти-чит/ELO части — инфра-блокер (нужен VPS).
+- **5.5 — режим «Match-3 PvP»** (`lib/modes/match3/`): turn-based «три в ряд»
+  8×8 с 6 цветами. Pure-ядро (генерация без серий, поиск серий, легальность
+  свопа, каскады с гравитацией/досыпкой, скоринг), ViewModel (лимит ходов),
+  виджет цветной доски, экран. Маршрут `/match3`.
+- **5.6 — composite-score** (`lib/modes/ladder/composite_score.dart`): pure
+  формула `floor(0.4·E_general + 0.6·avg(E_modes))` + тесты (per-mode
+  ELO-ladders и серверные эндпоинты — инфра-надстройка, отдельно).
+- Итог Фазы 5: 4 новых играбельных режима + реестр, **233** Flutter-теста
+  зелёные, `flutter analyze` чист. Остаток фазы — сетевые ELO-ladders (🔒 VPS).
 
 ## 2.0.0 — 2026-06-09 — Миграция на Dart/Flutter
 
