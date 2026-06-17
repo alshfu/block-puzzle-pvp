@@ -179,6 +179,14 @@ class MemorySoloNotifier extends Notifier<MemorySoloState> {
     state = state.copyWith(game: g.copyWith(orientIndex: g.orientIndex + 1));
   }
 
+  /// Снимает выбор фигуры (только в фазе сборки).
+  void deselect() {
+    if (state.phase != MemoryPhase.reconstruct) return;
+    final g = state.game;
+    if (g == null) return;
+    state = state.copyWith(game: g.copyWith(clearSelection: true));
+  }
+
   /// Ставит выбранную фигуру с якорем `(r, c)`. Очистки линий НЕ применяются
   /// (режим воспроизводит узор). При опустошении руки — финиш.
   void placeAt(int r, int c) {

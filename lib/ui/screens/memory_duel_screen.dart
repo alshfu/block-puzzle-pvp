@@ -10,6 +10,7 @@
 /// Соответствие ROADMAP: § 5.3 (Memory Duel, локальный hot-seat).
 library;
 
+import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +21,13 @@ import '../design_tokens.dart';
 import '../game/confetti_overlay.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
+import '../widgets/piece_controls.dart';
+
+/// Доступен ли поворот фигуры [p] при правилах [cfg] (> 1 ориентации).
+bool _canRotateCells(PieceInstance? p, RuleConfig cfg) {
+  if (p == null) return false;
+  return orientations(p.type, cfg.rotationEnabled, cfg.flipEnabled).length > 1;
+}
 
 /// Имя игрока по индексу.
 String _playerName(int i) => 'Игрок ${i + 1}';
@@ -96,6 +104,7 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                       onPlace: notifier.placeAt,
                       onSelect: notifier.select,
                       onRotate: notifier.rotate,
+                      onDeselect: notifier.deselect,
                       onFinish: notifier.finishArrange,
                       showTimer: false,
                     ),
@@ -119,6 +128,7 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                       onPlace: notifier.placeAt,
                       onSelect: notifier.select,
                       onRotate: notifier.rotate,
+                      onDeselect: notifier.deselect,
                       onFinish: notifier.finishReproduce,
                       showTimer: true,
                     ),
@@ -228,6 +238,7 @@ class _PlacePhase extends StatelessWidget {
   final void Function(int, int) onPlace;
   final void Function(String) onSelect;
   final VoidCallback onRotate;
+  final VoidCallback onDeselect;
   final VoidCallback onFinish;
   final bool showTimer;
 
@@ -239,6 +250,7 @@ class _PlacePhase extends StatelessWidget {
     required this.onPlace,
     required this.onSelect,
     required this.onRotate,
+    required this.onDeselect,
     required this.onFinish,
     required this.showTimer,
   });
@@ -302,29 +314,24 @@ class _PlacePhase extends StatelessWidget {
           onSelect: onSelect,
           onRotate: onRotate,
         ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Осталось фигур: ${game.currentPlayer.hand.length}',
-              style: TextStyle(color: tokens.muted, fontSize: 12),
-            ),
-            const SizedBox(width: 16),
-            TextButton(
-              onPressed: onFinish,
-              child: Text(
-                'Готово →',
-                style: TextStyle(color: tokens.p0, fontWeight: FontWeight.w700),
-              ),
-            ),
-          ],
+        const SizedBox(height: 8),
+        PieceControls(
+          theme: tokens,
+          hasSelection: game.selectedPiece != null,
+          canRotate: _canRotateCells(game.selectedPiece, game.cfg),
+          onRotate: onRotate,
+          onDeselect: onDeselect,
+          hint: 'Осталось фигур: ${game.currentPlayer.hand.length} · $hint',
         ),
         const SizedBox(height: 4),
-        Text(
-          hint,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: tokens.muted, fontSize: 12),
+        Center(
+          child: TextButton(
+            onPressed: onFinish,
+            child: Text(
+              'Готово →',
+              style: TextStyle(color: tokens.p0, fontWeight: FontWeight.w700),
+            ),
+          ),
         ),
       ],
     );

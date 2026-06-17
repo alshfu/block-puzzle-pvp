@@ -10,6 +10,7 @@
 /// Соответствие ROADMAP: § 5.4 (Co-op Tetris UI, hot-seat).
 library;
 
+import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +23,15 @@ import '../design_tokens.dart';
 import '../game/confetti_overlay.dart';
 import '../widgets/coop_board_view.dart';
 import '../widgets/hand_view.dart';
+import '../widgets/piece_controls.dart';
+
+/// Доступен ли поворот выбранной фигуры (у неё > 1 уникальной ориентации).
+bool _canRotate(CoopState s) {
+  final p = s.selectedPiece;
+  if (p == null) return false;
+  return orientations(p.type, s.cfg.rotationEnabled, s.cfg.flipEnabled).length >
+      1;
+}
 
 /// Экран режима «Co-op Tetris».
 class CoopScreen extends ConsumerStatefulWidget {
@@ -125,14 +135,15 @@ class _CoopScreenState extends ConsumerState<CoopScreen> {
                           onRotate: notifier.rotate,
                         ),
                         const SizedBox(height: 6),
-                        Text(
-                          'Ход: ${state.currentPlayer.name}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: tokens.playerColor(state.current),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        PieceControls(
+                          theme: tokens,
+                          hasSelection: state.selectedPiece != null,
+                          canRotate: _canRotate(state),
+                          onRotate: notifier.rotate,
+                          onDeselect: notifier.deselect,
+                          hint:
+                              'Ход: ${state.currentPlayer.name} · '
+                              'выбери фигуру и тапни по доске',
                         ),
                       ],
                     ],

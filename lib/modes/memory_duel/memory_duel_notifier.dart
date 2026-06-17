@@ -201,6 +201,12 @@ class MemoryDuelNotifier extends Notifier<MemoryDuelState> {
     );
   }
 
+  /// Снимает выбор фигуры (в фазах расстановки/воспроизведения).
+  void deselect() {
+    if (!_isPlacing) return;
+    state = state.copyWith(game: state.game.copyWith(clearSelection: true));
+  }
+
   /// Ставит выбранную фигуру с якорем `(r, c)` (без очисток — фиксируем узор).
   void placeAt(int r, int c) {
     if (!_isPlacing) return;

@@ -11,6 +11,7 @@
 /// Соответствие ROADMAP: § 5.2 (Memory Solo).
 library;
 
+import 'package:block_duel/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,13 @@ import '../design_tokens.dart';
 import '../game/confetti_overlay.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
+import '../widgets/piece_controls.dart';
+
+/// Доступен ли поворот фигуры [p] при правилах [cfg] (> 1 ориентации).
+bool _canRotateCells(PieceInstance? p, RuleConfig cfg) {
+  if (p == null) return false;
+  return orientations(p.type, cfg.rotationEnabled, cfg.flipEnabled).length > 1;
+}
 
 /// Экран режима «Память: соло».
 class MemorySoloScreen extends ConsumerStatefulWidget {
@@ -357,26 +365,27 @@ class _PlayPhase extends ConsumerWidget {
             onSelect: notifier.select,
             onRotate: notifier.rotate,
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Осталось фигур: $placed',
-                style: TextStyle(color: tokens.muted, fontSize: 12),
-              ),
-              const SizedBox(width: 16),
-              TextButton(
-                onPressed: notifier.finishNow,
-                child: Text(
-                  'Готово →',
-                  style: TextStyle(
-                    color: tokens.p0,
-                    fontWeight: FontWeight.w700,
-                  ),
+          const SizedBox(height: 8),
+          PieceControls(
+            theme: tokens,
+            hasSelection: game.selectedPiece != null,
+            canRotate: _canRotateCells(game.selectedPiece, game.cfg),
+            onRotate: notifier.rotate,
+            onDeselect: notifier.deselect,
+            hint: 'Осталось фигур: $placed · выбери и тапни по доске',
+          ),
+          const SizedBox(height: 4),
+          Center(
+            child: TextButton(
+              onPressed: notifier.finishNow,
+              child: Text(
+                'Готово →',
+                style: TextStyle(
+                  color: tokens.p0,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ],

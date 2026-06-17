@@ -56,6 +56,12 @@ class CoopNotifier extends Notifier<CoopState> {
     state = state.copyWith(orientIndex: state.orientIndex + 1);
   }
 
+  /// Снимает выбор фигуры.
+  void deselect() {
+    if (state.selectedPieceId == null) return;
+    state = state.copyWith(clearSelection: true);
+  }
+
   /// Ставит выбранную фигуру с якорем `(r, c)`: применяет очистку строк,
   /// начисляет очки, пополняет руку, переключает ход и проверяет тупик.
   void placeAt(int r, int c) {

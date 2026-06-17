@@ -93,6 +93,16 @@ void main() {
     expect(filled, 4);
   });
 
+  test('снятие выбора очищает выбранную фигуру', () {
+    final c = _c();
+    final vm = c.read(coopProvider.notifier);
+    vm.newGame(9);
+    vm.selectPiece(c.read(coopProvider).players[0].hand.first.id);
+    expect(c.read(coopProvider).selectedPieceId, isNotNull);
+    vm.deselect();
+    expect(c.read(coopProvider).selectedPieceId, isNull);
+  });
+
   test('поворот меняет ориентацию выбранной фигуры', () {
     final c = _c();
     final vm = c.read(coopProvider.notifier);
