@@ -255,20 +255,25 @@
 
 ---
 
-## Фаза 8 — Глубокая прогрессия (уровни 1-100 + квесты) ⬜
+## Фаза 8 — Глубокая прогрессия (уровни 1-100 + квесты) 🟨 (в работе с 2026-06-18)
 
-### 8.1. Перебалансировка XP-формулы ⬜
-- [ ] `xp = floor(baseXp · resultMult · diffMult · streakBonus)`.
-- [ ] Победа `resultMult=1.0` / ничья `0.5` / поражение `0.0`.
-- [ ] `diffMult` 0.7 (easy bot) … 1.6 (ranked +50 ELO).
-- [ ] `streakBonus = 1 + 0.05·streak` (cap 1.5).
-- [ ] Тесты в `tests/xp.test.ts`.
+### 8.1. Перебалансировка XP-формулы ✅ (2026-06-18)
+- [x] `xp = floor(baseXp · resultMult · diffMult · streakBonus)` —
+      `lib/profile/xp_formula.dart` (baseXp=50).
+- [x] Победа `resultMult=1.0` / ничья `0.5` / поражение `0.0`.
+- [x] `diffMult` по уровню бота (0.7/1.0/1.3) и по разнице ELO (зажат 0.7…1.6).
+- [x] `streakBonus = 1 + 0.05·streak` (cap 1.5), серия из stats.
+- [x] Тесты `test/profile/xp_formula_test.dart` (11). Интегрировано в
+      `ProfileController.recordResult` + `game_screen`.
 
-### 8.2. Кривая уровней 1-100 ⬜
-- [ ] Triangular: `xpToLevel(n) = floor(50 · n · (n+1) / 2)`.
-- [ ] Награды каждому уровню: см. таблицу в TZ § 17.1.
+### 8.2. Кривая уровней 1-100 🟨
+- [x] Triangular: `xpToReachLevel(n) = floor(50 · n · (n+1) / 2)` —
+      `lib/profile/profile.dart` (уже было).
+- [x] Награды каждому уровню — `lib/profile/level_rewards.dart`
+      (монеты + кристаллы на вехах + unlock на 100), начисляются при level-up
+      в `ProfileController`. Тесты `test/profile/level_rewards_test.dart` (7).
 - [ ] UI: progress bar с указанием next-level reward.
-- [ ] Hi-score при достижении 100 → бонусные piece-set unlock.
+- [x] Достижение 100 → unlock `mirror-pieces` (потребляется § 8.5).
 
 ### 8.3. Гарантия валидного hand для новичков ≤ 10 ⬜
 - [ ] В `freshInit` для player с level ≤ 10: проверить `hasAnyMove`.

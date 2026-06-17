@@ -4,6 +4,17 @@
 
 ## Unreleased
 
+### Фаза 8 — Глубокая прогрессия (в работе)
+
+- **8.1 — структурированная XP-формула** (`lib/profile/xp_formula.dart`):
+  `xp = floor(baseXp · resultMult · diffMult · streakBonus)` (baseXp=50; win 1.0
+  / draw 0.5 / loss 0.0; diffMult 0.7…1.6 по боту/ELO; streakBonus 1+0.05·streak
+  cap 1.5). Заменила плоские 60/20. Интегрирована в `recordResult` + game_screen.
+- **8.2 — награды за уровни 1–100** (`lib/profile/level_rewards.dart`): монеты +
+  кристаллы на вехах + unlock зеркального набора на 100-м; начисляются при
+  повышении уровня. Кривая уровней (triangular) уже была.
+- 18 новых тестов прогрессии; всего **251** Flutter-тест зелёный.
+
 ### Фаза 5 — PvP-платформа: расширение режимов (в работе)
 
 - **5.1 — реестр режимов** (`lib/modes/game_mode_descriptor.dart`): каталог
