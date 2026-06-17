@@ -301,61 +301,117 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
         body: Stack(
           children: [
             SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 460),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _TopBar(
-                            theme: theme,
-                            onMenu: () => context.go('/online'),
-                            onResign: game.isOver ? null : vm.resign,
-                            reconnecting: !match.connected && !game.isOver,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final wide = constraints.maxWidth >= 720;
+                  final board = BoardView(
+                    state: gs,
+                    theme: theme,
+                    onPlace: vm.placeAt,
+                    skin: skinStyleOf(
+                      ref.watch(skinsControllerProvider).equipped,
+                    ),
+                  );
+                  final topBar = _TopBar(
+                    theme: theme,
+                    onMenu: () => context.go('/online'),
+                    onResign: game.isOver ? null : vm.resign,
+                    reconnecting: !match.connected && !game.isOver,
+                  );
+                  final panel = <Widget>[
+                    _Controls(
+                      theme: theme,
+                      myTurn: myTurn,
+                      canRotate: canRotate,
+                      hasSelection: gs.selectedPiece != null,
+                      onRotate: vm.rotateSelected,
+                      onDeselect: vm.deselect,
+                    ),
+                    const SizedBox(height: 10),
+                    HandView(
+                      hand: gs.currentPlayer.hand,
+                      selectedId: gs.selectedPieceId,
+                      selectedCells: gs.activeCells,
+                      interactive: myTurn,
+                      owner: game.current,
+                      theme: theme,
+                      onSelect: vm.selectPiece,
+                      onRotate: vm.rotateSelected,
+                    ),
+                  ];
+
+                  if (wide) {
+                    return Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 940),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 520,
+                                    maxHeight: 520,
+                                  ),
+                                  child: board,
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              SizedBox(
+                                width: 330,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      topBar,
+                                      const SizedBox(height: 10),
+                                      Scoreboard(state: gs, theme: theme),
+                                      if (myTurn) ...[
+                                        const SizedBox(height: 10),
+                                        TurnTimer(state: gs, theme: theme),
+                                      ],
+                                      const SizedBox(height: 12),
+                                      ...panel,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 10),
-                          Scoreboard(state: gs, theme: theme),
-                          if (myTurn) ...[
-                            const SizedBox(height: 10),
-                            TurnTimer(state: gs, theme: theme),
-                          ],
-                          const SizedBox(height: 12),
-                          BoardView(
-                            state: gs,
-                            theme: theme,
-                            onPlace: vm.placeAt,
-                            skin: skinStyleOf(
-                              ref.watch(skinsControllerProvider).equipped,
-                            ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 460),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              topBar,
+                              const SizedBox(height: 10),
+                              Scoreboard(state: gs, theme: theme),
+                              if (myTurn) ...[
+                                const SizedBox(height: 10),
+                                TurnTimer(state: gs, theme: theme),
+                              ],
+                              const SizedBox(height: 12),
+                              board,
+                              const SizedBox(height: 10),
+                              ...panel,
+                            ],
                           ),
-                          const SizedBox(height: 10),
-                          _Controls(
-                            theme: theme,
-                            myTurn: myTurn,
-                            canRotate: canRotate,
-                            hasSelection: gs.selectedPiece != null,
-                            onRotate: vm.rotateSelected,
-                            onDeselect: vm.deselect,
-                          ),
-                          const SizedBox(height: 10),
-                          HandView(
-                            hand: gs.currentPlayer.hand,
-                            selectedId: gs.selectedPieceId,
-                            selectedCells: gs.activeCells,
-                            interactive: myTurn,
-                            owner: game.current,
-                            theme: theme,
-                            onSelect: vm.selectPiece,
-                            onRotate: vm.rotateSelected,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
             Positioned.fill(child: ConfettiOverlay(game: _confetti)),
