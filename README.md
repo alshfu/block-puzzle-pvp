@@ -6,7 +6,7 @@
 
 **🎮 Play now:** <https://alshfu.github.io/block-puzzle-pvp/>
 
-[![tests](https://img.shields.io/badge/tests-176%20passing-brightgreen)](#testing)
+[![tests](https://img.shields.io/badge/tests-258%20passing-brightgreen)](#testing)
 [![version](https://img.shields.io/badge/version-2.0.0-blue)](./CHANGELOG.md)
 [![stack](https://img.shields.io/badge/stack-Dart%20%2B%20Flutter%20%2B%20Flame-0175C2)](#stack)
 
@@ -53,7 +53,7 @@ flutter pub get
 flutter run -d chrome
 
 # Tests / static analysis
-flutter test              # 176 tests
+flutter test              # 258 tests
 flutter analyze           # must be clean
 
 # E2E pilot (integration test through the real widget tree)
@@ -125,6 +125,15 @@ PRNG, no I/O, no UI imports.
 | **Bot × bot** | 0 humans | Spectate two bots; pick each level independently. |
 | **Arcade** | 1 human | Solo play for high score. |
 | **Online (PvP)** | 2 humans, separate devices | Quick-play matchmaking; server validates every move; ELO ladder. |
+| **Memory: Solo** | 1 human | Memorise a layout, then rebuild it from memory (5 difficulties). |
+| **Memory Duel** | 2 humans, hot-seat | Arrange → memorise → reproduce, roles swap. |
+| **Co-op Tetris** | 2 humans, hot-seat | Turn-based on a 10×20 board, rows-only clears. |
+| **Match-3 PvP** | 2 humans, hot-seat | Turn-based 8×8 swap-to-match with cascades. |
+| **Auto-show** | 0 humans (AI vs AI) | Self-playing 9:16 Shorts showcase; record a clip or go **live on YouTube** via a local relay (see `STREAMING.md`). |
+
+> New genre modes (Memory / Co-op / Match-3) live in `lib/modes/` on the shared
+> pure core. Every mode with a board uses an adaptive side-by-side layout on wide
+> screens. See `ROADMAP.md` (Phase 5) and `CHANGELOG.md`.
 
 ---
 
@@ -148,7 +157,7 @@ XP per match: 50 (win) / 25 (draw) / 10 (loss) + 1 per clear + streak bonus
 ## Testing
 
 ```bash
-flutter test              # 176 tests
+flutter test              # 258 tests
 ```
 
 Coverage: clears (rows / cols / boxes / overlaps), scoring (triangular, combo,
@@ -186,7 +195,7 @@ lib/
   storage/                 — persistence (profile, stats, settings, save, TS import)
   achievements/ daily/ profile/ settings/ audio/   — features
   firebase_options.dart    — Firebase web config
-test/                      — flutter_test suites (176)
+test/                      — flutter_test suites (258)
 integration_test/app_test.dart  — E2E pilot
 web/ android/ ios/ macos/ assets/  — Flutter platforms & assets
 pubspec.yaml               — Flutter / Flame / Riverpod deps
