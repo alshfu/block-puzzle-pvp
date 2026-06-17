@@ -280,14 +280,17 @@
 - [ ] Если dead — реролл bag-snapshot до 3 попыток.
 - [ ] Тест на 1000 свежих init'ов — у новичков 0 dead-старта.
 
-### 8.4. Расширенная квестовая система ⬜
-- [ ] `src/ui/quests/engine.ts` — общий движок triggers/conditions/rewards.
-- [ ] Daily (3-5 шт., ротация в 00:00 UTC): «Очисть 5 строк», «Победи бота
-      Hard», «Сыграй 3 матча онлайн», и т.д.
-- [ ] Weekly (1-2 шт.): «10 побед подряд», «5 perfect clear'ов».
-- [ ] Seasonal (1 шт., 90 дней): «Топ-10 в Bot Mastery», «25 онлайн-побед».
-- [ ] Server-side validation квестов в `users/{uid}/quests`.
-- [ ] UI: `QuestsScreen` с прогресс-барами, награда-claim.
+### 8.4. Расширенная квестовая система 🟨 (2026-06-18)
+- [x] Обобщённый движок `lib/quests/quest.dart` (метрики/цели/награды, периоды,
+      детерминированный выбор, QuestEvent, QuestPeriodState с кум./max-метриками).
+- [x] Daily — существующий `lib/daily/` (3 квеста, ротация по дню).
+- [x] Weekly (3 из пула): 10 побед, 5 perfect, серия 5, 150 линий, Hard×3, 20 игр.
+- [x] Seasonal (2 из пула, 90 дней): 25 онлайн-побед, 100 побед, 25 perfect,
+      серия 10.
+- [x] UI `lib/ui/screens/quests_screen.dart` — 3 вкладки, прогресс-бары, claim
+      (монеты+кристаллы). Маршрут `/quests`, иконка 🎯 в меню.
+      Тесты `test/quests/quest_test.dart` (8).
+- [ ] 🔒 Server-side validation квестов в `users/{uid}/quests` (требует VPS).
 
 ### 8.5. Бонусный piece-set (100 уровень) ⬜
 - [ ] 7 «mirror-фигур» — отражённые версии классических тетромино с
