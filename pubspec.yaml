@@ -67,6 +67,8 @@ dependencies:
   audioplayers: ^6.7.1
   flutter_svg: ^2.3.0
   web_socket_channel: ^3.0.3
+  # Браузерные media-API (getDisplayMedia/MediaRecorder) для захвата Авто-шоу.
+  web: ^1.1.1
   firebase_core: ^4.10.0
   firebase_auth: ^6.5.2
   cloud_firestore: ^6.5.0

@@ -157,6 +157,15 @@ const List<GameModeDescriptor> gameModes = [
     status: GameModeStatus.beta,
   ),
   GameModeDescriptor(
+    id: 'showcase',
+    icon: '📺',
+    title: 'Авто-шоу',
+    subtitle: 'ИИ играет сам · формат Shorts + запись',
+    route: '/showcase',
+    category: GameModeCategory.learn,
+    status: GameModeStatus.beta,
+  ),
+  GameModeDescriptor(
     id: 'tutorial',
     icon: '🎓',
     title: 'Обучение',

@@ -39,6 +39,7 @@ enum GameMode {
   memoryDuel,
   coop,
   match3,
+  showcase,
   online,
 }
 
@@ -97,6 +98,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
       context.go('/memory-duel');
     } else if (mode == GameMode.match3) {
       context.go('/match3');
+    } else if (mode == GameMode.showcase) {
+      context.go('/showcase');
     } else if (setupModes.contains(mode)) {
       context.go('/setup/${mode.name}');
     } else {
@@ -406,6 +409,13 @@ class _Actions extends StatelessWidget {
           title: 'Match-3 PvP',
           sub: 'три в ряд, ходы по очереди',
           onTap: () => onStart(GameMode.match3),
+        ),
+        _ModeButton(
+          tokens: tokens,
+          icon: '📺',
+          title: 'Авто-шоу',
+          sub: 'ИИ играет сам · формат Shorts + запись',
+          onTap: () => onStart(GameMode.showcase),
         ),
         _ModeButton(
           tokens: tokens,

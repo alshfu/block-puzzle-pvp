@@ -30,6 +30,7 @@ import 'screens/quests_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/setup_screen.dart';
 import 'screens/shop_screen.dart';
+import 'screens/showcase_screen.dart';
 import 'screens/stats_screen.dart';
 import 'screens/tutorial_screen.dart';
 
@@ -113,6 +114,10 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
     GoRoute(path: '/quests', builder: (context, state) => const QuestsScreen()),
+    GoRoute(
+      path: '/showcase',
+      builder: (context, state) => const ShowcaseScreen(),
+    ),
     GoRoute(path: '/shop', builder: (context, state) => const ShopScreen()),
     GoRoute(
       path: '/tutorial',
