@@ -33,6 +33,11 @@ bool _canRotate(CoopState s) {
       1;
 }
 
+/// Порог ширины, с которого «обвязка» выносится сбоку от высокого поля
+/// (ROADMAP § 5.4: «на мобиле board высокий, обвязка по бокам»). Ниже —
+/// вертикальная раскладка (поле сверху, управление снизу).
+const double _coopSideBySideWidth = 720;
+
 /// Экран режима «Co-op Tetris».
 class CoopScreen extends ConsumerStatefulWidget {
   /// Создаёт экран.
@@ -81,75 +86,91 @@ class _CoopScreenState extends ConsumerState<CoopScreen> {
       }
     });
 
+    // Поле + всплывающий счёт (общий блок для обеих раскладок).
+    final board = Stack(
+      alignment: Alignment.center,
+      children: [
+        CoopBoardView(
+          state: state,
+          theme: tokens,
+          onPlace: notifier.placeAt,
+          showGhost: !state.gameOver,
+        ),
+        if (_floatText != null)
+          FloatingScore(
+            key: ValueKey(_floatId),
+            text: _floatText!,
+            color: tokens.good,
+            onDone: () => setState(() => _floatText = null),
+          ),
+      ],
+    );
+
+    // Рука + панель управления (показываются, пока партия идёт).
+    final controls = state.gameOver
+        ? null
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              HandView(
+                hand: state.currentPlayer.hand,
+                selectedId: state.selectedPieceId,
+                interactive: true,
+                owner: state.current,
+                theme: tokens,
+                selectedCells: state.activeCells,
+                onSelect: notifier.selectPiece,
+                onRotate: notifier.rotate,
+              ),
+              const SizedBox(height: 8),
+              PieceControls(
+                theme: tokens,
+                hasSelection: state.selectedPiece != null,
+                canRotate: _canRotate(state),
+                onRotate: notifier.rotate,
+                onDeselect: notifier.deselect,
+                hint:
+                    'Ход: ${state.currentPlayer.name} · '
+                    'выбери фигуру и тапни по доске',
+              ),
+            ],
+          );
+
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(
         children: [
           const ThemeBackdrop(),
           SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 460),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _Header(tokens: tokens, onNewGame: _newGame),
-                      const SizedBox(height: 6),
-                      _Scoreboard(tokens: tokens, state: state),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: Center(
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              CoopBoardView(
-                                state: state,
-                                theme: tokens,
-                                onPlace: notifier.placeAt,
-                                showGhost: !state.gameOver,
-                              ),
-                              if (_floatText != null)
-                                FloatingScore(
-                                  key: ValueKey(_floatId),
-                                  text: _floatText!,
-                                  color: tokens.good,
-                                  onDone: () =>
-                                      setState(() => _floatText = null),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      if (!state.gameOver) ...[
-                        HandView(
-                          hand: state.currentPlayer.hand,
-                          selectedId: state.selectedPieceId,
-                          interactive: true,
-                          owner: state.current,
-                          theme: tokens,
-                          selectedCells: state.activeCells,
-                          onSelect: notifier.selectPiece,
-                          onRotate: notifier.rotate,
-                        ),
-                        const SizedBox(height: 6),
-                        PieceControls(
-                          theme: tokens,
-                          hasSelection: state.selectedPiece != null,
-                          canRotate: _canRotate(state),
-                          onRotate: notifier.rotate,
-                          onDeselect: notifier.deselect,
-                          hint:
-                              'Ход: ${state.currentPlayer.name} · '
-                              'выбери фигуру и тапни по доске',
-                        ),
-                      ],
-                    ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Широкий экран (планшет/десктоп/ландшафт): высокое поле слева,
+                // «обвязка» (табло/рука/управление) — сбоку справа.
+                final wide = constraints.maxWidth >= _coopSideBySideWidth;
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: wide ? 980 : 460),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                      child: wide
+                          ? _WideLayout(
+                              tokens: tokens,
+                              state: state,
+                              board: board,
+                              controls: controls,
+                              onNewGame: _newGame,
+                            )
+                          : _NarrowLayout(
+                              tokens: tokens,
+                              state: state,
+                              board: board,
+                              controls: controls,
+                              onNewGame: _newGame,
+                            ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           Positioned.fill(
@@ -198,6 +219,89 @@ class _Header extends StatelessWidget {
           onPressed: onNewGame,
           icon: Icon(Icons.refresh, color: tokens.muted),
           tooltip: 'Новая партия',
+        ),
+      ],
+    );
+  }
+}
+
+/// Узкая (вертикальная) раскладка: поле сверху, управление снизу.
+class _NarrowLayout extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final CoopState state;
+  final Widget board;
+  final Widget? controls;
+  final VoidCallback onNewGame;
+
+  const _NarrowLayout({
+    required this.tokens,
+    required this.state,
+    required this.board,
+    required this.controls,
+    required this.onNewGame,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _Header(tokens: tokens, onNewGame: onNewGame),
+        const SizedBox(height: 6),
+        _Scoreboard(tokens: tokens, state: state),
+        const SizedBox(height: 8),
+        Expanded(child: Center(child: board)),
+        if (controls != null) ...[const SizedBox(height: 10), controls!],
+      ],
+    );
+  }
+}
+
+/// Широкая раскладка: высокое поле слева, «обвязка» (табло + управление)
+/// вертикальной панелью справа.
+class _WideLayout extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final CoopState state;
+  final Widget board;
+  final Widget? controls;
+  final VoidCallback onNewGame;
+
+  const _WideLayout({
+    required this.tokens,
+    required this.state,
+    required this.board,
+    required this.controls,
+    required this.onNewGame,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _Header(tokens: tokens, onNewGame: onNewGame),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: Center(child: board)),
+              const SizedBox(width: 20),
+              SizedBox(
+                width: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _Scoreboard(tokens: tokens, state: state),
+                    if (controls != null) ...[
+                      const SizedBox(height: 28),
+                      controls!,
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
