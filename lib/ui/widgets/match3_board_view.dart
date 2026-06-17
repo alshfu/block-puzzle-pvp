@@ -1,31 +1,35 @@
-/// match3_board_view.dart — интерактивное поле «Match-3» 8×8 (View).
+/// match3_board_view.dart — интерактивное поле «Match-3» 8×8 (View, анимир.).
 ///
 /// За что отвечает файл:
-///   Рисует сетку цветных «леденцов» 8×8 на `CustomPaint` и обрабатывает тапы:
-///   первый тап выделяет клетку, второй (соседняя) — делегируется в ViewModel
-///   как своп. Палитра цветов фиксирована (6 цветов ROADMAP § 5.5). Логики игры
-///   нет — валидность свопа и каскады считает ядро/ViewModel.
+///   Рисует сетку цветных «леденцов» 8×8 с премиальной графикой
+///   ([paintGlossyCell]) и анимациями: pop-появление изменившихся после хода
+///   клеток (каскад/досыпка «вырастают»), пульсирующая подсветка выбранной
+///   клетки. Обрабатывает тапы: первый выделяет клетку, второй (соседняя) —
+///   делегируется в ViewModel как своп. Логики игры нет.
 ///
 /// Соответствие ROADMAP: § 5.5 (Match-3 UI).
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../modes/match3/match3_core.dart';
+import '../decor/cell_fx.dart';
 import '../design_tokens.dart';
 
 /// Палитра «леденцов» (6 цветов) — индекс = цвет клетки.
 const List<Color> match3Palette = [
-  Color(0xFFE74C3C), // красный
-  Color(0xFFF1C40F), // жёлтый
-  Color(0xFF2ECC71), // зелёный
-  Color(0xFF3498DB), // синий
-  Color(0xFF9B59B6), // фиолетовый
-  Color(0xFFE67E22), // оранжевый
+  Color(0xFFFF5D5D), // красный
+  Color(0xFFFFD23F), // жёлтый
+  Color(0xFF42E07A), // зелёный
+  Color(0xFF49B6FF), // синий
+  Color(0xFFB57BFF), // фиолетовый
+  Color(0xFFFF924C), // оранжевый
 ];
 
 /// Интерактивное поле Match-3 8×8.
-class Match3BoardView extends StatelessWidget {
+class Match3BoardView extends StatefulWidget {
   /// Текущая сетка цветов.
   final Match3Grid grid;
 
@@ -48,13 +52,55 @@ class Match3BoardView extends StatelessWidget {
   });
 
   @override
+  State<Match3BoardView> createState() => _Match3BoardViewState();
+}
+
+class _Match3BoardViewState extends State<Match3BoardView>
+    with TickerProviderStateMixin {
+  /// Контроллер pop-появления изменившихся клеток (одноразовый прогон).
+  late final AnimationController _pop = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 360),
+  );
+
+  /// Контроллер пульсации выбранной клетки (повторяющийся).
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat();
+
+  /// Клетки, изменившиеся последним ходом (анимируются pop'ом).
+  Set<Cellxy> _changed = {};
+
+  @override
+  void didUpdateWidget(covariant Match3BoardView old) {
+    super.didUpdateWidget(old);
+    final changed = <Cellxy>{};
+    for (int r = 0; r < match3Size; r++) {
+      for (int c = 0; c < match3Size; c++) {
+        if (old.grid[r][c] != widget.grid[r][c]) changed.add((r: r, c: c));
+      }
+    }
+    if (changed.isNotEmpty) {
+      _changed = changed;
+      _pop.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pop.dispose();
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final side = constraints.maxWidth;
-          final cell = side / match3Size;
+          final cell = constraints.maxWidth / match3Size;
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapDown: (d) {
@@ -64,21 +110,34 @@ class Match3BoardView extends StatelessWidget {
               final r = (d.localPosition.dy / cell)
                   .floor()
                   .clamp(0, match3Size - 1);
-              onTap((r: r, c: c));
+              widget.onTap((r: r, c: c));
             },
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: theme.bg2,
-                borderRadius: BorderRadius.circular(theme.boardRadius),
-                border: Border.all(color: theme.line),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    widget.theme.bg2,
+                    Color.lerp(widget.theme.bg2, widget.theme.panel, 0.6)!,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(widget.theme.boardRadius),
+                border: Border.all(color: widget.theme.line),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(theme.boardRadius),
-                child: CustomPaint(
-                  painter: _Match3Painter(
-                    grid: grid,
-                    selected: selected,
-                    theme: theme,
+                borderRadius: BorderRadius.circular(widget.theme.boardRadius),
+                child: AnimatedBuilder(
+                  animation: Listenable.merge([_pop, _pulse]),
+                  builder: (context, _) => CustomPaint(
+                    painter: _Match3Painter(
+                      grid: widget.grid,
+                      selected: widget.selected,
+                      theme: widget.theme,
+                      changed: _pop.isAnimating ? _changed : const {},
+                      popT: Curves.easeOutBack.transform(_pop.value),
+                      pulseT: (math.sin(_pulse.value * 2 * math.pi) + 1) / 2,
+                    ),
                   ),
                 ),
               ),
@@ -95,62 +154,76 @@ class _Match3Painter extends CustomPainter {
   final Match3Grid grid;
   final Cellxy? selected;
   final BlockDuelTheme theme;
+  final Set<Cellxy> changed;
+  final double popT;
+  final double pulseT;
 
   const _Match3Painter({
     required this.grid,
     required this.selected,
     required this.theme,
+    required this.changed,
+    required this.popT,
+    required this.pulseT,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final cell = size.width / match3Size;
-    final radius = Radius.circular(theme.cellRadius + 2);
+    final radius = theme.cellRadius + 3;
     for (int r = 0; r < match3Size; r++) {
       for (int c = 0; c < match3Size; c++) {
         final color = grid[r][c];
         final rect = Rect.fromLTWH(
-          c * cell + 2,
-          r * cell + 2,
-          cell - 4,
-          cell - 4,
+          c * cell + 2.5,
+          r * cell + 2.5,
+          cell - 5,
+          cell - 5,
         );
-        final rr = RRect.fromRectAndRadius(rect, radius);
+        // Лунка-подложка.
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(rect, Radius.circular(radius)),
+          Paint()..color = Colors.black.withValues(alpha: 0.18),
+        );
         if (color >= 0 && color < match3Palette.length) {
-          // База + лёгкий радиальный блик (глянец «леденца»).
-          canvas.drawRRect(
-            rr,
-            Paint()
-              ..shader = RadialGradient(
-                center: const Alignment(-0.4, -0.5),
-                radius: 1.1,
-                colors: [
-                  const Color(0x55FFFFFF),
-                  match3Palette[color],
-                ],
-                stops: const [0.0, 0.7],
-              ).createShader(rect),
+          final isChanged = changed.contains((r: r, c: c));
+          final scale = isChanged
+              ? (0.3 + 0.7 * popT).clamp(0.0, 1.25)
+              : 1.0;
+          paintGlossyCell(
+            canvas,
+            rect,
+            match3Palette[color],
+            radius: radius,
+            scale: scale,
           );
-        } else {
-          canvas.drawRRect(rr, Paint()..color = theme.cell);
         }
       }
     }
-    // Подсветка выбранной клетки.
+    // Подсветка выбранной клетки — пульсирующая рамка-свечение.
     final sel = selected;
     if (sel != null) {
       final rect = Rect.fromLTWH(
-        sel.c * cell + 2,
-        sel.r * cell + 2,
-        cell - 4,
-        cell - 4,
+        sel.c * cell + 2.5,
+        sel.r * cell + 2.5,
+        cell - 5,
+        cell - 5,
+      );
+      final rr = RRect.fromRectAndRadius(rect, Radius.circular(radius));
+      canvas.drawRRect(
+        rr,
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.55 + 0.35 * pulseT)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 + 1.5 * pulseT
+          ..maskFilter = MaskFilter.blur(BlurStyle.outer, 2 + 3 * pulseT),
       );
       canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, radius),
+        rr,
         Paint()
-          ..color = theme.ink
+          ..color = Colors.white.withValues(alpha: 0.9)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3,
+          ..strokeWidth = 2.5,
       );
     }
   }

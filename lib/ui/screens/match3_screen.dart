@@ -2,8 +2,9 @@
 ///
 /// За что отвечает файл:
 ///   Тонкий View поверх [Match3Notifier]: табло обоих игроков с подсветкой
-///   активного и счётчиком оставшихся ходов, поле 8×8 ([Match3BoardView]) и
-///   оверлей итога. Логики нет — тапы делегируются ViewModel; seed берётся из
+///   активного и счётчиком оставшихся ходов, анимированное поле 8×8
+///   ([Match3BoardView]), всплывающий «+счёт» при очистках, конфетти на победу
+///   и оверлей итога. Логики нет — тапы делегируются ViewModel; seed берётся из
 ///   системного времени.
 ///
 /// Соответствие ROADMAP: § 5.5 (Match-3 PvP, hot-seat).
@@ -14,8 +15,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../modes/match3/match3_notifier.dart';
+import '../decor/cell_fx.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
+import '../game/confetti_overlay.dart';
 import '../widgets/match3_board_view.dart';
 
 /// Экран режима «Match-3 PvP».
@@ -28,11 +31,14 @@ class Match3Screen extends ConsumerStatefulWidget {
 }
 
 class _Match3ScreenState extends ConsumerState<Match3Screen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _newGame());
-  }
+  /// Flame-движок конфетти (победа/крупная очистка).
+  final ConfettiGame _confetti = ConfettiGame();
+
+  /// Текущий всплывающий «+счёт» (или null).
+  String? _floatText;
+
+  /// Ключ всплытия — меняется на каждый новый «+счёт» для перезапуска анимации.
+  int _floatId = 0;
 
   void _newGame() {
     final seed = DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
@@ -40,10 +46,34 @@ class _Match3ScreenState extends ConsumerState<Match3Screen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _newGame());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     final state = ref.watch(match3Provider);
     final notifier = ref.read(match3Provider.notifier);
+
+    // Реакции на ход: всплывающий счёт и конфетти.
+    ref.listen(match3Provider, (prev, next) {
+      if (prev == null) return;
+      if (next.turnsPlayed != prev.turnsPlayed && next.lastGain > 0) {
+        setState(() {
+          _floatText = '+${next.lastGain}';
+          _floatId++;
+        });
+        if (next.lastGain >= 120) {
+          _confetti.burst([tokens.p0, tokens.good, tokens.p1]);
+        }
+      }
+      if (next.gameOver && !prev.gameOver) {
+        _confetti.burst([tokens.p0, tokens.p1, tokens.good]);
+      }
+    });
+
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(
@@ -100,22 +130,28 @@ class _Match3ScreenState extends ConsumerState<Match3Screen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        state.gameOver
-                            ? 'Партия завершена'
-                            : 'Ход: Игрок ${state.current + 1} · '
-                                'осталось ходов: ${state.turnsLeft}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: tokens.muted, fontSize: 12),
-                      ),
+                      _TurnBar(tokens: tokens, state: state),
                       const SizedBox(height: 10),
                       Expanded(
                         child: Center(
-                          child: Match3BoardView(
-                            grid: state.grid,
-                            selected: state.selected,
-                            theme: tokens,
-                            onTap: notifier.tapCell,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Match3BoardView(
+                                grid: state.grid,
+                                selected: state.selected,
+                                theme: tokens,
+                                onTap: notifier.tapCell,
+                              ),
+                              if (_floatText != null)
+                                FloatingScore(
+                                  key: ValueKey(_floatId),
+                                  text: _floatText!,
+                                  color: tokens.good,
+                                  onDone: () =>
+                                      setState(() => _floatText = null),
+                                ),
+                            ],
                           ),
                         ),
                       ),
@@ -132,6 +168,9 @@ class _Match3ScreenState extends ConsumerState<Match3Screen> {
               ),
             ),
           ),
+          Positioned.fill(
+            child: IgnorePointer(child: ConfettiOverlay(game: _confetti)),
+          ),
           if (state.gameOver)
             _ResultOverlay(
               tokens: tokens,
@@ -142,6 +181,45 @@ class _Match3ScreenState extends ConsumerState<Match3Screen> {
             ),
         ],
       ),
+    );
+  }
+}
+
+/// Полоса хода/оставшихся ходов.
+class _TurnBar extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final Match3State state;
+
+  const _TurnBar({required this.tokens, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          state.gameOver
+              ? 'Партия завершена'
+              : 'Ход: Игрок ${state.current + 1} · осталось ходов: '
+                  '${state.turnsLeft}',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: tokens.muted, fontSize: 12),
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(end: state.turnsLeft / match3MaxTurns),
+            duration: const Duration(milliseconds: 350),
+            builder: (context, v, _) => LinearProgressIndicator(
+              value: v,
+              minHeight: 5,
+              backgroundColor: tokens.line,
+              valueColor: AlwaysStoppedAnimation(tokens.p0),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -164,15 +242,27 @@ class _PlayerChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: tokens.panel,
+        color: active
+            ? Color.lerp(tokens.panel, color, 0.14)
+            : tokens.panel,
         borderRadius: BorderRadius.circular(tokens.cardRadius),
         border: Border.all(
           color: active ? color : tokens.line,
           width: active ? 2 : 1,
         ),
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.35),
+                  blurRadius: 12,
+                  spreadRadius: -2,
+                ),
+              ]
+            : null,
       ),
       child: Row(
         children: [
@@ -193,12 +283,16 @@ class _PlayerChip extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            '$score',
-            style: TextStyle(
-              color: tokens.ink,
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
+          TweenAnimationBuilder<double>(
+            tween: Tween(end: score.toDouble()),
+            duration: const Duration(milliseconds: 400),
+            builder: (context, v, _) => Text(
+              '${v.round()}',
+              style: TextStyle(
+                color: tokens.ink,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],
@@ -228,8 +322,17 @@ class _ResultOverlay extends StatelessWidget {
     final w = winner;
     final title = w == null ? '🤝 Ничья!' : '🏆 Игрок ${w + 1} победил';
     return Positioned.fill(
-      child: ColoredBox(
-        color: Colors.black.withValues(alpha: 0.55),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOut,
+        builder: (context, t, child) => Opacity(
+          opacity: t,
+          child: ColoredBox(
+            color: Colors.black.withValues(alpha: 0.55 * t),
+            child: Transform.scale(scale: 0.9 + 0.1 * t, child: child),
+          ),
+        ),
         child: Center(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 32),

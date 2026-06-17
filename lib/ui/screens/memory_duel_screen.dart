@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import '../../modes/memory_duel/memory_duel_notifier.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
+import '../game/confetti_overlay.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
 
@@ -33,6 +34,9 @@ class MemoryDuelScreen extends ConsumerStatefulWidget {
 }
 
 class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
+  /// Flame-движок конфетти (победа в дуэли).
+  final ConfettiGame _confetti = ConfettiGame();
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +51,13 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     final state = ref.watch(memoryDuelProvider);
     final notifier = ref.read(memoryDuelProvider.notifier);
+
+    ref.listen(memoryDuelProvider, (prev, next) {
+      if (next.phase == DuelPhase.done && prev?.phase != DuelPhase.done) {
+        _confetti.burst([tokens.p0, tokens.p1, tokens.good]);
+      }
+    });
+
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(
@@ -58,7 +69,13 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                 constraints: const BoxConstraints(maxWidth: 460),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
-                  child: switch (state.phase) {
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 320),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    child: KeyedSubtree(
+                      key: ValueKey(state.phase),
+                      child: switch (state.phase) {
                     DuelPhase.introArrange => _Intro(
                       tokens: tokens,
                       emoji: '🤫',
@@ -120,10 +137,15 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                       },
                       onMenu: () => context.go('/'),
                     ),
-                  },
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(child: ConfettiOverlay(game: _confetti)),
           ),
         ],
       ),

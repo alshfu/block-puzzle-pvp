@@ -2,10 +2,10 @@
 ///
 /// За что отвечает файл:
 ///   Тонкий View поверх [CoopNotifier]: высокое поле 10×20 (через
-///   [CoopBoardView]), табло обоих игроков с подсветкой активного, рука
-///   текущего игрока ([HandView]) и оверлей итога партии. Логики нет — выбор/
-///   поворот/постановка делегируются ViewModel; seed новой партии берётся из
-///   системного времени (UI-слой).
+///   [CoopBoardView]), табло обоих игроков с подсветкой активного и анимацией
+///   счёта, всплывающий «+счёт» и конфетти при очистках/победе, рука текущего
+///   игрока ([HandView]) и оверлей итога. Логики нет — выбор/поворот/постановка
+///   делегируются ViewModel; seed новой партии берётся из системного времени.
 ///
 /// Соответствие ROADMAP: § 5.4 (Co-op Tetris UI, hot-seat).
 library;
@@ -16,8 +16,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../modes/coop/coop_notifier.dart';
 import '../../modes/coop/coop_state.dart';
+import '../decor/cell_fx.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
+import '../game/confetti_overlay.dart';
 import '../widgets/coop_board_view.dart';
 import '../widgets/hand_view.dart';
 
@@ -31,14 +33,19 @@ class CoopScreen extends ConsumerStatefulWidget {
 }
 
 class _CoopScreenState extends ConsumerState<CoopScreen> {
+  /// Flame-движок конфетти (очистка строк/победа).
+  final ConfettiGame _confetti = ConfettiGame();
+
+  /// Текущий всплывающий «+счёт».
+  String? _floatText;
+  int _floatId = 0;
+
   @override
   void initState() {
     super.initState();
-    // Свежая партия при каждом заходе на экран.
     WidgetsBinding.instance.addPostFrameCallback((_) => _newGame());
   }
 
-  /// Новая партия со seed от системного времени.
   void _newGame() {
     final seed = DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
     ref.read(coopProvider.notifier).newGame(seed);
@@ -49,6 +56,21 @@ class _CoopScreenState extends ConsumerState<CoopScreen> {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     final state = ref.watch(coopProvider);
     final notifier = ref.read(coopProvider.notifier);
+
+    ref.listen(coopProvider, (prev, next) {
+      if (prev == null) return;
+      if (next.moveSeq != prev.moveSeq && next.lastGain > 0) {
+        setState(() {
+          _floatText = '+${next.lastGain}';
+          _floatId++;
+        });
+        _confetti.burst([tokens.good, tokens.p0, tokens.p1]);
+      }
+      if (next.gameOver && !prev.gameOver) {
+        _confetti.burst([tokens.p0, tokens.p1, tokens.good]);
+      }
+    });
+
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(
@@ -69,11 +91,24 @@ class _CoopScreenState extends ConsumerState<CoopScreen> {
                       const SizedBox(height: 8),
                       Expanded(
                         child: Center(
-                          child: CoopBoardView(
-                            state: state,
-                            theme: tokens,
-                            onPlace: notifier.placeAt,
-                            showGhost: !state.gameOver,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CoopBoardView(
+                                state: state,
+                                theme: tokens,
+                                onPlace: notifier.placeAt,
+                                showGhost: !state.gameOver,
+                              ),
+                              if (_floatText != null)
+                                FloatingScore(
+                                  key: ValueKey(_floatId),
+                                  text: _floatText!,
+                                  color: tokens.good,
+                                  onDone: () =>
+                                      setState(() => _floatText = null),
+                                ),
+                            ],
                           ),
                         ),
                       ),
@@ -105,6 +140,9 @@ class _CoopScreenState extends ConsumerState<CoopScreen> {
                 ),
               ),
             ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(child: ConfettiOverlay(game: _confetti)),
           ),
           if (state.gameOver)
             _ResultOverlay(
@@ -183,7 +221,7 @@ class _Scoreboard extends StatelessWidget {
   }
 }
 
-/// Чип одного игрока в табло.
+/// Чип одного игрока в табло (с анимацией счёта и подсветки).
 class _PlayerChip extends StatelessWidget {
   final BlockDuelTheme tokens;
   final String name;
@@ -201,12 +239,22 @@ class _PlayerChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: tokens.panel,
+        color: active ? Color.lerp(tokens.panel, color, 0.14) : tokens.panel,
         borderRadius: BorderRadius.circular(tokens.cardRadius),
         border: Border.all(color: active ? color : tokens.line, width: active ? 2 : 1),
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.35),
+                  blurRadius: 12,
+                  spreadRadius: -2,
+                ),
+              ]
+            : null,
       ),
       child: Row(
         children: [
@@ -227,12 +275,16 @@ class _PlayerChip extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            '$score',
-            style: TextStyle(
-              color: tokens.ink,
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
+          TweenAnimationBuilder<double>(
+            tween: Tween(end: score.toDouble()),
+            duration: const Duration(milliseconds: 400),
+            builder: (context, v, _) => Text(
+              '${v.round()}',
+              style: TextStyle(
+                color: tokens.ink,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],
@@ -261,11 +313,19 @@ class _ResultOverlay extends StatelessWidget {
     final title = winner == null
         ? '🤝 Ничья!'
         : '🏆 ${state.players[winner].name} победил';
-    final scoreText =
-        '${state.players[0].score} : ${state.players[1].score}';
+    final scoreText = '${state.players[0].score} : ${state.players[1].score}';
     return Positioned.fill(
-      child: ColoredBox(
-        color: Colors.black.withValues(alpha: 0.55),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOut,
+        builder: (context, t, child) => Opacity(
+          opacity: t,
+          child: ColoredBox(
+            color: Colors.black.withValues(alpha: 0.55 * t),
+            child: Transform.scale(scale: 0.9 + 0.1 * t, child: child),
+          ),
+        ),
         child: Center(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 32),

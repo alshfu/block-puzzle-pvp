@@ -20,6 +20,7 @@ import '../../modes/memory_solo/memory_solo_puzzle.dart';
 import '../../modes/memory_solo/memory_solo_store.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
+import '../game/confetti_overlay.dart';
 import '../widgets/board_view.dart';
 import '../widgets/hand_view.dart';
 
@@ -33,6 +34,9 @@ class MemorySoloScreen extends ConsumerStatefulWidget {
 }
 
 class _MemorySoloScreenState extends ConsumerState<MemorySoloScreen> {
+  /// Flame-движок конфетти (празднование точного воспроизведения).
+  final ConfettiGame _confetti = ConfettiGame();
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +57,41 @@ class _MemorySoloScreenState extends ConsumerState<MemorySoloScreen> {
   Widget build(BuildContext context) {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     final state = ref.watch(memorySoloProvider);
+
+    // Конфетти на точном/отличном воспроизведении.
+    ref.listen(memorySoloProvider, (prev, next) {
+      if (next.phase == MemoryPhase.done &&
+          prev?.phase != MemoryPhase.done &&
+          next.result != null &&
+          next.result!.accuracy >= 0.8) {
+        _confetti.burst([tokens.p0, tokens.good, tokens.p1]);
+      }
+    });
+
+    final body = switch (state.phase) {
+      MemoryPhase.pickDifficulty => _PickDifficulty(
+        tokens: tokens,
+        onPick: _start,
+        onBack: () => context.go('/'),
+      ),
+      MemoryPhase.showing => _PlayPhase(
+        tokens: tokens,
+        state: state,
+        showing: true,
+      ),
+      MemoryPhase.reconstruct => _PlayPhase(
+        tokens: tokens,
+        state: state,
+        showing: false,
+      ),
+      MemoryPhase.done => _DonePhase(
+        tokens: tokens,
+        state: state,
+        onAgain: () => ref.read(memorySoloProvider.notifier).reset(),
+        onMenu: () => context.go('/'),
+      ),
+    };
+
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(
@@ -64,33 +103,21 @@ class _MemorySoloScreenState extends ConsumerState<MemorySoloScreen> {
                 constraints: const BoxConstraints(maxWidth: 460),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                  child: switch (state.phase) {
-                    MemoryPhase.pickDifficulty => _PickDifficulty(
-                      tokens: tokens,
-                      onPick: _start,
-                      onBack: () => context.go('/'),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 320),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    child: KeyedSubtree(
+                      key: ValueKey(state.phase),
+                      child: body,
                     ),
-                    MemoryPhase.showing => _PlayPhase(
-                      tokens: tokens,
-                      state: state,
-                      showing: true,
-                    ),
-                    MemoryPhase.reconstruct => _PlayPhase(
-                      tokens: tokens,
-                      state: state,
-                      showing: false,
-                    ),
-                    MemoryPhase.done => _DonePhase(
-                      tokens: tokens,
-                      state: state,
-                      onAgain: () =>
-                          ref.read(memorySoloProvider.notifier).reset(),
-                      onMenu: () => context.go('/'),
-                    ),
-                  },
+                  ),
                 ),
               ),
             ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(child: ConfettiOverlay(game: _confetti)),
           ),
         ],
       ),
