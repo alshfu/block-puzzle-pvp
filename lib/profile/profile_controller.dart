@@ -16,10 +16,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../online/uuid.dart';
 import '../storage/prefs.dart';
 import 'profile.dart';
+import 'xp_formula.dart';
 
-/// Награды за один матч (минимальная версия; перебалансировка — Фаза 8).
-const int _xpForWin = 60;
-const int _xpForLoss = 20;
+/// Монеты за матч (XP считается структурной формулой [xpForMatch], Фаза 8.1).
 const int _coinsForWin = 25;
 const int _coinsForLoss = 5;
 
@@ -116,11 +115,24 @@ class ProfileController extends Notifier<Profile> {
     return true;
   }
 
-  /// Начисляет результат партии: XP, монеты и счётчики. [won] — победа ли;
-  /// [draw] — ничья (как поражение по наградам, но без инкремента wins).
-  /// Возвращает число начисленных монет (для ежедневных квестов).
-  int recordResult({required bool won, bool draw = false}) {
-    final xpGain = won ? _xpForWin : _xpForLoss;
+  /// Начисляет результат партии: XP по структурной формуле (ROADMAP § 8.1),
+  /// монеты и счётчики. [won] — победа ли; [draw] — ничья (без инкремента wins);
+  /// [diffMult] — множитель сложности соперника; [winStreak] — серия побед с
+  /// учётом этого матча. Возвращает число начисленных монет (для дейли-квестов).
+  int recordResult({
+    required bool won,
+    bool draw = false,
+    double diffMult = 1.0,
+    int winStreak = 0,
+  }) {
+    final outcome = draw
+        ? MatchOutcome.draw
+        : (won ? MatchOutcome.win : MatchOutcome.loss);
+    final xpGain = xpForMatch(
+      outcome: outcome,
+      diffMult: diffMult,
+      winStreak: winStreak,
+    );
     final coinGain = won ? _coinsForWin : _coinsForLoss;
     state = state.copyWith(
       xp: state.xp + xpGain,

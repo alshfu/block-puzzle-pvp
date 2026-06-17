@@ -33,6 +33,7 @@ import '../../game/game_state.dart';
 import '../../game/match_config.dart';
 import '../../pilot/developer.dart';
 import '../../profile/profile_controller.dart';
+import '../../profile/xp_formula.dart';
 import '../../settings/settings.dart';
 import '../../settings/settings_controller.dart';
 import '../../shop/inventory_controller.dart';
@@ -399,12 +400,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
       if (justEnded && _config.mode != MatchMode.botvbot) {
         final won = next.winner == 0;
         final draw = next.winner == null;
-        final xpBefore = ref.read(profileControllerProvider).xp;
-        final coins = ref
-            .read(profileControllerProvider.notifier)
-            .recordResult(won: won, draw: draw);
-        // Статистика матча → достижения (вновь разблокированные → тосты).
         final winner = draw ? -1 : (won ? 0 : 1);
+        // Сначала статистика (обновляет серию побед) — она нужна для XP-бонуса.
         final stats = ref
             .read(statsControllerProvider.notifier)
             .recordOffline(
@@ -412,6 +409,19 @@ class _GameScreenState extends ConsumerState<GameScreen>
               matchClears: _matchClears,
               maxMulti: _matchMaxMulti,
               bestScore: next.players[0].score,
+            );
+        final xpBefore = ref.read(profileControllerProvider).xp;
+        // Множитель сложности: по уровню бота (vs Bot) либо нейтральный.
+        final diffMult = _config.mode == MatchMode.bot
+            ? diffMultForBot(_config.botLevel)
+            : 1.0;
+        final coins = ref
+            .read(profileControllerProvider.notifier)
+            .recordResult(
+              won: won,
+              draw: draw,
+              diffMult: diffMult,
+              winStreak: stats.currentWinStreak,
             );
         final fresh = ref
             .read(achievementsControllerProvider.notifier)
