@@ -34,6 +34,8 @@ import '../../game/match_config.dart';
 import '../../pilot/developer.dart';
 import '../../profile/profile_controller.dart';
 import '../../profile/xp_formula.dart';
+import '../../quests/quest.dart';
+import '../../quests/quests_controller.dart';
 import '../../settings/settings.dart';
 import '../../settings/settings_controller.dart';
 import '../../shop/inventory_controller.dart';
@@ -455,6 +457,18 @@ class _GameScreenState extends ConsumerState<GameScreen>
         ref
             .read(dailyControllerProvider.notifier)
             .recordGame(DailyGameEvent(won: won && !draw, coinsEarned: coins));
+        // Недельные/сезонные квесты (ROADMAP § 8.4).
+        ref.read(questsControllerProvider.notifier).recordEvent(
+              QuestEvent(
+                won: won && !draw,
+                perfect: _matchPerfect,
+                vsHardBot:
+                    _config.mode == MatchMode.bot &&
+                    _config.botLevel == BotLevel.hard,
+                clears: _matchClears,
+                winStreak: won && !draw ? stats.currentWinStreak : 0,
+              ),
+            );
       }
       if (justEnded) {
         final audio = ref.read(audioServiceProvider);

@@ -107,6 +107,13 @@ class ProfileController extends Notifier<Profile> {
     _persist();
   }
 
+  /// Начисляет кристаллы (например, награда за недельный/сезонный квест).
+  void addCrystals(int amount) {
+    if (amount == 0) return;
+    state = state.copyWith(crystals: state.crystals + amount);
+    _persist();
+  }
+
   /// Накапливает очки к кристаллу и конвертирует: 1 кристалл за 150 очков.
   void earnCrystalsFromScore(int score) {
     if (score <= 0) return;

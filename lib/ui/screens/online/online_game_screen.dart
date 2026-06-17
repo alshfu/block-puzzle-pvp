@@ -29,6 +29,8 @@ import '../../../online/online_models.dart';
 import '../../../online/online_to_game_state.dart';
 import '../../../pilot/developer.dart';
 import '../../../profile/profile_controller.dart';
+import '../../../quests/quest.dart';
+import '../../../quests/quests_controller.dart';
 import '../../../settings/settings_controller.dart';
 import '../../../shop/skins.dart';
 import '../../../shop/skins_controller.dart';
@@ -207,6 +209,17 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     ref
         .read(profileControllerProvider.notifier)
         .recordOnlineResult(outcome: drew ? 0 : (won ? 1 : -1));
+
+    // Недельные/сезонные квесты: онлайн-победы и общий зачёт (ROADMAP § 8.4).
+    ref.read(questsControllerProvider.notifier).recordEvent(
+          QuestEvent(
+            won: won,
+            online: true,
+            onlineWin: won,
+            perfect: s.matchPerfects > 0,
+            clears: s.matchClears,
+          ),
+        );
 
     // Накопительная статистика → снимок ПОСЛЕ матча.
     final stats = ref
