@@ -74,98 +74,57 @@ class _Match3ScreenState extends ConsumerState<Match3Screen> {
       }
     });
 
+    // Поле + всплывающий счёт (общий блок для обеих раскладок).
+    final board = Stack(
+      alignment: Alignment.center,
+      children: [
+        Match3BoardView(
+          grid: state.grid,
+          selected: state.selected,
+          theme: tokens,
+          onTap: notifier.tapCell,
+        ),
+        if (_floatText != null)
+          FloatingScore(
+            key: ValueKey(_floatId),
+            text: _floatText!,
+            color: tokens.good,
+            onDone: () => setState(() => _floatText = null),
+          ),
+      ],
+    );
+
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(
         children: [
           const ThemeBackdrop(),
           SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 460),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => context.go('/'),
-                            icon: Icon(Icons.arrow_back, color: tokens.ink),
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            '🍬 Match-3 PvP',
-                            style: TextStyle(
-                              color: tokens.ink,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              fontFamily: tokens.fontDisplay,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= _match3SideBySideWidth;
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: wide ? 920 : 460),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+                      child: wide
+                          ? _WideLayout(
+                              tokens: tokens,
+                              state: state,
+                              board: board,
+                              onNewGame: _newGame,
+                            )
+                          : _NarrowLayout(
+                              tokens: tokens,
+                              state: state,
+                              board: board,
+                              onNewGame: _newGame,
                             ),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: _newGame,
-                            icon: Icon(Icons.refresh, color: tokens.muted),
-                            tooltip: 'Новая партия',
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          for (int i = 0; i < 2; i++) ...[
-                            Expanded(
-                              child: _PlayerChip(
-                                tokens: tokens,
-                                name: 'Игрок ${i + 1}',
-                                score: state.scores[i],
-                                color: tokens.playerColor(i),
-                                active: !state.gameOver && state.current == i,
-                              ),
-                            ),
-                            if (i == 0) const SizedBox(width: 10),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      _TurnBar(tokens: tokens, state: state),
-                      const SizedBox(height: 10),
-                      Expanded(
-                        child: Center(
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Match3BoardView(
-                                grid: state.grid,
-                                selected: state.selected,
-                                theme: tokens,
-                                onTap: notifier.tapCell,
-                              ),
-                              if (_floatText != null)
-                                FloatingScore(
-                                  key: ValueKey(_floatId),
-                                  text: _floatText!,
-                                  color: tokens.good,
-                                  onDone: () =>
-                                      setState(() => _floatText = null),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Поменяй местами две соседние фишки, чтобы собрать ряд '
-                        'из трёх и больше.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: tokens.muted, fontSize: 12),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           Positioned.fill(
@@ -181,6 +140,170 @@ class _Match3ScreenState extends ConsumerState<Match3Screen> {
             ),
         ],
       ),
+    );
+  }
+}
+
+/// Порог ширины, с которого таблица/подсказка выносятся сбоку от поля.
+const double _match3SideBySideWidth = 720;
+
+/// Шапка: назад, заголовок, новая партия.
+class _Match3Header extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final VoidCallback onNewGame;
+
+  const _Match3Header({required this.tokens, required this.onNewGame});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () => context.go('/'),
+          icon: Icon(Icons.arrow_back, color: tokens.ink),
+        ),
+        const SizedBox(width: 2),
+        Text(
+          '🍬 Match-3 PvP',
+          style: TextStyle(
+            color: tokens.ink,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            fontFamily: tokens.fontDisplay,
+          ),
+        ),
+        const Spacer(),
+        IconButton(
+          onPressed: onNewGame,
+          icon: Icon(Icons.refresh, color: tokens.muted),
+          tooltip: 'Новая партия',
+        ),
+      ],
+    );
+  }
+}
+
+/// Табло обоих игроков (два чипа в ряд).
+class _Match3Scoreboard extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final Match3State state;
+
+  const _Match3Scoreboard({required this.tokens, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (int i = 0; i < 2; i++) ...[
+          Expanded(
+            child: _PlayerChip(
+              tokens: tokens,
+              name: 'Игрок ${i + 1}',
+              score: state.scores[i],
+              color: tokens.playerColor(i),
+              active: !state.gameOver && state.current == i,
+            ),
+          ),
+          if (i == 0) const SizedBox(width: 10),
+        ],
+      ],
+    );
+  }
+}
+
+/// Подсказка по управлению.
+class _Hint extends StatelessWidget {
+  final BlockDuelTheme tokens;
+
+  const _Hint({required this.tokens});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Поменяй местами две соседние фишки, чтобы собрать ряд из трёх и больше.',
+      textAlign: TextAlign.center,
+      style: TextStyle(color: tokens.muted, fontSize: 12),
+    );
+  }
+}
+
+/// Узкая (вертикальная) раскладка: табло/строка хода сверху, поле — снизу.
+class _NarrowLayout extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final Match3State state;
+  final Widget board;
+  final VoidCallback onNewGame;
+
+  const _NarrowLayout({
+    required this.tokens,
+    required this.state,
+    required this.board,
+    required this.onNewGame,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _Match3Header(tokens: tokens, onNewGame: onNewGame),
+        const SizedBox(height: 4),
+        _Match3Scoreboard(tokens: tokens, state: state),
+        const SizedBox(height: 8),
+        _TurnBar(tokens: tokens, state: state),
+        const SizedBox(height: 10),
+        Expanded(child: Center(child: board)),
+        const SizedBox(height: 8),
+        _Hint(tokens: tokens),
+      ],
+    );
+  }
+}
+
+/// Широкая раскладка: поле слева, табло/строка хода/подсказка панелью справа.
+class _WideLayout extends StatelessWidget {
+  final BlockDuelTheme tokens;
+  final Match3State state;
+  final Widget board;
+  final VoidCallback onNewGame;
+
+  const _WideLayout({
+    required this.tokens,
+    required this.state,
+    required this.board,
+    required this.onNewGame,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _Match3Header(tokens: tokens, onNewGame: onNewGame),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: Center(child: board)),
+              const SizedBox(width: 20),
+              SizedBox(
+                width: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _Match3Scoreboard(tokens: tokens, state: state),
+                    const SizedBox(height: 18),
+                    _TurnBar(tokens: tokens, state: state),
+                    const SizedBox(height: 18),
+                    _Hint(tokens: tokens),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
