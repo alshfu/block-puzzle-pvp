@@ -35,18 +35,41 @@ class ShowcaseScreen extends ConsumerStatefulWidget {
   ConsumerState<ShowcaseScreen> createState() => _ShowcaseScreenState();
 }
 
+/// Адрес сервер-релея по умолчанию (можно переопределить при сборке через
+/// --dart-define=STREAM_RELAY=..., и отредактировать в диалоге эфира).
+const String _defaultRelayUrl = String.fromEnvironment(
+  'STREAM_RELAY',
+  defaultValue: 'wss://pvp.alshfu.com/stream',
+);
+
 class _ShowcaseScreenState extends ConsumerState<ShowcaseScreen> {
   final Broadcaster _broadcaster = Broadcaster();
+  final TextEditingController _keyCtrl = TextEditingController();
+  final TextEditingController _relayCtrl = TextEditingController(
+    text: _defaultRelayUrl,
+  );
   late int _seed;
   late MatchConfig _config;
   Timer? _restart;
   bool _recording = false;
+  bool _streaming = false;
 
   @override
   void initState() {
     super.initState();
     _seed = DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
     _config = _makeConfig(_seed);
+    _broadcaster.onStatus = (status) {
+      if (!mounted) return;
+      if (status.contains('"type":"error"') || status.contains('error')) {
+        setState(() => _streaming = false);
+        _snack('Релей: ошибка эфира. Проверьте ключ и сервер.');
+      } else if (status.contains('live')) {
+        _snack('🔴 Вы в эфире на YouTube!');
+      } else if (status.contains('ended')) {
+        setState(() => _streaming = false);
+      }
+    };
   }
 
   MatchConfig _makeConfig(int seed) => MatchConfig(
@@ -59,6 +82,8 @@ class _ShowcaseScreenState extends ConsumerState<ShowcaseScreen> {
   void dispose() {
     _restart?.cancel();
     _broadcaster.dispose();
+    _keyCtrl.dispose();
+    _relayCtrl.dispose();
     super.dispose();
   }
 
@@ -76,26 +101,22 @@ class _ShowcaseScreenState extends ConsumerState<ShowcaseScreen> {
     });
   }
 
-  /// Кнопка «В эфир»: запускает/останавливает запись или объясняет live-эфир.
+  /// Кнопка «В эфир»: останавливает активный эфир/запись или открывает диалог.
   Future<void> _toggleBroadcast() async {
-    if (!_broadcaster.supported) {
-      _showLiveInfo();
-      return;
-    }
-    if (_recording) {
+    if (_streaming || _recording) {
       _broadcaster.stop();
-      setState(() => _recording = false);
-      _snack('Клип сохранён. Загрузите его как YouTube Shorts.');
+      setState(() {
+        _streaming = false;
+        _recording = false;
+      });
+      _snack('Эфир завершён.');
       return;
     }
-    final ok = await _broadcaster.startRecording();
-    if (!mounted) return;
-    setState(() => _recording = ok);
-    _snack(
-      ok
-          ? 'Запись началась — выберите вкладку с Авто-шоу.'
-          : 'Доступ к захвату не получен.',
-    );
+    if (!_broadcaster.supported) {
+      _snack('Трансляция доступна только в веб-версии (десктоп-браузер).');
+      return;
+    }
+    _showLiveDialog();
   }
 
   void _snack(String text) {
@@ -105,28 +126,96 @@ class _ShowcaseScreenState extends ConsumerState<ShowcaseScreen> {
     );
   }
 
-  /// Поясняет, что прямой live-эфир требует серверного релея.
-  void _showLiveInfo() {
+  /// Диалог выхода в эфир: ключ трансляции + адрес релея + варианты.
+  void _showLiveDialog() {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: tokens.panel,
-        title: Text('Прямой эфир на YouTube', style: TextStyle(color: tokens.ink)),
-        content: Text(
-          'Прямая RTMP-трансляция из браузера невозможна без серверного '
-          'медиа-релея + YouTube Live API. Это серверная часть (в работе вместе '
-          'с онлайн-сервером). Пока доступна запись вертикального клипа для '
-          'Shorts — на десктоп-браузере.',
-          style: TextStyle(color: tokens.muted, height: 1.4),
+        title: Text('Онлайн-эфир на YouTube', style: TextStyle(color: tokens.ink)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Ключ трансляции из YouTube Studio → «Трансляции» → «Ключ '
+                'трансляции». Релей (server/stream-relay.ts + ffmpeg) должен быть '
+                'развёрнут на сервере.',
+                style: TextStyle(color: tokens.muted, fontSize: 12, height: 1.4),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _keyCtrl,
+                style: TextStyle(color: tokens.ink),
+                decoration: InputDecoration(
+                  labelText: 'Ключ трансляции',
+                  labelStyle: TextStyle(color: tokens.muted),
+                  hintText: 'xxxx-xxxx-xxxx-xxxx',
+                  hintStyle: TextStyle(color: tokens.muted),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _relayCtrl,
+                style: TextStyle(color: tokens.ink),
+                decoration: InputDecoration(
+                  labelText: 'Адрес релея (WebSocket)',
+                  labelStyle: TextStyle(color: tokens.muted),
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
-            onPressed: () => context.pop(),
-            child: Text('Понятно', style: TextStyle(color: tokens.p0)),
+            onPressed: () {
+              context.pop();
+              _startRecording();
+            },
+            child: Text('Только клип', style: TextStyle(color: tokens.muted)),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: tokens.p0),
+            onPressed: () {
+              context.pop();
+              _startStreaming();
+            },
+            child: const Text('В эфир'),
           ),
         ],
       ),
+    );
+  }
+
+  /// Запускает онлайн-эфир через релей.
+  Future<void> _startStreaming() async {
+    final key = _keyCtrl.text.trim();
+    final relay = _relayCtrl.text.trim();
+    if (key.isEmpty || relay.isEmpty) {
+      _snack('Укажите ключ трансляции и адрес релея.');
+      return;
+    }
+    final ok = await _broadcaster.startStreaming(relay, key);
+    if (!mounted) return;
+    setState(() => _streaming = ok);
+    _snack(
+      ok
+          ? 'Подключение… выберите вкладку с Авто-шоу для захвата.'
+          : 'Не удалось подключиться к релею или получить захват.',
+    );
+  }
+
+  /// Запускает локальную запись клипа.
+  Future<void> _startRecording() async {
+    final ok = await _broadcaster.startRecording();
+    if (!mounted) return;
+    setState(() => _recording = ok);
+    _snack(
+      ok
+          ? 'Запись началась — выберите вкладку с Авто-шоу.'
+          : 'Доступ к захвату не получен.',
     );
   }
 
@@ -169,7 +258,10 @@ class _ShowcaseScreenState extends ConsumerState<ShowcaseScreen> {
                   ),
                   child: Column(
                     children: [
-                      _LiveHeader(tokens: tokens, recording: _recording),
+                      _LiveHeader(
+                        tokens: tokens,
+                        recording: _streaming || _recording,
+                      ),
                       const SizedBox(height: 10),
                       Scoreboard(state: state, theme: tokens, solo: false),
                       const SizedBox(height: 12),
@@ -222,16 +314,24 @@ class _ShowcaseScreenState extends ConsumerState<ShowcaseScreen> {
                 child: FilledButton.icon(
                   onPressed: _toggleBroadcast,
                   style: FilledButton.styleFrom(
-                    backgroundColor: _recording ? tokens.bad : tokens.p0,
+                    backgroundColor: (_streaming || _recording)
+                        ? tokens.bad
+                        : tokens.p0,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 22,
                       vertical: 13,
                     ),
                   ),
                   icon: Icon(
-                    _recording ? Icons.stop_rounded : Icons.videocam_rounded,
+                    (_streaming || _recording)
+                        ? Icons.stop_rounded
+                        : Icons.videocam_rounded,
                   ),
-                  label: Text(_recording ? 'Стоп · сохранить' : 'В эфир'),
+                  label: Text(
+                    _streaming
+                        ? 'Стоп · завершить эфир'
+                        : (_recording ? 'Стоп · сохранить' : 'В эфир'),
+                  ),
                 ),
               ),
             ),
