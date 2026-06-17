@@ -58,8 +58,12 @@ class HandView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    // Wrap (а не Row): большие руки (Memory Solo до 12 фигур, Memory Duel 6)
+    // переносятся на несколько рядов и не дают горизонтального переполнения;
+    // для руки из 3 фигур (9×9) — тот же одиночный центрированный ряд.
+    return Wrap(
+      alignment: WrapAlignment.center,
+      runSpacing: 8,
       children: [
         for (final piece in hand)
           Builder(
