@@ -35,11 +35,14 @@ class ShowcaseScreen extends ConsumerStatefulWidget {
   ConsumerState<ShowcaseScreen> createState() => _ShowcaseScreenState();
 }
 
-/// Адрес сервер-релея по умолчанию (можно переопределить при сборке через
-/// --dart-define=STREAM_RELAY=..., и отредактировать в диалоге эфира).
+/// Адрес сервер-релея по умолчанию — локальная машина (`npm run stream:relay`).
+/// Можно переопределить при сборке через --dart-define=STREAM_RELAY=... и
+/// отредактировать в диалоге эфира (например `wss://host/stream` для удалённого).
+/// Браузер из https-страницы к `ws://localhost` подключаться разрешено
+/// (localhost — доверенный origin).
 const String _defaultRelayUrl = String.fromEnvironment(
   'STREAM_RELAY',
-  defaultValue: 'wss://pvp.alshfu.com/stream',
+  defaultValue: 'ws://localhost:2000',
 );
 
 class _ShowcaseScreenState extends ConsumerState<ShowcaseScreen> {
