@@ -15,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../online/uuid.dart';
 import '../storage/prefs.dart';
+import 'level_rewards.dart';
 import 'profile.dart';
 import 'xp_formula.dart';
 
@@ -74,11 +75,29 @@ class ProfileController extends Notifier<Profile> {
     _persist();
   }
 
-  /// Начисляет XP (например, награда за разблокированную ачивку).
+  /// Начисляет XP (например, награда за разблокированную ачивку) и выдаёт
+  /// награды за повышение уровня (ROADMAP § 8.2).
   void addXp(int amount) {
     if (amount == 0) return;
+    final before = state.level;
     state = state.copyWith(xp: state.xp + amount);
+    _grantLevelUp(before);
     _persist();
+  }
+
+  /// Выдаёт награды за уровни, пройденные с [beforeLevel] до текущего (монеты/
+  /// кристаллы). Разблокировки (зеркальный набор на 100-м) — informational,
+  /// потребляются Фазой 8.5. Не персистит (вызывающий сам сохраняет).
+  void _grantLevelUp(int beforeLevel) {
+    final after = state.level;
+    if (after <= beforeLevel) return;
+    final r = rewardsForLevelUp(beforeLevel, after);
+    if (r.coins > 0 || r.crystals > 0) {
+      state = state.copyWith(
+        coins: state.coins + r.coins,
+        crystals: state.crystals + r.crystals,
+      );
+    }
   }
 
   /// Начисляет монеты (например, награда за ежедневный квест).
@@ -134,12 +153,14 @@ class ProfileController extends Notifier<Profile> {
       winStreak: winStreak,
     );
     final coinGain = won ? _coinsForWin : _coinsForLoss;
+    final before = state.level;
     state = state.copyWith(
       xp: state.xp + xpGain,
       coins: state.coins + coinGain,
       gamesPlayed: state.gamesPlayed + 1,
       wins: state.wins + (won && !draw ? 1 : 0),
     );
+    _grantLevelUp(before);
     _persist();
     return coinGain;
   }
