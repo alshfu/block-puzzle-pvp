@@ -32,6 +32,10 @@ bool _canRotateCells(PieceInstance? p, RuleConfig cfg) {
   return orientations(p.type, cfg.rotationEnabled, cfg.flipEnabled).length > 1;
 }
 
+/// Порог ширины для боковой раскладки в игровых фазах (доска слева, обвязка
+/// справа). Ниже — вертикальная раскладка.
+const double _soloSideBySideWidth = 720;
+
 /// Экран режима «Память: соло».
 class MemorySoloScreen extends ConsumerStatefulWidget {
   /// Создаёт экран.
@@ -76,52 +80,63 @@ class _MemorySoloScreenState extends ConsumerState<MemorySoloScreen> {
       }
     });
 
-    final body = switch (state.phase) {
-      MemoryPhase.pickDifficulty => _PickDifficulty(
-        tokens: tokens,
-        onPick: _start,
-        onBack: () => context.go('/'),
-      ),
-      MemoryPhase.showing => _PlayPhase(
-        tokens: tokens,
-        state: state,
-        showing: true,
-      ),
-      MemoryPhase.reconstruct => _PlayPhase(
-        tokens: tokens,
-        state: state,
-        showing: false,
-      ),
-      MemoryPhase.done => _DonePhase(
-        tokens: tokens,
-        state: state,
-        onAgain: () => ref.read(memorySoloProvider.notifier).reset(),
-        onMenu: () => context.go('/'),
-      ),
-    };
-
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(
         children: [
           const ThemeBackdrop(),
           SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 460),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 320),
-                    switchInCurve: Curves.easeOut,
-                    switchOutCurve: Curves.easeIn,
-                    child: KeyedSubtree(
-                      key: ValueKey(state.phase),
-                      child: body,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= _soloSideBySideWidth;
+                final playing = state.phase == MemoryPhase.showing ||
+                    state.phase == MemoryPhase.reconstruct;
+                final body = switch (state.phase) {
+                  MemoryPhase.pickDifficulty => _PickDifficulty(
+                    tokens: tokens,
+                    onPick: _start,
+                    onBack: () => context.go('/'),
+                  ),
+                  MemoryPhase.showing => _PlayPhase(
+                    tokens: tokens,
+                    state: state,
+                    showing: true,
+                    wide: wide,
+                  ),
+                  MemoryPhase.reconstruct => _PlayPhase(
+                    tokens: tokens,
+                    state: state,
+                    showing: false,
+                    wide: wide,
+                  ),
+                  MemoryPhase.done => _DonePhase(
+                    tokens: tokens,
+                    state: state,
+                    onAgain: () =>
+                        ref.read(memorySoloProvider.notifier).reset(),
+                    onMenu: () => context.go('/'),
+                  ),
+                };
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: wide && playing ? 920 : 460,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 320),
+                        switchInCurve: Curves.easeOut,
+                        switchOutCurve: Curves.easeIn,
+                        child: KeyedSubtree(
+                          key: ValueKey(state.phase),
+                          child: body,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           Positioned.fill(
@@ -288,10 +303,14 @@ class _PlayPhase extends ConsumerWidget {
   /// true — фаза показа (доска видна, без взаимодействия), false — сборка.
   final bool showing;
 
+  /// Широкий экран: доска слева, обвязка справа.
+  final bool wide;
+
   const _PlayPhase({
     required this.tokens,
     required this.state,
     required this.showing,
+    this.wide = false,
   });
 
   @override
@@ -299,95 +318,126 @@ class _PlayPhase extends ConsumerWidget {
     final game = state.game!;
     final notifier = ref.read(memorySoloProvider.notifier);
     final title = showing ? '👀 Запомни раскладку' : '🧩 Собери по памяти';
-    final placed = showing
-        ? 0
-        : state.game!.currentPlayer.hand.length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    final placed = showing ? 0 : state.game!.currentPlayer.hand.length;
+
+    final timerHeader = Row(
       children: [
-        Row(
-          children: [
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: tokens.ink,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              fontFamily: tokens.fontDisplay,
+            ),
+          ),
+        ),
+        Text(
+          '${state.phaseRemaining.ceil()} с',
+          style: TextStyle(
+            color: state.phaseRatio < 0.25 ? tokens.bad : tokens.ink,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+    final bar = ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: LinearProgressIndicator(
+        value: state.phaseRatio,
+        minHeight: 6,
+        backgroundColor: tokens.line,
+        valueColor: AlwaysStoppedAnimation(showing ? tokens.p0 : tokens.good),
+      ),
+    );
+    final boardW = BoardView(
+      state: game,
+      theme: tokens,
+      onPlace: showing ? (_, _) {} : notifier.placeAt,
+      showGhost: !showing,
+    );
+    final List<Widget> bottom = showing
+        ? [
             Text(
-              title,
-              style: TextStyle(
-                color: tokens.ink,
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                fontFamily: tokens.fontDisplay,
-              ),
+              'Запоминай позиции фигур — доска вот-вот очистится.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: tokens.muted, fontSize: 13),
             ),
-            const Spacer(),
-            Text(
-              '${state.phaseRemaining.ceil()} с',
-              style: TextStyle(
-                color: state.phaseRatio < 0.25 ? tokens.bad : tokens.ink,
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-              ),
+          ]
+        : [
+            HandView(
+              hand: game.currentPlayer.hand,
+              selectedId: game.selectedPieceId,
+              interactive: true,
+              owner: 0,
+              theme: tokens,
+              selectedCells: game.activeCells,
+              onSelect: notifier.select,
+              onRotate: notifier.rotate,
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-            value: state.phaseRatio,
-            minHeight: 6,
-            backgroundColor: tokens.line,
-            valueColor: AlwaysStoppedAnimation(
-              showing ? tokens.p0 : tokens.good,
+            const SizedBox(height: 8),
+            PieceControls(
+              theme: tokens,
+              hasSelection: game.selectedPiece != null,
+              canRotate: _canRotateCells(game.selectedPiece, game.cfg),
+              onRotate: notifier.rotate,
+              onDeselect: notifier.deselect,
+              hint: 'Осталось фигур: $placed · выбери и тапни по доске',
             ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        BoardView(
-          state: game,
-          theme: tokens,
-          // В фазе показа постановка отключена.
-          onPlace: showing ? (_, _) {} : notifier.placeAt,
-          showGhost: !showing,
-        ),
-        const SizedBox(height: 14),
-        if (showing)
-          Text(
-            'Запоминай позиции фигур — доска вот-вот очистится.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: tokens.muted, fontSize: 13),
-          )
-        else ...[
-          HandView(
-            hand: game.currentPlayer.hand,
-            selectedId: game.selectedPieceId,
-            interactive: true,
-            owner: 0,
-            theme: tokens,
-            selectedCells: game.activeCells,
-            onSelect: notifier.select,
-            onRotate: notifier.rotate,
-          ),
-          const SizedBox(height: 8),
-          PieceControls(
-            theme: tokens,
-            hasSelection: game.selectedPiece != null,
-            canRotate: _canRotateCells(game.selectedPiece, game.cfg),
-            onRotate: notifier.rotate,
-            onDeselect: notifier.deselect,
-            hint: 'Осталось фигур: $placed · выбери и тапни по доске',
-          ),
-          const SizedBox(height: 4),
-          Center(
-            child: TextButton(
-              onPressed: notifier.finishNow,
-              child: Text(
-                'Готово →',
-                style: TextStyle(
-                  color: tokens.p0,
-                  fontWeight: FontWeight.w700,
+            const SizedBox(height: 4),
+            Center(
+              child: TextButton(
+                onPressed: notifier.finishNow,
+                child: Text(
+                  'Готово →',
+                  style: TextStyle(
+                    color: tokens.p0,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
+          ];
+
+    if (wide) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460, maxHeight: 460),
+              child: boardW,
+            ),
+          ),
+          const SizedBox(width: 22),
+          SizedBox(
+            width: 300,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                timerHeader,
+                const SizedBox(height: 10),
+                bar,
+                const SizedBox(height: 20),
+                ...bottom,
+              ],
+            ),
           ),
         ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        timerHeader,
+        const SizedBox(height: 8),
+        bar,
+        const SizedBox(height: 14),
+        boardW,
+        const SizedBox(height: 14),
+        ...bottom,
       ],
     );
   }

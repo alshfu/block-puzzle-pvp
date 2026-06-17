@@ -29,6 +29,10 @@ bool _canRotateCells(PieceInstance? p, RuleConfig cfg) {
   return orientations(p.type, cfg.rotationEnabled, cfg.flipEnabled).length > 1;
 }
 
+/// Порог ширины для боковой раскладки в игровых фазах (доска слева, обвязка
+/// справа). Ниже — вертикальная раскладка.
+const double _duelSideBySideWidth = 720;
+
 /// Имя игрока по индексу.
 String _playerName(int i) => 'Игрок ${i + 1}';
 
@@ -72,9 +76,17 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
         children: [
           const ThemeBackdrop(),
           SafeArea(
-            child: Center(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= _duelSideBySideWidth;
+                final playing = state.phase == DuelPhase.arrange ||
+                    state.phase == DuelPhase.reproduce ||
+                    state.phase == DuelPhase.memorize;
+                return Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 460),
+                constraints: BoxConstraints(
+                  maxWidth: wide && playing ? 920 : 460,
+                ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
                   child: AnimatedSwitcher(
@@ -107,6 +119,7 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                       onDeselect: notifier.deselect,
                       onFinish: notifier.finishArrange,
                       showTimer: false,
+                      wide: wide,
                     ),
                     DuelPhase.introMemorize => _Intro(
                       tokens: tokens,
@@ -119,7 +132,8 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                       onTap: notifier.proceed,
                       onBack: () => context.go('/'),
                     ),
-                    DuelPhase.memorize => _ShowPhase(tokens: tokens, state: state),
+                    DuelPhase.memorize =>
+                      _ShowPhase(tokens: tokens, state: state, wide: wide),
                     DuelPhase.reproduce => _PlacePhase(
                       tokens: tokens,
                       state: state,
@@ -131,6 +145,7 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                       onDeselect: notifier.deselect,
                       onFinish: notifier.finishReproduce,
                       showTimer: true,
+                      wide: wide,
                     ),
                     DuelPhase.roundResult => _RoundResult(
                       tokens: tokens,
@@ -152,6 +167,8 @@ class _MemoryDuelScreenState extends ConsumerState<MemoryDuelScreen> {
                   ),
                 ),
               ),
+                );
+              },
             ),
           ),
           Positioned.fill(
@@ -241,6 +258,7 @@ class _PlacePhase extends StatelessWidget {
   final VoidCallback onDeselect;
   final VoidCallback onFinish;
   final bool showTimer;
+  final bool wide;
 
   const _PlacePhase({
     required this.tokens,
@@ -253,41 +271,38 @@ class _PlacePhase extends StatelessWidget {
     required this.onDeselect,
     required this.onFinish,
     required this.showTimer,
+    this.wide = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final game = state.game;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    final timerHeader = Row(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: tokens.ink,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: tokens.fontDisplay,
-                ),
-              ),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: tokens.ink,
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+              fontFamily: tokens.fontDisplay,
             ),
-            if (showTimer)
-              Text(
-                '${state.phaseRemaining.ceil()} с',
-                style: TextStyle(
-                  color: state.phaseRatio < 0.25 ? tokens.bad : tokens.ink,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-          ],
+          ),
         ),
-        if (showTimer) ...[
-          const SizedBox(height: 6),
-          ClipRRect(
+        if (showTimer)
+          Text(
+            '${state.phaseRemaining.ceil()} с',
+            style: TextStyle(
+              color: state.phaseRatio < 0.25 ? tokens.bad : tokens.ink,
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+      ],
+    );
+    final bar = showTimer
+        ? ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: state.phaseRatio,
@@ -295,44 +310,79 @@ class _PlacePhase extends StatelessWidget {
               backgroundColor: tokens.line,
               valueColor: AlwaysStoppedAnimation(tokens.good),
             ),
-          ),
-        ],
-        const SizedBox(height: 12),
-        BoardView(
-          state: game,
-          theme: tokens,
-          onPlace: onPlace,
+          )
+        : null;
+    final boardW = BoardView(state: game, theme: tokens, onPlace: onPlace);
+    final hand = HandView(
+      hand: game.currentPlayer.hand,
+      selectedId: game.selectedPieceId,
+      interactive: true,
+      owner: 0,
+      theme: tokens,
+      selectedCells: game.activeCells,
+      onSelect: onSelect,
+      onRotate: onRotate,
+    );
+    final controls = PieceControls(
+      theme: tokens,
+      hasSelection: game.selectedPiece != null,
+      canRotate: _canRotateCells(game.selectedPiece, game.cfg),
+      onRotate: onRotate,
+      onDeselect: onDeselect,
+      hint: 'Осталось фигур: ${game.currentPlayer.hand.length} · $hint',
+    );
+    final finishBtn = Center(
+      child: TextButton(
+        onPressed: onFinish,
+        child: Text(
+          'Готово →',
+          style: TextStyle(color: tokens.p0, fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 12),
-        HandView(
-          hand: game.currentPlayer.hand,
-          selectedId: game.selectedPieceId,
-          interactive: true,
-          owner: 0,
-          theme: tokens,
-          selectedCells: game.activeCells,
-          onSelect: onSelect,
-          onRotate: onRotate,
-        ),
-        const SizedBox(height: 8),
-        PieceControls(
-          theme: tokens,
-          hasSelection: game.selectedPiece != null,
-          canRotate: _canRotateCells(game.selectedPiece, game.cfg),
-          onRotate: onRotate,
-          onDeselect: onDeselect,
-          hint: 'Осталось фигур: ${game.currentPlayer.hand.length} · $hint',
-        ),
-        const SizedBox(height: 4),
-        Center(
-          child: TextButton(
-            onPressed: onFinish,
-            child: Text(
-              'Готово →',
-              style: TextStyle(color: tokens.p0, fontWeight: FontWeight.w700),
+      ),
+    );
+
+    final side = <Widget>[
+      timerHeader,
+      if (bar != null) ...[const SizedBox(height: 6), bar],
+      const SizedBox(height: 16),
+      hand,
+      const SizedBox(height: 8),
+      controls,
+      const SizedBox(height: 4),
+      finishBtn,
+    ];
+
+    if (wide) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460, maxHeight: 460),
+              child: boardW,
             ),
           ),
-        ),
+          const SizedBox(width: 22),
+          SizedBox(
+            width: 300,
+            child: Column(mainAxisSize: MainAxisSize.min, children: side),
+          ),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        timerHeader,
+        if (bar != null) ...[const SizedBox(height: 6), bar],
+        const SizedBox(height: 12),
+        boardW,
+        const SizedBox(height: 12),
+        hand,
+        const SizedBox(height: 8),
+        controls,
+        const SizedBox(height: 4),
+        finishBtn,
       ],
     );
   }
@@ -342,59 +392,97 @@ class _PlacePhase extends StatelessWidget {
 class _ShowPhase extends StatelessWidget {
   final BlockDuelTheme tokens;
   final MemoryDuelState state;
+  final bool wide;
 
-  const _ShowPhase({required this.tokens, required this.state});
+  const _ShowPhase({
+    required this.tokens,
+    required this.state,
+    this.wide = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final timerHeader = Row(
+      children: [
+        Expanded(
+          child: Text(
+            '👀 Запоминай!',
+            style: TextStyle(
+              color: tokens.ink,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              fontFamily: tokens.fontDisplay,
+            ),
+          ),
+        ),
+        Text(
+          '${state.phaseRemaining.ceil()} с',
+          style: TextStyle(
+            color: state.phaseRatio < 0.25 ? tokens.bad : tokens.ink,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+    final bar = ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: LinearProgressIndicator(
+        value: state.phaseRatio,
+        minHeight: 6,
+        backgroundColor: tokens.line,
+        valueColor: AlwaysStoppedAnimation(tokens.p0),
+      ),
+    );
+    final boardW = BoardView(
+      state: state.game,
+      theme: tokens,
+      onPlace: (_, _) {},
+      showGhost: false,
+    );
+    final note = Text(
+      'Запомни расположение — сейчас доска очистится и нужно будет повторить.',
+      textAlign: TextAlign.center,
+      style: TextStyle(color: tokens.muted, fontSize: 13),
+    );
+
+    if (wide) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460, maxHeight: 460),
+              child: boardW,
+            ),
+          ),
+          const SizedBox(width: 22),
+          SizedBox(
+            width: 300,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                timerHeader,
+                const SizedBox(height: 10),
+                bar,
+                const SizedBox(height: 20),
+                note,
+              ],
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Text(
-              '👀 Запоминай!',
-              style: TextStyle(
-                color: tokens.ink,
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                fontFamily: tokens.fontDisplay,
-              ),
-            ),
-            const Spacer(),
-            Text(
-              '${state.phaseRemaining.ceil()} с',
-              style: TextStyle(
-                color: state.phaseRatio < 0.25 ? tokens.bad : tokens.ink,
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
+        timerHeader,
         const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-            value: state.phaseRatio,
-            minHeight: 6,
-            backgroundColor: tokens.line,
-            valueColor: AlwaysStoppedAnimation(tokens.p0),
-          ),
-        ),
+        bar,
         const SizedBox(height: 16),
-        BoardView(
-          state: state.game,
-          theme: tokens,
-          onPlace: (_, _) {},
-          showGhost: false,
-        ),
+        boardW,
         const SizedBox(height: 16),
-        Text(
-          'Запомни расположение — сейчас доска очистится и нужно будет повторить.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: tokens.muted, fontSize: 13),
-        ),
+        note,
       ],
     );
   }
