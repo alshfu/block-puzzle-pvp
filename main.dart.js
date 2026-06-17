@@ -60069,7 +60069,7 @@ s=p?r.f:q
 return A.dD(!1,B.I,!0,l,A.es(!1,m,!0,A.by(q,A.U(r.d,q,q,q,q,A.W(q,q,p?o.r:o.as,q,q,q,q,q,q,q,q,13,q,q,B.z,q,q,!0,q,q,q,q,q,q,q,q),q,q),B.k,q,q,q,q,q,q,B.dL,q,q,q),q,!0,q,q,q,q,q,q,s,q,q,q),B.k,n,0,q,q,q,q,q,B.ai)}}
 A.yi.prototype={
 ac(){var s=A.b([],t.Y),r=$.aG()
-return new A.S0(new A.aiB(s),new A.qi(B.oe,r),new A.qi(new A.d8("wss://pvp.alshfu.com/stream",B.ds,B.b6),r))}}
+return new A.S0(new A.aiB(s),new A.qi(B.oe,r),new A.qi(new A.d8("ws://localhost:2000",B.ds,B.b6),r))}}
 A.S0.prototype={
 aw(){var s,r=this
 r.aM()
