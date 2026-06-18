@@ -206,6 +206,7 @@ legacy/                    — original JSX prototype (visual reference only)
 TZ_BlockDuel_9x9.md        — full Russian spec (source of truth)
 MIGRATION_FLUTTER.md       — migration plan; MIGRATION_PROGRESS.md — live checklist
 ROADMAP.md  CHANGELOG.md  CLAUDE.md  HANDOFF.md  DEPLOY.md
+ASSETS.md                  — sprite & asset spec (current procedural state + art needs)
 ```
 
 ---
