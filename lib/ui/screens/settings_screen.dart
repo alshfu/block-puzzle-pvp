@@ -236,6 +236,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         },
         onChanged: (v) => update(s.copyWith(defaultBlitzPreset: v)),
       ),
+    const SizedBox(height: 20),
+    _SectionLabel(text: 'Бонусы', theme: theme),
+    const SizedBox(height: 4),
+    if (ref.watch(profileControllerProvider).level >= 100)
+      _ToggleRow(
+        theme: theme,
+        label: 'Зеркальный набор фигур',
+        value: s.mirrorPiecesEnabled,
+        onChanged: (v) => update(s.copyWith(mirrorPiecesEnabled: v)),
+      )
+    else
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(
+          '🔒 Зеркальный набор фигур — откроется на 100-м уровне',
+          style: TextStyle(color: theme.muted, fontSize: 13),
+        ),
+      ),
   ];
 
   /// Категория «Аккаунт» — вход, данные, о приложении.

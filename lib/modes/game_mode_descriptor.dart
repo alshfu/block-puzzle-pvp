@@ -157,6 +157,15 @@ const List<GameModeDescriptor> gameModes = [
     status: GameModeStatus.beta,
   ),
   GameModeDescriptor(
+    id: 'tetris',
+    icon: '🧩',
+    title: 'Классический Tetris',
+    subtitle: 'падающие фигуры · клавиатура/тач',
+    route: '/tetris',
+    category: GameModeCategory.coop,
+    status: GameModeStatus.beta,
+  ),
+  GameModeDescriptor(
     id: 'showcase',
     icon: '📺',
     title: 'Авто-шоу',

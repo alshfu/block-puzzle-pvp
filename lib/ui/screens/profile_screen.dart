@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../achievements/stats_controller.dart';
+import '../../profile/level_rewards.dart';
 import '../../profile/profile_controller.dart';
 import '../design_tokens.dart';
 import '../widgets/screen_scaffold.dart';
@@ -128,6 +129,12 @@ class ProfileScreen extends ConsumerWidget {
             valueColor: AlwaysStoppedAnimation<Color>(theme.p0),
           ),
         ),
+        const SizedBox(height: 12),
+        _NextRewardCard(
+          theme: theme,
+          level: profile.level,
+          xpToNext: profile.xpForNextLevel - profile.xpInLevel,
+        ),
         const SizedBox(height: 20),
         OutlinedButton.icon(
           onPressed: () => context.go('/stats'),
@@ -181,6 +188,74 @@ class _AvatarChip extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Карточка-превью награды за следующий уровень (ROADMAP § 8.2).
+class _NextRewardCard extends StatelessWidget {
+  final BlockDuelTheme theme;
+  final int level;
+  final int xpToNext;
+
+  const _NextRewardCard({
+    required this.theme,
+    required this.level,
+    required this.xpToNext,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // На максимальном уровне (100) награждать больше нечем.
+    if (level >= 100) {
+      return _wrap(
+        context,
+        Text(
+          'Максимальный уровень достигнут 🏆',
+          style: TextStyle(color: theme.ink, fontWeight: FontWeight.w700),
+        ),
+      );
+    }
+    final next = level + 1;
+    final reward = rewardForLevel(next);
+    final parts = <String>[
+      if (reward.coins > 0) '+${reward.coins} 🪙',
+      if (reward.crystals > 0) '+${reward.crystals} 💎',
+      if (reward.unlock == mirrorPiecesUnlock) 'зеркальный набор фигур',
+    ];
+    return _wrap(
+      context,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'До уровня $next: $xpToNext XP',
+            style: TextStyle(color: theme.muted, fontSize: 12),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Награда: ${parts.join(' · ')}',
+            style: TextStyle(color: theme.ink, fontWeight: FontWeight.w700),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _wrap(BuildContext context, Widget child) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    decoration: BoxDecoration(
+      color: theme.panel,
+      borderRadius: BorderRadius.circular(theme.cardRadius),
+      border: Border.all(color: theme.line),
+    ),
+    child: Row(
+      children: [
+        const Text('🎁', style: TextStyle(fontSize: 22)),
+        const SizedBox(width: 12),
+        Expanded(child: child),
+      ],
+    ),
+  );
 }
 
 /// Панель «строк статистики».

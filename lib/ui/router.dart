@@ -32,6 +32,7 @@ import 'screens/setup_screen.dart';
 import 'screens/shop_screen.dart';
 import 'screens/showcase_screen.dart';
 import 'screens/stats_screen.dart';
+import 'screens/tetris_screen.dart';
 import 'screens/tutorial_screen.dart';
 
 /// Страница с плавным fade-through переходом (для экранов новых режимов
@@ -111,6 +112,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/match3',
       pageBuilder: (context, state) => _fadeThroughPage(const Match3Screen()),
+    ),
+    GoRoute(
+      path: '/tetris',
+      pageBuilder: (context, state) => _fadeThroughPage(const TetrisScreen()),
     ),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
     GoRoute(path: '/quests', builder: (context, state) => const QuestsScreen()),

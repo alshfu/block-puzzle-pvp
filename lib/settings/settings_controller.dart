@@ -58,6 +58,18 @@ class SettingsController extends Notifier<Settings> {
     state = state.copyWith(reduceMotion: !state.reduceMotion);
     _persist();
   }
+
+  /// Переключает подсветку-призрак цели постановки.
+  void toggleGhost() {
+    state = state.copyWith(ghostEnabled: !state.ghostEnabled);
+    _persist();
+  }
+
+  /// Переключает бонусный зеркальный набор фигур (ROADMAP § 8.5).
+  void toggleMirrorPieces() {
+    state = state.copyWith(mirrorPiecesEnabled: !state.mirrorPiecesEnabled);
+    _persist();
+  }
 }
 
 /// Провайдер ViewModel настроек.

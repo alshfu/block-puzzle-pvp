@@ -166,6 +166,26 @@
 - [x] Графика «леденцов» `Match3BoardView`, экран `match3_screen`, маршрут
       `/match3`.
 
+### 5.7. Классический Tetris (живое падение) ✅ (2026-06-18, локально)
+- [x] Pure-ядро `lib/modes/tetris/tetris_core.dart`: поле 10×20, 4 состояния
+      поворота (через `rotate90`), wall-kick, drop-distance, СХЛОПЫВАЮЩАЯ очистка
+      строк (классика, не row-in-place), таблица очков (100/300/500/800×уровень),
+      кривые `tetrisLevelForLines`/`tetrisGravitySeconds`.
+- [x] ViewModel `tetris_notifier.dart`: гравитация через `tick(dt)` (темп —
+      Ticker во View, ядро без таймеров), move/soft/hard drop, повороты CW/CCW,
+      hold (раз за фигуру), очередь NEXT, рекорд в SharedPreferences.
+- [x] View `tetris_board_view.dart` (классическая 7-цветная палитра, призрак
+      приземления, вспышка очисток) + `tetris_screen.dart` (HUD score/lines/
+      level/NEXT/HOLD, адаптивная раскладка, оверлеи паузы/конца).
+- [x] **Грамотное управление с клавиатуры (web/desktop):** ← → двигать, ↓ soft
+      drop, ↑/X поворот CW, Z/Ctrl поворот CCW, Space hard drop, C/Shift hold,
+      P/Esc пауза, Enter рестарт; DAS (авто-повтор) для движения/soft drop +
+      экранные кнопки для тача.
+- [x] Реестр режимов (`game_mode_descriptor` id `tetris`), маршрут `/tetris`,
+      пункт меню «🧩 Классический Tetris».
+- [x] Тесты `test/modes/tetris_test.dart` (геометрия/очистка/счёт + ViewModel).
+- [ ] 🔒 ELO-ladder (онлайн-надстройка).
+
 ### 5.6. Composite-score и ladder-листы 🟨
 - [x] Composite-score формула `floor(0.4·E_general + 0.6·avg(E_modes))`
       (`lib/modes/ladder/composite_score.dart`, pure + тесты).
@@ -272,13 +292,17 @@
 - [x] Награды каждому уровню — `lib/profile/level_rewards.dart`
       (монеты + кристаллы на вехах + unlock на 100), начисляются при level-up
       в `ProfileController`. Тесты `test/profile/level_rewards_test.dart` (7).
-- [ ] UI: progress bar с указанием next-level reward.
+- [x] **2026-06-18** UI: карточка next-level reward на экране профиля
+      (`_NextRewardCard` в `profile_screen.dart`: «До уровня N: X XP» + награда).
 - [x] Достижение 100 → unlock `mirror-pieces` (потребляется § 8.5).
 
-### 8.3. Гарантия валидного hand для новичков ≤ 10 ⬜
-- [ ] В `freshInit` для player с level ≤ 10: проверить `hasAnyMove`.
-- [ ] Если dead — реролл bag-snapshot до 3 попыток.
-- [ ] Тест на 1000 свежих init'ов — у новичков 0 dead-старта.
+### 8.3. Гарантия валидного hand для новичков ≤ 10 ✅ (2026-06-18)
+- [x] `lib/game/opening_hand.dart` — `dealOpeningHand(bag, k, board, cfg)`:
+      проверяет `hasAnyMove`, при dead-руке перераздаёт до 3 раз. Подключено в
+      `GameNotifier._freshState` для игрока 0 (на пустой доске reroll не нужен —
+      последовательность мешка та же, это защитная гарантия).
+- [x] Тест `test/game/opening_hand_test.dart` (1000 свежих init'ов — 0 dead;
+      идентичность обычной раздаче на пустой доске; не зацикливается на full).
 
 ### 8.4. Расширенная квестовая система 🟨 (2026-06-18)
 - [x] Обобщённый движок `lib/quests/quest.dart` (метрики/цели/награды, периоды,
@@ -292,11 +316,17 @@
       Тесты `test/quests/quest_test.dart` (8).
 - [ ] 🔒 Server-side validation квестов в `users/{uid}/quests` (требует VPS).
 
-### 8.5. Бонусный piece-set (100 уровень) ⬜
-- [ ] 7 «mirror-фигур» — отражённые версии классических тетромино с
-      diagonally cut углами.
-- [ ] Применимо во всех режимах, опт-ин в Settings.
-- [ ] Визуально отличаются скином.
+### 8.5. Бонусный piece-set (100 уровень) ✅ (2026-06-18)
+- [x] `lib/profile/mirror_pieces.dart` — зеркальный набор: горизонтальное
+      отражение тетромино = переотображение типов `mirrorOf` (S↔Z, J↔L; I/O/T
+      самосимметричны) + `mirrorShape` для превью/тестов. Pure, тесты
+      `test/profile/mirror_pieces_test.dart`.
+- [x] Опт-ин в Settings (`mirrorPiecesEnabled`), тумблер виден/доступен только
+      при достижении 100-го уровня (иначе 🔒-подсказка).
+- [x] Применение в режиме «Tetris» (`TetrisNotifier(mirror: …)`) — не трогает
+      parity-связанное ядро 9×9.
+- [ ] Применение в 9×9/онлайне отложено: потребует синхронной правки TS-ядра
+      (golden-паритет), поэтому вне этого инкремента.
 
 ---
 

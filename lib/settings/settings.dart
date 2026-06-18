@@ -40,6 +40,11 @@ class Settings {
   /// Подсвечивать цель постановки (призрак фигуры).
   final bool ghostEnabled;
 
+  /// Использовать бонусный «зеркальный набор» фигур (ROADMAP § 8.5). Действует
+  /// только если набор разблокирован (100-й уровень); применяется в режимах
+  /// платформы (например, «Tetris»).
+  final bool mirrorPiecesEnabled;
+
   /// Вибрация.
   final VibrationMode vibration;
 
@@ -75,6 +80,7 @@ class Settings {
     this.confettiEnabled = true,
     this.mascotsEnabled = true,
     this.ghostEnabled = true,
+    this.mirrorPiecesEnabled = false,
     this.vibration = VibrationMode.light,
     this.botDelayMs = 350,
     this.defaultBotLevel = 'medium',
@@ -95,6 +101,7 @@ class Settings {
     confettiEnabled: true,
     mascotsEnabled: true,
     ghostEnabled: true,
+    mirrorPiecesEnabled: false,
     vibration: VibrationMode.light,
     botDelayMs: 350,
     defaultBotLevel: 'medium',
@@ -115,6 +122,7 @@ class Settings {
     bool? confettiEnabled,
     bool? mascotsEnabled,
     bool? ghostEnabled,
+    bool? mirrorPiecesEnabled,
     VibrationMode? vibration,
     int? botDelayMs,
     String? defaultBotLevel,
@@ -132,6 +140,7 @@ class Settings {
     confettiEnabled: confettiEnabled ?? this.confettiEnabled,
     mascotsEnabled: mascotsEnabled ?? this.mascotsEnabled,
     ghostEnabled: ghostEnabled ?? this.ghostEnabled,
+    mirrorPiecesEnabled: mirrorPiecesEnabled ?? this.mirrorPiecesEnabled,
     vibration: vibration ?? this.vibration,
     botDelayMs: botDelayMs ?? this.botDelayMs,
     defaultBotLevel: defaultBotLevel ?? this.defaultBotLevel,
@@ -152,6 +161,7 @@ class Settings {
     'confettiEnabled': confettiEnabled,
     'mascotsEnabled': mascotsEnabled,
     'ghostEnabled': ghostEnabled,
+    'mirrorPiecesEnabled': mirrorPiecesEnabled,
     'vibration': vibration.name,
     'botDelayMs': botDelayMs,
     'defaultBotLevel': defaultBotLevel,
@@ -174,6 +184,8 @@ class Settings {
       confettiEnabled: json['confettiEnabled'] as bool? ?? d.confettiEnabled,
       mascotsEnabled: json['mascotsEnabled'] as bool? ?? d.mascotsEnabled,
       ghostEnabled: json['ghostEnabled'] as bool? ?? d.ghostEnabled,
+      mirrorPiecesEnabled:
+          json['mirrorPiecesEnabled'] as bool? ?? d.mirrorPiecesEnabled,
       vibration:
           VibrationMode.values
               .where((v) => v.name == json['vibration'])

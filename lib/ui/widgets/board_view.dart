@@ -36,6 +36,10 @@ class BoardView extends StatefulWidget {
   /// Надетый скин клеток (косметика из магазина).
   final SkinStyle skin;
 
+  /// Якорь курсора-клавиатуры (web/desktop): когда мышь не наводится, призрак
+  /// рисуется здесь. `null` — управление клавиатурой не активно.
+  final ({int r, int c})? keyboardCursor;
+
   /// Создаёт интерактивную доску.
   const BoardView({
     super.key,
@@ -44,6 +48,7 @@ class BoardView extends StatefulWidget {
     required this.onPlace,
     this.showGhost = true,
     this.skin = SkinStyle.plain,
+    this.keyboardCursor,
   });
 
   @override
@@ -77,7 +82,8 @@ class _BoardViewState extends State<BoardView> {
   @override
   Widget build(BuildContext context) {
     final state = widget.state;
-    final hover = _hover;
+    // Мышь имеет приоритет; иначе — курсор-клавиатура (web/desktop).
+    final hover = _hover ?? widget.keyboardCursor;
     final List<Coord> preview =
         (widget.showGhost && hover != null && state.activeCells != null)
         ? state.previewCells(hover.r, hover.c)

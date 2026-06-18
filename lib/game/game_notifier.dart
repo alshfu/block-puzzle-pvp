@@ -25,6 +25,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../settings/settings_controller.dart';
 import 'game_state.dart';
 import 'match_config.dart';
+import 'opening_hand.dart';
 import 'saved_game.dart';
 import 'saved_game_store.dart';
 
@@ -304,12 +305,21 @@ class GameNotifier extends Notifier<GameState> {
       config.isSolo ? 'Ты' : 'Игрок 1',
       config.mode == MatchMode.hotseat ? 'Игрок 2' : 'Бот',
     ];
+    // Игроку 0 (человеку) гарантируем валидный стартовый hand (ROADMAP § 8.3) —
+    // на пустой доске это защитная проверка (последовательность мешка та же).
     final players = [
       for (int i = 0; i < 2; i++)
         PlayerState(
           score: 0,
           combo: 0,
-          hand: _dealHand(_bags[i], config.cfg.handSize),
+          hand: i == 0
+              ? dealOpeningHand(
+                  _bags[0],
+                  config.cfg.handSize,
+                  emptyBoard(),
+                  config.cfg,
+                )
+              : _dealHand(_bags[i], config.cfg.handSize),
           name: names[i],
         ),
     ];

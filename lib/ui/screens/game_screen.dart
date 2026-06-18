@@ -184,6 +184,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
   /// Активный power-up в режиме выбора клетки (палочка/бомба) или `null`.
   String? _activePowerup;
 
+  /// Якорь курсора-клавиатуры на доске (web/desktop) или `null`, пока им не
+  /// пользовались. Появляется при первом нажатии стрелки/выборе фигуры.
+  ({int r, int c})? _kbCursor;
+
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
 
@@ -228,20 +232,99 @@ class _GameScreenState extends ConsumerState<GameScreen>
     ref.read(gameProvider(_config).notifier).placeAt(r, c);
   }
 
-  /// Горячие клавиши (десктоп): R — поворот выбранной фигуры, Esc — снять
-  /// выбор/отменить активный power-up. Порт r/escape из TS-версии.
+  /// Грамотное управление с клавиатуры (web/desktop):
+  ///   1/2/3 — выбрать фигуру руки, Tab — следующая фигура, R / ↑ — поворот,
+  ///   стрелки ← ↓ → (и ↑ когда нечего вращать) — двигать курсор по доске,
+  ///   Enter / Space — поставить под курсором, Esc — снять выбор/power-up.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     final k = event.logicalKey;
-    if (k == LogicalKeyboardKey.keyR) {
-      ref.read(gameProvider(_config).notifier).rotateSelected();
+    final vm = ref.read(gameProvider(_config).notifier);
+    final state = ref.read(gameProvider(_config));
+    final hand = state.currentPlayer.hand;
+    final canControl = !state.gameOver && !_config.isBot(state.current);
+
+    // Выбор фигуры по номеру (1..3) и Numpad.
+    int? digit;
+    if (k == LogicalKeyboardKey.digit1 || k == LogicalKeyboardKey.numpad1) {
+      digit = 0;
+    } else if (k == LogicalKeyboardKey.digit2 ||
+        k == LogicalKeyboardKey.numpad2) {
+      digit = 1;
+    } else if (k == LogicalKeyboardKey.digit3 ||
+        k == LogicalKeyboardKey.numpad3) {
+      digit = 2;
+    }
+    if (digit != null) {
+      if (canControl && digit < hand.length) {
+        vm.selectPiece(hand[digit].id);
+        setState(() => _kbCursor ??= (r: 4, c: 4));
+      }
       return KeyEventResult.handled;
     }
+
+    // Tab — циклический выбор следующей фигуры руки.
+    if (k == LogicalKeyboardKey.tab) {
+      if (canControl && hand.isNotEmpty) {
+        final cur = state.selectedPieceId;
+        final idx = hand.indexWhere((p) => p.id == cur);
+        final next = hand[(idx + 1) % hand.length];
+        vm.selectPiece(next.id);
+        setState(() => _kbCursor ??= (r: 4, c: 4));
+      }
+      return KeyEventResult.handled;
+    }
+
+    if (k == LogicalKeyboardKey.keyR) {
+      vm.rotateSelected();
+      return KeyEventResult.handled;
+    }
+
+    // Стрелки — движение курсора (если есть выбранная фигура).
+    final dir = switch (k) {
+      LogicalKeyboardKey.arrowLeft => (dr: 0, dc: -1),
+      LogicalKeyboardKey.arrowRight => (dr: 0, dc: 1),
+      LogicalKeyboardKey.arrowDown => (dr: 1, dc: 0),
+      LogicalKeyboardKey.arrowUp => (dr: -1, dc: 0),
+      _ => null,
+    };
+    if (dir != null) {
+      // ↑ без курсора и с выбранной фигурой — поворот (привычно по TS).
+      if (k == LogicalKeyboardKey.arrowUp &&
+          _kbCursor == null &&
+          state.selectedPiece != null) {
+        vm.rotateSelected();
+        return KeyEventResult.handled;
+      }
+      if (canControl && state.selectedPiece != null) {
+        final cur = _kbCursor ?? (r: 4, c: 4);
+        setState(() {
+          _kbCursor = (
+            r: (cur.r + dir.dr).clamp(0, 8),
+            c: (cur.c + dir.dc).clamp(0, 8),
+          );
+        });
+      }
+      return KeyEventResult.handled;
+    }
+
+    // Enter / Space — поставить под курсором.
+    if (k == LogicalKeyboardKey.enter ||
+        k == LogicalKeyboardKey.numpadEnter ||
+        k == LogicalKeyboardKey.space) {
+      final cur = _kbCursor;
+      if (canControl && cur != null && state.selectedPiece != null) {
+        _onBoardTap(cur.r, cur.c);
+      }
+      return KeyEventResult.handled;
+    }
+
     if (k == LogicalKeyboardKey.escape) {
       if (_activePowerup != null) {
         setState(() => _activePowerup = null);
       } else {
-        ref.read(gameProvider(_config).notifier).deselect();
+        vm.deselect();
+        setState(() => _kbCursor = null);
       }
       return KeyEventResult.handled;
     }
@@ -515,6 +598,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
                       skin: skinStyleOf(
                         ref.watch(skinsControllerProvider).equipped,
                       ),
+                      // Призрак под курсором-клавиатуры — только когда фигура
+                      // выбрана (иначе ставить нечего).
+                      keyboardCursor:
+                          state.selectedPiece != null ? _kbCursor : null,
                     );
                     final topBar = _TopBar(
                       theme: theme,

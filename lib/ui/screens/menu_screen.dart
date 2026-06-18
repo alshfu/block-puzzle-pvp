@@ -39,6 +39,7 @@ enum GameMode {
   memoryDuel,
   coop,
   match3,
+  tetris,
   showcase,
   online,
 }
@@ -98,6 +99,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
       context.go('/memory-duel');
     } else if (mode == GameMode.match3) {
       context.go('/match3');
+    } else if (mode == GameMode.tetris) {
+      context.go('/tetris');
     } else if (mode == GameMode.showcase) {
       context.go('/showcase');
     } else if (setupModes.contains(mode)) {
@@ -409,6 +412,13 @@ class _Actions extends StatelessWidget {
           title: 'Match-3 PvP',
           sub: 'три в ряд, ходы по очереди',
           onTap: () => onStart(GameMode.match3),
+        ),
+        _ModeButton(
+          tokens: tokens,
+          icon: '🧩',
+          title: 'Классический Tetris',
+          sub: 'падающие фигуры · клавиатура/тач',
+          onTap: () => onStart(GameMode.tetris),
         ),
         _ModeButton(
           tokens: tokens,
