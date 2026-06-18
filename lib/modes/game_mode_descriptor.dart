@@ -166,6 +166,15 @@ const List<GameModeDescriptor> gameModes = [
     status: GameModeStatus.beta,
   ),
   GameModeDescriptor(
+    id: 'puzzle',
+    icon: '🐱',
+    title: 'Силуэты',
+    subtitle: 'собери фигуру по контуру',
+    route: '/puzzle',
+    category: GameModeCategory.coop,
+    status: GameModeStatus.beta,
+  ),
+  GameModeDescriptor(
     id: 'showcase',
     icon: '📺',
     title: 'Авто-шоу',

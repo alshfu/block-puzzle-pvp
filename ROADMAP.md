@@ -330,29 +330,45 @@
 
 ---
 
-## Фаза 9 — Puzzle Silhouettes ⬜
+## Фаза 9 — Puzzle Silhouettes ✅ (2026-06-18, локально; онлайн-ladder 🔒)
 
-### 9.1. Игровой режим ⬜
-- [ ] `src/modes/puzzle/`: маска-шаблон + ограниченный hand.
-- [ ] N ходов на решение, zone outside mask заблокирована.
-- [ ] Скоринг: solved/unsolved + бонус за оставшиеся ходы.
+Реализована в `lib/modes/puzzle/` + `lib/ui/screens/puzzle_screen.dart` +
+`lib/ui/widgets/puzzle_board_view.dart`. Маршрут `/puzzle`, меню «🐱 Силуэты».
+Режим pure-детерминированный, не зеркалится в TS, не входит в golden 9×9.
 
-### 9.2. Не-стандартный piece-set ⬜
-- [ ] `BASE_SHAPES_PUZZLE` в отдельном модуле.
-- [ ] L-shape с закруглением, T-shape со скосом, Plus, Mini (1×1),
-      Pentomino-варианты, Diagonal-step.
-- [ ] SVG-рендер для закруглений (вместо grid-of-squares).
+### 9.1. Игровой режим ✅
+- [x] `lib/modes/puzzle/puzzle_core.dart`: `PuzzleDef` (маска + эталонное
+      решение), ограниченная рука = фигуры решения; постановка ТОЛЬКО внутри
+      маски (`puzzleCanPlace`), клетки вне маски заблокированы.
+- [x] Бюджет ходов `puzzleMoveBudget` (фигуры + люфт по сложности); промахи
+      (поставил→undo) тратят ход.
+- [x] Скоринг `puzzleScore`: база по сложности + бонус за неиспользованные ходы;
+      решение `isPuzzleSolved`. ViewModel `puzzle_notifier.dart` (выбор/поворот/
+      постановка/undo/рестарт/подсказка).
 
-### 9.3. Контент-pack ⬜
-- [ ] 50-100 силуэтов к старту: животные (кот, мишка, пони, дельфин),
-      объекты (домик, машина, дерево), мемы (sus, sigma).
-- [ ] In-house level editor (внутренний tool).
-- [ ] JSON-схема `puzzles/<id>.json`.
+### 9.2. Не-стандартный piece-set ✅
+- [x] `lib/modes/puzzle/puzzle_pieces.dart`: `puzzleBaseShapes` — тетромино +
+      мини (1×1), домино, тримино I/L, плюс- и I/L/P/T-пентамино, «лесенка»
+      (W-пентамино). Обобщённые `shapeOrientations` (любая форма).
+- [x] Скруглённый силуэт (внешние углы) в `puzzle_board_view.dart` —
+      «не grid-of-squares» (через `Path`+`RRect`-углы, без SVG-файлов).
 
-### 9.4. Прогрессия и рейтинг ⬜
-- [ ] «Puzzle Speedrun» ladder — лучшее суммарное время для season-pack.
-- [ ] Уровни сложности: Easy / Medium / Hard / Expert.
-- [ ] Награда за каждое прохождение: 10-100 coins.
+### 9.3. Контент-pack ✅ (стартовый набор, расширяемый)
+- [x] `lib/modes/puzzle/puzzle_pack.dart`: силуэты заданы ASCII-арт-масками
+      (символы/объекты/животные), решение строится детерминированным генератором
+      `puzzle_generator.dart` (гарантия разрешимости через fallback «мини»).
+- [x] JSON-схема уровня — `PuzzleDef.toJson/fromJson` (round-trip в тестах);
+      внешние паки загружаемы. Полноценный визуальный level-editor — отложен
+      (генератор + ASCII закрывают потребность авторинга; UI-редактор — позже).
+- [~] Объём «50–100»: заложен конвейер (ASCII→генератор), в паке стартовые ~15;
+      расширение — дозапись данных.
+
+### 9.4. Прогрессия и рейтинг ✅ (локально; онлайн-ladder 🔒)
+- [x] Сложности Easy/Medium/Hard/Expert (разные пулы фигур + база очков + люфт).
+- [x] Награда монетами за ПЕРВОЕ прохождение (10–100 по сложности) —
+      `ProfileController.addCoins`.
+- [x] Speedrun-рекорды (лучшее время/счёт по уровню) — `puzzle_store.dart`
+      (SharedPreferences). Глобальный season-ladder — 🔒 (серверная надстройка).
 
 ---
 

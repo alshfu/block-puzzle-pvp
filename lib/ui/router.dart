@@ -26,6 +26,7 @@ import 'screens/online/leaderboard_screen.dart';
 import 'screens/online/online_game_screen.dart';
 import 'screens/online/online_menu_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/puzzle_screen.dart';
 import 'screens/quests_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/setup_screen.dart';
@@ -116,6 +117,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/tetris',
       pageBuilder: (context, state) => _fadeThroughPage(const TetrisScreen()),
+    ),
+    GoRoute(
+      path: '/puzzle',
+      pageBuilder: (context, state) => _fadeThroughPage(const PuzzleScreen()),
     ),
     GoRoute(path: '/daily', builder: (context, state) => const DailyScreen()),
     GoRoute(path: '/quests', builder: (context, state) => const QuestsScreen()),

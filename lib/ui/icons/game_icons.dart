@@ -28,6 +28,7 @@ IconData modeIcon(String id) => switch (id) {
   'coop' => Icons.grid_view_outlined,
   'match3' => Icons.bubble_chart_outlined,
   'tetris' => Icons.extension_outlined,
+  'puzzle' => Icons.interests_outlined,
   'showcase' => Icons.live_tv_outlined,
   'tutorial' => Icons.school_outlined,
   'online' => Icons.public,

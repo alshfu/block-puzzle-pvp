@@ -42,6 +42,7 @@ enum GameMode {
   coop,
   match3,
   tetris,
+  puzzle,
   showcase,
   online,
 }
@@ -103,6 +104,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
       context.go('/match3');
     } else if (mode == GameMode.tetris) {
       context.go('/tetris');
+    } else if (mode == GameMode.puzzle) {
+      context.go('/puzzle');
     } else if (mode == GameMode.showcase) {
       context.go('/showcase');
     } else if (setupModes.contains(mode)) {
@@ -421,6 +424,13 @@ class _Actions extends StatelessWidget {
           title: 'Классический Tetris',
           sub: 'падающие фигуры · клавиатура/тач',
           onTap: () => onStart(GameMode.tetris),
+        ),
+        _ModeButton(
+          tokens: tokens,
+          icon: modeIcon(GameMode.puzzle.name),
+          title: 'Силуэты',
+          sub: 'собери фигуру по контуру',
+          onTap: () => onStart(GameMode.puzzle),
         ),
         _ModeButton(
           tokens: tokens,
