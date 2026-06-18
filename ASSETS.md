@@ -107,18 +107,26 @@ L orange (см. `tetris_colors` в `tetris_board_view.dart`) — арт-вари
 
 | Ассет | Назначение | Где | Сейчас | Статус |
 |-------|-----------|-----|--------|--------|
-| Иконки режимов меню | 🤖👥🎯🎬🧠🃏🧱🍬🧩📺🎓 | `menu_screen.dart`, `game_mode_descriptor.dart` | **emoji** | 🟨 emoji-плейсхолдер |
+| Иконки режимов меню | bot/hotseat/arcade/… (12) | `menu_screen.dart` ← `ui/icons/game_icons.dart` (`modeIcon`) | **Material-иконки** | ✅ векторные (emoji заменены) |
 | Аватары профиля | 🙂😎🦊… (12) | `profile_screen.dart` | **emoji** | 🟨 emoji-плейсхолдер |
-| Power-ups (6) | hint / swap_hand / stick_row / stick_col / bomb_3x3 / auto_play | `shop/powerups.dart`, `powerups_panel.dart` | Material/emoji | 🟨 → ⬜ если арт |
+| Power-ups (6) | hint / swap_hand / stick_row / stick_col / bomb_3x3 / auto_play | `powerups_panel.dart`, `shop_screen.dart` ← `game_icons.dart` (`powerUpIcon`) | **Material-иконки** | ✅ векторные (emoji заменены) |
 | Награды/валюта | 🪙 монеты, 💎 кристаллы, 🎁 награда | shop/profile/quests | **emoji** | 🟨 emoji-плейсхолдер |
 | Достижения (~120) | бейджи ачивок | `achievements_*` | текст/emoji | ⬜ если бейджи-арт |
 | Логотип игры | заставка меню | `logo.dart` | 🎨 процедурно | 🎨 |
 
-**Если делаем художественные иконки:** единый набор в одном стиле.
+**Сделано (2026-06-18):** иконки **режимов меню** и **power-ups** переведены с
+emoji на векторные **Material-иконки** — единый источник `lib/ui/icons/
+game_icons.dart` (`modeIcon(id)` / `powerUpIcon(id)`). В меню иконка режима
+рисуется в тонированном чипе; power-ups — в панели матча и в магазине. Нулевой
+вес ассетов, чёткость на любом DPI. Художественный набор (если понадобится)
+заменяет только эти мапы/отрисовку.
+
+**Если делаем художественные иконки (следующий шаг):** единый набор в одном
+стиле, заменяющий Material-иконки.
 - Формат: **SVG** (масштаб) или PNG **96×96 @1x/@2x/@3x**.
 - Именование: `assets/icons/<group>/<id>.svg` (например `icons/powerups/bomb_3x3.svg`,
   `icons/modes/tetris.svg`, `icons/avatars/fox.svg`).
-- Иконки power-ups и режимов — приоритет №1 для арта (заменяют emoji, дают бренд).
+- Остаток: **аватары профиля** ещё emoji; **бейджи достижений** — текст/emoji.
 
 ---
 
@@ -204,7 +212,8 @@ L orange (см. `tetris_colors` в `tetris_board_view.dart`) — арт-вари
 ## Приоритеты производства
 
 1. **Брендинг релиза:** мастер-иконка 1024² → иконки всех платформ + splash.
-2. **Иконки power-ups (6) и режимов меню** — заменяют emoji, дают узнаваемость.
+2. ~~**Иконки power-ups (6) и режимов меню**~~ ✅ переведены на Material-иконки
+   (`game_icons.dart`, 2026-06-18); художественный арт-набор — опционально позже.
 3. **Скины блоков (6 стилей)** — монетизация магазина.
 4. **Маскоты** в SVG/арте (3 темы + позы).
 5. **Записанный звук** (если синтез решат заменить) — SFX, затем музыка.

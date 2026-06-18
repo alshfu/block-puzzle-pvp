@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 
 import '../../shop/powerups.dart';
 import '../design_tokens.dart';
+import '../icons/game_icons.dart';
 
 /// Панель power-ups (одиночные режимы).
 class PowerupsPanel extends StatelessWidget {
@@ -101,7 +102,11 @@ class _PuButton extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(def.icon, style: const TextStyle(fontSize: 18)),
+                  Icon(
+                    powerUpIcon(def.id),
+                    size: 18,
+                    color: isActive ? theme.bg : theme.ink,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     '$count',

@@ -18,6 +18,7 @@ import '../../shop/powerups.dart';
 import '../../shop/skins.dart';
 import '../../shop/skins_controller.dart';
 import '../design_tokens.dart';
+import '../icons/game_icons.dart';
 import '../widgets/screen_scaffold.dart';
 
 /// Экран магазина.
@@ -87,7 +88,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       for (final p in powerupDefs)
         _ShopCard(
           theme: t,
-          icon: p.icon,
+          leading: Icon(powerUpIcon(p.id), size: 28, color: t.ink),
           ownedLabel: (inv[p.id] ?? 0) > 0 ? '×${inv[p.id]}' : null,
           title: p.name,
           description: '${p.description}\n${p.hint}',
@@ -110,7 +111,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       for (final s in skinDefs)
         _ShopCard(
           theme: t,
-          icon: s.icon,
+          leading: Text(s.icon, style: const TextStyle(fontSize: 28)),
           ownedLabel: s.id == skins.equipped ? 'надет' : null,
           title: s.name,
           description: s.description,
@@ -221,7 +222,7 @@ class _Tab extends StatelessWidget {
 /// Карточка товара магазина.
 class _ShopCard extends StatelessWidget {
   final BlockDuelTheme theme;
-  final String icon;
+  final Widget leading;
   final String? ownedLabel;
   final String title;
   final String description;
@@ -229,7 +230,7 @@ class _ShopCard extends StatelessWidget {
 
   const _ShopCard({
     required this.theme,
-    required this.icon,
+    required this.leading,
     required this.ownedLabel,
     required this.title,
     required this.description,
@@ -250,7 +251,7 @@ class _ShopCard extends StatelessWidget {
         children: [
           Column(
             children: [
-              Text(icon, style: const TextStyle(fontSize: 28)),
+              leading,
               if (ownedLabel != null)
                 Text(
                   ownedLabel!,

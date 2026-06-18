@@ -24,6 +24,7 @@ import '../../pilot/developer.dart';
 import '../../profile/profile_controller.dart';
 import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
+import '../icons/game_icons.dart';
 import '../responsive.dart';
 import '../widgets/logo.dart';
 import '../widgets/mini_piece.dart';
@@ -358,7 +359,7 @@ class _Actions extends StatelessWidget {
       children: [
         _ModeButton(
           tokens: tokens,
-          icon: '🤖',
+          icon: modeIcon(GameMode.bot.name),
           title: 'С ботом',
           sub: 'быстрая партия против ИИ',
           primary: true,
@@ -366,70 +367,70 @@ class _Actions extends StatelessWidget {
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '👥',
+          icon: modeIcon(GameMode.hotseat.name),
           title: 'Вдвоём',
           sub: 'hot-seat на одном устройстве',
           onTap: () => onStart(GameMode.hotseat),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🎯',
+          icon: modeIcon(GameMode.arcade.name),
           title: 'Аркада',
           sub: 'один на доске — на рекорд',
           onTap: () => onStart(GameMode.arcade),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🎬',
+          icon: modeIcon(GameMode.botvbot.name),
           title: 'Бот × бот',
           sub: 'смотри как ИИ играет с ИИ',
           onTap: () => onStart(GameMode.botvbot),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🧠',
+          icon: modeIcon(GameMode.memorySolo.name),
           title: 'Память: соло',
           sub: 'запомни раскладку и собери её',
           onTap: () => onStart(GameMode.memorySolo),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🧱',
+          icon: modeIcon(GameMode.coop.name),
           title: 'Co-op Tetris',
           sub: 'поле 10×20, ходы по очереди',
           onTap: () => onStart(GameMode.coop),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🃏',
+          icon: modeIcon(GameMode.memoryDuel.name),
           title: 'Memory Duel',
           sub: 'расставь · запомни · повтори',
           onTap: () => onStart(GameMode.memoryDuel),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🍬',
+          icon: modeIcon(GameMode.match3.name),
           title: 'Match-3 PvP',
           sub: 'три в ряд, ходы по очереди',
           onTap: () => onStart(GameMode.match3),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🧩',
+          icon: modeIcon(GameMode.tetris.name),
           title: 'Классический Tetris',
           sub: 'падающие фигуры · клавиатура/тач',
           onTap: () => onStart(GameMode.tetris),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '📺',
+          icon: modeIcon(GameMode.showcase.name),
           title: 'Авто-шоу',
           sub: 'ИИ играет сам · формат Shorts + запись',
           onTap: () => onStart(GameMode.showcase),
         ),
         _ModeButton(
           tokens: tokens,
-          icon: '🎓',
+          icon: modeIcon(GameMode.tutorial.name),
           title: 'Обучение',
           sub: '5 шагов · награда +50 🪙',
           onTap: () => onStart(GameMode.tutorial),
@@ -490,7 +491,7 @@ class _HeroButton extends StatelessWidget {
 /// Кнопка одного режима в раскрытом списке.
 class _ModeButton extends StatelessWidget {
   final BlockDuelTheme tokens;
-  final String icon;
+  final IconData icon;
   final String title;
   final String sub;
   final bool primary;
@@ -523,7 +524,22 @@ class _ModeButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               children: [
-                Text(icon, style: const TextStyle(fontSize: 22)),
+                // Иконка режима в тонированном чипе — «приложенческий» вид.
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: (primary ? tokens.p0 : tokens.ink).withValues(
+                      alpha: 0.12,
+                    ),
+                    borderRadius: BorderRadius.circular(tokens.btnRadius - 2),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 22,
+                    color: primary ? tokens.p0 : tokens.ink,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
