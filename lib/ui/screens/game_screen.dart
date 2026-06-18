@@ -34,6 +34,7 @@ import '../../game/match_config.dart';
 import '../../pilot/developer.dart';
 import '../../profile/profile_controller.dart';
 import '../../profile/xp_formula.dart';
+import '../../progression/season_pass_controller.dart';
 import '../../quests/quest.dart';
 import '../../quests/quests_controller.dart';
 import '../../settings/settings.dart';
@@ -530,6 +531,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
             .earnCrystalsFromScore(next.players[0].score);
         // Прирост XP за матч (награды + XP ачивок) — для экрана результата.
         final gainedXp = ref.read(profileControllerProvider).xp - xpBefore;
+        // Сезонный пропуск (§ 10.4): прогресс по тому же XP.
+        ref.read(seasonPassControllerProvider.notifier).addXp(gainedXp);
         setState(() {
           if (fresh.isNotEmpty) _toasts.addAll(fresh);
           _resultXp = gainedXp;
@@ -595,9 +598,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
                       showGhost: ref
                           .watch(settingsControllerProvider)
                           .ghostEnabled,
-                      skin: skinStyleOf(
-                        ref.watch(skinsControllerProvider).equipped,
-                      ),
+                      // Доступность (§ 10.3): нейтральные клетки — игнор скинов.
+                      skin: ref.watch(
+                            settingsControllerProvider.select(
+                              (s) => s.accessibilityNeutralSkins,
+                            ),
+                          )
+                          ? SkinStyle.plain
+                          : skinStyleOf(
+                              ref.watch(skinsControllerProvider).equipped,
+                            ),
                       // Призрак под курсором-клавиатуры — только когда фигура
                       // выбрана (иначе ставить нечего).
                       keyboardCursor:

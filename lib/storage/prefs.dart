@@ -48,4 +48,13 @@ abstract final class PrefKeys {
 
   /// JSON рекордов режима «Память: соло» (уровень сложности → лучший счёт).
   static const String memorySoloBest = 'bd_memory_solo_best';
+
+  /// JSON состояния кастомных тем (список + надетая) — конструктор тем § 10.2.
+  static const String customThemes = 'bd_custom_themes';
+
+  /// Флаг разблокировки конструктора тем (`'1'` — куплен за кристаллы).
+  static const String themeBuilderUnlocked = 'bd_theme_builder';
+
+  /// JSON прогресса сезонного пропуска (§ 10.4): xp + premium + claimed.
+  static const String seasonPass = 'bd_season_pass';
 }

@@ -13,8 +13,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../profile/profile_controller.dart';
+import '../../shop/crystal_packs.dart';
 import '../../shop/inventory_controller.dart';
 import '../../shop/powerups.dart';
+import '../../shop/purchase_service.dart';
 import '../../shop/skins.dart';
 import '../../shop/skins_controller.dart';
 import '../design_tokens.dart';
@@ -31,7 +33,8 @@ class ShopScreen extends ConsumerStatefulWidget {
 }
 
 class _ShopScreenState extends ConsumerState<ShopScreen> {
-  bool _powerupsTab = true;
+  /// Активная вкладка: 0 — power-ups, 1 — скины, 2 — кристаллы.
+  int _tab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -63,20 +66,31 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
             _Tab(
               theme: t,
               label: '💎 Power-ups',
-              active: _powerupsTab,
-              onTap: () => setState(() => _powerupsTab = true),
+              active: _tab == 0,
+              onTap: () => setState(() => _tab = 0),
             ),
             const SizedBox(width: 8),
             _Tab(
               theme: t,
               label: '🪙 Скины',
-              active: !_powerupsTab,
-              onTap: () => setState(() => _powerupsTab = false),
+              active: _tab == 1,
+              onTap: () => setState(() => _tab = 1),
+            ),
+            const SizedBox(width: 8),
+            _Tab(
+              theme: t,
+              label: '💎 Кристаллы',
+              active: _tab == 2,
+              onTap: () => setState(() => _tab = 2),
             ),
           ],
         ),
         const SizedBox(height: 12),
-        if (_powerupsTab) ..._powerupsList(t) else ..._skinsList(t),
+        ...switch (_tab) {
+          0 => _powerupsList(t),
+          1 => _skinsList(t),
+          _ => _crystalsList(t),
+        },
       ],
     );
   }
@@ -118,6 +132,51 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
           action: _skinAction(t, s, skins, profile.coins, notifier),
         ),
     ];
+  }
+
+  /// Вкладка «Кристаллы» (§ 10.1): пакеты IAP. Реальная оплата (стор + серверная
+  /// валидация чека) — 🔒; пока честно сообщаем, что оплата не подключена.
+  List<Widget> _crystalsList(BlockDuelTheme t) {
+    final purchases = ref.read(purchaseServiceProvider);
+    return [
+      Text(
+        purchases.available
+            ? 'Выбери пакет кристаллов'
+            : 'Оплата пока не подключена — пакеты появятся со сторами',
+        style: TextStyle(color: t.muted, fontSize: 12),
+      ),
+      const SizedBox(height: 8),
+      for (final pack in crystalPacks)
+        _ShopCard(
+          theme: t,
+          leading: const Text('💎', style: TextStyle(fontSize: 28)),
+          ownedLabel: pack.bestValue ? 'выгодно' : null,
+          title: '${pack.total} 💎'
+              '${pack.bonusCrystals > 0 ? '  +${pack.bonusPercent}%' : ''}',
+          description: pack.bonusCrystals > 0
+              ? '${pack.baseCrystals} + ${pack.bonusCrystals} бонус'
+              : 'базовый пакет',
+          action: _BuyButton(
+            theme: t,
+            label: pack.priceLabel,
+            enabled: purchases.available,
+            onTap: () => _buyCrystals(pack.id),
+          ),
+        ),
+    ];
+  }
+
+  /// Запускает покупку пакета [packId]; начисляет кристаллы при успехе.
+  Future<void> _buyCrystals(String packId) async {
+    final res = await ref.read(purchaseServiceProvider).buy(packId);
+    if (!mounted) return;
+    if (res.status == PurchaseStatus.success) {
+      ref.read(profileControllerProvider.notifier).addCrystals(res.crystals);
+    } else if (res.status == PurchaseStatus.unavailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Оплата пока не подключена')),
+      );
+    }
   }
 
   Widget _skinAction(

@@ -45,6 +45,10 @@ class Settings {
   /// платформы (например, «Tetris»).
   final bool mirrorPiecesEnabled;
 
+  /// Доступность (ROADMAP § 10.3): игнорировать косметические скины клеток и
+  /// рисовать нейтральной палитрой (в т.ч. скины соперника в онлайне).
+  final bool accessibilityNeutralSkins;
+
   /// Вибрация.
   final VibrationMode vibration;
 
@@ -81,6 +85,7 @@ class Settings {
     this.mascotsEnabled = true,
     this.ghostEnabled = true,
     this.mirrorPiecesEnabled = false,
+    this.accessibilityNeutralSkins = false,
     this.vibration = VibrationMode.light,
     this.botDelayMs = 350,
     this.defaultBotLevel = 'medium',
@@ -102,6 +107,7 @@ class Settings {
     mascotsEnabled: true,
     ghostEnabled: true,
     mirrorPiecesEnabled: false,
+    accessibilityNeutralSkins: false,
     vibration: VibrationMode.light,
     botDelayMs: 350,
     defaultBotLevel: 'medium',
@@ -123,6 +129,7 @@ class Settings {
     bool? mascotsEnabled,
     bool? ghostEnabled,
     bool? mirrorPiecesEnabled,
+    bool? accessibilityNeutralSkins,
     VibrationMode? vibration,
     int? botDelayMs,
     String? defaultBotLevel,
@@ -141,6 +148,8 @@ class Settings {
     mascotsEnabled: mascotsEnabled ?? this.mascotsEnabled,
     ghostEnabled: ghostEnabled ?? this.ghostEnabled,
     mirrorPiecesEnabled: mirrorPiecesEnabled ?? this.mirrorPiecesEnabled,
+    accessibilityNeutralSkins:
+        accessibilityNeutralSkins ?? this.accessibilityNeutralSkins,
     vibration: vibration ?? this.vibration,
     botDelayMs: botDelayMs ?? this.botDelayMs,
     defaultBotLevel: defaultBotLevel ?? this.defaultBotLevel,
@@ -162,6 +171,7 @@ class Settings {
     'mascotsEnabled': mascotsEnabled,
     'ghostEnabled': ghostEnabled,
     'mirrorPiecesEnabled': mirrorPiecesEnabled,
+    'accessibilityNeutralSkins': accessibilityNeutralSkins,
     'vibration': vibration.name,
     'botDelayMs': botDelayMs,
     'defaultBotLevel': defaultBotLevel,
@@ -186,6 +196,8 @@ class Settings {
       ghostEnabled: json['ghostEnabled'] as bool? ?? d.ghostEnabled,
       mirrorPiecesEnabled:
           json['mirrorPiecesEnabled'] as bool? ?? d.mirrorPiecesEnabled,
+      accessibilityNeutralSkins: json['accessibilityNeutralSkins'] as bool? ??
+          d.accessibilityNeutralSkins,
       vibration:
           VibrationMode.values
               .where((v) => v.name == json['vibration'])

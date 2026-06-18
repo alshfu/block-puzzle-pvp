@@ -12,9 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../design_tokens.dart';
+import '../theme/custom_themes_controller.dart';
 import '../theme/theme_controller.dart';
 
-/// Компактный переключатель из трёх тем-чипов.
+/// Компактный переключатель тем: пресеты + сохранённые кастомные темы (§ 10.2).
 class ThemeSwitch extends ConsumerWidget {
   /// Создаёт переключатель темы.
   const ThemeSwitch({super.key});
@@ -22,18 +23,35 @@ class ThemeSwitch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final current = ref.watch(themeControllerProvider);
+    final customState = ref.watch(customThemesControllerProvider);
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
+    final customEquipped = customState.equippedId;
 
     return Wrap(
       spacing: 8,
+      runSpacing: 8,
       children: [
+        // Пресеты: выбор пресета снимает кастомную тему.
         for (final id in themeOrder)
           _ThemeChip(
             theme: blockDuelThemes[id]!,
-            selected: id == current,
+            selected: customEquipped == null && id == current,
             ink: tokens.ink,
             line: tokens.line,
-            onTap: () => ref.read(themeControllerProvider.notifier).select(id),
+            onTap: () {
+              ref.read(themeControllerProvider.notifier).select(id);
+              ref.read(customThemesControllerProvider.notifier).unequip();
+            },
+          ),
+        // Кастомные темы (надеваются поверх пресета).
+        for (final ct in customState.themes)
+          _ThemeChip(
+            theme: ct.toTokens(),
+            selected: customEquipped == ct.id,
+            ink: tokens.ink,
+            line: tokens.line,
+            onTap: () =>
+                ref.read(customThemesControllerProvider.notifier).equip(ct.id),
           ),
       ],
     );

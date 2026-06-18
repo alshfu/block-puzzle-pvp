@@ -25,6 +25,7 @@ import '../../settings/settings_controller.dart';
 import '../../shop/inventory_controller.dart';
 import '../../shop/skins_controller.dart';
 import '../design_tokens.dart';
+import '../theme/custom_themes_controller.dart';
 import '../widgets/screen_scaffold.dart';
 import '../widgets/theme_switch.dart';
 
@@ -145,6 +146,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _SectionLabel(text: 'Тема', theme: theme),
     const SizedBox(height: 8),
     const ThemeSwitch(),
+    const SizedBox(height: 10),
+    _themeBuilderTile(theme),
     const SizedBox(height: 20),
     _SectionLabel(text: 'Анимации и эффекты', theme: theme),
     const SizedBox(height: 4),
@@ -172,7 +175,66 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       value: s.reduceMotion,
       onChanged: (v) => update(s.copyWith(reduceMotion: v)),
     ),
+    _ToggleRow(
+      theme: theme,
+      label: 'Нейтральные клетки (без скинов)',
+      value: s.accessibilityNeutralSkins,
+      onChanged: (v) => update(s.copyWith(accessibilityNeutralSkins: v)),
+    ),
   ];
+
+  /// Кнопка входа в конструктор тем (§ 10.2): после разблокировки за кристаллы
+  /// открывает `/theme-builder`, иначе предлагает купить.
+  Widget _themeBuilderTile(BlockDuelTheme theme) {
+    final unlocked = ref.watch(
+      customThemesControllerProvider.select((s) => s.unlocked),
+    );
+    if (unlocked) {
+      return OutlinedButton.icon(
+        onPressed: () => context.go('/theme-builder'),
+        icon: const Text('🎨', style: TextStyle(fontSize: 16)),
+        label: const Text('Конструктор тем'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: theme.ink,
+          side: BorderSide(color: theme.line),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(theme.btnRadius),
+          ),
+        ),
+      );
+    }
+    return OutlinedButton.icon(
+      onPressed: () {
+        final crystals = ref.read(profileControllerProvider).crystals;
+        if (crystals < themeBuilderUnlockPrice) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Нужно $themeBuilderUnlockPrice 💎 (у тебя $crystals)',
+              ),
+            ),
+          );
+          return;
+        }
+        ref
+            .read(profileControllerProvider.notifier)
+            .addCrystals(-themeBuilderUnlockPrice);
+        ref.read(customThemesControllerProvider.notifier).unlock();
+        context.go('/theme-builder');
+      },
+      icon: const Icon(Icons.lock_open),
+      label: Text('Конструктор тем — $themeBuilderUnlockPrice 💎'),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: theme.ink,
+        side: BorderSide(color: theme.line),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(theme.btnRadius),
+        ),
+      ),
+    );
+  }
 
   /// Категория «Игра» — задержка бота и параметры матча по умолчанию.
   List<Widget> _gameSection(

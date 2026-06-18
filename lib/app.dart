@@ -17,6 +17,7 @@ import 'auth/sync_controller.dart';
 import 'settings/settings_controller.dart';
 import 'ui/design_tokens.dart';
 import 'ui/router.dart';
+import 'ui/theme/custom_themes_controller.dart';
 import 'ui/theme/theme_controller.dart';
 
 /// Корневой виджет BlockDuel. Перестраивается при смене темы.
@@ -27,7 +28,8 @@ class BlockDuelApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeId = ref.watch(themeControllerProvider);
-    final tokens = blockDuelThemes[themeId]!;
+    // Активные токены: надетая кастомная тема (конструктор § 10.2) либо пресет.
+    final tokens = ref.watch(activeThemeProvider);
     // Драйвер фоновой музыки: реагирует на настройку музыки и тему. Вызов
     // идемпотентен (no-op без изменений), сам сервис плагин-зависим.
     final musicOn = ref.watch(
