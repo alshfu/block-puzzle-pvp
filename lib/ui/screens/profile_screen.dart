@@ -16,23 +16,9 @@ import '../../achievements/stats_controller.dart';
 import '../../profile/level_rewards.dart';
 import '../../profile/profile_controller.dart';
 import '../design_tokens.dart';
+import '../icons/game_icons.dart';
+import '../widgets/avatar_view.dart';
 import '../widgets/screen_scaffold.dart';
-
-/// Набор аватаров для выбора.
-const List<String> _avatars = [
-  '🙂',
-  '😎',
-  '🦊',
-  '🐱',
-  '🦄',
-  '🐉',
-  '🤖',
-  '👾',
-  '🧙',
-  '🥷',
-  '👑',
-  '🌟',
-];
 
 /// Экран профиля.
 class ProfileScreen extends ConsumerWidget {
@@ -58,7 +44,7 @@ class ProfileScreen extends ConsumerWidget {
       onBack: () => context.go('/'),
       children: [
         Center(
-          child: Text(profile.avatar, style: const TextStyle(fontSize: 64)),
+          child: AvatarView(value: profile.avatar, size: 64, color: theme.p0),
         ),
         const SizedBox(height: 16),
         Wrap(
@@ -66,9 +52,9 @@ class ProfileScreen extends ConsumerWidget {
           runSpacing: 8,
           alignment: WrapAlignment.center,
           children: [
-            for (final a in _avatars)
+            for (final a in avatarIds)
               _AvatarChip(
-                emoji: a,
+                value: a,
                 selected: a == profile.avatar,
                 theme: theme,
                 onTap: () => ctrl.setAvatar(a),
@@ -156,13 +142,13 @@ class ProfileScreen extends ConsumerWidget {
 
 /// Чип выбора аватара.
 class _AvatarChip extends StatelessWidget {
-  final String emoji;
+  final String value;
   final bool selected;
   final BlockDuelTheme theme;
   final VoidCallback onTap;
 
   const _AvatarChip({
-    required this.emoji,
+    required this.value,
     required this.selected,
     required this.theme,
     required this.onTap,
@@ -184,7 +170,13 @@ class _AvatarChip extends StatelessWidget {
             width: selected ? 2 : 1,
           ),
         ),
-        child: Center(child: Text(emoji, style: const TextStyle(fontSize: 22))),
+        child: Center(
+          child: AvatarView(
+            value: value,
+            size: 24,
+            color: selected ? theme.p0 : theme.ink,
+          ),
+        ),
       ),
     );
   }

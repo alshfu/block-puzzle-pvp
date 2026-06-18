@@ -80,10 +80,11 @@ class Profile {
     this.scoreForCrystals = 0,
   });
 
-  /// Профиль по умолчанию для нового игрока.
+  /// Профиль по умолчанию для нового игрока. Аватар — id иконки (`avatarIds`),
+  /// а не emoji; старые emoji-аватары всё ещё корректно рисуются (`AvatarView`).
   static const Profile initial = Profile(
     nick: 'Игрок',
-    avatar: '🙂',
+    avatar: 'smiley',
     xp: 0,
     coins: 0,
     gamesPlayed: 0,

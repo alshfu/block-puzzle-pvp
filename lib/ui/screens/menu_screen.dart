@@ -26,6 +26,7 @@ import '../decor/theme_backdrop.dart';
 import '../design_tokens.dart';
 import '../icons/game_icons.dart';
 import '../responsive.dart';
+import '../widgets/avatar_view.dart';
 import '../widgets/logo.dart';
 import '../widgets/mini_piece.dart';
 
@@ -236,7 +237,7 @@ class _TopBar extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(profile.avatar, style: const TextStyle(fontSize: 18)),
+              AvatarView(value: profile.avatar, size: 20, color: tokens.ink),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

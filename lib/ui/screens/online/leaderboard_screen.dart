@@ -16,6 +16,7 @@ import '../../../online/leaderboard_notifier.dart';
 import '../../../online/online_models.dart';
 import '../../../profile/profile_controller.dart';
 import '../../design_tokens.dart';
+import '../../widgets/avatar_view.dart';
 import '../../widgets/screen_scaffold.dart';
 
 /// Экран таблицы лидеров.
@@ -126,7 +127,7 @@ class _Row extends StatelessWidget {
               ),
             ),
           ),
-          Text(entry.avatar, style: const TextStyle(fontSize: 20)),
+          AvatarView(value: entry.avatar, size: 22, color: tokens.ink),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

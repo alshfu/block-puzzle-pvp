@@ -95,7 +95,7 @@ void main() {
       );
       const cloud = Profile(
         nick: 'Игрок', // дефолт
-        avatar: '🙂', // дефолт
+        avatar: 'smiley', // дефолт (id иконки, см. Profile.initial)
         xp: 0,
         coins: 0,
         gamesPlayed: 0,

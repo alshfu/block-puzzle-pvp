@@ -45,3 +45,39 @@ IconData powerUpIcon(String id) => switch (id) {
   'auto_play' => Icons.auto_awesome,
   _ => Icons.bolt,
 };
+
+/// Идентификаторы аватаров профиля (12 штук, в порядке показа в сетке выбора).
+/// Хранятся в `Profile.avatar` как строка — это id, а не emoji.
+const List<String> avatarIds = [
+  'smiley',
+  'cool',
+  'robot',
+  'alien',
+  'cat',
+  'rocket',
+  'star',
+  'crown',
+  'wizard',
+  'ninja',
+  'gem',
+  'bolt',
+];
+
+/// Иконка аватара по id, либо `null`, если id неизвестен (тогда вызывающий
+/// рисует значение как текст — обратная совместимость со старыми emoji-аватарами
+/// и аватарами соперников из онлайна). Material-иконки: без ассет-файлов.
+IconData? avatarIcon(String id) => switch (id) {
+  'smiley' => Icons.sentiment_very_satisfied,
+  'cool' => Icons.mood,
+  'robot' => Icons.smart_toy,
+  'alien' => Icons.videogame_asset,
+  'cat' => Icons.pets,
+  'rocket' => Icons.rocket_launch,
+  'star' => Icons.star,
+  'crown' => Icons.workspace_premium,
+  'wizard' => Icons.auto_fix_high,
+  'ninja' => Icons.shield,
+  'gem' => Icons.diamond,
+  'bolt' => Icons.bolt,
+  _ => null,
+};

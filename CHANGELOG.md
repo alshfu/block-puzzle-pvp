@@ -4,14 +4,20 @@
 
 ## Unreleased
 
-### Векторные иконки вместо emoji (режимы меню + power-ups, 2026-06-18)
+### Векторные иконки вместо emoji (режимы, power-ups, аватары, 2026-06-18)
 
 - Новый модуль `lib/ui/icons/game_icons.dart` — единый источник иконок:
-  `modeIcon(id)` (12 режимов) и `powerUpIcon(id)` (6 power-ups) → Material
-  `IconData`. Нулевой вес ассетов, чёткость на любом DPI, цвет от темы.
+  `modeIcon(id)` (12 режимов), `powerUpIcon(id)` (6 power-ups), `avatarIcon(id)`
+  (12 аватаров) → Material `IconData`. Нулевой вес ассетов, чёткость на любом
+  DPI, цвет от темы.
 - **Меню режимов** (`menu_screen.dart`): emoji заменены на иконки в тонированном
   чипе — «приложенческий» вид. **Power-ups**: иконки в панели матча
   (`powerups_panel.dart`) и в магазине (`shop_screen.dart`, `_ShopCard.leading`).
+- **Аватары профиля**: новый виджет `lib/ui/widgets/avatar_view.dart`
+  (`AvatarView`) рисует иконку для известного id, иначе — текст (emoji-фолбэк для
+  старых локальных профилей и аватаров соперников из онлайна). Применён на
+  профиле (сетка выбора + крупный аватар), в шапке меню и лидерборде. Дефолт
+  `Profile.initial.avatar` теперь `'smiley'` (id иконки).
 - Скины магазина пока остаются emoji (отдельный пункт `ASSETS.md`). Документ
   `ASSETS.md` и его GitHub-issue обновлены (приоритет № 2 закрыт).
 
