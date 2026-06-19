@@ -72,6 +72,8 @@ void main() {
         onlineWins: 2,
         onlineLosses: 7,
         onlineDraws: 1,
+        crystals: 42,
+        scoreForCrystals: 90,
       );
       final m = mergeProfiles(local, cloud);
       expect(m.xp, 100); // local больше
@@ -81,6 +83,9 @@ void main() {
       expect(m.onlineWins, 5);
       expect(m.onlineLosses, 7);
       expect(m.onlineDraws, 1);
+      // Премиум-валюта тоже max-wins (§ 11.3): не теряем кристаллы облака.
+      expect(m.crystals, 42);
+      expect(m.scoreForCrystals, 90);
     });
 
     test('не-дефолтные ник/аватар выигрывают; id из облака', () {

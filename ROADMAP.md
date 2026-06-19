@@ -418,36 +418,42 @@
 
 ---
 
-## Фаза 11 — Платформенный rollout (нативный mobile) ⬜
+## Фаза 11 — Платформенный rollout (нативный mobile) 🟨 (локальное закрыто 2026-06-19; стор/сервер 🔒)
 
-### 11.1. Capacitor wrapping ⬜
-- [ ] `@capacitor/core` + `@capacitor/ios` + `@capacitor/android`.
-- [ ] Reuse Vite build → нативная WebView оболочка.
-- [ ] Adaptive icons + splash для iOS и Android.
+Локально-проверяемые части закрыты; нативная упаковка/сторы/push-доставка/OAuth/
+CDN — инфраструктура (🔒).
 
-### 11.2. Push-уведомления ⬜
-- [ ] FCM (Android) + APNs (iOS) integration через Capacitor.
-- [ ] Server endpoint для отправки: invite от друга, начало сезона,
-      ход соперника, daily quest reminder.
-- [ ] Opt-in management в Settings.
+### 11.1. Нативная упаковка ✅ (заменено Flutter-миграцией)
+- [x] Capacitor/WebView-обёртка **не нужна**: Flutter собирает Android/iOS/macOS
+      нативно напрямую (сборки уже идут, см. CLAUDE.md «Текущий статус»).
+- [ ] 🔒/art Adaptive-иконки + splash: нужен мастер-арт 1024² (см. `ASSETS.md` и
+      GitHub-issue) + `flutter_launcher_icons`/`flutter_native_splash`.
 
-### 11.3. Single account across devices ⬜
-- [ ] Apple Sign-in + Telegram OAuth + Google + Email.
-- [ ] Session-management: при логине на новом устройстве — уведомление
-      на старое.
-- [ ] Conflict-resolver «max wins» по XP/coins/achievements; ELO
-      server-authoritative.
+### 11.2. Push-уведомления 🟨 (opt-in локально; доставка 🔒)
+- [x] Opt-in в Settings — `lib/notifications/notification_prefs*` (мастер-тумблер
+      + категории: приглашение/сезон/ход соперника/ежедневки), persist, секция
+      «Уведомления» на экране настроек. Тесты.
+- [ ] 🔒 FCM (Android) + APNs (iOS) + серверный endpoint отправки — серверная
+      надстройка (эти opt-in её и будут гейтить).
 
-### 11.4. On-demand assets ⬜
-- [ ] CDN-хранение тяжёлых ассетов (темы, музыка, фоны).
-- [ ] Lazy-download при первом использовании.
-- [ ] Локальный кеш с очисткой LRU при нехватке места.
+### 11.3. Single account across devices 🟨 (resolver локально; OAuth/session 🔒)
+- [x] Conflict-resolver «max wins» — `mergeProfiles` (XP/coins/wins/online +
+      **кристаллы** добавлены, § 11.3) + объединение ачивок; ELO
+      server-authoritative. Тесты.
+- [ ] 🔒 Apple/Telegram/Email OAuth (сейчас только Google) + session-management
+      (уведомление старого устройства при новом входе) — инфра/сервер.
 
-### 11.5. Store submission ⬜
-- [ ] App Store: метаданные, скриншоты, политика, review.
-- [ ] Google Play: то же + Android App Bundle.
-- [ ] RuStore: версия для РФ-региона.
-- [ ] In-app rating prompt (после 5+ матчей).
+### 11.4. On-demand assets 🔒 (не требуется в текущей архитектуре)
+- [ ] CDN/lazy-download/LRU-кеш — **сейчас неактуально**: ассеты процедурные/
+      бандлятся (см. `ASSETS.md`), тяжёлых удалённых ассетов нет. Включается,
+      когда появится художественный контент на CDN.
+
+### 11.5. Store submission 🟨 (rating prompt локально; submission 🔒)
+- [x] In-app rating prompt (после 5+ матчей) — `lib/feedback/rating_controller`
+      (счётчик матчей, статусы оценил/позже/не-предлагать, persist) + диалог в
+      меню + `review_service.dart` (стаб нативного review-API). Тесты.
+- [ ] 🔒 App Store / Google Play / RuStore: метаданные, скриншоты, политика,
+      App Bundle, нативный review-API — требует стор-аккаунтов.
 
 ---
 

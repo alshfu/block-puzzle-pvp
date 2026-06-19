@@ -89,5 +89,11 @@ Profile mergeProfiles(Profile local, Profile cloud) {
     onlineDraws: local.onlineDraws > cloud.onlineDraws
         ? local.onlineDraws
         : cloud.onlineDraws,
+    // Премиум-валюта тоже сливается «максимум» — иначе при входе на новом
+    // устройстве можно потерять кристаллы (ROADMAP § 11.3, max-wins).
+    crystals: local.crystals > cloud.crystals ? local.crystals : cloud.crystals,
+    scoreForCrystals: local.scoreForCrystals > cloud.scoreForCrystals
+        ? local.scoreForCrystals
+        : cloud.scoreForCrystals,
   );
 }

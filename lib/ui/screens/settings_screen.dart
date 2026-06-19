@@ -17,6 +17,8 @@ import '../../achievements/stats_controller.dart';
 import '../../auth/auth_controller.dart';
 import '../../daily/daily_controller.dart';
 import '../../game/saved_game_store.dart';
+import '../../notifications/notification_prefs.dart';
+import '../../notifications/notification_prefs_controller.dart';
 import '../../online/uuid.dart';
 import '../../profile/profile.dart';
 import '../../profile/profile_controller.dart';
@@ -318,11 +320,44 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
   ];
 
-  /// Категория «Аккаунт» — вход, данные, о приложении.
+  /// Секция «Уведомления» (§ 11.2): мастер-тумблер + категории opt-in. Сама
+  /// доставка (FCM/APNs) — серверная часть; здесь только предпочтения.
+  List<Widget> _notificationsSection(BlockDuelTheme theme) {
+    final prefs = ref.watch(notificationPrefsControllerProvider);
+    final ctrl = ref.read(notificationPrefsControllerProvider.notifier);
+    const labels = {
+      NotificationKind.invite: 'Приглашения в матч',
+      NotificationKind.season: 'Старт сезона',
+      NotificationKind.opponentMove: 'Ход соперника',
+      NotificationKind.dailyReminder: 'Напоминание о ежедневках',
+    };
+    return [
+      _SectionLabel(text: 'Уведомления', theme: theme),
+      const SizedBox(height: 4),
+      _ToggleRow(
+        theme: theme,
+        label: 'Push-уведомления',
+        value: prefs.enabled,
+        onChanged: ctrl.setEnabled,
+      ),
+      if (prefs.enabled)
+        for (final kind in NotificationKind.values)
+          _ToggleRow(
+            theme: theme,
+            label: labels[kind]!,
+            value: prefs.kinds.contains(kind),
+            onChanged: (_) => ctrl.toggle(kind),
+          ),
+    ];
+  }
+
+  /// Категория «Аккаунт» — вход, уведомления, данные, о приложении.
   List<Widget> _accountSection(BlockDuelTheme theme) => [
     _SectionLabel(text: 'Аккаунт', theme: theme),
     const SizedBox(height: 8),
     _AccountSection(theme: theme),
+    const SizedBox(height: 24),
+    ..._notificationsSection(theme),
     const SizedBox(height: 24),
     _SectionLabel(text: 'Данные', theme: theme),
     const SizedBox(height: 8),

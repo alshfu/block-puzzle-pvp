@@ -18,6 +18,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../audio/audio_service.dart';
 import '../../audio/sfx.dart';
+import '../../feedback/rating_controller.dart';
+import '../../feedback/review_service.dart';
 import '../../game/saved_game.dart';
 import '../../game/saved_game_store.dart';
 import '../../pilot/developer.dart';
@@ -63,8 +65,69 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   /// Счётчик тапов по версии — секретный жест для режима разработчика.
   int _devTaps = 0;
 
+  /// Показывали ли запрос оценки в этой сессии (чтобы не дёргать повторно).
+  bool _ratingChecked = false;
+
   /// Проигрывает звук клика по элементу UI.
   void _click() => ref.read(audioServiceProvider).play(Sfx.click);
+
+  /// Показывает ненавязчивый запрос оценки, если пора (§ 11.5). Один раз за
+  /// сессию, после первого кадра меню.
+  void _maybePromptRating() {
+    if (_ratingChecked) return;
+    if (!ref.read(ratingControllerProvider).shouldPrompt) return;
+    _ratingChecked = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _showRatingDialog();
+    });
+  }
+
+  /// Диалог оценки: «Оценить» (поход в стор + отметка) / «Позже» / «Не
+  /// предлагать».
+  Future<void> _showRatingDialog() async {
+    final theme = Theme.of(context).extension<BlockDuelTheme>()!;
+    final ctrl = ref.read(ratingControllerProvider.notifier);
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: theme.panel,
+        title: Text('Нравится BlockDuel?',
+            style: TextStyle(color: theme.ink)),
+        content: Text(
+          'Оцени игру — это помогает проекту 💛',
+          style: TextStyle(color: theme.muted),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              ctrl.markDismissed();
+              Navigator.of(ctx).pop();
+            },
+            child: Text('Не предлагать',
+                style: TextStyle(color: theme.muted)),
+          ),
+          TextButton(
+            onPressed: () {
+              ctrl.snooze();
+              Navigator.of(ctx).pop();
+            },
+            child: Text('Позже', style: TextStyle(color: theme.ink)),
+          ),
+          FilledButton(
+            onPressed: () {
+              ctrl.markRated();
+              ref.read(reviewServiceProvider).requestReview();
+              Navigator.of(ctx).pop();
+            },
+            style: FilledButton.styleFrom(backgroundColor: theme.p0),
+            child: const Text('Оценить'),
+          ),
+        ],
+      ),
+    );
+  }
 
   /// Секретный жест: 7 тапов по версии включают/выключают режим разработчика
   /// (скрытый pilot). Работает без Google-входа — нужно на macOS-десктопе.
@@ -119,6 +182,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   Widget build(BuildContext context) {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
     final saved = ref.read(savedGameStoreProvider).load();
+    _maybePromptRating();
     return Scaffold(
       backgroundColor: tokens.bg,
       body: Stack(

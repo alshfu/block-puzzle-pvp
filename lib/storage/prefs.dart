@@ -57,4 +57,10 @@ abstract final class PrefKeys {
 
   /// JSON прогресса сезонного пропуска (§ 10.4): xp + premium + claimed.
   static const String seasonPass = 'bd_season_pass';
+
+  /// JSON opt-in push-уведомлений (§ 11.2): мастер + категории.
+  static const String notifications = 'bd_notifications';
+
+  /// JSON состояния запроса оценки приложения (§ 11.5): счётчик + статус.
+  static const String rating = 'bd_rating';
 }

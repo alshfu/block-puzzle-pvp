@@ -28,6 +28,7 @@ import '../../audio/audio_service.dart';
 import '../../audio/sfx.dart';
 import '../../daily/daily.dart';
 import '../../daily/daily_controller.dart';
+import '../../feedback/rating_controller.dart';
 import '../../game/game_notifier.dart';
 import '../../game/game_state.dart';
 import '../../game/match_config.dart';
@@ -533,6 +534,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
         final gainedXp = ref.read(profileControllerProvider).xp - xpBefore;
         // Сезонный пропуск (§ 10.4): прогресс по тому же XP.
         ref.read(seasonPassControllerProvider.notifier).addXp(gainedXp);
+        // Счётчик матчей для запроса оценки (§ 11.5).
+        ref.read(ratingControllerProvider.notifier).recordMatch();
         setState(() {
           if (fresh.isNotEmpty) _toasts.addAll(fresh);
           _resultXp = gainedXp;
