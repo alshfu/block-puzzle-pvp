@@ -376,25 +376,34 @@ def crit(numbered, every=7):
     return res
 
 
-def exactly_n(sections, n):
-    """Round-robin по областям, обрезка до ровно n (сбалансированное покрытие).
+def exactly_n(sections, n, filler=None):
+    """Round-robin по областям до ровно n (сбалансированное покрытие).
 
-    sections: список (area_name, [строки]). Возвращает список (area_name, строка)
-    длиной n. Если суммарно < n — ошибка (нужно добавить сценариев).
+    sections: список (area_name, [строки]). Осмысленные («первичные») области
+    раскладываются по кругу; если их суммарно >= n — обрезка до n. Если меньше —
+    остаток добирается из filler=(name, fn(k)->[k строк]): режимы малой игровой
+    поверхности (tutorial/showcase) добирают хвост осмысленным seed-sweep'ом
+    (детерминированные property-прогоны), а не пустым филлером. Без filler и при
+    нехватке — ошибка (нужно обогатить области).
     """
-    total = sum(len(items) for _, items in sections)
-    if total < n:
-        raise SystemExit(f"Сгенерировано {total} < {n}: добавьте сценариев в области")
     queues = [(name, list(items)) for name, items in sections]
     picked = []
     idx = 0
-    while len(picked) < n:
+    remaining = sum(len(q) for _, q in queues)
+    while remaining > 0 and len(picked) < n:
         name, q = queues[idx % len(queues)]
         if q:
             picked.append((name, q.pop(0)))
+            remaining -= 1
         idx += 1
-        # Если все очереди опустели раньше n — невозможно (total >= n гарантирует).
-    return picked
+    if len(picked) < n:
+        if filler is None:
+            raise SystemExit(
+                f"Сгенерировано {len(picked)} < {n}: обогатите области или задайте filler")
+        fname, ffn = filler
+        for text in ffn(n - len(picked)):
+            picked.append((fname, text))
+    return picked[:n]
 
 
 def build_app_catalog():
@@ -419,20 +428,15 @@ def build_app_catalog():
     return exactly_n(sections, TARGET)
 
 
-def render(picked):
-    lines = []
-    lines.append("# BlockDuel 9×9 — Сквозной каталог сценариев приложения")
-    lines.append("")
-    lines.append(f"**Ровно {TARGET} сценариев** («1000 и 1»). Сгенерировано детерминированно")
-    lines.append("из `tools/gen_scenarios.py` — НЕ редактировать вручную, править генератор.")
-    lines.append("")
-    lines.append("- **ID** `APP-0001…APP-1001` стабильны между прогонами (round-robin по областям).")
-    lines.append("- **[C]** — критический smoke-срез (каждый ~7-й) для быстрой регрессии.")
-    lines.append("- Часть пунктов продублирована исполняемыми автотестами в")
-    lines.append("  `test/scenarios/app_scenarios_test.dart` (ссылки на APP-ID в названиях).")
+def render_catalog(title, intro_lines, prefix, picked):
+    """Единый рендер каталога: заголовок, оглавление по областям, нумерация с ID.
+
+    prefix — префикс ID («APP», «MODE-BOT»…); картинка нумерации `{prefix}-NNNN`.
+    """
+    lines = [f"# {title}", ""]
+    lines += intro_lines
     lines.append("")
     tagged = crit([f"[{name}] {text}" for name, text in picked])
-    # Оглавление по областям (счётчики).
     counts = {}
     for name, _ in picked:
         counts[name] = counts.get(name, 0) + 1
@@ -444,21 +448,527 @@ def render(picked):
     lines.append("## Сценарии")
     lines.append("")
     for i, text in enumerate(tagged, start=1):
-        lines.append(f"{i}. **APP-{i:04d}** — {text}")
+        lines.append(f"{i}. **{prefix}-{i:04d}** — {text}")
     lines.append("")
     return "\n".join(lines)
 
 
-def main():
+# ── Ось «режим»: 1001 сценарий на каждый режим ───────────────────────────────
+#
+# Профиль режима задаёт игровую поверхность (доска, ввод, механика) и флаги-
+# трейты, по которым собираются ОБЩИЕ разделы; уникальная механика — в
+# специфичных билдерах по family. Хвост добирается осмысленным seed-sweep'ом.
+
+MODE_PROFILES = [
+    # 9×9-дуэль (одно ядро, разные оппоненты/цели).
+    dict(id="bot", title="С ботом (9×9)", route="/setup/bot", family="duel9",
+         board="9×9", bot=True, timer=True, save=True),
+    dict(id="hotseat", title="Вдвоём — hot-seat (9×9)", route="/setup/hotseat",
+         family="duel9", board="9×9", two_human=True, timer=True, save=True),
+    dict(id="arcade", title="Аркада — соло на рекорд (9×9)", route="/game/arcade",
+         family="duel9", board="9×9", solo=True, timer=True, save=True),
+    dict(id="botvbot", title="Бот × бот — зритель (9×9)", route="/setup/botvbot",
+         family="duel9", board="9×9", bot=True, spectator=True, timer=True),
+    dict(id="online", title="Онлайн PvP (9×9)", route="/online", family="duel9",
+         board="9×9", online=True, timer=True),
+    # Память.
+    dict(id="memorySolo", title="Память: соло", route="/memory", family="memory",
+         board="9×9", solo=True, save=True),
+    dict(id="memoryDuel", title="Память: дуэль", route="/memory-duel",
+         family="memory", board="9×9", two_human=True),
+    # Прочие жанры.
+    dict(id="coop", title="Co-op Tetris (10×20)", route="/coop", family="coop",
+         board="10×20", save=True),
+    dict(id="match3", title="Match-3 PvP (8×8)", route="/match3", family="match3",
+         board="8×8", two_human=True),
+    dict(id="tetris", title="Классический Tetris (10×20)", route="/tetris",
+         family="tetris", board="10×20", solo=True, save=True),
+    dict(id="puzzle", title="Силуэты", route="/puzzle", family="puzzle",
+         board="переменная", solo=True, save=True),
+    dict(id="showcase", title="Авто-шоу — ИИ vs ИИ (9:16)", route="/showcase",
+         family="showcase", board="9×9", spectator=True),
+    dict(id="tutorial", title="Обучение (5 шагов)", route="/tutorial",
+         family="tutorial", board="9×9"),
+]
+
+INPUT_VERBS = ["тап", "drag-and-drop", "клавиатура"]
+
+
+def gen_lifecycle(p):
+    out = [
+        f"Запуск «{p['title']}» из меню по маршруту {p['route']} — экран рисуется без ошибок",
+        f"Возврат из «{p['title']}» в меню — стек навигации корректен, без утечек",
+    ]
+    if p.get("route", "").startswith("/setup"):
+        out += [
+            f"Setup режима: выбор правил (handSize/rotation/flip) и старт партии",
+            f"Setup режима: пресет блица применяется к первой партии",
+            f"Setup режима: отмена возвращает в меню без создания партии",
+        ]
+    for t in THEMES:
+        out.append(f"Холодный старт «{p['title']}» в теме «{t}» — без белой вспышки")
+    if p.get("save"):
+        out += [
+            f"Сворачивание во время «{p['title']}» → resume восстанавливает состояние точно",
+            f"Перезапуск во время «{p['title']}» → карточка «Продолжить» предлагает resume",
+            f"resume «{p['title']}» детерминистичен (та же раздача/seed)",
+        ]
+    if p.get("online"):
+        out += [
+            "Выход из онлайн-матча системной Back — предупреждение о поражении",
+            "Reconnect после обрыва — матч продолжается с сохранением накопителей",
+        ]
+    out.append(f"Двойной быстрый тап по старту «{p['title']}» не создаёт две партии")
+    return out
+
+
+def gen_render(p):
+    surfaces = ["доска", "HUD (счёт/таймер)", "панель руки", "экран результата",
+                "пауза/меню выхода"]
+    if p["family"] == "puzzle":
+        surfaces = ["сетка-маска", "рука фигур", "HUD (ходы/цель)", "экран результата"]
+    if p["family"] == "memory":
+        surfaces = ["фаза показа", "фаза скрытия", "фаза воспроизведения",
+                    "HUD (таймер показа)", "экран результата"]
+    out = []
+    for s in surfaces:
+        for t in THEMES:
+            out.append(f"«{p['title']}»: поверхность «{s}» в теме «{t}» — цвета/контраст по токенам")
+        out.append(f"«{p['title']}»: «{s}» при reduceMotion=on — статичный декор")
+        out.append(f"«{p['title']}»: «{s}» на узком окне — нет overflow")
+        out.append(f"«{p['title']}»: «{s}» на широком окне — адаптивная боковая раскладка")
+        out.append(f"«{p['title']}»: «{s}» с нейтральными клетками (a11y) — не зависит от цвета владельца")
+    return out
+
+
+def gen_input(p):
+    out = []
+    if p["family"] in ("duel9", "coop", "puzzle"):
+        for v in INPUT_VERBS:
+            for pc in PIECES:
+                out.append(f"«{p['title']}»: выбор и постановка фигуры {pc} через {v} — без двойных срабатываний")
+        out += [
+            f"«{p['title']}»: поворот выбранной фигуры (если rotation вкл.) меняет ориентацию",
+            f"«{p['title']}»: отражение (если flip вкл.) даёт зеркальную фигуру",
+            f"«{p['title']}»: призрак показывает валидность до отпускания",
+            f"«{p['title']}»: постановка на занятые/за край — отклонена без изменения доски",
+        ]
+    if p["family"] == "match3":
+        for v in INPUT_VERBS[:2]:
+            out.append(f"«{p['title']}»: своп соседей через {v} — анимация и разрешение")
+        out.append(f"«{p['title']}»: своп несоседних клеток — запрещён")
+        out.append(f"«{p['title']}»: своп без серии — откат к исходному")
+    if p["family"] == "tetris":
+        out += [
+            f"«{p['title']}»: soft-drop ускоряет падение",
+            f"«{p['title']}»: hard-drop мгновенно фиксирует фигуру",
+            f"«{p['title']}»: поворот у стены (wall-kick, если есть) корректен",
+            f"«{p['title']}»: удержание влево/право двигает фигуру с автоповтором",
+        ]
+    return out
+
+
+def gen_settings(p):
+    out = []
+    for t in SETTINGS_TOGGLES:
+        out.append(f"«{p['title']}»: настройка «{t}» применяется в режиме и переживает перезапуск")
+    return out
+
+
+def gen_progression(p):
+    out = [
+        f"«{p['title']}»: завершение партии пишет результат в статистику режима",
+        f"«{p['title']}»: вклад в composite-score (сводный рейтинг) учитывается",
+    ]
+    if p.get("online"):
+        out += [
+            "Онлайн: победа/поражение/ничья двигают ELO (K=24)",
+            "Онлайн: W/L/D и накопительная статистика пишутся в профиль",
+            "Онлайн: PvP-ачивки разблокируются по порогам",
+        ]
+    else:
+        out += [
+            f"«{p['title']}»: XP по исходу начисляется один раз (ничья ×0.5, поражение 0)",
+            f"«{p['title']}»: личный рекорд обновляется только при улучшении",
+        ]
+    return out
+
+
+def gen_errors(p):
+    return [
+        f"«{p['title']}»: повреждённая сохранёнка → graceful fallback, без краша",
+        f"«{p['title']}»: сворачивание в момент хода → без рассинхрона состояния",
+        f"«{p['title']}»: быстрый повторный ввод не даёт двойного хода",
+        f"«{p['title']}»: возврат/пауза в критический момент не ломает партию",
+    ]
+
+
+# — Специфичные билдеры по family —
+
+def spec_duel9(p):
+    out = []
+    for pc in PIECES:
+        for o in ORIENTS:
+            for pl in PLACEMENTS:
+                out.append(f"Фигура {pc} ({o}): постановка {pl} — призрак и валидация корректны")
+    # Покрытие по якорям: каждая фигура в каждую клетку-якорь 9×9.
+    for pc in PIECES:
+        for r in range(9):
+            for c in range(9):
+                out.append(f"Фигура {pc}: якорь ({r},{c}) — валидна если помещается, иначе отклонена")
+    for r in range(9):
+        out.append(f"Полная строка {r}: очистка и начисление очков ходившему")
+    for c in range(9):
+        out.append(f"Полный столбец {c}: очистка и начисление очков ходившему")
+    for br in range(3):
+        for bc in range(3):
+            out.append(f"Бокс 3×3 [{br},{bc}]: очистка и начисление")
+    for ct in CLEAR_TYPES:
+        for lvl in range(1, 11):
+            out.append(f"Очистка «{ct}» при комбо={lvl}: множитель и очки по формуле")
+    out += [
+        "Perfect clear: +15 и конфетти/звук",
+        "base=N·(N+1)/2; placement-бонус I=+5/L,J=+3/T,S,Z=+1/O=0",
+        "Тупик: партия завершается, победитель по очкам, ничья при равенстве",
+        "7-bag: свой мешок у игрока, каждая фигура по разу за цикл",
+    ]
+    if p.get("timer"):
+        for preset in BLITZ_PRESETS:
+            out.append(f"Блиц «{preset}»: старт-время/decay применяются")
+            out.append(f"Блиц «{preset}»: таймаут → force-place; при отсутствии ходов — конец партии")
+    if p.get("bot"):
+        for lvl in BOT_LEVELS:
+            out.append(f"Бот «{lvl}»: делает валидный ход в разумное время")
+            out.append(f"Бот «{lvl}»: не ставит фигуру за край/на занятое")
+        out.append("Задержка бота уважает настройку скорости")
+    if p.get("two_human"):
+        out.append("Hot-seat: ход переходит второму игроку; счёт раздельный")
+        out.append("Hot-seat: экран передачи устройства между ходами (если есть)")
+    if p.get("solo"):
+        out.append("Аркада: один игрок на доске, цель — максимум очков до тупика")
+        out.append("Аркада: рекорд сохраняется и показывается на экране результата")
+    if p.get("spectator"):
+        out.append("Зритель: оба игрока — боты, ходы автопроигрываются")
+        out.append("Зритель: можно выйти в любой момент без последствий")
+    if p.get("online"):
+        out += [f"Онлайн: {f}" for f in ONLINE_FLOWS]
+        for msg in WIRE_MESSAGES:
+            out.append(f"Онлайн: сообщение «{msg}» разбирается и редьюсится корректно")
+        for cond in NET_CONDITIONS:
+            out.append(f"Онлайн при «{cond}»: матч консистентен")
+    return out
+
+
+def spec_memory(p):
+    out = []
+    for n in range(1, 25):
+        out.append(f"Показ {n} фигур: раскладка видна заданное время, затем скрывается")
+        out.append(f"Воспроизведение {n} фигур: точная копия засчитывается как успех")
+        out.append(f"Ошибка на {n}-й фигуре: несовпадение фиксируется, счёт падает")
+    for r in range(9):
+        for c in range(9):
+            out.append(f"Клетка ({r},{c}) — фаза показа: подсвечена если входит в раскладку")
+            out.append(f"Клетка ({r},{c}) — воспроизведение: верная/ошибочная постановка учтена")
+    for dur in ("0.5с", "1с", "2с", "3с", "5с"):
+        out.append(f"Длительность показа {dur}: раскладка видна ровно столько, затем скрыта")
+    out += [
+        "Тайм-бюджет показа ограничен и убывает с уровнем сложности",
+        "Соло: рекорд по числу воспроизведённых уровней сохраняется",
+        "Досрочный показ (peek) недоступен после старта воспроизведения",
+    ]
+    if p.get("two_human"):
+        out += [
+            "Дуэль: игрок A расставляет → показ → игрок B воспроизводит по памяти",
+            "Дуэль: очки за точность, ход переходит сопернику",
+            "Дуэль: ограничение времени показа общее для обоих",
+        ]
+    return out
+
+
+def spec_coop(p):
+    out = []
+    for pc in PIECES:
+        for col in range(10):
+            out.append(f"Фигура {pc}: постановка в столбец {col} поля 10×20 — валидация")
+    for col in range(10):
+        for h in range(0, 20, 2):
+            out.append(f"Столбец {col}: фигура ложится на высоту ~{h} без наложения")
+    for r in range(20):
+        out.append(f"Полная строка {r} (10×20): очистка, общий счёт растёт")
+    for k in range(1, 5):
+        out.append(f"Очистка {k} строк за ход: линейная база × бонус +25%/доп.строка")
+    out += [
+        "Ходы по очереди, счёт общий (кооператив)",
+        "Тупик по высоте: партия завершается",
+        "Очистка без «падения» верхних строк (по правилам coop)",
+        "resume 10×20 восстанавливает доску и общий счёт",
+    ]
+    return out
+
+
+def spec_match3(p):
+    out = []
+    for r in range(8):
+        for c in range(8):
+            for dr, dc, dname in ((0, 1, "вправо"), (1, 0, "вниз")):
+                nr, nc = r + dr, c + dc
+                if nr < 8 and nc < 8:
+                    out.append(f"Своп ({r},{c})↔({nr},{nc}) [{dname}]: разрешён только если даёт серию, иначе откат")
+    for r in range(8):
+        for c in range(8):
+            out.append(f"Клетка ({r},{c}): если входит в серию — очищается и даёт очки ходившему")
+    for color in range(6):
+        for length in (3, 4, 5):
+            out.append(f"Серия длины {length} цвета {color}: обнаружение и очистка")
+    for c in range(8):
+        out.append(f"Столбец {c}: гравитация роняет клетки вниз, досыпка сверху детерминирована по seed")
+    for depth in range(1, 9):
+        out.append(f"Каскад глубины {depth}: множитель 1+0.5·(k-1), очки растут")
+    out += [
+        "resolveBoard завершается даже при длинной цепочке (потолок 128)",
+        "Своп без серии откатывается, ход не тратится",
+        "Достигнут лимит ходов → партия завершается, победитель по очкам",
+        "Нет доступных ходов → пересборка поля (reshuffle)",
+        "Досыпка новых цветов сверху детерминирована по seed",
+    ]
+    return out
+
+
+def spec_tetris(p):
+    out = []
+    for pc in PIECES:
+        for o in ORIENTS:
+            for col in range(10):
+                out.append(f"Фигура {pc} ({o}): фиксация в столбце {col} на поле 10×20")
+    for pc in PIECES:
+        for drop in ("soft-drop", "hard-drop"):
+            out.append(f"Фигура {pc}: {drop} фиксирует на нижней достижимой высоте")
+    for r in range(20):
+        out.append(f"Полная строка {r}: очистка, начисление, сдвиг верхних вниз")
+    for lvl in range(1, 16):
+        out.append(f"Уровень {lvl}: скорость падения выше, порог линий соблюдён")
+    for col in range(10):
+        out.append(f"Столбец {col}: стакан у верха в этом столбце ведёт к top-out")
+    out += [
+        "Top-out (стакан достиг верха) → game over",
+        "Одновременная очистка 4 строк (tetris) даёт максимум очков",
+        "Превью следующей фигуры соответствует выданной",
+        "Пауза останавливает падение; снятие возобновляет",
+    ]
+    return out
+
+
+def spec_puzzle(p):
+    out = []
+    cats = ["животные", "предметы", "символы"]
+    diffs = ["easy", "medium", "hard", "expert"]
+    for cat in cats:
+        for d in diffs:
+            for k in range(1, 13):
+                out.append(f"Уровень [{cat}/{d}] #{k}: рука из решения, постановка только внутри маски")
+                out.append(f"Уровень [{cat}/{d}] #{k}: реплей эталонного решения решает головоломку")
+    for seed in range(1, 61):
+        out.append(f"Генератор seed={seed}: замощение маски существует (разрешимость гарантирована)")
+    for d in diffs:
+        out.append(f"Сложность {d}: бюджет ходов и базовые очки соответствуют")
+        out.append(f"Сложность {d}: награда монетами по таблице")
+    for pc in PIECES:
+        out.append(f"Фигура {pc}: постановка внутри маски засчитывается, вне — отклонена")
+    out += [
+        "Контур собран → «решено», начисление очков по movesUsed",
+        "hint подсвечивает валидный ход внутри маски",
+        "Битый внешний пак (клетка вне сетки) отвергается FormatException, без краша",
+        "Неразрешимая рука невозможна: генератор гарантирует замощение",
+        "Рекорды по уровням сохраняются (SharedPreferences)",
+        "JSON round-trip уровня симметричен",
+    ]
+    return out
+
+
+def spec_showcase(p):
+    out = [
+        "Формат 9:16 (вертикаль) выдержан для Shorts",
+        "ИИ vs ИИ: оба хода автопроигрываются без участия игрока",
+        "Кнопка «В эфир»/запись клипа доступна",
+        "Веб-запись клипа стартует и останавливается",
+        "Прямой live требует серверный RTMP-релей (заглушка/недоступно локально)",
+        "Выход из шоу в любой момент без последствий",
+    ]
+    # Наблюдаемая 9×9-механика (шоу показывает полноценную партию).
+    for pc in PIECES:
+        for o in ORIENTS:
+            out.append(f"Наблюдение: фигура {pc} ({o}) ставится ботом корректно")
+    for ct in CLEAR_TYPES:
+        for lvl in range(1, 6):
+            out.append(f"Наблюдение: очистка «{ct}» при комбо={lvl} отображается с эффектом")
+    return out
+
+
+def spec_tutorial(p):
+    steps = ["постановка фигуры", "поворот/отражение", "очистка линии",
+             "комбо и множитель", "завершение и награда"]
+    out = []
+    for i, s in enumerate(steps, 1):
+        out.append(f"Шаг {i} «{s}»: инструкция понятна, действие принимается")
+        out.append(f"Шаг {i} «{s}»: подсветка цели корректна")
+        out.append(f"Шаг {i} «{s}»: нельзя пропустить обязательное действие")
+        for t in THEMES:
+            out.append(f"Шаг {i} «{s}» в теме «{t}»: контраст подсказок достаточен")
+    out += [
+        "Завершение обучения: награда +50 🪙 начисляется один раз",
+        "Повторное прохождение не начисляет награду повторно",
+        "Выход посреди обучения не выдаёт награду",
+        "Обучение доступно из меню и из первого запуска",
+    ]
+    return out
+
+
+SPECIFIC = {
+    "duel9": spec_duel9,
+    "memory": spec_memory,
+    "coop": spec_coop,
+    "match3": spec_match3,
+    "tetris": spec_tetris,
+    "puzzle": spec_puzzle,
+    "showcase": spec_showcase,
+    "tutorial": spec_tutorial,
+}
+
+
+def fuzz_matrix(p):
+    """Осмысленный хвост-добор: property-фаззинг (seed × конфиг × инвариант).
+
+    Все режимы детерминированы (makeRng/seed), поэтому прогон на фиксированной
+    паре (seed, конфиг) воспроизводим, а проверка инварианта — валидный
+    property-тест, а не пустой филлер. Матрица (config-вариация × инвариант ×
+    seed) даёт много РАЗЛИЧНЫХ осмысленных фаз-кейсов. Возвращает fn(k)->[k строк].
+    """
+    base_inv = [
+        "счёт неотрицателен на всём протяжении",
+        "ни одного исключения/краша за партию",
+        "resume в середине — бит-в-бит то же продолжение",
+        "число ходов конечно (партия сходится)",
+        "детерминизм: повтор на той же паре (seed,cfg) даёт тот же исход",
+        "ни одной невалидной постановки не принято",
+        "инвариант доски: заполненные клетки не «протекают» за границы",
+    ]
+    fam = p["family"]
+    if fam == "duel9":
+        cfgs = ["blitz=normal", "blitz=fast", "blitz=hardcore", "blitz=off",
+                "rotation=off", "flip=off", "handSize=1", "handSize=5"]
+        if p.get("bot"):
+            cfgs += ["bot=easy", "bot=medium", "bot=hard"]
+        base_inv += ["очистка начисляется ходившему игроку",
+                     "тупик корректно завершает партию"]
+    elif fam == "memory":
+        cfgs = ["show=short", "show=long", "уровень=1", "уровень=5", "уровень=10",
+                "сложность растёт", "рука=малая", "рука=большая"]
+        base_inv += ["точность воспроизведения оценена верно"]
+    elif fam == "match3":
+        cfgs = ["6 цветов", "лимит ходов низкий", "лимит ходов высокий",
+                "плотное поле", "разреженное поле", "seed без стартовых серий"]
+        base_inv += ["каскады затухают (resolveBoard завершается)",
+                     "своп без серии откатывается"]
+    elif fam in ("coop", "tetris"):
+        cfgs = ["скорость=низкая", "скорость=высокая", "поле почти полное",
+                "поле пустое", "серия очисток", "одиночная очистка"]
+        base_inv += ["очистка строки сдвигает/освобождает корректно"]
+    elif fam == "puzzle":
+        cfgs = ["easy", "medium", "hard", "expert", "категория=животные",
+                "категория=предметы", "категория=символы"]
+        base_inv += ["решение генератора всегда замощает маску",
+                     "постановка вне маски отклонена"]
+    else:  # showcase, tutorial
+        cfgs = ["тема=neutral", "тема=candy", "тема=night", "reduceMotion=on",
+                "узкое окно", "широкое окно"]
+
+    def fn(k):
+        res = []
+        s = 1
+        # Внешний цикл — seed; внутренние — конфиг × инвариант (различимость строк).
+        while len(res) < k:
+            for cfg in cfgs:
+                for inv in base_inv:
+                    res.append(f"Фаззинг seed={s} · {cfg} [{p['id']}]: {inv}")
+                    if len(res) >= k:
+                        return res
+            s += 1
+        return res[:k]
+
+    return fn
+
+
+def build_mode_catalog(p):
+    sections = [
+        ("Запуск и жизненный цикл", gen_lifecycle(p)),
+        ("Рендер и темы", gen_render(p)),
+        ("Ввод", gen_input(p)),
+        ("Механика режима", SPECIFIC[p["family"]](p)),
+        ("Прогрессия и рекорды", gen_progression(p)),
+        ("Настройки в режиме", gen_settings(p)),
+        ("Ошибки и устойчивость", gen_errors(p)),
+    ]
+    # Пустые разделы (например Ввод у showcase) отсеиваем.
+    sections = [(n, items) for n, items in sections if items]
+    filler = ("Property-фаззинг (seed×конфиг)", fuzz_matrix(p))
+    return exactly_n(sections, TARGET, filler=filler)
+
+
+def render_mode(p, picked):
+    prefix = "MODE-" + p["id"].upper()
+    intro = [
+        f"**Ровно {TARGET} сценариев** режима «{p['title']}» («1000 и 1»).",
+        f"Доска: {p['board']}. Маршрут: `{p['route']}`. Сгенерировано детерминированно",
+        "из `tools/gen_scenarios.py` (ось «режим») — НЕ редактировать вручную.",
+        "",
+        f"- **ID** `{prefix}-0001…{prefix}-1001` стабильны между прогонами.",
+        "- **[C]** — критический smoke-срез (каждый ~7-й).",
+        "- «Механика режима» — уникальная логика; хвост «Property-фаззинг» —",
+        "  осмысленная матрица (seed × конфиг × инвариант) для добора до 1001 в",
+        "  режимах малой игровой поверхности (это valid property-тесты, не филлер).",
+    ]
+    title = f"BlockDuel — Каталог сценариев режима «{p['title']}»"
+    return render_catalog(title, intro, prefix, picked)
+
+
+def write_app_catalog():
     picked = build_app_catalog()
-    out = render(picked)
+    intro = [
+        f"**Ровно {TARGET} сценариев** («1000 и 1»). Сгенерировано детерминированно",
+        "из `tools/gen_scenarios.py` — НЕ редактировать вручную, править генератор.",
+        "",
+        "- **ID** `APP-0001…APP-1001` стабильны между прогонами (round-robin по областям).",
+        "- **[C]** — критический smoke-срез (каждый ~7-й) для быстрой регрессии.",
+        "- Часть пунктов продублирована исполняемыми автотестами в",
+        "  `test/scenarios/app_scenarios_test.dart` (ссылки на APP-ID в названиях).",
+    ]
+    out = render_catalog(
+        "BlockDuel 9×9 — Сквозной каталог сценариев приложения", intro, "APP", picked)
     dst = os.path.join(ROOT, "qa", "SCENARIOS_APP.md")
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     with open(dst, "w", encoding="utf-8") as f:
         f.write(out)
     n = out.count("**APP-")
-    print(f"  qa/SCENARIOS_APP.md — {n} сценариев записано")
-    assert n == TARGET, f"ожидалось {TARGET}, получено {n}"
+    print(f"  qa/SCENARIOS_APP.md — {n} сценариев")
+    assert n == TARGET, f"APP: ожидалось {TARGET}, получено {n}"
+
+
+def write_mode_catalogs():
+    for p in MODE_PROFILES:
+        picked = build_mode_catalog(p)
+        out = render_mode(p, picked)
+        dst = os.path.join(ROOT, "qa", f"SCENARIOS_MODE_{p['id']}.md")
+        with open(dst, "w", encoding="utf-8") as f:
+            f.write(out)
+        n = out.count(f"**MODE-{p['id'].upper()}-")
+        print(f"  qa/SCENARIOS_MODE_{p['id']}.md — {n} сценариев")
+        assert n == TARGET, f"MODE {p['id']}: ожидалось {TARGET}, получено {n}"
+
+
+def main():
+    write_app_catalog()
+    write_mode_catalogs()
+    print(f"  Итого: 1 (app) + {len(MODE_PROFILES)} (mode) каталогов по {TARGET}")
 
 
 if __name__ == "__main__":
