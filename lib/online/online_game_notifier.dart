@@ -45,6 +45,13 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
   bool _disposed = false;
   final math.Random _rng = math.Random();
 
+  /// matchId, к которому относятся накопители матча (clears/multi/combo/perfect).
+  /// Смена id → новый матч (в т.ч. ремач) → накопители обнуляем; тот же id при
+  /// reconnect (сервер повторно шлёт `joined`) — сохраняем. Привязка к типу
+  /// сообщения была бы неверной: `joined` приходит на каждый reconnect, а ремач
+  /// приходит как `state` с новым matchId (см. server/room.ts).
+  String? _accMatchId;
+
   /// Создаёт ViewModel матча [args].
   OnlineGameNotifier(this.args);
 
@@ -221,8 +228,14 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
     if (_disposed) return;
     switch (msg['type']) {
       case 'joined':
+        final game = OnlineGameState.fromJson(
+          msg['state'] as Map<String, dynamic>,
+        );
+        // Сброс накопителей — только при смене матча, НЕ на каждый reconnect.
+        final freshMatch = game.matchId != _accMatchId;
+        _accMatchId = game.matchId;
         state = state.copyWith(
-          game: OnlineGameState.fromJson(msg['state'] as Map<String, dynamic>),
+          game: game,
           you: (msg['you'] as num).toInt(),
           connected: true,
           opponentLeft: false,
@@ -231,26 +244,36 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
           rematchYours: false,
           rematchTheirs: false,
           clearError: true,
-          resetMatchAcc:
-              true, // новый матч (в т.ч. ремач) — обнуляем накопители
+          resetMatchAcc: freshMatch,
         );
       case 'state':
         final game = OnlineGameState.fromJson(
           msg['state'] as Map<String, dynamic>,
         );
+        // Ремач приходит как `state` с новым matchId — обнуляем накопители тут.
+        final freshMatch = game.matchId != _accMatchId;
+        _accMatchId = game.matchId;
         final owner = (msg['lastMoveOwner'] as num?)?.toInt();
         final perfect = msg['perfect'] as bool? ?? false;
+        // База накопителей: 0 при новом матче, иначе текущие значения.
+        final baseClears = freshMatch ? 0 : state.matchClears;
+        final baseMaxMulti = freshMatch ? 0 : state.matchMaxMulti;
+        final baseBestCombo = freshMatch ? 0 : state.matchBestCombo;
+        final basePerfects = freshMatch ? 0 : state.matchPerfects;
         // Накопители ведём только по СВОИМ ходам (для статистики/PvP-ачивок).
-        int? clears, maxMulti, bestCombo, perfects;
+        var clears = baseClears;
+        var maxMulti = baseMaxMulti;
+        var bestCombo = baseBestCombo;
+        var perfects = basePerfects;
         if (owner == state.you) {
           final units = _countClearedUnits(game.lastClearedCells ?? const []);
-          clears = state.matchClears + units;
-          maxMulti = math.max(state.matchMaxMulti, units);
+          clears = baseClears + units;
+          maxMulti = math.max(baseMaxMulti, units);
           final combo = state.you < game.players.length
               ? game.players[state.you].combo
               : 0;
-          bestCombo = math.max(state.matchBestCombo, combo);
-          perfects = state.matchPerfects + (perfect ? 1 : 0);
+          bestCombo = math.max(baseBestCombo, combo);
+          perfects = basePerfects + (perfect ? 1 : 0);
         }
         state = state.copyWith(
           game: game,

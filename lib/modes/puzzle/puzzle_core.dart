@@ -103,19 +103,40 @@ class PuzzleDef {
     'solution': [for (final p in solution) p.toJson()],
   };
 
-  /// Восстанавливает уровень из JSON.
-  factory PuzzleDef.fromJson(Map<String, dynamic> json) => PuzzleDef(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    category: PuzzleCategory.values.byName(json['category'] as String),
-    difficulty: PuzzleDifficulty.values.byName(json['difficulty'] as String),
-    width: json['w'] as int,
-    height: json['h'] as int,
-    solution: [
+  /// Восстанавливает уровень из JSON. Валидирует, что решение целиком лежит
+  /// внутри сетки w×h — иначе [isPuzzleSolved]/`hint` уронят `RangeError` на
+  /// внешнем/битом паке. При нарушении бросает [FormatException] на этапе
+  /// разбора (fail-fast), а не крешит позже при индексации доски.
+  factory PuzzleDef.fromJson(Map<String, dynamic> json) {
+    final width = json['w'] as int;
+    final height = json['h'] as int;
+    if (width <= 0 || height <= 0) {
+      throw FormatException('PuzzleDef: недопустимый размер сетки $width×$height');
+    }
+    final solution = [
       for (final p in (json['solution'] as List))
         PuzzlePlacement.fromJson(p as Map<String, dynamic>),
-    ],
-  );
+    ];
+    for (final p in solution) {
+      for (final cell in p.cells) {
+        if (cell.r < 0 || cell.r >= height || cell.c < 0 || cell.c >= width) {
+          throw FormatException(
+            'PuzzleDef "${json['id']}": клетка (${cell.r},${cell.c}) '
+            'фигуры "${p.shapeId}" вне сетки $width×$height',
+          );
+        }
+      }
+    }
+    return PuzzleDef(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      category: PuzzleCategory.values.byName(json['category'] as String),
+      difficulty: PuzzleDifficulty.values.byName(json['difficulty'] as String),
+      width: width,
+      height: height,
+      solution: solution,
+    );
+  }
 }
 
 /// Создаёт пустое поле [height]×[width].

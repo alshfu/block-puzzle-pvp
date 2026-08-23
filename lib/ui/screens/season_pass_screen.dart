@@ -29,7 +29,6 @@ class SeasonPassScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).extension<BlockDuelTheme>()!;
     final pass = ref.watch(seasonPassControllerProvider);
-    final profile = ref.watch(profileControllerProvider);
     final ratio = seasonXpInTier(pass.xp) / seasonXpPerTier;
 
     void grant(SeasonReward? r) {
@@ -95,19 +94,21 @@ class SeasonPassScreen extends ConsumerWidget {
         if (!pass.premium)
           FilledButton.icon(
             onPressed: () {
-              if (profile.crystals < seasonPremiumPrice) {
+              // Атомарная проверка+списание по СВЕЖЕМУ балансу (ref.read):
+              // защищает от двойной траты при быстром повторном тапе, пока
+              // виджет не перестроился. buyPremium() — только при успехе.
+              final ok = ref
+                  .read(profileControllerProvider.notifier)
+                  .spendCrystals(seasonPremiumPrice);
+              if (!ok) {
+                final have = ref.read(profileControllerProvider).crystals;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      'Нужно $seasonPremiumPrice 💎 (у тебя ${profile.crystals})',
-                    ),
+                    content: Text('Нужно $seasonPremiumPrice 💎 (у тебя $have)'),
                   ),
                 );
                 return;
               }
-              ref
-                  .read(profileControllerProvider.notifier)
-                  .addCrystals(-seasonPremiumPrice);
               ref.read(seasonPassControllerProvider.notifier).buyPremium();
             },
             icon: const Icon(Icons.workspace_premium),

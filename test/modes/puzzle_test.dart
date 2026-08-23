@@ -168,6 +168,41 @@ void main() {
       expect(back.mask.length, def.mask.length);
       expect(back.handShapeIds, def.handShapeIds);
     });
+
+    test('fromJson: клетка решения вне сетки → FormatException (fail-fast)', () {
+      // Битый внешний пак: сетка 3×3, но клетка (5,5) вне границ. Без валидации
+      // это уронило бы RangeError позже в isPuzzleSolved/hint.
+      final bad = {
+        'id': 'bad',
+        'name': 'X',
+        'category': 'objects',
+        'difficulty': 'easy',
+        'w': 3,
+        'h': 3,
+        'solution': [
+          {
+            's': 'O',
+            'c': [
+              [5, 5],
+            ],
+          },
+        ],
+      };
+      expect(() => PuzzleDef.fromJson(bad), throwsFormatException);
+    });
+
+    test('fromJson: недопустимый размер сетки → FormatException', () {
+      final bad = {
+        'id': 'bad',
+        'name': 'X',
+        'category': 'objects',
+        'difficulty': 'easy',
+        'w': 0,
+        'h': 3,
+        'solution': const [],
+      };
+      expect(() => PuzzleDef.fromJson(bad), throwsFormatException);
+    });
   });
 
   group('ViewModel', () {

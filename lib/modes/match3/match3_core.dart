@@ -143,6 +143,12 @@ class Match3Resolve {
   });
 }
 
+/// Верхний предохранитель числа каскадов в одном [resolveBoard]: досыпка кладёт
+/// случайные цвета, которые сами могут дать серию, поэтому теоретически цикл мог
+/// бы не завершиться. На практике каскады затухают за единицы итераций; предел
+/// заведомо недостижим в нормальной игре и лишь гарантирует завершение.
+const int _maxCascades = 128;
+
 /// Разрешает поле после свопа: пока есть серии — очищает их, роняет столбцы
 /// (гравитация) и досыпает новые цвета сверху из [rng], считая каскады.
 /// Мутирует [grid]. Возвращает суммарную очистку и очки.
@@ -150,7 +156,7 @@ Match3Resolve resolveBoard(Match3Grid grid, RandomSource rng) {
   var totalCleared = 0;
   var cascades = 0;
   var score = 0;
-  while (true) {
+  while (cascades < _maxCascades) {
     final matches = findMatches(grid);
     if (matches.isEmpty) break;
     cascades++;

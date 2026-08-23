@@ -190,6 +190,63 @@ void main() {
     expect(s.matchPerfects, 0);
   });
 
+  test('reconnect (joined с тем же matchId) СОХРАНЯЕТ накопители', () async {
+    final (c, fake) = _setup();
+    fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});
+    await _tick();
+    fake.emit({
+      'type': 'state',
+      'state': sampleStateJson(
+        current: 1,
+        lastClearedCells: [for (var col = 0; col < 9; col++) [0, col]],
+      ),
+      'lastMoveOwner': 0,
+      'perfect': true,
+    });
+    await _tick();
+    expect(c.read(onlineGameProvider(_args)).matchClears, 1);
+    // Обрыв WS и переподключение: сервер снова шлёт `joined` с ТЕМ ЖЕ matchId.
+    // Накопители набитого матча должны сохраниться (регрессия HIGH-бага).
+    fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});
+    await _tick();
+    final s = c.read(onlineGameProvider(_args));
+    expect(s.matchClears, 1);
+    expect(s.matchPerfects, 1);
+  });
+
+  test('ремач через state с новым matchId сбрасывает накопители', () async {
+    final (c, fake) = _setup();
+    fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});
+    await _tick();
+    fake.emit({
+      'type': 'state',
+      'state': sampleStateJson(
+        current: 1,
+        lastClearedCells: [for (var col = 0; col < 9; col++) [0, col]],
+      ),
+      'lastMoveOwner': 0,
+      'perfect': true,
+    });
+    await _tick();
+    expect(c.read(onlineGameProvider(_args)).matchClears, 1);
+    // Ремач на той же комнате приходит как `state` с НОВЫМ matchId (сервер шлёт
+    // broadcastState, а не joined). Накопители обнуляются, а не удваиваются.
+    fake.emit({
+      'type': 'state',
+      'state': sampleStateJson(
+        matchId: 'm_rematch2',
+        current: 1,
+        lastClearedCells: [for (var col = 0; col < 9; col++) [0, col]],
+      ),
+      'lastMoveOwner': 0,
+      'perfect': true,
+    });
+    await _tick();
+    final s = c.read(onlineGameProvider(_args));
+    expect(s.matchClears, 1); // 0 (сброс) + 1 (этот ход), а НЕ 2
+    expect(s.matchPerfects, 1);
+  });
+
   test('on closed → connected=false', () async {
     final (c, fake) = _setup();
     fake.emit({'type': 'joined', 'you': 0, 'state': sampleStateJson()});

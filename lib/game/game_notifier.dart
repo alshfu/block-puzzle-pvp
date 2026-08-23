@@ -124,6 +124,10 @@ class GameNotifier extends Notifier<GameState> {
   /// Начинает новую партию с тем же конфигом (сбрасывает сохранёнку).
   void newGame() {
     ref.read(savedGameStoreProvider).clear();
+    // Гасим висящий hint-таймер прошлой партии: иначе его отложенный колбэк
+    // сработает уже в новой партии и дёрнет лишний clearHint/rebuild.
+    _hintTimer?.cancel();
+    _hintTimer = null;
     final fresh = _freshState();
     state = fresh;
     _armTimers(fresh);
