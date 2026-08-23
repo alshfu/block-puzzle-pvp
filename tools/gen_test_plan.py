@@ -10,7 +10,7 @@
     минимум 2500 пронумерованных пунктов в каждом.
 
     Реальные 120 достижений подтягиваются из
-    flutter/lib/achievements/definitions.dart (id+title), по 12 фасетов проверки
+    lib/achievements/definitions.dart (id+title), по 12 фасетов проверки
     на каждое — это даёт основную осмысленную массу, а не филлер.
 
     Чеклист сознательно избыточен и комбинаторен: один прогон не обязан закрыть
@@ -98,7 +98,7 @@ AVATARS = ["🙂","😎","🦊","🐱","🦄","🐉","🤖","👾","🧙","🥷"
 
 def load_achievements(root):
     """Парсит (id, title) всех достижений из definitions.dart."""
-    path = os.path.join(root, "flutter", "lib", "achievements", "definitions.dart")
+    path = os.path.join(root, "lib", "achievements", "definitions.dart")
     text = open(path, encoding="utf-8").read()
     ids = re.findall(r"id:\s*'([^']+)'", text)
     titles = re.findall(r"title:\s*'([^']+)'", text)
