@@ -965,10 +965,260 @@ def write_mode_catalogs():
         assert n == TARGET, f"MODE {p['id']}: ожидалось {TARGET}, получено {n}"
 
 
+# ── Ось «код + платформа»: 1001 сценарий на каждую платформу ──────────────────
+#
+# Проверяет платформенный срез: рендер/ввод/жизненный цикл/хранение/auth/сеть/
+# сборка/разрешения ПЛЮС «код мода» — инварианты чистого ядра, одинаковые на всех
+# платформах (детерминизм, отсутствие Random/DateTime в pure-слое, паритет с TS).
+
+PLATFORM_PROFILES = [
+    dict(id="web", title="Web (Flutter Web, прод)",
+         input=["мышь", "тачскрин", "клавиатура", "трекпад"],
+         store="SharedPreferences→localStorage", deploy="gh-pages (GitHub Actions)",
+         auth="Google sign-in (popup/redirect)"),
+    dict(id="macos", title="macOS (desktop)",
+         input=["мышь", "трекпад", "клавиатура"],
+         store="SharedPreferences→NSUserDefaults", deploy="release .app/.dmg",
+         auth="Google sign-in (ждёт значений Firebase, MACOS_AUTH_SETUP.md)"),
+    dict(id="android", title="Android",
+         input=["тачскрин", "жесты", "аппаратная Back"],
+         store="SharedPreferences→XML", deploy="APK/AAB (Play)",
+         auth="Google sign-in (native)"),
+    dict(id="ios", title="iOS/iPadOS",
+         input=["тачскрин", "жесты", "внешняя клавиатура (iPad)"],
+         store="SharedPreferences→NSUserDefaults", deploy="App Store (TestFlight)",
+         auth="Google sign-in (native/ASWebAuth)"),
+]
+
+DEVICE_SURFACES = [
+    "Меню", "Setup", "Игра 9×9", "Профиль", "Статистика", "Настройки",
+    "Магазин", "Достижения", "Онлайн-меню", "Онлайн-матч", "Лидерборд",
+    "Силуэты", "Co-op", "Match-3", "Память", "Экран результата",
+]
+
+
+def gen_plat_render(pl):
+    out = []
+    for s in DEVICE_SURFACES:
+        for t in THEMES:
+            out.append(f"[{pl['id']}] «{s}» в теме «{t}»: рендер без артефактов, шрифты/иконки чёткие")
+        out.append(f"[{pl['id']}] «{s}»: масштаб под DPR/плотность экрана без размытия")
+        out.append(f"[{pl['id']}] «{s}»: безопасные зоны/вырезы не перекрывают контент")
+        out.append(f"[{pl['id']}] «{s}»: адаптивная раскладка при смене размера/ориентации")
+    return out
+
+
+def _plat_devices(pl):
+    """Представительный набор сред/устройств для платформенной матрицы."""
+    if pl["id"] == "web":
+        return [f"{b}/{ff}" for b in ("Chrome", "Safari", "Firefox", "Edge")
+                for ff in ("desktop", "laptop", "tablet", "mobile")]
+    if pl["id"] == "macos":
+        return ["окно макс.", "окно 50%", "узкое окно", "Retina 2×",
+                "внешний монитор", "разделённый экран", "полноэкранный"]
+    if pl["id"] == "android":
+        return ["малый телефон", "крупный телефон", "планшет 10\"",
+                "складной", "бюджетный (low-RAM)", "high-refresh 120Гц"]
+    # ios / ipados
+    return ["iPhone SE", "iPhone mini", "iPhone Pro", "iPhone Pro Max",
+            "iPad", "iPad Pro", "iPad Split View"]
+
+
+def gen_plat_device_matrix(pl):
+    """Стандартная платформенная матрица: устройство × ориентация × ключевой экран."""
+    out = []
+    devices = _plat_devices(pl)
+    orients = ["портрет", "ландшафт"] if pl["id"] in ("android", "ios") else ["по умолч."]
+    for d in devices:
+        for o in orients:
+            for s in DEVICE_SURFACES:
+                tag = f"{d}/{o}" if o != "по умолч." else d
+                out.append(f"[{pl['id']}] {tag}: «{s}» — без overflow, читаемо, тапабельные зоны ≥44pt")
+    return out
+
+
+def gen_plat_input(pl):
+    out = []
+    for v in pl["input"]:
+        for pc in PIECES:
+            out.append(f"[{pl['id']}] Ввод «{v}»: выбор/постановка фигуры {pc} без двойных срабатываний")
+        out.append(f"[{pl['id']}] Ввод «{v}»: поворот/отражение фигуры реагирует корректно")
+        out.append(f"[{pl['id']}] Ввод «{v}»: drag-призрак следует за указателем, отпускание ставит")
+        out.append(f"[{pl['id']}] Ввод «{v}»: отмена жеста возвращает фигуру в руку")
+    return out
+
+
+def gen_plat_lifecycle(pl):
+    base = [
+        f"[{pl['id']}] Холодный старт: без белой вспышки, состояние по умолчанию/восстановлено",
+        f"[{pl['id']}] Возврат из фона во время матча: таймер/бот не рассинхронятся",
+        f"[{pl['id']}] Прерывание (звонок/уведомление/сон): партия ставится на паузу корректно",
+        f"[{pl['id']}] Поворот экрана во время матча: доска не теряет состояние",
+        f"[{pl['id']}] Нехватка памяти/выгрузка: resume восстанавливает партию",
+    ]
+    if pl["id"] == "web":
+        base += [
+            "[web] Смена вкладки (visibilitychange): анимации/звук приостановлены",
+            "[web] Обновление страницы (F5) во время матча: resume предлагает продолжить",
+            "[web] Кнопка Back браузера: навигация по стеку роутера корректна",
+            "[web] Deep-link на маршрут по URL: открывает нужный экран",
+        ]
+    else:
+        base += [
+            f"[{pl['id']}] Системная кнопка/жест «назад»: предупреждение о выходе из матча",
+            f"[{pl['id']}] Уведомление в шторке: тап открывает нужный экран",
+        ]
+    return base
+
+
+def gen_plat_storage_auth(pl):
+    out = [
+        f"[{pl['id']}] Хранение ({pl['store']}): профиль/настройки/статистика персистятся",
+        f"[{pl['id']}] Хранение: сохранёнка матча resume-абельна после перезапуска",
+        f"[{pl['id']}] Хранение: повреждённые данные → graceful fallback к дефолтам",
+        f"[{pl['id']}] Хранение: очистка данных приложения → чистый первый запуск",
+        f"[{pl['id']}] Auth ({pl['auth']}): вход выполняется, аватар/ник подтягиваются",
+        f"[{pl['id']}] Auth: выход не стирает локальный прогресс",
+        f"[{pl['id']}] Auth: отмена входа пользователем обрабатывается без краша",
+        f"[{pl['id']}] Sync: Firestore-слияние (max-wins, union ачивок) при кросс-девайсе",
+        f"[{pl['id']}] Sync: оффлайн-правки мёрджатся при следующем входе",
+    ]
+    return out
+
+
+def gen_plat_network(pl):
+    out = []
+    for f in ONLINE_FLOWS:
+        out.append(f"[{pl['id']}] Онлайн: {f}")
+    for cond in NET_CONDITIONS:
+        out.append(f"[{pl['id']}] Онлайн при «{cond}»: reconnect/консистентность матча")
+    out.append(f"[{pl['id']}] WSS к pvp.alshfu.com: TLS-соединение устанавливается")
+    out.append(f"[{pl['id']}] Потеря сети посреди хода: клиент не теряет состояние, чинит по reconnect")
+    return out
+
+
+def gen_plat_build_perms(pl):
+    out = [
+        f"[{pl['id']}] Release-сборка ({pl['deploy']}) проходит без ошибок",
+        f"[{pl['id']}] Иконки/сплэш/название приложения корректны",
+        f"[{pl['id']}] Версия 2.0.0+1 отображается в About",
+        f"[{pl['id']}] Разрешение на уведомления: запрос и отказ обрабатываются",
+        f"[{pl['id']}] Сетевые разрешения/ATS/CORS настроены для WSS и Firebase",
+    ]
+    if pl["id"] == "web":
+        out += [
+            "[web] CanvasKit/движок рендера грузится; нет запросов на заблокированные хосты",
+            "[web] Пути ассетов относительны base-href gh-pages",
+            "[web] Автодеплой GitHub Actions (analyze+test+build) зелёный на push в main",
+        ]
+    if pl["id"] == "macos":
+        out += [
+            "[macos] Sandbox/entitlements: сеть-клиент разрешён",
+            "[macos] Firebase auth ждёт 4 значения из Console (MACOS_AUTH_SETUP.md)",
+        ]
+    if pl["id"] in ("android", "ios"):
+        out += [
+            f"[{pl['id']}] Требования сторов к приватности/иконкам соблюдены",
+            f"[{pl['id']}] IAP/платежи — серверная валидация (заглушка локально)",
+        ]
+    return out
+
+
+def gen_plat_code_invariants(pl):
+    """«Код мода» — инварианты чистого ядра, одинаковые на всех платформах."""
+    out = [
+        f"[{pl['id']}] Ядро lib/core детерминировано: (seed,cfg,log)→то же состояние",
+        f"[{pl['id']}] В pure-слое нет Random()/DateTime.now()/IO/Flutter-импортов",
+        f"[{pl['id']}] Golden-паритет с TS-ядром бит-в-бит держится",
+        f"[{pl['id']}] 7-bag resume детерминистичен (queue+counter+rngState)",
+        f"[{pl['id']}] Формула очков идентична ТЗ на этой платформе",
+        f"[{pl['id']}] MVVM: виджеты без логики, состояние в нотифайерах",
+        f"[{pl['id']}] Нет утечек таймеров/подписок при входе/выходе экранов",
+    ]
+    for m in ["9×9", "Memory", "Co-op", "Match-3", "Силуэты"]:
+        out.append(f"[{pl['id']}] Режим «{m}»: pure-логика даёт тот же результат, что на других платформах")
+    return out
+
+
+def plat_fuzz(pl):
+    inv = [
+        "рендер без исключений на всех экранах",
+        "ввод не даёт двойных ходов",
+        "resume бит-в-бит восстанавливает партию",
+        "нет обращений к заблокированным ресурсам",
+        "детерминизм ядра сохраняется",
+        "нет утечек памяти за сессию",
+        "локализация RU не обрезается в лэйауте",
+    ]
+    cfgs = ["тема=neutral", "тема=candy", "тема=night", "reduceMotion=on",
+            "мелкий экран", "крупный экран", "медленная сеть", "оффлайн",
+            "низкая память", "высокий DPR"]
+
+    def fn(k):
+        res = []
+        s = 1
+        while len(res) < k:
+            for cfg in cfgs:
+                for i in inv:
+                    res.append(f"Фаззинг [{pl['id']}] прогон={s} · {cfg}: {i}")
+                    if len(res) >= k:
+                        return res
+            s += 1
+        return res[:k]
+
+    return fn
+
+
+def build_platform_catalog(pl):
+    sections = [
+        ("Рендер и темы", gen_plat_render(pl)),
+        ("Матрица устройств", gen_plat_device_matrix(pl)),
+        ("Ввод", gen_plat_input(pl)),
+        ("Жизненный цикл", gen_plat_lifecycle(pl)),
+        ("Хранение и auth/sync", gen_plat_storage_auth(pl)),
+        ("Сеть и онлайн", gen_plat_network(pl)),
+        ("Сборка и разрешения", gen_plat_build_perms(pl)),
+        ("Код мода (инварианты ядра)", gen_plat_code_invariants(pl)),
+    ]
+    sections = [(n, items) for n, items in sections if items]
+    filler = ("Property-фаззинг (платформа)", plat_fuzz(pl))
+    return exactly_n(sections, TARGET, filler=filler)
+
+
+def render_platform(pl, picked):
+    prefix = "CODE-" + pl["id"].upper()
+    intro = [
+        f"**Ровно {TARGET} сценариев** платформы «{pl['title']}» («1000 и 1»).",
+        f"Ввод: {', '.join(pl['input'])}. Хранение: {pl['store']}. Деплой: {pl['deploy']}.",
+        "Сгенерировано детерминированно из `tools/gen_scenarios.py` (ось «код+платформа»).",
+        "",
+        f"- **ID** `{prefix}-0001…{prefix}-1001` стабильны между прогонами.",
+        "- **[C]** — критический smoke-срез (каждый ~7-й).",
+        "- Раздел «Код мода» — инварианты чистого ядра, одинаковые на всех платформах;",
+        "  хвост «Property-фаззинг» (прогон × конфиг × инвариант) добирает до 1001.",
+    ]
+    title = f"BlockDuel — Каталог сценариев платформы «{pl['title']}»"
+    return render_catalog(title, intro, prefix, picked)
+
+
+def write_platform_catalogs():
+    for pl in PLATFORM_PROFILES:
+        picked = build_platform_catalog(pl)
+        out = render_platform(pl, picked)
+        dst = os.path.join(ROOT, "qa", f"SCENARIOS_CODE_{pl['id']}.md")
+        with open(dst, "w", encoding="utf-8") as f:
+            f.write(out)
+        n = out.count(f"**CODE-{pl['id'].upper()}-")
+        print(f"  qa/SCENARIOS_CODE_{pl['id']}.md — {n} сценариев")
+        assert n == TARGET, f"CODE {pl['id']}: ожидалось {TARGET}, получено {n}"
+
+
 def main():
     write_app_catalog()
     write_mode_catalogs()
-    print(f"  Итого: 1 (app) + {len(MODE_PROFILES)} (mode) каталогов по {TARGET}")
+    write_platform_catalogs()
+    print(f"  Итого: 1 (app) + {len(MODE_PROFILES)} (mode) + "
+          f"{len(PLATFORM_PROFILES)} (platform) каталогов по {TARGET}")
 
 
 if __name__ == "__main__":
