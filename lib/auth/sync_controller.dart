@@ -15,14 +15,13 @@ library;
 
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../achievements/achievements_controller.dart';
 import '../profile/profile_controller.dart';
 import '../settings/settings_controller.dart';
 import 'auth_controller.dart';
+import 'cloud_repo.dart';
 import 'cloud_snapshot.dart';
 
 /// Статус синхронизации (для возможной индикации в UI).
@@ -38,7 +37,7 @@ class SyncController extends Notifier<SyncStatus> {
 
   @override
   SyncStatus build() {
-    if (Firebase.apps.isEmpty) return SyncStatus.disabled;
+    if (!ref.read(cloudRepoProvider).available) return SyncStatus.disabled;
 
     ref.onDispose(() => _pushTimer?.cancel());
 
@@ -60,16 +59,12 @@ class SyncController extends Notifier<SyncStatus> {
     return SyncStatus.idle;
   }
 
-  DocumentReference<Map<String, dynamic>> _doc(String uid) =>
-      FirebaseFirestore.instance.collection('users').doc(uid);
-
   /// Тянет облако и сливает с локальным; если документа нет — заливает локальное.
   Future<void> _pullAndSeed(String uid) async {
     _pulling = true;
     state = SyncStatus.syncing;
     try {
-      final doc = await _doc(uid).get();
-      final data = doc.data();
+      final data = await ref.read(cloudRepoProvider).fetch(uid);
       if (data != null) {
         final cloud = CloudSnapshot.fromJson(data);
         final localProfile = ref.read(profileControllerProvider);
@@ -115,7 +110,7 @@ class SyncController extends Notifier<SyncStatus> {
         settings: ref.read(settingsControllerProvider),
         updatedAt: DateTime.now().millisecondsSinceEpoch,
       );
-      await _doc(uid).set(snap.toJson(), SetOptions(merge: true));
+      await ref.read(cloudRepoProvider).save(uid, snap.toJson());
       if (state != SyncStatus.syncing) state = SyncStatus.synced;
     } catch (_) {
       state = SyncStatus.error;
