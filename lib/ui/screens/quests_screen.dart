@@ -28,6 +28,11 @@ class QuestsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = Theme.of(context).extension<BlockDuelTheme>()!;
+    // Открытие после смены недели/сезона должно показать новый набор квестов:
+    // провайдер keepAlive не пересобирается сам. Идемпотентно, после кадра.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => ref.read(questsControllerProvider.notifier).refreshPeriods(),
+    );
     return DefaultTabController(
       length: 3,
       child: Scaffold(

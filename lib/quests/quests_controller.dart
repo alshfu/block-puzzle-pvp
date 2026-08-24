@@ -103,8 +103,34 @@ class QuestsController extends Notifier<QuestsState> {
         .setString(_prefsKey(period), jsonEncode(s.toJson()));
   }
 
+  /// Ротирует недельные/сезонные квесты при смене периода. `build()` вычисляет
+  /// ключи лишь однажды, а провайдер keepAlive и сам не пересобирается, поэтому
+  /// при работе приложения через границу недели/сезона состояние «зависает» на
+  /// старом периоде (как было в [DailyController]). Идемпотентно; зовётся лениво
+  /// перед мутациями и при открытии экрана квестов.
+  void refreshPeriods() {
+    final now = DateTime.now();
+    final wk = _weekKey(now);
+    final sk = _seasonKey(now);
+    var weekly = state.weekly;
+    var seasonal = state.seasonal;
+    var changed = false;
+    if (weekly.periodKey != wk) {
+      weekly = QuestPeriodState.fresh(QuestPeriod.weekly, wk);
+      _persist(QuestPeriod.weekly, weekly);
+      changed = true;
+    }
+    if (seasonal.periodKey != sk) {
+      seasonal = QuestPeriodState.fresh(QuestPeriod.seasonal, sk);
+      _persist(QuestPeriod.seasonal, seasonal);
+      changed = true;
+    }
+    if (changed) state = QuestsState(weekly: weekly, seasonal: seasonal);
+  }
+
   /// Засчитывает событие партии в обоих периодах.
   void recordEvent(QuestEvent event) {
+    refreshPeriods(); // не копить прогресс на старом периоде после его смены
     final weekly = state.weekly.applyEvent(event);
     final seasonal = state.seasonal.applyEvent(event);
     state = QuestsState(weekly: weekly, seasonal: seasonal);
@@ -114,6 +140,7 @@ class QuestsController extends Notifier<QuestsState> {
 
   /// Забирает награду за выполненный квест [id] периода [period].
   void claim(QuestPeriod period, String id) {
+    refreshPeriods(); // после смены периода старые квесты уже неактуальны
     final q = questById(id);
     if (q == null) return;
     final ps = state.forPeriod(period);
