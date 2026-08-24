@@ -428,8 +428,13 @@ export class Room {
 
   private notifyOpponentLeft(slot: number): void {
     if (slot === -1) return;
+    // L-B: не слать ложное «соперник вышел» после конца матча; и сообщать
+    // реальный тайм-бюджет хода (TURN_TIME_MS), а не рассинхронные 30с.
+    if (this.state.status !== "playing") return;
     const other = this.state.players[(1 - slot) as 0 | 1];
-    if (other?.conn) this.send(other.conn, { type: "opponent_left", willTimeoutMs: 30_000 });
+    if (other?.conn) {
+      this.send(other.conn, { type: "opponent_left", willTimeoutMs: TURN_TIME_MS });
+    }
   }
 
   private publicState(): OnlineGameState {

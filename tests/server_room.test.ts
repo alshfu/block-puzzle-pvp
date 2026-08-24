@@ -93,6 +93,19 @@ describe("Room — resign в waiting не завершает матч (M-A)", ()
     expect(room.state.status).toBe("over");
     expect(room.state.result?.winner).toBe(1); // победа оппоненту сдавшегося
   });
+
+  it("opponent_left НЕ шлётся после конца матча (L-B)", () => {
+    const room = makeRoom();
+    const c0 = new FakeConn();
+    const c1 = new FakeConn();
+    room.handleConnection(c0 as never);
+    room.handleConnection(c1 as never);
+    c0.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    c1.emit("message", JSON.stringify({ type: "hello", profile: p1, token: "tb" }));
+    c0.emit("message", JSON.stringify({ type: "resign" })); // матч over
+    c1.emit("close", undefined); // соперник отключается уже после конца
+    expect(c0.sent.some((m) => (m as { type?: string }).type === "opponent_left")).toBe(false);
+  });
 });
 
 describe("Lobby — устойчивость к malformed сообщениям (H-A)", () => {

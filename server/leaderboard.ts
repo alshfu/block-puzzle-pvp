@@ -2,7 +2,7 @@
  * Глобальный лидерборд. Singleton в памяти + persistent JSON-файл.
  * ELO K=24, старт 1000. Победа = 1, ничья = 0.5, проигрыш = 0.
  */
-import { mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, renameSync } from "node:fs";
 import { rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import type {
@@ -40,7 +40,18 @@ export class Leaderboard {
       console.log(`[leaderboard] loaded ${this.entries.size} entries from ${this.storagePath}`);
     } catch (err: unknown) {
       const e = err as { code?: string };
-      if (e.code !== "ENOENT") console.warn(`[leaderboard] load failed:`, err);
+      if (e.code !== "ENOENT") {
+        console.warn(`[leaderboard] load failed:`, err);
+        // L-C: битый/несовместимый файл. НЕ стартуем с пустой Map поверх него —
+        // следующий save() затёр бы историю навсегда. Отодвигаем повреждённый
+        // файл в бэкап (.corrupt-<ts>), чтобы его можно было разобрать вручную.
+        try {
+          renameSync(this.storagePath, `${this.storagePath}.corrupt-${Date.now()}`);
+          console.warn(`[leaderboard] повреждённый файл сохранён как .corrupt-*`);
+        } catch (mvErr) {
+          console.warn(`[leaderboard] не удалось забэкапить повреждённый файл:`, mvErr);
+        }
+      }
     }
   }
 
