@@ -84,4 +84,19 @@ void main() {
       coinsBefore + expectedReward,
     );
   });
+
+  test('refreshDay в тот же день идемпотентен (не сбрасывает прогресс)', () async {
+    final c = await _container();
+    final daily = c.read(dailyControllerProvider.notifier);
+    daily.recordGame(const DailyGameEvent(won: true, coinsEarned: 25));
+    final before = c.read(dailyControllerProvider);
+    final total = before.progress.values.fold<int>(0, (a, b) => a + b);
+    expect(total, greaterThan(0));
+
+    daily.refreshDay(); // тот же день — не должно ничего сбросить
+    final after = c.read(dailyControllerProvider);
+    expect(after.dayKey, before.dayKey);
+    expect(after.progress, before.progress);
+    expect(after.questIds, before.questIds);
+  });
 }

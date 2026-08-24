@@ -27,6 +27,10 @@ class DailyScreen extends ConsumerWidget {
     final theme = Theme.of(context).extension<BlockDuelTheme>()!;
     final daily = ref.watch(dailyControllerProvider);
     final ctrl = ref.read(dailyControllerProvider.notifier);
+    // Открытие экрана после полуночи должно показать новый набор квестов:
+    // провайдер keepAlive не пересобирается сам. refreshDay() идемпотентен
+    // (ротирует только при смене дня); зовём после кадра, не мутируя в build.
+    WidgetsBinding.instance.addPostFrameCallback((_) => ctrl.refreshDay());
 
     return ScreenScaffold(
       title: 'Ежедневные квесты',

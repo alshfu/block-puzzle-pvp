@@ -95,23 +95,25 @@ class StatsController extends Notifier<Stats> {
     final prevOp = state.onlineOpponents[opponentId];
     final isNewOpponent = prevOp == null;
     final op = prevOp ?? const OnlineOpponentRecord();
+    // Серия ПОДРЯД побед над этим соперником: +1 при победе, обнуление иначе.
+    final opWinStreak = won ? op.winStreak + 1 : 0;
     final updatedOp = OnlineOpponentRecord(
       count: op.count + 1,
       wins: op.wins + (won ? 1 : 0),
       lastResult: won ? 'win' : (drew ? 'draw' : 'loss'),
+      winStreak: opWinStreak,
       nick: opponentNick.isNotEmpty ? opponentNick : op.nick,
     );
     final opponents = {...state.onlineOpponents, opponentId: updatedOp};
 
-    // Серия реваншей: подряд побед против того же соперника (приближение TS —
-    // если в прошлый раз с ним тоже выиграли, берём накопленные победы).
-    var rematchStreak = state.onlineMaxRematchWinStreak;
-    if (won && !isNewOpponent) {
-      rematchStreak = math.max(
-        rematchStreak,
-        op.lastResult == 'win' ? updatedOp.wins : 1,
-      );
-    }
+    // Макс. серия побед подряд над одним соперником (для on_rm_*/on_dom_*).
+    // Считаем по НЕПРЕРЫВНОЙ серии opWinStreak, а не по кумулятивным победам —
+    // иначе чередование W/L давало бы ложные unlock'и.
+    final rematchStreak = math.max(state.onlineMaxRematchWinStreak, opWinStreak);
+
+    // Реванш (on_revenge): победа над соперником, которому в ПРОШЛЫЙ раз проиграли.
+    final isRevenge = won && !isNewOpponent && op.lastResult == 'loss';
+    final revengeWins = state.onlineRevengeWins + (isRevenge ? 1 : 0);
 
     // Дни подряд: сравниваем today с датой последнего матча.
     var consecutiveDays = state.onlineConsecutiveDays;
@@ -156,6 +158,7 @@ class StatsController extends Notifier<Stats> {
         updatedOp.count,
       ),
       onlineMaxRematchWinStreak: rematchStreak,
+      onlineRevengeWins: revengeWins,
       onlineConsecutiveDays: consecutiveDays,
       onlineMaxConsecutiveDays: math.max(
         state.onlineMaxConsecutiveDays,

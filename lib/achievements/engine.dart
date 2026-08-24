@@ -231,6 +231,12 @@ EngineResult processOnlineMatch(
   for (final t in [2, 3, 5, 10]) {
     set('on_rm_$t', s.onlineMaxRematchWinStreak);
   }
+  // Доминирование над одним соперником — та же метрика непрерывной серии побед.
+  for (final t in [3, 5, 10]) {
+    set('on_dom_$t', s.onlineMaxRematchWinStreak);
+  }
+  // Реванш: победа над соперником после поражения от него.
+  set('on_revenge', s.onlineRevengeWins);
   for (final t in [3, 10, 25, 50, 100]) {
     set('on_opp_$t', s.onlineUniqueOpponents);
   }

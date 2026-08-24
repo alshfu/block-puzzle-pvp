@@ -25,6 +25,21 @@ Future<ProviderContainer> _container() async {
   return c;
 }
 
+/// Краткая запись онлайн-матча против [opp] (остальное — нули).
+Stats _rec(StatsController ctrl, {required bool won, bool drew = false, required String opp}) =>
+    ctrl.recordOnline(
+      won: won,
+      drew: drew,
+      matchClears: 0,
+      perfects: 0,
+      maxMultiClear: 0,
+      bestCombo: 0,
+      turnCount: 10,
+      themeId: 'neutral',
+      opponentId: opp,
+      today: '2026-06-09',
+    );
+
 void main() {
   group('recordOnline — общие счётчики и серии', () {
     test('победа наращивает wins/streak/no-loss и темы', () async {
@@ -199,6 +214,33 @@ void main() {
         );
       }
       expect(s.onlineMaxRematchWinStreak, greaterThanOrEqualTo(2));
+    });
+
+    test('серия побед над соперником ОБНУЛЯЕТСЯ поражением (W,L,W,W → 2, не 3)', () async {
+      final c = await _container();
+      final ctrl = c.read(statsControllerProvider.notifier);
+      _rec(ctrl, won: true, opp: 'x'); // streak 1
+      _rec(ctrl, won: false, opp: 'x'); // обнуление
+      _rec(ctrl, won: true, opp: 'x'); // streak 1
+      final s = _rec(ctrl, won: true, opp: 'x'); // streak 2
+      expect(s.onlineOpponents['x']!.winStreak, 2);
+      // Максимум за всё время = 2, а НЕ кумулятивные 3 победы (регрессия).
+      expect(s.onlineMaxRematchWinStreak, 2);
+    });
+
+    test('реванш: победа после поражения от соперника → onlineRevengeWins', () async {
+      final c = await _container();
+      final ctrl = c.read(statsControllerProvider.notifier);
+      var s = _rec(ctrl, won: false, opp: 'r'); // проиграл
+      expect(s.onlineRevengeWins, 0);
+      s = _rec(ctrl, won: true, opp: 'r'); // реванш!
+      expect(s.onlineRevengeWins, 1);
+      // Победа над НОВЫМ соперником реваншем не считается.
+      s = _rec(ctrl, won: true, opp: 'fresh');
+      expect(s.onlineRevengeWins, 1);
+      // Победа после победы — не реванш.
+      s = _rec(ctrl, won: true, opp: 'r');
+      expect(s.onlineRevengeWins, 1);
     });
   });
 

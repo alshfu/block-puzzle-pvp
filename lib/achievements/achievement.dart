@@ -90,6 +90,11 @@ class OnlineOpponentRecord {
   /// Последний исход: `win` / `loss` / `draw`.
   final String lastResult;
 
+  /// Текущая серия ПОДРЯД побед над этим соперником (обнуляется при loss/draw).
+  /// Для on_dom_*/on_rm_* — «N побед подряд над одним соперником». Раньше эти
+  /// достижения считались по кумулятивным [wins], что давало ложные unlock'и.
+  final int winStreak;
+
   /// Ник соперника (последний известный) — для отображения в статистике.
   final String nick;
 
@@ -97,6 +102,7 @@ class OnlineOpponentRecord {
     this.count = 0,
     this.wins = 0,
     this.lastResult = 'draw',
+    this.winStreak = 0,
     this.nick = '',
   });
 
@@ -104,6 +110,7 @@ class OnlineOpponentRecord {
     'count': count,
     'wins': wins,
     'lastResult': lastResult,
+    if (winStreak != 0) 'winStreak': winStreak,
     if (nick.isNotEmpty) 'nick': nick,
   };
 
@@ -112,6 +119,7 @@ class OnlineOpponentRecord {
         count: (json['count'] as num?)?.toInt() ?? 0,
         wins: (json['wins'] as num?)?.toInt() ?? 0,
         lastResult: json['lastResult'] as String? ?? 'draw',
+        winStreak: (json['winStreak'] as num?)?.toInt() ?? 0,
         nick: json['nick'] as String? ?? '',
       );
 }
@@ -142,6 +150,7 @@ class Stats {
   final int onlineTotalClears;
   final int onlineTotalPerfects;
   final int onlineMaxRematchWinStreak;
+  final int onlineRevengeWins;
   final int onlineUniqueOpponents;
   final int onlineMostVsSingleOpponent;
   final int onlineConsecutiveDays;
@@ -180,6 +189,7 @@ class Stats {
     this.onlineTotalClears = 0,
     this.onlineTotalPerfects = 0,
     this.onlineMaxRematchWinStreak = 0,
+    this.onlineRevengeWins = 0,
     this.onlineUniqueOpponents = 0,
     this.onlineMostVsSingleOpponent = 0,
     this.onlineConsecutiveDays = 0,
@@ -216,6 +226,7 @@ class Stats {
     int? onlineTotalClears,
     int? onlineTotalPerfects,
     int? onlineMaxRematchWinStreak,
+    int? onlineRevengeWins,
     int? onlineUniqueOpponents,
     int? onlineMostVsSingleOpponent,
     int? onlineConsecutiveDays,
@@ -250,6 +261,7 @@ class Stats {
     onlineTotalPerfects: onlineTotalPerfects ?? this.onlineTotalPerfects,
     onlineMaxRematchWinStreak:
         onlineMaxRematchWinStreak ?? this.onlineMaxRematchWinStreak,
+    onlineRevengeWins: onlineRevengeWins ?? this.onlineRevengeWins,
     onlineUniqueOpponents: onlineUniqueOpponents ?? this.onlineUniqueOpponents,
     onlineMostVsSingleOpponent:
         onlineMostVsSingleOpponent ?? this.onlineMostVsSingleOpponent,
@@ -287,6 +299,7 @@ class Stats {
     'onlineTotalClears': onlineTotalClears,
     'onlineTotalPerfects': onlineTotalPerfects,
     'onlineMaxRematchWinStreak': onlineMaxRematchWinStreak,
+    'onlineRevengeWins': onlineRevengeWins,
     'onlineUniqueOpponents': onlineUniqueOpponents,
     'onlineMostVsSingleOpponent': onlineMostVsSingleOpponent,
     'onlineConsecutiveDays': onlineConsecutiveDays,
@@ -324,6 +337,7 @@ class Stats {
       onlineTotalClears: i('onlineTotalClears'),
       onlineTotalPerfects: i('onlineTotalPerfects'),
       onlineMaxRematchWinStreak: i('onlineMaxRematchWinStreak'),
+      onlineRevengeWins: i('onlineRevengeWins'),
       onlineUniqueOpponents: i('onlineUniqueOpponents'),
       onlineMostVsSingleOpponent: i('onlineMostVsSingleOpponent'),
       onlineConsecutiveDays: i('onlineConsecutiveDays'),

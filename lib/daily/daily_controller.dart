@@ -56,8 +56,23 @@ class DailyController extends Notifier<DailyState> {
         .setString(_dailyKey, jsonEncode(s.toJson()));
   }
 
+  /// Ротирует квесты при наступлении нового дня. `build()` вычисляет день лишь
+  /// однажды, а провайдер keepAlive и не пересобирается сам, поэтому при работе
+  /// приложения через полночь состояние «зависает» на вчерашнем дне. Вызывается
+  /// лениво перед каждой мутацией и при открытии экрана дейли (а также годится
+  /// для хука на `AppLifecycleState.resumed`, если он появится).
+  void refreshDay() {
+    final today = _todayKey();
+    if (state.dayKey != today) {
+      final fresh = DailyState.fresh(today);
+      state = fresh;
+      _persist(fresh);
+    }
+  }
+
   /// Засчитывает прогресс по итогу партии для всех активных квестов.
   void recordGame(DailyGameEvent event) {
+    refreshDay(); // не копить прогресс на вчерашних квестах после полуночи
     final progress = {...state.progress};
     for (final id in state.questIds) {
       final q = questById(id);
@@ -79,6 +94,7 @@ class DailyController extends Notifier<DailyState> {
 
   /// Забирает награду за выполненный квест [id] (если выполнен и не получен).
   void claim(String id) {
+    refreshDay(); // после полуночи вчерашние квесты уже неактуальны
     final q = questById(id);
     if (q == null) return;
     if (state.claimed.contains(id)) return;

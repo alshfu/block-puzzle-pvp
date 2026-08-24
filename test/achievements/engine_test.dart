@@ -162,6 +162,36 @@ void main() {
       );
       expect(r.progress['on_draw']!.unlocked, isTrue);
     });
+
+    test('on_dom_* разблокируются по серии побед над соперником (регрессия)', () {
+      final r = processOnlineMatch(
+        {},
+        const Stats(onlineGames: 5, onlineWins: 5, onlineMaxRematchWinStreak: 5),
+        const OnlineMatchInfo(
+          won: true, drew: false, scoreGap: 5, opponentScore: 3,
+          turnCount: 20, maxMultiClear: 0, bestCombo: 0,
+          themeId: 'neutral', opponentId: 'op',
+        ),
+        1000,
+      );
+      expect(r.progress['on_dom_3']!.unlocked, isTrue);
+      expect(r.progress['on_dom_5']!.unlocked, isTrue);
+      expect(r.progress['on_dom_10']!.unlocked, isFalse); // серия 5 < 10
+    });
+
+    test('on_revenge разблокируется по onlineRevengeWins (регрессия)', () {
+      final r = processOnlineMatch(
+        {},
+        const Stats(onlineGames: 2, onlineWins: 1, onlineRevengeWins: 1),
+        const OnlineMatchInfo(
+          won: true, drew: false, scoreGap: 5, opponentScore: 3,
+          turnCount: 20, maxMultiClear: 0, bestCombo: 0,
+          themeId: 'neutral', opponentId: 'op',
+        ),
+        1000,
+      );
+      expect(r.progress['on_revenge']!.unlocked, isTrue);
+    });
   });
 
   group('сериализация', () {
