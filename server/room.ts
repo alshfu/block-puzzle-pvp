@@ -31,7 +31,7 @@ import type {
   RoomServer2Client,
 } from "../party/protocol";
 import { randomInt } from "node:crypto";
-import { isValidMoveInput, RateLimiter } from "./limits";
+import { isValidMoveInput, isValidProfile, RateLimiter } from "./limits";
 import type { Conn } from "./types";
 
 const TURN_TIME_MS = 60_000;
@@ -136,6 +136,10 @@ export class Room {
   }
 
   private onMessage(conn: Conn, msg: RoomClient2Server): void {
+    // H-A: `JSON.parse("null")` возвращает валидный null; `null.type` уронил бы
+    // весь процесс (исключение из message-listener'а = uncaughtException).
+    // Отбрасываем не-объекты до доступа к полям.
+    if (msg === null || typeof msg !== "object") return;
     if (msg.type === "hello") {
       this.handleHello(conn, msg.profile, msg.cfg, msg.token);
       return;
@@ -155,6 +159,11 @@ export class Room {
   }
 
   private handleHello(conn: Conn, profile: OnlineProfile, requestedCfg?: { handSize?: number; rotationEnabled?: boolean; flipEnabled?: boolean }, token?: string): void {
+    // H-A: `hello` без валидного profile ронял процесс на profile.id.
+    if (!isValidProfile(profile)) {
+      this.send(conn, { type: "error", reason: "invalid profile" });
+      return;
+    }
     const idx = this.state.players.findIndex((p) => p.profile.id === profile.id);
     if (idx === -1) {
       this.send(conn, { type: "error", reason: "not a participant" });
@@ -324,7 +333,10 @@ export class Room {
 
   private endMatch(conn: Conn, reason: "resign" | "timeout"): void {
     const s = this.state;
-    if (s.status === "over") return;
+    // M-A: завершать можно только идущий матч. Раньше resign в статусе `waiting`
+    // (оппонент ещё не вошёл) засчитывал ему победу и менял ELO обоих —
+    // инструмент грифинга. timeout в waiting не срабатывает (таймер не запущен).
+    if (s.status !== "playing") return;
     const idx = s.players.findIndex((p) => p.conn === conn);
     if (idx === -1) return;
     const winner: 0 | 1 = (1 - idx) as 0 | 1;

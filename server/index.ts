@@ -157,6 +157,30 @@ httpServer.listen(PORT, () => {
   console.log(`[server] listening on :${PORT} (leaderboard at ${LEADERBOARD_FILE})`);
 });
 
+// ─── graceful shutdown & last-line defense ──────────────────────────────────
+// M-C: при `systemctl restart` (SIGTERM) сбрасываем дебаунс-лидерборд на диск,
+// иначе результаты за последнюю ≤1с теряются на каждом деплое.
+let shuttingDown = false;
+async function shutdown(signal: string): Promise<void> {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[server] ${signal} — flushing leaderboard`);
+  try {
+    await leaderboard.flushNow();
+  } catch (e) {
+    console.warn("[server] flush on shutdown failed:", e);
+  }
+  httpServer.close(() => process.exit(0));
+  setTimeout(() => process.exit(0), 3000).unref(); // страховка от зависших сокетов
+}
+process.on("SIGTERM", () => void shutdown("SIGTERM"));
+process.on("SIGINT", () => void shutdown("SIGINT"));
+
+// H-A (defense-in-depth): кривое сообщение/промис не должно ронять весь процесс
+// и с ним соседний сайт на VPS. Гарды в room/lobby — первая линия, это — вторая.
+process.on("uncaughtException", (err) => console.error("[server] uncaughtException:", err));
+process.on("unhandledRejection", (err) => console.error("[server] unhandledRejection:", err));
+
 // ─── route parsing ─────────────────────────────────────────────────────────
 interface Route {
   party: "lobby" | "room" | "leaderboard";

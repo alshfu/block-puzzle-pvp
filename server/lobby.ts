@@ -41,6 +41,7 @@ export class Lobby {
       } catch {
         return;
       }
+      if (msg === null || typeof msg !== "object") return; // H-A: не роняем процесс на null
       if (msg.type === "queue" && isValidProfile(msg.profile)) this.onQueue(conn, msg.profile);
       else if (msg.type === "cancel") this.onCancel(conn);
     });

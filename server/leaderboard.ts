@@ -66,6 +66,17 @@ export class Leaderboard {
     }
   }
 
+  /** M-C: немедленный сброс на диск для graceful shutdown (SIGTERM при деплое).
+   *  Гасит отложенный дебаунс и пишет сразу — иначе результаты за последнюю ≤1с
+   *  теряются при каждом `systemctl restart`. */
+  async flushNow(): Promise<void> {
+    if (this.saveTimer) {
+      clearTimeout(this.saveTimer);
+      this.saveTimer = null;
+    }
+    await this.flush();
+  }
+
   /** Возвращает рейтинги [pa, pb] ПОСЛЕ матча (для доставки клиенту). */
   reportMatch(report: LeaderboardMatchReport): [number, number] {
     const [pa, pb] = report.participants;
