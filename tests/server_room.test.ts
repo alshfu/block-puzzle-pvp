@@ -7,7 +7,7 @@
  *   M-A: `resign` в статусе `waiting` завершал матч и менял ELO до входа оппонента.
  * Соединения мокаются лёгким FakeConn (WebSocket-совместимый по нужным методам).
  */
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Lobby } from "../server/lobby";
 import { Room } from "../server/room";
@@ -203,6 +203,83 @@ describe("Room — валидация ходов и анти-чит", () => {
       JSON.stringify({ type: "move", pieceId, cells: [[0, 0]], r: 0, c: 0 }),
     );
     expect(c0.sent).toContainEqual({ type: "move_rejected", reason: "invalid orientation" });
+  });
+});
+
+/** Комната с обоими игроками в статусе playing + опциональным спаем onMatchOver. */
+function bothInRoom(onOver?: (winner: number) => [number, number]): {
+  room: Room;
+  c0: FakeConn;
+  c1: FakeConn;
+} {
+  const room = new Room(
+    "t",
+    { matchSeed: 42, participants: [p0, p1] },
+    ["ta", "tb"],
+    (r) => onOver?.(r.winner) ?? [1000, 1000],
+    () => {},
+  );
+  const c0 = new FakeConn();
+  const c1 = new FakeConn();
+  room.handleConnection(c0 as never);
+  room.handleConnection(c1 as never);
+  c0.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+  c1.emit("message", JSON.stringify({ type: "hello", profile: p1, token: "tb" }));
+  return { room, c0, c1 };
+}
+
+describe("Room — очередь ходов и реванш", () => {
+  it("ход не в свою очередь отклоняется", () => {
+    const { room, c1 } = bothInRoom();
+    expect(room.state.current).toBe(0);
+    c1.emit(
+      "message",
+      JSON.stringify({ type: "move", pieceId: "x", cells: [[0, 0]], r: 0, c: 0 }),
+    );
+    expect(c1.sent).toContainEqual({ type: "move_rejected", reason: "not your turn" });
+  });
+
+  it("оба запросили реванш → новый матч стартует (счёт/ход сброшены)", () => {
+    const { room, c0, c1 } = bothInRoom();
+    c0.emit("message", JSON.stringify({ type: "resign" })); // матч over
+    expect(room.state.status).toBe("over");
+    const seedBefore = room.state.matchSeed;
+    c0.emit("message", JSON.stringify({ type: "rematch_request" }));
+    c1.emit("message", JSON.stringify({ type: "rematch_request" }));
+    expect(room.state.status).toBe("playing");
+    expect(room.state.turnCount).toBe(0);
+    expect(room.state.players[0].score).toBe(0);
+    expect(room.state.result).toBeUndefined();
+    expect(room.state.matchSeed).not.toBe(seedBefore); // новый seed реванша
+  });
+
+  it("rematch_request во время playing игнорируется (только из over)", () => {
+    const { room } = bothInRoom();
+    const c = new FakeConn();
+    room.handleConnection(c as never);
+    c.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    c.emit("message", JSON.stringify({ type: "rematch_request" }));
+    expect(room.state.status).toBe("playing"); // не сбросилось
+  });
+});
+
+describe("Room — таймаут хода (fake timers)", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it("истечение turnDeadline завершает матч поражением текущего игрока", () => {
+    const winners: number[] = [];
+    const { room } = bothInRoom((w) => {
+      winners.push(w);
+      return [1000, 1000];
+    });
+    expect(room.state.status).toBe("playing");
+    expect(room.state.current).toBe(0);
+    vi.advanceTimersByTime(61_000); // TURN_TIME_MS=60с + запас
+    expect(room.state.status).toBe("over");
+    expect(room.state.result?.reason).toBe("timeout");
+    expect(room.state.result?.winner).toBe(1); // текущий (0) проиграл по времени
+    expect(winners).toContain(1); // отчёт в лидерборд
   });
 });
 
