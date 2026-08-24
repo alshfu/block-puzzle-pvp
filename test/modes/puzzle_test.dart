@@ -270,5 +270,27 @@ void main() {
       expect(st.movesUsed, def.pieceCount);
       expect(st.score, puzzleScore(def, def.pieceCount));
     });
+
+    test('hint: валидное размещение внутри маски; на решённом — null', () {
+      final c = _c();
+      final vm = c.read(puzzleProvider.notifier);
+      final def = puzzleById('sym-diamond')!;
+      vm.loadPuzzle(def);
+
+      final h = vm.hint();
+      expect(h, isNotNull);
+      final st = c.read(puzzleProvider);
+      for (final coord in h!) {
+        expect(st.mask.contains(coord), isTrue, reason: 'клетка вне маски');
+        expect(st.board[coord.r][coord.c].filled, isFalse, reason: 'клетка занята');
+      }
+
+      // Решаем уровень → подсказывать нечего.
+      for (final pl in def.solution) {
+        _replay(c, pl);
+      }
+      expect(c.read(puzzleProvider).solved, isTrue);
+      expect(vm.hint(), isNull);
+    });
   });
 }
