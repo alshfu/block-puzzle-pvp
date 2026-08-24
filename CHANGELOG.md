@@ -29,9 +29,13 @@
   «генератор + образец»: исполняемые образцы в `test/scenarios/`.
 - **Guardrails**: тест чистоты pure-слоя (нет Random/DateTime/Flutter/IO в
   `lib/core` и `*_core.dart`); тест целостности каталогов (ровно 1001, без дублей).
-- Всего **390 Flutter-тестов** зелёные (+72 за сессию), `flutter analyze` чист.
-- **NB**: `npm audit` показывает 5 уязвимостей — все транзитивные из npm-пакета
-  `firebase` (используется только в `legacy-ts/ui`, не в проде). Прод не затронут.
+- Всего **398 Flutter-тестов** зелёные (+80 за сессию), `flutter analyze` чист.
+- **npm-уязвимости устранены (0)**: удалён npm-пакет `firebase` (тянул уязвимые
+  websocket-driver critical + protobufjs) — использовался только ретайрнутым
+  `legacy-ts/ui`; `legacy-ts/ui/auth/firebase.ts` понижен до guest-only стаба
+  (прод на Dart-Firebase не затронут, rollback-сборка работает, бандл меньше).
+  Остаток dev-тулинга (postcss/nanoid/esbuild) добит `npm audit fix`. `npm audit`
+  → **0 vulnerabilities**; typecheck/55 TS-тестов/build зелёные.
 
 ### Фаза 11 — платформенный rollout: локальные части (2026-06-19)
 
