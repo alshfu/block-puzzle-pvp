@@ -101,6 +101,10 @@ class CustomTheme {
     final panelC = Color(panel);
     final inkC = Color(ink);
     return b.copyWith(
+      // id — enum ThemeId (пресеты neutral/candy/night); у кастомной темы своего
+      // ThemeId нет, поэтому наследуем id базового пресета. Для логики токенов id
+      // нигде не читается (выбор пресета — themeControllerProvider, кастом —
+      // equippedId), так что расхождения не возникает.
       id: base,
       label: label,
       bg: bgC,
