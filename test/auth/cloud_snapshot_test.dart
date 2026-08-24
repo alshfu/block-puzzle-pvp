@@ -112,5 +112,40 @@ void main() {
       expect(m.avatar, '🐼');
       expect(m.id, 'cloud-id'); // id из облака (единая идентичность)
     });
+
+    test('счётчики коммутативны: merge(a,b) == merge(b,a) по числам', () {
+      const a = Profile(nick: 'X', avatar: 'i', xp: 100, coins: 5, gamesPlayed: 0, wins: 0, crystals: 9);
+      const b = Profile(nick: 'X', avatar: 'i', xp: 40, coins: 80, gamesPlayed: 0, wins: 0, crystals: 3);
+      final ab = mergeProfiles(a, b);
+      final ba = mergeProfiles(b, a);
+      expect(ab.xp, ba.xp);
+      expect(ab.coins, ba.coins);
+      expect(ab.crystals, ba.crystals);
+      expect(ab.xp, 100);
+      expect(ab.coins, 80);
+      expect(ab.crystals, 9);
+    });
+
+    test('оба имени дефолтные → остаётся дефолт', () {
+      final local = Profile.initial;
+      final cloud = Profile.initial.copyWith(id: 'c');
+      final m = mergeProfiles(local, cloud);
+      expect(m.nick, Profile.initial.nick);
+      expect(m.avatar, Profile.initial.avatar);
+    });
+
+    test('cloud id пустой → сохраняется локальный id', () {
+      const local = Profile(nick: 'X', avatar: 'i', xp: 0, coins: 0, gamesPlayed: 0, wins: 0, id: 'local-only');
+      const cloud = Profile(nick: 'X', avatar: 'i', xp: 0, coins: 0, gamesPlayed: 0, wins: 0, id: '');
+      expect(mergeProfiles(local, cloud).id, 'local-only');
+    });
+
+    test('локаль дефолтная, облако не-дефолт → выигрывает облако', () {
+      final local = Profile.initial;
+      final cloud = Profile.initial.copyWith(nick: 'Алиса', avatar: '🦄', id: 'c');
+      final m = mergeProfiles(local, cloud);
+      expect(m.nick, 'Алиса');
+      expect(m.avatar, '🦄');
+    });
   });
 }
