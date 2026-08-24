@@ -15,7 +15,7 @@
 - Старый TS/React-фронт перенесён в **`legacy-ts/`** и ретайрнут. **НО:** его pure-TS ядро `legacy-ts/core` ещё **живое** — это зависимость Node PvP-сервера (`server/`).
 - **Прод на Flutter Web.** Cut-over выполнен 2026-06-10 (`npm run deploy:flutter`) — GitHub Pages отдаёт Flutter-сборку. VPS-сервер не трогался (Flutter-клиент говорит по тому же WS-протоколу).
 - **Архитектура — строго MVVM** (Model=ядро/репозитории, ViewModel=Riverpod-нотифайеры без `BuildContext`, View=виджеты без логики).
-- **Стек:** Dart 3.12 / Flutter 3.44.1 / Flame 1.37 / Riverpod 3.3.1. **176 тестов** зелёные, `flutter analyze` чист.
+- **Стек:** Dart 3.12 / Flutter 3.44.1 / Flame 1.37 / Riverpod 3.3.1. **399 Flutter-тестов + 55 TS** зелёные, `flutter analyze` чист, `npm audit` 0 уязвимостей (2026-08-23).
 - **IDE пользователя:** **IntelliJ IDEA Ultimate 2026.1.3** + плагины Flutter/Dart/Android. Бесплатные альтернативы (VS Code, Android Studio как «бесплатная», Cursor) **не предлагать** — оплачена JetBrains All Products подписка.
 - **Источник правды по правилам** — `TZ_BlockDuel_9x9.md` (RU, v1.0).
 
@@ -97,14 +97,14 @@ block_puzzle_pvp/   (= Flutter-проект block_duel в корне)
 ├── SECURITY_AUDIT_SERVER.md # ← аудит PvP-сервера
 ├── pubspec.yaml             # ← Flutter/Flame/Riverpod (version 2.0.0)
 ├── lib/                     # ← Dart-код: core/modes/game/ui/online/auth/storage/...
-├── test/                    # ← flutter_test (176)
+├── test/                    # ← flutter_test (399); guardrails purity+catalog-integrity
 ├── integration_test/        # ← E2E pilot (app_test.dart)
 ├── web/ android/ ios/ macos/ assets/   # ← Flutter-платформы/ассеты
 ├── server/                  # ← Node WS сервер (живой, прод; тянет legacy-ts/core)
-├── legacy-ts/               # ← бывший src/: TS/React-фронт (ретайрнут; core живо)
+├── legacy-ts/               # ← бывший src/: TS/React-фронт (ретайрнут; firebase удалён → guest-only стаб)
 ├── party/                   # ← опц. PartyKit-вариант (не используется)
-├── tools/                   # ← bot-sim.ts, gen_test_plan.py, pentest_local.mjs
-├── qa/                      # ← QA-тест-планы по платформам
+├── tools/                   # ← bot-sim.ts, gen_test_plan.py, gen_scenarios.py, pentest_local.mjs
+├── qa/                      # ← QA-планы по платформам + SCENARIOS_* (18×1001 «1000 и 1»)
 ├── legacy/                  # ← инертный визуальный референс (НЕ ТРОГАТЬ)
 ├── package.json index.html vite.config.ts  # ← TS/Vite сборка (legacy/откат)
 └── .github/workflows/deploy.yml.disabled    # ← Actions выключен (биллинг)
@@ -155,6 +155,8 @@ block_puzzle_pvp/   (= Flutter-проект block_duel в корне)
 | 2026-06-18 | **Старт Фазы 8 (глубокая прогрессия)**: 8.1 структурная XP-формула `lib/profile/xp_formula.dart`; 8.2 награды за уровни `lib/profile/level_rewards.dart` (+ начисление при level-up); 8.4 квест-движок weekly/seasonal `lib/quests/` + экран `/quests` (3 вкладки). Фазы 6/7 — позже. Server-side валидация квестов — 🔒 | git log + ROADMAP § 8 + memory `[[project-phase8-progression]]` |
 | 2026-06-18 | **Режим «📺 Авто-шоу» + онлайн-трансляция**: ИИ vs ИИ 9:16 (`/showcase`); кнопка «В эфир». Стриминг на YouTube Live БЕЗ OAuth по ключу трансляции: релей `server/stream-relay.ts` (ws→ffmpeg→RTMP, `npm run stream:relay`), клиент `lib/showcase/broadcast_web.dart` (getDisplayMedia→WS-чанки). **Запуск локально** (`ws://localhost:2000`, ffmpeg на машине; VPS не нужен). Инструкция `STREAMING.md`. Реальный эфир делает пользователь (ключ+захват вкладки). **258 тестов** зелёные | git log + STREAMING.md + memory `[[project-showcase-mode]]` |
 | 2026-06-18 | **Классический Tetris + клавиатура; Фаза 8 (8.2/8.3/8.5)**: новый режим «🧩 Tetris» `lib/modes/tetris/` (живое падение 10×20, pure-ядро без таймеров + гравитация через Ticker `tick(dt)`, hold/NEXT/wall-kick/схлопывание строк, экран с HUD и оверлеями, маршрут `/tetris`). **Грамотное управление с клавиатуры** для web/desktop: Tetris (стрелки/Space/Z-X/C/P, DAS) + 9×9 (1/2/3 выбор, Tab, стрелки-курсор+Enter, `BoardView.keyboardCursor`). Фаза 8: 8.2 next-level reward на профиле, 8.3 `opening_hand.dart` (валидный hand новичкам), 8.5 зеркальный набор `mirror_pieces.dart` (опт-ин в Settings, gate 100-й ур., применён в Tetris). **284 теста** зелёные, analyze чист | git log + ROADMAP §5.7/§8 + CHANGELOG + memory `[[project-phase8-progression]]` `[[project-phase5-platform]]` |
+
+| 2026-08-23 | **Сессия закалки**: 3 параллельных аудита кода → починка находок (HIGH онлайн-накопители при reconnect/rematch; MEDIUM puzzle-валидация; LOW ×6; ничья→12 монет; строгий детерминизм resume через сериализацию RNG; потолок уровня 100 от фарма кристаллов). **Правило «1000 и 1»**: `tools/gen_scenarios.py` → 18 каталогов `qa/SCENARIOS_*` (app+13 режимов+4 платформы) × 1001 = **18 018 сценариев** (детерминированы), гибрид с образцами `test/scenarios/`. **Guardrails**: `test/core/purity_guard_test.dart` + `test/scenarios/catalog_integrity_test.dart`. **npm audit → 0** (удалён legacy `firebase` → guest-only стаб в `legacy-ts/ui/auth/firebase.ts`). **399 Flutter + 55 TS** зелёные | git log (10 коммитов) + CHANGELOG + memory `[[project-scenarios-1001]]` `[[project-state]]` |
 
 Текущая версия: **v2.0.0** (`pubspec.yaml`). Legacy TS-версия — `v1.6.1` (`package.json`).
 
