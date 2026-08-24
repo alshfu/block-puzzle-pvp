@@ -1,0 +1,12 @@
+День 063 · Неделя 9: Честная случайность
+Тип: 🎯 МИНИ-ПРОЕКТ (праздничная сцена)   ·   Герои: llama
+
+Что иллюстрируем (кратко): a friendly random-machine labeled mulberry32, predictable magic
+
+─── ГОТОВЫЙ ПРОМПТ (англ. — вставь в генератор изображений) ───
+
+flat vector children's book illustration, soft rounded shapes, thick soft outlines, cozy friendly mood, dark navy background #0E1116, glowing tetromino blocks in orange #E0913E, cyan #2FB6D2, purple #9B5DE0 and green #43AE68, warm magical Code World, cute, simple, centered square composition. Characters: Lu the llama, a tall calm cyan llama with a long graceful neck and wise kind eyes. Scene: a friendly random-machine labeled mulberry32, predictable magic.
+
+─── ПОДСКАЗКА ───
+Правь по чуть-чуть, как код: не нравится поза/цвет — добавь деталь и
+сгенерируй снова. Держи единый стиль, чтобы все картинки были «одной семьёй».

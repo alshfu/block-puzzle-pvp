@@ -1,0 +1,12 @@
+День 040 · Неделя 6: Списки
+Тип: иллюстрация дня   ·   Герои: cats
+
+Что иллюстрируем (кратко): arranging glowing items in a neat numbered row starting at 0
+
+─── ГОТОВЫЙ ПРОМПТ (англ. — вставь в генератор изображений) ───
+
+flat vector children's book illustration, soft rounded shapes, thick soft outlines, cozy friendly mood, dark navy background #0E1116, glowing tetromino blocks in orange #E0913E, cyan #2FB6D2, purple #9B5DE0 and green #43AE68, warm magical Code World, cute, simple, centered square composition. Characters: two tiny cats, one soft purple and one warm red, with big round eyes, playful. Scene: arranging glowing items in a neat numbered row starting at 0.
+
+─── ПОДСКАЗКА ───
+Правь по чуть-чуть, как код: не нравится поза/цвет — добавь деталь и
+сгенерируй снова. Держи единый стиль, чтобы все картинки были «одной семьёй».
