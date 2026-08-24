@@ -46,7 +46,10 @@
   `flushNow()` + graceful-shutdown; нет heartbeat (мёртвые сокеты блокировали
   reconnect) → ping/pong каждые 30с + terminate; **LOW** — бэкап битого файла
   лидерборда (`.corrupt-*`) вместо тихой потери, корректный `opponent_left`.
-  Первые **6 серверных vitest-тестов** (`tests/server_room.test.ts`); всего 62 TS.
+  **Серверное тест-покрытие с нуля**: 22 vitest-теста (`tests/server_room` +
+  `server_leaderboard` + `server_lobby`) — Elo/W-L-D/анти-фарм/персистентность/
+  битый файл, матчмейкинг/bot-fallback/cancel, reconnect/анти-чит/валидация
+  ходов. Всего **78 TS-тестов** зелёные.
 - Всего **404 Flutter-теста** зелёные (+86 за сессию), `flutter analyze` чист.
 - **npm-уязвимости устранены (0)**: удалён npm-пакет `firebase` (тянул уязвимые
   websocket-driver critical + protobufjs) — использовался только ретайрнутым
