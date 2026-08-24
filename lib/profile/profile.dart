@@ -9,6 +9,12 @@
 /// Соответствие TS: `src/ui/storage/profile.ts` + `stats.ts`.
 library;
 
+/// Максимальный уровень прогрессии (ROADMAP §8.2/§8.5). Награды определены для
+/// уровней 1–100, на 100-м — финальная разблокировка (зеркальный набор). Выше не
+/// растём: иначе `_crystalsForLevel` фармил бы кристаллы на кратных 5/10/25
+/// уровнях бесконечным гриндом.
+const int maxLevel = 100;
+
 /// XP, требуемый для достижения уровня [level] (треугольная кривая
 /// `floor(50·n·(n+1)/2)`). Уровень 1 достигается при 0 XP.
 int xpToReachLevel(int level) {
@@ -16,10 +22,10 @@ int xpToReachLevel(int level) {
   return (50 * n * (n + 1) / 2).floor();
 }
 
-/// Вычисляет текущий уровень по накопленному [xp] (≥ 1).
+/// Вычисляет текущий уровень по накопленному [xp] (1..[maxLevel]).
 int levelForXp(int xp) {
   var level = 1;
-  while (xp >= xpToReachLevel(level + 1)) {
+  while (level < maxLevel && xp >= xpToReachLevel(level + 1)) {
     level++;
   }
   return level;

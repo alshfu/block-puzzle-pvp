@@ -34,6 +34,13 @@ void main() {
     expect(levelForXp(xpToReachLevel(5)), 5);
   });
 
+  test('уровень зажат потолком maxLevel=100 (нет фарма кристаллов гриндом)', () {
+    expect(levelForXp(xpToReachLevel(100)), 100);
+    // Огромный XP не даёт уровень >100.
+    expect(levelForXp(1 << 30), maxLevel);
+    expect(levelForXp(xpToReachLevel(100) * 100), 100);
+  });
+
   test('профиль (де)сериализуется без потерь', () {
     const p = Profile(
       nick: 'Тест',
