@@ -51,5 +51,20 @@ void main() {
     test('всего 18 каталогов (1 app + 13 mode + 4 platform)', () {
       expect(_catalogs.length, 18);
     });
+
+    test('каждый режим реестра game_mode_descriptor имеет каталог', () {
+      final descriptor = File('lib/modes/game_mode_descriptor.dart');
+      expect(descriptor.existsSync(), isTrue);
+      final ids = RegExp(r"id:\s*'([^']+)'")
+          .allMatches(descriptor.readAsStringSync())
+          .map((m) => m.group(1)!)
+          .toSet();
+      expect(ids, isNotEmpty);
+      for (final id in ids) {
+        expect(File('qa/SCENARIOS_MODE_$id.md').existsSync(), isTrue,
+            reason: 'режим «$id» из реестра без каталога — запусти gen_scenarios.py '
+                'и добавь профиль в MODE_PROFILES');
+      }
+    });
   });
 }
