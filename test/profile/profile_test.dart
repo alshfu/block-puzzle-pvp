@@ -79,4 +79,18 @@ void main() {
     expect(after.gamesPlayed, 1);
     expect(after.wins, 0);
   });
+
+  test('монеты: победа > ничья > поражение', () async {
+    final c1 = await _container();
+    final win = c1.read(profileControllerProvider.notifier).recordResult(won: true);
+    final c2 = await _container();
+    final draw = c2
+        .read(profileControllerProvider.notifier)
+        .recordResult(won: false, draw: true);
+    final c3 = await _container();
+    final loss =
+        c3.read(profileControllerProvider.notifier).recordResult(won: false);
+    expect(win, greaterThan(draw), reason: 'победа дороже ничьи');
+    expect(draw, greaterThan(loss), reason: 'ничья дороже поражения');
+  });
 }

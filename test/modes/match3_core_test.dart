@@ -136,5 +136,13 @@ void main() {
       }
       expect(withMove, greaterThan(0));
     });
+
+    test('свежее поле НЕ содержит стартовых серий (findMatches пусто)', () {
+      for (final seed in [1, 2, 3, 4, 5, 42, 123, 999, 7777]) {
+        final grid = generateMatch3Grid(seed);
+        expect(findMatches(grid), isEmpty,
+            reason: 'seed=$seed: на старте не должно быть готовых серий');
+      }
+    });
   });
 }

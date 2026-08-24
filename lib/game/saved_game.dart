@@ -190,16 +190,25 @@ String encodeBoard(Board board) {
   return sb.toString();
 }
 
-/// Восстанавливает доску из строковой кодировки.
+/// Восстанавливает доску из строковой кодировки. Валидирует длину: усечённая/
+/// раздутая строка (битый save) → [FormatException], чтобы `load()` вернул
+/// `null`, а не подняло полупустую доску, рассинхронную со счётом/мешками.
 Board decodeBoard(String encoded) {
+  const expected = boardSize * boardSize;
+  if (encoded.length != expected) {
+    throw FormatException(
+      'decodeBoard: длина ${encoded.length}, ожидалось $expected (битый save)',
+    );
+  }
   final board = emptyBoard();
-  for (int i = 0; i < encoded.length && i < boardSize * boardSize; i++) {
+  for (int i = 0; i < expected; i++) {
     final ch = encoded[i];
     if (ch == '.') continue;
-    board[i ~/ boardSize][i % boardSize] = Cell(
-      filled: true,
-      owner: int.parse(ch),
-    );
+    final owner = int.tryParse(ch);
+    if (owner == null) {
+      throw FormatException('decodeBoard: недопустимый символ «$ch» на позиции $i');
+    }
+    board[i ~/ boardSize][i % boardSize] = Cell(filled: true, owner: owner);
   }
   return board;
 }

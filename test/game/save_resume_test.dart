@@ -112,4 +112,20 @@ void main() {
       after.players[after.current].hand.map((p) => p.id).toList(),
     );
   });
+
+  test('decodeBoard: корректная кодировка round-trip', () {
+    final board = emptyBoard();
+    board[0][0] = Cell(filled: true, owner: 0);
+    board[8][8] = Cell(filled: true, owner: 1);
+    expect(encodeBoard(decodeBoard(encodeBoard(board))), encodeBoard(board));
+  });
+
+  test('decodeBoard: усечённая строка → FormatException', () {
+    expect(() => decodeBoard('.' * 80), throwsFormatException);
+  });
+
+  test('decodeBoard: недопустимый символ → FormatException', () {
+    final bad = '${'.' * 80}X';
+    expect(() => decodeBoard(bad), throwsFormatException);
+  });
 }

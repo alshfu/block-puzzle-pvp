@@ -203,6 +203,19 @@ void main() {
       };
       expect(() => PuzzleDef.fromJson(bad), throwsFormatException);
     });
+
+    test('fromJson: неизвестная категория/сложность → FormatException', () {
+      final bad = {
+        'id': 'bad',
+        'name': 'X',
+        'category': 'aliens', // нет такой категории
+        'difficulty': 'easy',
+        'w': 3,
+        'h': 3,
+        'solution': const [],
+      };
+      expect(() => PuzzleDef.fromJson(bad), throwsFormatException);
+    });
   });
 
   group('ViewModel', () {

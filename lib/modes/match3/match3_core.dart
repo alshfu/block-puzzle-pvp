@@ -50,6 +50,17 @@ Match3Grid generateMatch3Grid(int seed) {
         color = (rng() * match3Colors).floor();
         guard++;
       } while (guard < 50 && _makesRunAt(grid, r, c, color));
+      // Крайне маловероятный случай исчерпания guard: берём первый цвет, точно
+      // НЕ образующий стартовую серию (их всегда ≥1 из 6 при ≤2 запретных).
+      // rng не потребляется — детерминизм реальных seed'ов не меняется.
+      if (_makesRunAt(grid, r, c, color)) {
+        for (int alt = 0; alt < match3Colors; alt++) {
+          if (!_makesRunAt(grid, r, c, alt)) {
+            color = alt;
+            break;
+          }
+        }
+      }
       grid[r][c] = color;
     }
   }

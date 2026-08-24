@@ -20,7 +20,10 @@ import 'profile.dart';
 import 'xp_formula.dart';
 
 /// Монеты за матч (XP считается структурной формулой [xpForMatch], Фаза 8.1).
+/// Ничья ценится выше поражения, но ниже победы — как множитель XP за ничью
+/// (0.5): раньше ничья ошибочно падала в ветку поражения (5 монет).
 const int _coinsForWin = 25;
+const int _coinsForDraw = 12;
 const int _coinsForLoss = 5;
 
 /// ViewModel профиля игрока.
@@ -159,7 +162,9 @@ class ProfileController extends Notifier<Profile> {
       diffMult: diffMult,
       winStreak: winStreak,
     );
-    final coinGain = won ? _coinsForWin : _coinsForLoss;
+    final coinGain = draw
+        ? _coinsForDraw
+        : (won ? _coinsForWin : _coinsForLoss);
     final before = state.level;
     state = state.copyWith(
       xp: state.xp + xpGain,

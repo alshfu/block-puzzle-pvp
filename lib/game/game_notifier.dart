@@ -76,9 +76,15 @@ class GameNotifier extends Notifier<GameState> {
     if (config.resume) {
       final saved = ref.read(savedGameStoreProvider).load();
       if (saved != null && saved.seed == config.seed) {
-        final restored = _restore(saved);
-        _armTimers(restored);
-        return restored;
+        try {
+          final restored = _restore(saved);
+          _armTimers(restored);
+          return restored;
+        } catch (_) {
+          // Битая сохранёнка (например усечённая доска → FormatException):
+          // чистим её и стартуем свежую партию, а не крешим resume.
+          ref.read(savedGameStoreProvider).clear();
+        }
       }
     }
     final fresh = _freshState();

@@ -40,6 +40,8 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
   final OnlineMatchArgs args;
 
   ITransport? _transport;
+  StreamSubscription<Map<String, dynamic>>? _inSub;
+  StreamSubscription<TransportStatus>? _statusSub;
   Timer? _reconnect;
   int _attempt = 0;
   bool _disposed = false;
@@ -60,6 +62,8 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
     ref.onDispose(() {
       _disposed = true;
       _reconnect?.cancel();
+      _inSub?.cancel();
+      _statusSub?.cancel();
       _transport?.close();
     });
     _connect();
@@ -70,12 +74,17 @@ class OnlineGameNotifier extends Notifier<OnlineMatchState> {
 
   void _connect() {
     if (_disposed) return;
+    // Отменяем подписки прошлого транспорта ЯВНО (не полагаясь только на
+    // закрытие его контроллеров), иначе после reconnect _onMessage/_onStatus
+    // могли бы вызываться дважды.
+    _inSub?.cancel();
+    _statusSub?.cancel();
     _transport?.close();
     final factory = ref.read(transportFactoryProvider);
     final transport = factory(partyUriRoom(args.roomId));
     _transport = transport;
-    transport.incoming.listen(_onMessage);
-    transport.status.listen(_onStatus);
+    _inSub = transport.incoming.listen(_onMessage);
+    _statusSub = transport.status.listen(_onStatus);
   }
 
   void _onStatus(TransportStatus s) {

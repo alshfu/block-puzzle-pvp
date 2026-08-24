@@ -78,11 +78,18 @@ class CustomThemesController extends Notifier<CustomThemesState> {
     }
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
+      // Пропускаем битые темы поштучно, а не роняем весь список: одна
+      // повреждённая запись не должна стирать остальные пользовательские темы.
+      final themes = <CustomTheme>[];
+      for (final t in (json['themes'] as List? ?? [])) {
+        try {
+          themes.add(CustomTheme.fromJson(t as Map<String, dynamic>));
+        } catch (_) {
+          // битая тема — пропускаем
+        }
+      }
       return CustomThemesState(
-        themes: [
-          for (final t in (json['themes'] as List? ?? []))
-            CustomTheme.fromJson(t as Map<String, dynamic>),
-        ],
+        themes: themes,
         equippedId: json['equipped'] as String?,
         unlocked: unlocked,
       );

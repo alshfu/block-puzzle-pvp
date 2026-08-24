@@ -130,13 +130,24 @@ class PuzzleDef {
     return PuzzleDef(
       id: json['id'] as String,
       name: json['name'] as String,
-      category: PuzzleCategory.values.byName(json['category'] as String),
-      difficulty: PuzzleDifficulty.values.byName(json['difficulty'] as String),
+      category: _enumByName(
+        PuzzleCategory.values, json['category'] as String, 'category'),
+      difficulty: _enumByName(
+        PuzzleDifficulty.values, json['difficulty'] as String, 'difficulty'),
       width: width,
       height: height,
       solution: solution,
     );
   }
+}
+
+/// Ищет enum-значение по имени, но бросает [FormatException] (а не
+/// `ArgumentError`) на неизвестном имени — единый тип ошибки разбора пака.
+T _enumByName<T extends Enum>(List<T> values, String name, String field) {
+  for (final v in values) {
+    if (v.name == name) return v;
+  }
+  throw FormatException('PuzzleDef: недопустимое $field «$name»');
 }
 
 /// Создаёт пустое поле [height]×[width].
