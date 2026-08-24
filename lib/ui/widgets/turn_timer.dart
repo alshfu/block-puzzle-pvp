@@ -30,8 +30,10 @@ class TurnTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Скрыт, если таймер выключен или партия окончена.
-    if (!state.turnLimit.isFinite || state.gameOver) {
+    // Скрыт, если таймер выключен/некорректен или партия окончена. Проверка
+    // `turnLimit > 0` заодно исключает деление на ноль → NaN → assert в
+    // LinearProgressIndicator (на практике turnLimit — blitz-секунды или бесконеч.).
+    if (!state.turnLimit.isFinite || state.turnLimit <= 0 || state.gameOver) {
       return const SizedBox.shrink();
     }
     final ratio = (state.turnRemaining / state.turnLimit).clamp(0.0, 1.0);

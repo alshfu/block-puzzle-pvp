@@ -166,7 +166,13 @@ class Broadcaster {
       ..href = url
       ..download = 'blockduel-shorts.webm';
     a.click();
-    web.URL.revokeObjectURL(url);
-    _chunks.clear();
+    // Отзываем object-URL и чистим чанки ОТЛОЖЕННО: скачивание крупного blob'а
+    // (запись экрана — мегабайты) стартует асинхронно, и синхронный revoke сразу
+    // после click() в части браузеров отзывает URL до чтения данных → пустой/
+    // битый файл. 30 с с запасом достаточно, чтобы загрузка началась.
+    Timer(const Duration(seconds: 30), () {
+      web.URL.revokeObjectURL(url);
+      _chunks.clear();
+    });
   }
 }

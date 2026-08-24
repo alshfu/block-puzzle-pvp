@@ -502,15 +502,19 @@ class _RoundResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final result = state.reproResult[state.reproducer]!;
-    final pct = (result.accuracy * 100).round();
+    // Защитно: результат раунда может быть ещё не записан (гонка авто-финиша по
+    // таймеру). Тогда показываем нулевой итог, а не роняем экран null-unwrap'ом.
+    final result = state.reproResult[state.reproducer];
+    final pct = ((result?.accuracy ?? 0) * 100).round();
     final last = state.round == 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Spacer(),
         Text(
-          result.perfect ? '🎯 Идеально!' : '✅ Раунд ${state.round + 1} сыгран',
+          (result?.perfect ?? false)
+              ? '🎯 Идеально!'
+              : '✅ Раунд ${state.round + 1} сыгран',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: tokens.ink,
@@ -522,8 +526,8 @@ class _RoundResult extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           '${_playerName(state.reproducer)} воспроизвёл на $pct%\n'
-          '(${result.correctCells}/${result.totalCells} клеток) · '
-          '${result.score} очков',
+          '(${result?.correctCells ?? 0}/${result?.totalCells ?? 0} клеток) · '
+          '${result?.score ?? 0} очков',
           textAlign: TextAlign.center,
           style: TextStyle(color: tokens.muted, fontSize: 15, height: 1.5),
         ),
