@@ -108,6 +108,87 @@ describe("Room — resign в waiting не завершает матч (M-A)", ()
   });
 });
 
+describe("Room — аутентификация и reconnect", () => {
+  it("неверный token → error + закрытие", () => {
+    const room = makeRoom();
+    const conn = new FakeConn();
+    room.handleConnection(conn as never);
+    conn.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "WRONG" }));
+    expect(conn.sent).toContainEqual({ type: "error", reason: "invalid token" });
+    expect(conn.readyState).toBe(3); // закрыт
+  });
+
+  it("reconnect по мёртвому conn проходит (слот освобождён при close)", () => {
+    const room = makeRoom();
+    const c0 = new FakeConn();
+    room.handleConnection(c0 as never);
+    c0.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    expect(c0.sent.some((m) => (m as { type?: string }).type === "joined")).toBe(true);
+    c0.emit("close", undefined); // разрыв → слот освобождён
+
+    const c0b = new FakeConn(); // новое соединение того же игрока
+    room.handleConnection(c0b as never);
+    c0b.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    expect(c0b.sent.some((m) => (m as { type?: string }).type === "joined")).toBe(true);
+    expect(c0b.sent).not.toContainEqual({ type: "error", reason: "slot already connected" });
+  });
+
+  it("угон занятого ЖИВОГО слота отклоняется", () => {
+    const room = makeRoom();
+    const c0 = new FakeConn();
+    room.handleConnection(c0 as never);
+    c0.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    const hijack = new FakeConn(); // второй коннект под тем же id, старый жив
+    room.handleConnection(hijack as never);
+    hijack.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    expect(hijack.sent).toContainEqual({ type: "error", reason: "slot already connected" });
+  });
+});
+
+describe("Room — валидация ходов и анти-чит", () => {
+  function startedRoom(): { room: Room; c0: FakeConn } {
+    const room = makeRoom();
+    const c0 = new FakeConn();
+    const c1 = new FakeConn();
+    room.handleConnection(c0 as never);
+    room.handleConnection(c1 as never);
+    c0.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    c1.emit("message", JSON.stringify({ type: "hello", profile: p1, token: "tb" }));
+    return { room, c0 };
+  }
+
+  it("ход до старта матча отклоняется", () => {
+    const room = makeRoom();
+    const c0 = new FakeConn();
+    room.handleConnection(c0 as never);
+    c0.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    // только один игрок → waiting
+    c0.emit("message", JSON.stringify({ type: "move", pieceId: "x", cells: [[0, 0]], r: 0, c: 0 }));
+    expect(c0.sent).toContainEqual({ type: "move_rejected", reason: "match not active" });
+  });
+
+  it("кривой ход (мусорные cells) отклоняется как malformed", () => {
+    const { c0 } = startedRoom();
+    c0.emit("message", JSON.stringify({ type: "move", pieceId: "x", cells: "нет", r: 0, c: 0 }));
+    expect(c0.sent).toContainEqual({ type: "move_rejected", reason: "malformed move" });
+  });
+
+  it("анти-чит: cells не соответствуют ориентации фигуры → отклонение", () => {
+    const { c0 } = startedRoom();
+    const joined = c0.sent.find((m) => (m as { type?: string }).type === "joined") as {
+      state: { players: Array<{ hand: Array<{ id: string }> }> };
+    };
+    const pieceId = joined.state.players[0].hand[0].id;
+    // Одна клетка вместо тетромино — валидна по форме, но не совпадает ни с одной
+    // ориентацией фигуры → анти-чит отклоняет.
+    c0.emit(
+      "message",
+      JSON.stringify({ type: "move", pieceId, cells: [[0, 0]], r: 0, c: 0 }),
+    );
+    expect(c0.sent).toContainEqual({ type: "move_rejected", reason: "invalid orientation" });
+  });
+});
+
 describe("Lobby — устойчивость к malformed сообщениям (H-A)", () => {
   it("сообщение `null` не роняет обработчик", () => {
     const lobby = new Lobby(() => "room-x");
