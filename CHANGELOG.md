@@ -36,6 +36,17 @@
   «генератор + образец»: исполняемые образцы в `test/scenarios/`.
 - **Guardrails**: тест чистоты pure-слоя (нет Random/DateTime/Flutter/IO в
   `lib/core` и `*_core.dart`); тест целостности каталогов (ровно 1001, без дублей).
+- **Аудит PvP-сервера (server/*.ts, ранее без тестов вообще)** — ⚠️ требует
+  деплоя на VPS (`git pull && systemctl restart blockduel-pvp`): **HIGH** — одно
+  сообщение `null`/`hello` без profile роняло ВЕСЬ Node-процесс (uncaughtException;
+  DoS всего VPS) → гарды в room/lobby + валидация profile + `process.on(
+  uncaughtException/unhandledRejection)`; **MEDIUM** — `resign` в `waiting`
+  завершал матч и менял ELO до входа оппонента → гард `status==='playing'`;
+  лидерборд не сбрасывался на SIGTERM (потеря результатов при каждом деплое) →
+  `flushNow()` + graceful-shutdown; нет heartbeat (мёртвые сокеты блокировали
+  reconnect) → ping/pong каждые 30с + terminate; **LOW** — бэкап битого файла
+  лидерборда (`.corrupt-*`) вместо тихой потери, корректный `opponent_left`.
+  Первые **6 серверных vitest-тестов** (`tests/server_room.test.ts`); всего 62 TS.
 - Всего **404 Flutter-теста** зелёные (+86 за сессию), `flutter analyze` чист.
 - **npm-уязвимости устранены (0)**: удалён npm-пакет `firebase` (тянул уязвимые
   websocket-driver critical + protobufjs) — использовался только ретайрнутым
