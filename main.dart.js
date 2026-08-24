@@ -10031,8 +10031,10 @@ this.c=b
 this.d=c},
 aih(a){var s=a-1
 return B.c.c3(50*s*(s+1)/2)},
-nu(a){var s,r,q
-for(s=1;r=s+1,q=r-1,a>=B.c.c3(50*q*(q+1)/2);s=r);return s},
+nu(a){var s,r,q=1
+for(;;){if(q<100){s=q+1-1
+r=a>=B.c.c3(50*s*(s+1)/2)}else r=!1
+if(!r)break;++q}return q},
 bco(a){var s,r,q,p,o,n,m,l,k,j,i=J.a6(a),h=A.am(i.h(a,"nick"))
 if(h==null)h="\u0418\u0433\u0440\u043e\u043a"
 s=A.am(i.h(a,"avatar"))
