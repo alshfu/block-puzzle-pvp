@@ -114,9 +114,27 @@ class SeasonPassController extends Notifier<SeasonPassState> {
         );
   }
 
+  /// Ротирует пропуск при смене сезона: `build()` вычисляет ключ однажды, а
+  /// провайдер keepAlive не пересобирается сам (как в Daily/Quests-контроллерах).
+  /// Практический риск мал — сезон 90 дней, процесс столько не живёт, — но для
+  /// консистентности перепроверяем перед мутациями. Идемпотентно.
+  void refreshSeason() {
+    final key = _currentSeasonKey();
+    if (state.seasonKey == key) return;
+    state = SeasonPassState(
+      seasonKey: key,
+      xp: 0,
+      premium: false,
+      claimedFree: const {},
+      claimedPremium: const {},
+    );
+    _persist();
+  }
+
   /// Добавляет сезонный XP (из завершённых матчей).
   void addXp(int amount) {
     if (amount <= 0) return;
+    refreshSeason();
     state = state.copyWith(xp: state.xp + amount);
     _persist();
   }
@@ -131,6 +149,7 @@ class SeasonPassController extends Notifier<SeasonPassState> {
   /// Забирает награду бесплатного трека за [tier]; `null`, если недоступно
   /// (уровень не достигнут или уже забрано).
   SeasonReward? claimFree(int tier) {
+    refreshSeason();
     if (tier < 1 || tier > state.tier || state.claimedFree.contains(tier)) {
       return null;
     }
@@ -142,6 +161,7 @@ class SeasonPassController extends Notifier<SeasonPassState> {
   /// Забирает награду премиум-трека за [tier]; `null`, если недоступно
   /// (нет премиума, уровень не достигнут или уже забрано).
   SeasonReward? claimPremium(int tier) {
+    refreshSeason();
     if (!state.premium ||
         tier < 1 ||
         tier > state.tier ||

@@ -81,5 +81,18 @@ void main() {
       expect(c.read(seasonPassControllerProvider).premium, isTrue);
       expect(vm.claimPremium(1), isNotNull);
     });
+
+    test('refreshSeason в том же сезоне идемпотентен (прогресс цел)', () async {
+      final c = await _container();
+      final vm = c.read(seasonPassControllerProvider.notifier);
+      vm.addXp(seasonXpPerTier + 5);
+      vm.buyPremium();
+      final before = c.read(seasonPassControllerProvider);
+      vm.refreshSeason(); // тот же сезон — не сбрасывать
+      final after = c.read(seasonPassControllerProvider);
+      expect(after.seasonKey, before.seasonKey);
+      expect(after.xp, before.xp);
+      expect(after.premium, isTrue);
+    });
   });
 }
