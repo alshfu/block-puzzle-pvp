@@ -7,11 +7,14 @@
 ///   Имена тестов ссылаются на `MODE-<ID>` каталога соответствующего режима.
 library;
 
+import 'package:block_duel/core/core.dart';
 import 'package:block_duel/modes/coop/coop_core.dart';
 import 'package:block_duel/modes/ladder/composite_score.dart';
 import 'package:block_duel/modes/match3/match3_core.dart';
+import 'package:block_duel/modes/memory_solo/memory_solo_puzzle.dart';
 import 'package:block_duel/modes/puzzle/puzzle_core.dart';
 import 'package:block_duel/modes/puzzle/puzzle_pack.dart';
+import 'package:block_duel/modes/tetris/tetris_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -63,6 +66,48 @@ void main() {
     });
   });
 
+  group('MODE-TETRIS — Классический Tetris 10×20', () {
+    test('MODE-TETRIS: tetris (4 линии) даёт максимум очков', () {
+      expect(tetrisLineScore(4, 1), 800);
+      expect(tetrisLineScore(4, 1), greaterThan(tetrisLineScore(3, 1)));
+    });
+
+    test('MODE-TETRIS: очки масштабируются уровнем', () {
+      expect(tetrisLineScore(1, 3), tetrisLineScore(1, 1) * 3);
+    });
+
+    test('MODE-TETRIS: уровень +1 за каждые 10 линий', () {
+      expect(tetrisLevelForLines(0), 1);
+      expect(tetrisLevelForLines(10), 2);
+      expect(tetrisLevelForLines(25), 3);
+    });
+
+    test('MODE-TETRIS: гравитация убывает и зажата снизу 0.05с', () {
+      expect(tetrisGravitySeconds(1), greaterThan(tetrisGravitySeconds(5)));
+      expect(tetrisGravitySeconds(100), greaterThanOrEqualTo(0.05));
+    });
+  });
+
+  group('MODE-MEMORY — Память: соло', () {
+    test('MODE-MEMORY: генерация детерминирована (seed+сложность → та же цель)', () {
+      final a = generateMemoryPuzzle(MemoryDifficulty.medium, 77);
+      final b = generateMemoryPuzzle(MemoryDifficulty.medium, 77);
+      expect(_fillMask(a.target), _fillMask(b.target));
+      expect(a.hand.map((p) => p.type), b.hand.map((p) => p.type));
+    });
+
+    test('MODE-MEMORY: totalCells = 4×число фигур сложности', () {
+      final p = generateMemoryPuzzle(MemoryDifficulty.hard, 5);
+      expect(p.totalCells, MemoryDifficulty.hard.pieceCount * 4);
+    });
+
+    test('MODE-MEMORY: в целевой раскладке ровно totalCells заполнено', () {
+      final p = generateMemoryPuzzle(MemoryDifficulty.easy, 9);
+      final filled = _fillMask(p.target).where((f) => f).length;
+      expect(filled, p.totalCells);
+    });
+  });
+
   group('MODE-* — сводный рейтинг (composite)', () {
     test('MODE: пустой список режимов → композит = общий ELO', () {
       expect(compositeScore(1200, const []), 1200);
@@ -74,3 +119,8 @@ void main() {
     });
   });
 }
+
+/// Плоская маска заполненности доски (для сравнения раскладок независимо от
+/// владельца клетки).
+List<bool> _fillMask(Board board) =>
+    [for (final row in board) for (final cell in row) cell.filled];
