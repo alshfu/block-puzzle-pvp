@@ -103,6 +103,10 @@ dev_dependencies:
   # Запуск: `dart run flutter_launcher_icons`.
   flutter_launcher_icons: ^0.14.4
 
+  # Брендированный splash (тёмный фон вместо белой вспышки Flutter).
+  # Запуск: `dart run flutter_native_splash:create`.
+  flutter_native_splash: ^2.4.4
+
 # Конфиг генератора иконок: мастер — брендированный web-икон (тетромино 4×4).
 flutter_launcher_icons:
   image_path: "web/icons/Icon-512.png"
@@ -112,6 +116,18 @@ flutter_launcher_icons:
   # Адаптивная иконка Android (передний слой — тот же арт, фон — тёмный тон бренда).
   adaptive_icon_background: "#0E1116"
   adaptive_icon_foreground: "web/icons/Icon-512.png"
+
+# Брендированный splash: тёмный фон бренда + иконка по центру (без белой вспышки).
+flutter_native_splash:
+  color: "#0E1116"
+  color_dark: "#0E1116"
+  image: "web/icons/Icon-192.png"
+  image_dark: "web/icons/Icon-192.png"
+  android_12:
+    color: "#0E1116"
+    color_dark: "#0E1116"
+    image: "web/icons/Icon-192.png"
+    image_dark: "web/icons/Icon-192.png"
 
 flutter:
   uses-material-design: true

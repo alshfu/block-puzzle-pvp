@@ -29,10 +29,12 @@
 
 ### 1. Художественные ассеты (иконки/сплэш/скриншоты)
 Сейчас игра почти полностью **процедурная** (см. `ASSETS.md`), но для сторов нужны:
-- [ ] **Иконка приложения** 1024×1024 (мастер) → адаптивные иконки Android +
-      iOS AppIcon. Рекомендую пакет `flutter_launcher_icons` (добавить в
-      `dev_dependencies`, конфиг в `pubspec.yaml`, `dart run flutter_launcher_icons`).
-- [ ] **Splash** (по желанию) — `flutter_native_splash`.
+- [x] **Иконка приложения** — ✅ настроено: `flutter_launcher_icons` (мастер
+      `web/icons/Icon-512.png`, тетромино 4×4) генерит Android (вкл. адаптивные) +
+      iOS AppIcon. Регенерация: `dart run flutter_launcher_icons`. При желании
+      заменить мастер на художественный 1024×1024 и перегенерировать.
+- [x] **Splash** — ✅ настроено: `flutter_native_splash` (тёмный фон `#0E1116` +
+      иконка, light/dark, Android 12). Регенерация: `dart run flutter_native_splash:create`.
 - [ ] **Скриншоты** для листингов (телефон/планшет; несколько экранов игры).
 - [ ] **Feature graphic** (Play, 1024×500) и промо-арт по вкусу.
 
