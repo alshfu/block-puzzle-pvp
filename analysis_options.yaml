@@ -22,6 +22,9 @@ analyzer:
     - build/**
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    # Учебные заготовки курса (course/) — незаконченный код ученика не должен
+    # «краснить» проект (там намеренно пустые TODO-файлы). См. tools/gen_course.py.
+    - course/**
 
 formatter:
   page_width: 80
