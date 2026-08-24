@@ -173,6 +173,23 @@ describe("Room — валидация ходов и анти-чит", () => {
     expect(c0.sent).toContainEqual({ type: "move_rejected", reason: "malformed move" });
   });
 
+  it("валидный ход применяется и передаёт ход сопернику", () => {
+    const { room, c0 } = startedRoom();
+    const joined = c0.sent.find((m) => (m as { type?: string }).type === "joined") as {
+      state: { players: Array<{ hand: Array<{ id: string; cells: number[][] }> }> };
+    };
+    const piece = joined.state.players[0].hand[0];
+    expect(room.state.current).toBe(0);
+    c0.emit(
+      "message",
+      JSON.stringify({ type: "move", pieceId: piece.id, cells: piece.cells, r: 0, c: 0 }),
+    );
+    // Ход принят (нет reject), состояние продвинулось, очередь перешла к сопернику.
+    expect(c0.sent.some((m) => (m as { type?: string }).type === "move_rejected")).toBe(false);
+    expect(room.state.turnCount).toBe(1);
+    expect(room.state.current).toBe(1);
+  });
+
   it("анти-чит: cells не соответствуют ориентации фигуры → отклонение", () => {
     const { c0 } = startedRoom();
     const joined = c0.sent.find((m) => (m as { type?: string }).type === "joined") as {
