@@ -23,13 +23,20 @@
 - **Строгий детерминизм resume**: состояние PRNG бота и force-place сериализуется
   в `SavedGame` (через `Mulberry32.fromState`) — resume даёт бит-в-бит то же
   продолжение. Обратная совместимость со старыми снимками.
+- **2-й аудит (achievements/daily/audio/decor/auth/settings/tutorial)**: (1) 4
+  достижения были недостижимы (`on_dom_3/5/10`, `on_revenge` — engine не вызывал
+  `set()`) → подключены; (2) серия реваншей считалась по кумулятивным победам →
+  ложный `on_rm_*` (введён `OnlineOpponentRecord.winStreak`, непрерывная серия);
+  (3) дейли-квесты не ротировались через полночь без рестарта (`DailyController.
+  refreshDay`). audio/decor/auth/settings/tutorial — чисты. Потолок уровня
+  `maxLevel=100` от фарма кристаллов гриндом.
 - **Сценарные каталоги** (`qa/SCENARIOS_*.md`, генератор `tools/gen_scenarios.py`):
   правило «1000 и 1» по 3 осям — приложение (1), режимы (13), код+платформы (4) =
   **18 каталогов × 1001 = 18018 сценариев**. Устойчивые ID, `[C]`-smoke, гибрид
   «генератор + образец»: исполняемые образцы в `test/scenarios/`.
 - **Guardrails**: тест чистоты pure-слоя (нет Random/DateTime/Flutter/IO в
   `lib/core` и `*_core.dart`); тест целостности каталогов (ровно 1001, без дублей).
-- Всего **398 Flutter-тестов** зелёные (+80 за сессию), `flutter analyze` чист.
+- Всего **404 Flutter-теста** зелёные (+86 за сессию), `flutter analyze` чист.
 - **npm-уязвимости устранены (0)**: удалён npm-пакет `firebase` (тянул уязвимые
   websocket-driver critical + protobufjs) — использовался только ретайрнутым
   `legacy-ts/ui`; `legacy-ts/ui/auth/firebase.ts` понижен до guest-only стаба
