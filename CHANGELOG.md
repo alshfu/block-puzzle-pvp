@@ -50,6 +50,11 @@
   `server_leaderboard` + `server_lobby`) — Elo/W-L-D/анти-фарм/персистентность/
   битый файл, матчмейкинг/bot-fallback/cancel, reconnect/анти-чит/валидация
   ходов. Всего **78 TS-тестов** зелёные.
+- **Тестовые сборки под все 4 платформы** (device runs): Web (release), Android
+  (APK), macOS (.app), iOS (.app) — весь Dart пакуется. **iOS-фикс**: поднят
+  `IPHONEOS_DEPLOYMENT_TARGET` 13.0→15.0 (firebase-core через SPM требует ≥15;
+  сборка iOS падала). Gotcha: не запускать два `flutter build` одновременно
+  (гонка SPM-резолва на общем `build/`).
 - Всего **404 Flutter-теста** зелёные (+86 за сессию), `flutter analyze` чист.
 - **npm-уязвимости устранены (0)**: удалён npm-пакет `firebase` (тянул уязвимые
   websocket-driver critical + protobufjs) — использовался только ретайрнутым
