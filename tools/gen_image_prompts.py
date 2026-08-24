@@ -12,7 +12,7 @@
 
 Запуск
     python3 tools/gen_image_prompts.py
-    (перезаписывает image-promt/; печатает число файлов)
+    (перезаписывает book/image-promt/; печатает число файлов)
 """
 
 import os
@@ -284,12 +284,13 @@ def readme():
         "- `00_cover.txt` — обложка книги.\n"
         "- `01_maryam.txt` … `05_cats.txt` — портреты героев (мастер-промпты).\n"
         "- `day001.txt` … `day200.txt` — иллюстрация на каждый день (по неделям/темам).\n\n"
-        "Файлы сгенерированы `tools/gen_image_prompts.py` (регенерация — тем же\n"
-        "скриптом). Связано с книгой `book/` и курсом `course/`.\n")
+        "Лежит рядом с самой книгой: `../maryam_v_mire_koda.html` (в её главах указан\n"
+        "диапазон дней-иллюстраций). Курс с заготовками кода — `../../course/`.\n\n"
+        "Файлы сгенерированы `tools/gen_image_prompts.py` (регенерация — тем же скриптом).\n")
 
 
 def main():
-    base = os.path.join(ROOT, "image-promt")
+    base = os.path.join(ROOT, "book", "image-promt")
     os.makedirs(base, exist_ok=True)
     count = 0
     # мастер-промпты
