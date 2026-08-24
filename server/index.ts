@@ -83,6 +83,24 @@ const wss = new WebSocketServer({ noServer: true, maxPayload: 16 * 1024 });
 // Rate-limit подписок лидерборда (H4); лобби/комната держат свои лимитеры.
 const leaderboardLimiter = new RateLimiter();
 
+// M-B: heartbeat. Обрыв сети без TCP-FIN оставляет сокет OPEN до TCP-таймаута ОС
+// (минуты) — слот занят, reconnect отклоняется, зомби-комната не чистится.
+// Пингуем каждый интервал; кто не ответил pong к следующему тику — terminate()
+// (эмитит close → освобождение слота/комнаты).
+const HEARTBEAT_MS = 30_000;
+const alive = new WeakMap<WebSocket, boolean>();
+const heartbeat = setInterval(() => {
+  for (const ws of wss.clients) {
+    if (alive.get(ws) === false) {
+      try { ws.terminate(); } catch { /* ignore */ }
+      continue;
+    }
+    alive.set(ws, false);
+    try { ws.ping(); } catch { /* ignore */ }
+  }
+}, HEARTBEAT_MS);
+heartbeat.unref();
+
 httpServer.on("upgrade", (req, socket, head) => {
   // M5 (CSWSH): если задан ALLOWED_ORIGINS — пускаем только эти Origin.
   // Запросы без Origin (нативные клиенты Flutter/desktop, curl) пропускаем.
@@ -116,6 +134,10 @@ wss.on("connection", (ws: WebSocket, _req: IncomingMessage, route: Route) => {
       /* ignore */
     }
   });
+
+  // M-B: отмечаем живость; pong от клиента подтверждает, что сокет ещё дышит.
+  alive.set(ws, true);
+  ws.on("pong", () => alive.set(ws, true));
 
   if (route.party === "lobby") {
     lobby.handleConnection(ws);
@@ -164,6 +186,7 @@ let shuttingDown = false;
 async function shutdown(signal: string): Promise<void> {
   if (shuttingDown) return;
   shuttingDown = true;
+  clearInterval(heartbeat);
   console.log(`[server] ${signal} — flushing leaderboard`);
   try {
     await leaderboard.flushNow();
