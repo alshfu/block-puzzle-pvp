@@ -1,0 +1,1209 @@
+<title>Марьям в Мире Кода</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<style>
+  :root {
+    --page: #FBF6EC;
+    --ground: #F1E7D6;
+    --card: #FFFDF8;
+    --ink: #302A22;
+    --muted: #7C6F5C;
+    --faint: #AC9E88;
+    --line: #E7DBC5;
+    --magic: #6B4FE0;
+    --magic-ink: #5238C6;
+    --magic-wash: #ECE7FB;
+    --code-bg: #211E29;
+    --code-ink: #EDE6D6;
+    --code-cmt: #8AA37E;
+    --code-str: #E0B36B;
+    --code-key: #C99BF0;
+    --code-num: #6FC7E0;
+    --tI:#2FB6D2; --tO:#E0913E; --tT:#9B5DE0; --tS:#43AE68; --tZ:#DE5A61; --tJ:#4A78E0; --tL:#DF8A3C;
+    --shadow: 0 2px 4px rgba(60,45,20,.05), 0 14px 40px rgba(60,45,20,.09);
+    --shadow-sm: 0 1px 2px rgba(60,45,20,.06), 0 4px 14px rgba(60,45,20,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #14121B;
+      --ground: #100E16;
+      --card: #1D1A26;
+      --ink: #F0E9DA;
+      --muted: #AB9E88;
+      --faint: #6E6553;
+      --line: #2C2838;
+      --magic: #A48CFF;
+      --magic-ink: #BBA6FF;
+      --magic-wash: #211C36;
+      --code-bg: #100E16;
+      --code-ink: #EDE6D6;
+      --shadow: 0 2px 4px rgba(0,0,0,.3), 0 18px 44px rgba(0,0,0,.5);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.35), 0 5px 16px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #14121B; --ground: #100E16; --card: #1D1A26; --ink: #F0E9DA;
+    --muted: #AB9E88; --faint: #6E6553; --line: #2C2838; --magic: #A48CFF;
+    --magic-ink: #BBA6FF; --magic-wash: #211C36; --code-bg: #100E16; --code-ink: #EDE6D6;
+    --shadow: 0 2px 4px rgba(0,0,0,.3), 0 18px 44px rgba(0,0,0,.5);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.35), 0 5px 16px rgba(0,0,0,.4);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font-family: "Lora", Georgia, serif; font-size: 18px; line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation:none!important;transition:none!important} }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 22px; }
+  h1,h2,h3,.disp { font-family: "Baloo 2", system-ui, sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 1.12; text-wrap: balance; margin: 0; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  a { color: var(--magic-ink); }
+
+  /* ── Cover ─────────────────────────────────────────── */
+  .cover { text-align: center; padding: 64px 0 40px; }
+  .cover .eyebrow { font-family:"JetBrains Mono",monospace; font-size: 12.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--magic-ink); }
+  .cover h1 { font-size: clamp(40px, 9vw, 76px); font-weight: 800; margin: 18px 0 6px; }
+  .cover .tag { color: var(--muted); font-size: clamp(16px,2.6vw,20px); font-style: italic; max-width: 34ch; margin: 0 auto; }
+  .cover-art { margin: 26px auto 8px; max-width: 460px; }
+  .cover-art svg { width: 100%; height: auto; display:block; filter: drop-shadow(0 16px 30px rgba(60,45,20,.14)); }
+  .byline { margin-top: 20px; color: var(--faint); font-size: 14px; font-family:"JetBrains Mono",monospace; }
+
+  /* tetromino divider */
+  .tetro-rule { display:flex; gap:5px; justify-content:center; margin: 30px 0; }
+  .tetro-rule i { width: 14px; height: 14px; border-radius: 4px; display:block; }
+  .tetro-rule i:nth-child(1){background:var(--tI)} .tetro-rule i:nth-child(2){background:var(--tO)}
+  .tetro-rule i:nth-child(3){background:var(--tT)} .tetro-rule i:nth-child(4){background:var(--tS)}
+  .tetro-rule i:nth-child(5){background:var(--tZ)} .tetro-rule i:nth-child(6){background:var(--tJ)}
+  .tetro-rule i:nth-child(7){background:var(--tL)}
+
+  /* ── Table of contents ─────────────────────────────── */
+  .toc { background: var(--card); border:1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 26px 26px 20px; margin: 8px 0 40px; }
+  .toc h2 { font-size: 22px; margin-bottom: 6px; }
+  .toc p { color: var(--muted); font-size: 15px; margin: 0 0 16px; }
+  .toc ol { list-style: none; counter-reset: ch; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .toc li { counter-increment: ch; }
+  .toc a { display: grid; grid-template-columns: 30px 1fr auto; align-items: baseline; gap: 12px; text-decoration: none; color: var(--ink); padding: 8px 8px; border-radius: 10px; }
+  .toc a:hover { background: var(--magic-wash); }
+  .toc a .n { font-family:"JetBrains Mono",monospace; font-size: 13px; color: var(--magic-ink); font-weight: 500; }
+  .toc a .t { font-family:"Baloo 2",sans-serif; font-weight: 600; }
+  .toc a .s { font-size: 12.5px; color: var(--faint); font-style: italic; }
+
+  /* ── Chapter ───────────────────────────────────────── */
+  .chapter { margin: 0 0 8px; padding-top: 34px; }
+  .ch-head { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .ch-badge { flex: none; width: 60px; height: 60px; border-radius: 16px; display: grid; place-items: center; box-shadow: var(--shadow-sm); background: var(--card); border: 1px solid var(--line); }
+  .ch-badge svg { width: 46px; height: 46px; }
+  .ch-num { font-family:"JetBrains Mono",monospace; font-size: 12px; letter-spacing:.16em; text-transform: uppercase; color: var(--magic-ink); }
+  .ch-head h2 { font-size: clamp(25px, 4.4vw, 34px); font-weight: 800; margin-top: 2px; }
+  .ch-companion { color: var(--faint); font-style: italic; font-size: 14.5px; }
+
+  .scene { margin: 20px 0 8px; background: linear-gradient(160deg, var(--magic-wash), var(--card)); border:1px solid var(--line); border-radius: 20px; padding: 12px; box-shadow: var(--shadow-sm); }
+  .scene svg { width: 100%; height: auto; display: block; border-radius: 12px; }
+
+  .prose p { margin: 18px 0; }
+  .prose p:first-of-type::first-letter {
+    font-family:"Baloo 2",sans-serif; font-weight: 800; float: left;
+    font-size: 3.4em; line-height: .8; padding: 6px 10px 0 0; color: var(--magic);
+  }
+  .say { color: var(--ink); }
+  .say b { color: var(--magic-ink); font-family:"Baloo 2",sans-serif; font-weight: 700; font-style: normal; }
+  .word { background: var(--magic-wash); color: var(--magic-ink); border-radius: 6px; padding: 1px 7px; font-weight: 600; font-style: normal; font-family:"Baloo 2",sans-serif; font-size: .92em; white-space: nowrap; }
+
+  /* code spell */
+  .spell { margin: 22px 0; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); }
+  .spell-top { background: var(--code-bg); color: var(--code-ink); display:flex; align-items:center; gap: 8px; padding: 10px 16px; font-family:"JetBrains Mono",monospace; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .spell-top .dot { width: 10px; height:10px; border-radius: 50%; }
+  .spell-top .file { margin-left: auto; opacity: .6; }
+  .spell pre { margin: 0; background: var(--code-bg); color: var(--code-ink); padding: 16px 18px; overflow-x: auto; font-family:"JetBrains Mono",monospace; font-size: 13.5px; line-height: 1.62; }
+  .spell code { font-family: inherit; }
+  .cmt { color: var(--code-cmt); font-style: italic; }
+  .str { color: var(--code-str); }
+  .key { color: var(--code-key); }
+  .num { color: var(--code-num); }
+  .spell-cap { background: var(--card); color: var(--muted); font-size: 13.5px; padding: 12px 18px; font-style: italic; }
+  .spell-cap b { color: var(--ink); font-style: normal; }
+
+  .learn { margin: 20px 0; background: var(--card); border:1px solid var(--line); border-left: 5px solid var(--tS); border-radius: 12px; padding: 14px 18px; box-shadow: var(--shadow-sm); }
+  .learn .h { font-family:"Baloo 2",sans-serif; font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:8px; margin-bottom: 4px; }
+  .learn .h .star { color: var(--tO); }
+  .learn ul { margin: 6px 0 0; padding-left: 20px; }
+  .learn li { margin: 4px 0; font-size: 15.5px; }
+
+  .task { margin: 20px 0; background: var(--magic-wash); border:1px dashed var(--magic); border-radius: 12px; padding: 14px 18px; }
+  .task .h { font-family:"Baloo 2",sans-serif; font-weight: 700; color: var(--magic-ink); display:flex; gap:8px; align-items:center; margin-bottom:4px; }
+  .task ol, .task ul { margin: 6px 0 0; padding-left: 20px; }
+  .task li { margin: 5px 0; font-size: 15.5px; }
+  .task .mono { color: var(--ink); }
+
+  .course { background: var(--card); border:1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 24px 26px; margin: 8px 0 30px; }
+  .course h2 { font-size: 23px; margin-bottom: 4px; }
+  .course p { color: var(--muted); font-size: 15.5px; margin: 10px 0; }
+  .course p b { color: var(--ink); }
+  .course .grid { display:grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 16px 0 8px; }
+  @media (max-width:520px){ .course .grid{grid-template-columns:1fr} .plan td:first-child{width:auto} }
+  .course .tile { background: var(--magic-wash); border-radius: 12px; padding: 12px 14px; text-align:center; }
+  .course .tile .k { font-family:"Baloo 2",sans-serif; font-weight:800; color: var(--magic-ink); font-size: 22px; line-height:1.1; }
+  .course .tile .v { font-size: 12.5px; color: var(--muted); }
+  .course .rhythm { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+  .course .rhythm span { background: var(--magic-wash); border-radius: 20px; padding: 5px 12px; font-size: 13.5px; font-family:"Baloo 2",sans-serif; font-weight:600; color: var(--magic-ink); }
+
+  .plan { background: var(--card); border:1px solid var(--line); border-radius:20px; box-shadow: var(--shadow); padding: 24px 26px 14px; margin: 8px 0 20px; }
+  .plan h2 { font-size: clamp(24px,4.4vw,32px); }
+  .plan > p { color: var(--muted); font-size:15px; margin: 8px 0 4px; }
+  .plan-scroll { overflow-x:auto; }
+  .plan table { width:100%; border-collapse: collapse; margin-top: 10px; font-size: 14.5px; }
+  .plan td { padding: 9px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .plan tr:last-child td { border-bottom: 0; }
+  .plan td:first-child { font-family:"JetBrains Mono",monospace; color: var(--magic-ink); white-space: nowrap; width: 96px; font-size:13px; }
+  .plan td:nth-child(2){ font-family:"Baloo 2",sans-serif; font-weight:600; color: var(--ink); }
+  .plan td:nth-child(3){ color: var(--muted); font-size:13.5px; }
+  .plan td:nth-child(3) .mono { color: var(--ink); }
+
+  .track { background: linear-gradient(160deg, var(--magic-wash), var(--card)); border:1px solid var(--magic); border-radius: 20px; box-shadow: var(--shadow); padding: 24px 26px; margin: 8px 0 30px; }
+  .track h2 { font-size: clamp(22px,4vw,28px); margin-bottom: 6px; }
+  .track h2 .em { color: var(--magic-ink); }
+  .track p { font-size: 16px; margin: 12px 0; }
+  .track ol { margin: 12px 0; padding-left: 0; list-style: none; counter-reset: step; }
+  .track ol > li { counter-increment: step; position: relative; padding: 10px 0 10px 46px; border-bottom: 1px dashed var(--line); }
+  .track ol > li:last-child { border-bottom: 0; }
+  .track ol > li::before { content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; border-radius: 9px; background: var(--magic); color: #fff; font-family:"Baloo 2",sans-serif; font-weight: 800; display: grid; place-items: center; font-size: 15px; }
+  .track ol > li b { font-family:"Baloo 2",sans-serif; }
+  .track .quests { background: var(--card); border-radius: 12px; padding: 12px 16px; margin-top: 12px; }
+  .track .quests .h { font-family:"Baloo 2",sans-serif; font-weight:700; color: var(--magic-ink); margin-bottom: 6px; }
+  .track .quests ul { margin: 0; padding-left: 20px; }
+  .track .quests li { margin: 5px 0; font-size: 15px; }
+  .track .quests .mono, .track .mono { color: var(--ink); background: var(--magic-wash); border-radius: 5px; padding: 0 5px; }
+  .cmdline { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-family:"JetBrains Mono",monospace; font-size: 13px; overflow-x:auto; }
+  .cmdline .cmt { color: var(--code-cmt); }
+
+  .prompts { background: var(--card); border:1px solid var(--line); border-radius:20px; box-shadow: var(--shadow); padding: 24px 26px; margin: 8px 0 20px; }
+  .prompts h2 { font-size: clamp(23px,4.4vw,30px); }
+  .prompts > p { color: var(--muted); font-size: 15.5px; margin: 10px 0; }
+  .recipe { background: var(--magic-wash); border-radius: 12px; padding: 14px 18px; margin: 14px 0; }
+  .recipe .h { font-family:"Baloo 2",sans-serif; font-weight:700; color:var(--magic-ink); margin-bottom: 4px; }
+  .recipe .part { display:inline-block; background: var(--card); border-radius: 6px; padding: 2px 9px; margin: 3px 4px 3px 0; font-family:"Baloo 2",sans-serif; font-weight:600; font-size: 13.5px; }
+  .prompt-card { border:1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 12px 0; box-shadow: var(--shadow-sm); }
+  .prompt-card .pc-top { background: var(--magic-wash); padding: 8px 14px; font-family:"Baloo 2",sans-serif; font-weight:700; color: var(--ink); font-size: 14.5px; display:flex; align-items:center; gap:8px; }
+  .prompt-card .pc-top svg { width: 26px; height: 26px; }
+  .prompt-card pre { margin: 0; background: var(--code-bg); color: var(--code-ink); padding: 13px 16px; overflow-x: auto; font-family:"JetBrains Mono",monospace; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; }
+
+  .divide { height:1px; background: var(--line); margin: 40px 0; border:0; }
+
+  footer { text-align: center; color: var(--faint); font-size: 14px; padding: 40px 0 60px; font-family:"JetBrains Mono",monospace; }
+  footer .big { font-family:"Baloo 2",sans-serif; font-size: 20px; color: var(--magic-ink); margin-bottom: 8px; }
+  .backtop { display:inline-block; margin-top: 10px; }
+
+  @media (max-width:520px){ body{font-size:17px} .ch-badge{width:52px;height:52px} .ch-badge svg{width:40px;height:40px} }
+</style>
+
+<!-- ═══ SVG character sprite (reused) ═══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Марьям -->
+    <symbol id="maryam" viewBox="0 0 100 100">
+      <circle cx="50" cy="42" r="20" fill="#F1C9A5"/>
+      <path d="M30 40a20 20 0 0140 0c0-16-9-24-20-24S30 24 30 40z" fill="#4A3B2E"/>
+      <circle cx="27" cy="42" r="7" fill="#4A3B2E"/><circle cx="73" cy="42" r="7" fill="#4A3B2E"/>
+      <circle cx="43" cy="44" r="2.6" fill="#2E2620"/><circle cx="57" cy="44" r="2.6" fill="#2E2620"/>
+      <path d="M45 52q5 4 10 0" stroke="#B5654A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M32 96V72a18 18 0 0136 0v24z" fill="#6B4FE0"/>
+      <circle cx="50" cy="78" r="4" fill="#EDE6D6"/>
+    </symbol>
+    <!-- Пони По (orange) -->
+    <symbol id="pony" viewBox="0 0 100 100">
+      <ellipse cx="52" cy="62" rx="30" ry="20" fill="#E0913E"/>
+      <path d="M70 30c14-4 22 6 20 16-8 2-14 0-18-4z" fill="#E0913E"/>
+      <circle cx="82" cy="36" r="13" fill="#E0913E"/>
+      <path d="M74 24c-4-6 2-12 8-10 0 6-2 9-8 10z" fill="#DE5A61"/>
+      <path d="M84 24c4-6 12-4 12 2-5 4-9 4-12-2z" fill="#DE5A61"/>
+      <circle cx="86" cy="36" r="2.6" fill="#2E2620"/>
+      <ellipse cx="92" cy="42" rx="4" ry="3" fill="#B5654A"/>
+      <rect x="34" y="76" width="6" height="16" rx="3" fill="#C97A2E"/>
+      <rect x="52" y="76" width="6" height="16" rx="3" fill="#C97A2E"/>
+      <path d="M24 56c-10-2-14 6-10 14 6 0 10-4 12-10z" fill="#DE5A61"/>
+    </symbol>
+    <!-- Лама Лу (cyan) -->
+    <symbol id="llama" viewBox="0 0 100 100">
+      <ellipse cx="46" cy="72" rx="24" ry="16" fill="#2FB6D2"/>
+      <path d="M52 74V34a11 11 0 0122 0v40z" fill="#2FB6D2"/>
+      <circle cx="63" cy="30" r="12" fill="#37C2DE"/>
+      <path d="M56 20c-2-8 6-10 8-4 0 4-3 6-8 4z" fill="#2FB6D2"/>
+      <path d="M70 20c2-8 10-8 10-2-3 5-7 5-10 2z" fill="#2FB6D2"/>
+      <circle cx="60" cy="30" r="2.4" fill="#1B2E33"/><circle cx="68" cy="30" r="2.4" fill="#1B2E33"/>
+      <ellipse cx="64" cy="38" rx="4" ry="3" fill="#1B7E92"/>
+      <rect x="30" y="84" width="6" height="12" rx="3" fill="#1B7E92"/>
+      <rect x="52" y="84" width="6" height="12" rx="3" fill="#1B7E92"/>
+    </symbol>
+    <!-- Альпака Аля (green, fluffy) -->
+    <symbol id="alpaca" viewBox="0 0 100 100">
+      <circle cx="48" cy="66" r="26" fill="#43AE68"/>
+      <circle cx="30" cy="58" r="10" fill="#43AE68"/><circle cx="66" cy="56" r="11" fill="#43AE68"/>
+      <circle cx="40" cy="46" r="9" fill="#43AE68"/><circle cx="58" cy="44" r="9" fill="#43AE68"/>
+      <ellipse cx="60" cy="36" rx="12" ry="13" fill="#57C47C"/>
+      <path d="M52 24c-1-7 6-8 7-3 0 4-3 5-7 3z" fill="#43AE68"/>
+      <path d="M67 24c2-7 9-6 8-1-3 4-6 4-8 1z" fill="#43AE68"/>
+      <circle cx="57" cy="36" r="2.3" fill="#173D28"/><circle cx="65" cy="35" r="2.3" fill="#173D28"/>
+      <ellipse cx="61" cy="42" rx="3.4" ry="2.6" fill="#2A6B44"/>
+      <rect x="36" y="84" width="6" height="11" rx="3" fill="#2A6B44"/>
+      <rect x="54" y="84" width="6" height="11" rx="3" fill="#2A6B44"/>
+    </symbol>
+    <!-- Котик (purple) -->
+    <symbol id="catP" viewBox="0 0 100 100">
+      <path d="M28 40l8-16 10 12z" fill="#9B5DE0"/><path d="M72 40l-8-16-10 12z" fill="#9B5DE0"/>
+      <circle cx="50" cy="52" r="26" fill="#9B5DE0"/>
+      <circle cx="41" cy="50" r="3" fill="#2A1740"/><circle cx="59" cy="50" r="3" fill="#2A1740"/>
+      <path d="M47 58q3 3 6 0" stroke="#2A1740" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="50" cy="55" rx="3" ry="2" fill="#E7B7C8"/>
+      <path d="M74 66c14 2 18 12 10 20" stroke="#9B5DE0" stroke-width="7" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <!-- Котик (red) -->
+    <symbol id="catR" viewBox="0 0 100 100">
+      <path d="M28 40l8-16 10 12z" fill="#DE5A61"/><path d="M72 40l-8-16-10 12z" fill="#DE5A61"/>
+      <circle cx="50" cy="52" r="26" fill="#DE5A61"/>
+      <circle cx="41" cy="50" r="3" fill="#3D1518"/><circle cx="59" cy="50" r="3" fill="#3D1518"/>
+      <path d="M47 58q3 3 6 0" stroke="#3D1518" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="50" cy="55" rx="3" ry="2" fill="#F6D6C0"/>
+      <path d="M26 66c-14 2-18 12-10 20" stroke="#DE5A61" stroke-width="7" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <!-- Портал-блок -->
+    <symbol id="portal" viewBox="0 0 100 100">
+      <rect x="16" y="16" width="68" height="68" rx="16" fill="none" stroke="#6B4FE0" stroke-width="4" opacity=".5"/>
+      <rect x="26" y="26" width="48" height="48" rx="12" fill="none" stroke="#6B4FE0" stroke-width="4" opacity=".8"/>
+      <rect x="38" y="38" width="24" height="24" rx="8" fill="#6B4FE0"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <!-- ═══ COVER ═══ -->
+  <header class="cover">
+    <div class="eyebrow">Код-РПГ · учебник-курс · 200 дней по 3 часа</div>
+    <h1>Марьям<br>в Мире Кода</h1>
+    <p class="tag">Как маленькая девочка, пони, лама, альпака и два котика построили настоящую игру — и она стала кросс-платформенным разработчиком.</p>
+
+    <div class="cover-art">
+      <svg viewBox="0 0 460 260" role="img" aria-label="Марьям и её друзья-зверята у волшебного портала-блока">
+        <rect x="0" y="0" width="460" height="260" rx="24" fill="var(--card)"/>
+        <!-- floor -->
+        <path d="M0 210h460v50H0z" fill="var(--magic-wash)"/>
+        <!-- portal -->
+        <use href="#portal" x="180" y="30" width="120" height="120"/>
+        <circle cx="240" cy="90" r="70" fill="none" stroke="var(--magic)" stroke-width="1.5" opacity=".25"/>
+        <!-- floating code blocks -->
+        <rect x="70" y="40" width="26" height="26" rx="7" fill="var(--tO)" opacity=".9"/>
+        <rect x="360" y="60" width="26" height="26" rx="7" fill="var(--tI)" opacity=".9"/>
+        <rect x="392" y="120" width="20" height="20" rx="6" fill="var(--tT)" opacity=".9"/>
+        <rect x="52" y="110" width="20" height="20" rx="6" fill="var(--tS)" opacity=".9"/>
+        <!-- characters standing -->
+        <use href="#maryam" x="196" y="150" width="88" height="88"/>
+        <use href="#pony"   x="286" y="158" width="86" height="86"/>
+        <use href="#llama"  x="120" y="150" width="80" height="94"/>
+        <use href="#alpaca" x="52"  y="160" width="82" height="82"/>
+        <use href="#catP"   x="352" y="176" width="60" height="60"/>
+        <use href="#catR"   x="14"  y="182" width="58" height="58"/>
+      </svg>
+    </div>
+    <div class="byline">книга-сборник · внутри — настоящий код игры BlockDuel 9×9</div>
+  </header>
+
+  <div class="tetro-rule"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <!-- ═══ О КУРСЕ ═══ -->
+  <section class="course">
+    <h2>Как учиться по этой книге</h2>
+    <p>Это не просто сказка — это <b>учебник-курс</b>. Он рассчитан на <b>200 дней по 3 часа</b> — это шестьсот часов, за которые ребёнок из нуля становится настоящим разработчиком. Спешить не надо: программисты растут не рывком, а <b>каждый день понемногу</b>.</p>
+    <div class="grid">
+      <div class="tile"><div class="k">200</div><div class="v">дней пути</div></div>
+      <div class="tile"><div class="k">3 ч</div><div class="v">в день</div></div>
+      <div class="tile"><div class="k">600 ч</div><div class="v">до разработчика</div></div>
+    </div>
+    <p><b>Ритм одного дня</b> (3 часа делим на три части — как завтрак, обед и ужин):</p>
+    <div class="rhythm">
+      <span>🥣 1 час — читаем главу и разбираем код</span>
+      <span>🍲 1 час — набираем код сами, меняем числа, смотрим что будет</span>
+      <span>🍎 1 час — своя маленькая задачка (в конце глав — «Задание»)</span>
+    </div>
+    <p style="margin-top:14px">В конце книги — <a href="#plan"><b>200-дневная карта</b></a>: какая глава на какие дни и что делать. Правило одно: <b>ошибаться — нормально</b>. Именно из ошибок рождается мастерство (об этом — целая глава про баги).</p>
+  </section>
+
+  <!-- ═══ ПРАКТИЧЕСКИЙ ТРЕК ═══ -->
+  <section class="track">
+    <h2>Как в конце получить <span class="em">именно эту игру</span></h2>
+    <p><b>Честно и по-взрослому.</b> Марьям в сказке строит игру с нуля. Но настоящая игра — это тысячи строк, и ни один разработчик не пишет их «на память». Секрет профессии другой: <b>берёшь настоящий проект, запускаешь его в первый же день, и растёшь вместе с ним</b> — читаешь, меняешь, чиняешь. Так к концу курса у тебя на экране будет <b>наша игра BlockDuel</b> — собранная твоими руками и понятная тебе до винтика.</p>
+    <ol>
+      <li><b>Поставь инструменты.</b> Flutter с сайта <span class="mono">flutter.dev</span> и бесплатный редактор (VS Code). Один раз — и на всю жизнь.</li>
+      <li><b>Скачай настоящую игру и запусти её.</b> Уже в первый день ты увидишь её живой:
+        <div class="cmdline">git clone https://github.com/alshfu/block-puzzle-pvp
+cd block-puzzle-pvp
+flutter pub get
+flutter run -d chrome   <span class="cmt"># и вот она, наша игра, у тебя в браузере!</span></div>
+      </li>
+      <li><b>Дальше — не «пиши с нуля», а «найди → пойми → поменяй → запусти».</b> Каждую неделю открываешь настоящий файл из проекта, разбираешь его по этой книге и делаешь маленькую правку. Нажал «запустить» — сразу видишь результат. Так знание становится <em>твоим</em>.</li>
+      <li><b>Собери и покажи миру.</b> В конце — <span class="mono">flutter build</span> под web/Android/iPhone/Mac (глава 15) и документ <span class="mono">RELEASE_CHECKLIST.md</span> в проекте: пошагово, как выложить в Google Play и App Store.</li>
+    </ol>
+    <div class="quests">
+      <div class="h">🔧 Мини-квесты на НАСТОЯЩЕМ коде (каждый сразу видно в игре)</div>
+      <ul>
+        <li>Поменяй цвета клеток в теме — файл <span class="mono">lib/ui/theme/</span> (темы <span class="mono">neutral / candy / night</span>).</li>
+        <li>Сделай ход быстрее/медленнее — таймер <span class="mono">turnTimeStart</span> в <span class="mono">lib/core/types.dart</span> (<span class="mono">defaultConfig</span>).</li>
+        <li>Измени формулу очков — <span class="mono">lib/core/scoring.dart</span> (например, больше очков за бокс 3×3).</li>
+        <li>Сделай бота хитрее — веса в <span class="mono">lib/core/bot.dart</span> (<span class="mono">botWeights</span>).</li>
+        <li>Добавь свою тему в конструкторе тем прямо в игре (экран «Конструктор тем»).</li>
+        <li>Напиши свой тест в <span class="mono">test/</span> и запусти <span class="mono">flutter test</span> — стань контролёром (глава 12).</li>
+      </ul>
+    </div>
+    <div class="quests" style="margin-top:12px">
+      <div class="h">📂 Заготовка на каждый день — в самом проекте</div>
+      <ul>
+        <li>В скачанном проекте есть папка <span class="mono">course/</span> — там <b>на каждый из 200 дней свой файл-заготовка</b>: шапка с заданием дня, связь с настоящим кодом игры и место <span class="mono">// TODO</span>, куда ты дописываешь свой код.</li>
+        <li>Открыл файл дня (например <span class="mono">course/week03_functions/day015.dart</span>) → прочитал задание → сначала подумал сам → написал код на месте <span class="mono">TODO</span> → запустил → сравнил с настоящим файлом игры.</li>
+      </ul>
+    </div>
+    <p style="margin-bottom:0"><b>Итог курса:</b> не «похожая игрушка», а <b>наша игра целиком</b> — ты её запустил, понял, поменял под себя, покрыл тестами и собрал под четыре платформы. Это и есть настоящий разработчик.</p>
+  </section>
+
+  <!-- ═══ TOC ═══ -->
+  <nav class="toc">
+    <h2>Что нас ждёт</h2>
+    <p>Тринадцать глав и эпилог. В каждой — кусочек сказки, новый друг, одна настоящая идея программирования и живой код, из которого по-настоящему собирается игра.</p>
+    <ol>
+      <li><a href="#c1"><span class="n">00</span><span class="t">Портал из блока <span class="s">— что такое программа</span></span></a></li>
+      <li><a href="#c2"><span class="n">01</span><span class="t">Пони По и коробочки-переменные <span class="s">— данные</span></span></a></li>
+      <li><a href="#c3"><span class="n">02</span><span class="t">Лама Лу и волшебные функции <span class="s">— действия</span></span></a></li>
+      <li><a href="#c4"><span class="n">03</span><span class="t">Альпака Аля, «если» и «повтори» <span class="s">— логика</span></span></a></li>
+      <li><a href="#c5"><span class="n">04</span><span class="t">Котики и сетка 9×9 <span class="s">— списки и доска</span></span></a></li>
+      <li><a href="#c6"><span class="n">05</span><span class="t">Предсказуемое волшебство <span class="s">— случайность, которая честная</span></span></a></li>
+      <li><a href="#c7"><span class="n">06</span><span class="t">Семь фигур-тетромино <span class="s">— как хранить формы</span></span></a></li>
+      <li><a href="#c8"><span class="n">07</span><span class="t">Закон мира: «сюда можно?» <span class="s">— проверки</span></span></a></li>
+      <li><a href="#c9"><span class="n">08</span><span class="t">Линии гаснут, очки летят <span class="s">— правила и счёт</span></span></a></li>
+      <li><a href="#c10"><span class="n">09</span><span class="t">Котёнок, который научился думать <span class="s">— искусственный ум</span></span></a></li>
+      <li><a href="#c11"><span class="n">10</span><span class="t">Лицо игры <span class="s">— фронтенд, рисуем виджетами</span></span></a></li>
+      <li><a href="#c12"><span class="n">11</span><span class="t">Двое через океан <span class="s">— бэкенд и сервер</span></span></a></li>
+      <li><a href="#ctest"><span class="n">12</span><span class="t">Зверята-контролёры <span class="s">— тесты, страж качества</span></span></a></li>
+      <li><a href="#cbug"><span class="n">13</span><span class="t">Охота на баги <span class="s">— как мы чинили жучков</span></span></a></li>
+      <li><a href="#cgit"><span class="n">14</span><span class="t">Git: машина времени <span class="s">— не потерять работу</span></span></a></li>
+      <li><a href="#c13"><span class="n">15</span><span class="t">Один код — четыре мира <span class="s">— кросс-платформа</span></span></a></li>
+      <li><a href="#c14"><span class="n">16</span><span class="t">Игра готова <span class="s">— эпилог</span></span></a></li>
+    </ol>
+    <p style="margin:14px 0 0"><a href="#plan">📅 Карта курса на 200 дней</a> &nbsp;·&nbsp; <a href="#prompts">🎨 Бонус: промпты для иллюстраций</a></p>
+  </nav>
+
+  <!-- ═══ CH 1 ═══ -->
+  <section class="chapter" id="c1">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#portal"/></svg></div>
+      <div><div class="ch-num">Глава 00 · Пролог</div><h2>Портал из блока</h2></div>
+    </div>
+    <div class="prose">
+      <p>Марьям было восемь, и больше всего на свете она любила складывать. Кубики, пазлы, слова из букв — что угодно, лишь бы из маленького получалось большое. В тот дождливый вечер она играла в игру на старом планшете: разноцветные фигурки-<span class="word">тетромино</span> падали на сетку, и когда ряд заполнялся целиком — <em>вжух!</em> — он вспыхивал и исчезал.</p>
+      <p>Марьям потянулась поставить оранжевую фигурку в самый угол — и вдруг экран под её пальцем стал глубоким, как колодец. Оранжевый блок засветился фиолетовым, комната закружилась, и Марьям <em>провалилась внутрь игры</em>.</p>
+      <p class="say">Она приземлилась на мягкий пол из светящихся клеток. Вокруг парили кубики всех цветов радуги, а в воздухе плавали строчки из букв и значков. «Где это я?» — прошептала Марьям. «В <b>Мире Кода</b>, — ответил кто-то тёплым голосом. — Здесь всё, что ты видишь, кто-то придумал и <em>записал</em>. И игра, из которой ты выпала, — тоже. Хочешь, научим тебя её строить?»</p>
+      <p>Из-за парящего блока вышли четверо: рыжий пони, высокая лама, пушистая альпака и два маленьких котика. Марьям кивнула так быстро, что чуть не потеряла бантик.</p>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что такое программа</div>
+      <ul>
+        <li><b>Программа</b> — это очень точный список указаний, записанный так, что его понимает компьютер.</li>
+        <li>Игра, сайт, приложение — всё это программы. Мы будем строить игру <b>BlockDuel 9×9</b>: тетромино на доске 9×9, как та, из которой выпала Марьям.</li>
+        <li>Язык, на котором мы напишем игру, называется <span class="word">Dart</span>, а её «тело» — <span class="word">Flutter</span>. Сервер (для игры вдвоём) — на <span class="word">TypeScript</span>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 2 ═══ -->
+  <section class="chapter" id="c2">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#pony"/></svg></div>
+      <div><div class="ch-num">Глава 01 · Данные</div><h2>Пони По и коробочки-переменные</h2><div class="ch-companion">спутник главы — рыжий пони По</div></div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 460 160" role="img" aria-label="Пони По показывает Марьям подписанные коробочки">
+        <rect width="460" height="160" rx="16" fill="var(--card)"/>
+        <use href="#pony" x="24" y="42" width="96" height="96"/>
+        <use href="#maryam" x="350" y="46" width="86" height="86"/>
+        <g font-family="JetBrains Mono, monospace" font-size="12" fill="var(--ink)">
+          <rect x="150" y="40" width="150" height="30" rx="8" fill="var(--magic-wash)" stroke="var(--line)"/>
+          <text x="162" y="59">score = <tspan fill="var(--tO)">0</tspan></text>
+          <rect x="150" y="82" width="150" height="30" rx="8" fill="var(--magic-wash)" stroke="var(--line)"/>
+          <text x="162" y="101">nick = <tspan fill="var(--tS)">"Марьям"</tspan></text>
+        </g>
+      </svg>
+    </div>
+    <div class="prose">
+      <p class="say">Рыжий пони топнул копытцем и представился: «Я — <b>По</b>. Пони — значит "маленький", но память у меня о-го-го. Смотри: чтобы компьютер что-то запомнил, мы кладём это в <span class="word">переменную</span> — коробочку с подписью».</p>
+      <p>По подкатил две коробочки. На одной написал <span class="mono">score</span> и положил внутрь число <span class="mono">0</span> — это очки. На другой написал <span class="mono">nick</span> и положил слово <span class="mono">"Марьям"</span>. «Подпись — это <em>имя</em> коробочки. То, что внутри, — <em>значение</em>. А ещё у коробочки есть <span class="word">тип</span>: в одной живут числа, в другой — буквы. Числа мы зовём <span class="mono">int</span>, а буквы — <span class="mono">String</span>».</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> заклинание По <span class="file">Dart</span></div>
+<pre><code><span class="key">int</span> score = <span class="num">0</span>;          <span class="cmt">// коробочка с числом: очки игрока</span>
+<span class="key">String</span> nick = <span class="str">"Марьям"</span>;  <span class="cmt">// коробочка с буквами: имя</span>
+
+score = score + <span class="num">15</span>;      <span class="cmt">// очистили ряд — прибавили 15 очков</span>
+</code></pre>
+      <div class="spell-cap">Знак <b>=</b> здесь не «равно», а «<b>положи в коробочку</b>». Сначала считается то, что справа, потом кладётся в имя слева.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Переменная</b> — именованная коробочка для данных.</li>
+        <li>У каждого значения есть <b>тип</b>: <span class="mono">int</span> (числа), <span class="mono">String</span> (текст), <span class="mono">bool</span> (да/нет).</li>
+        <li><span class="mono">=</span> — это «присвоить», а не «равно».</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 3 ═══ -->
+  <section class="chapter" id="c3">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#llama"/></svg></div>
+      <div><div class="ch-num">Глава 02 · Действия</div><h2>Лама Лу и волшебные функции</h2><div class="ch-companion">спутник главы — лама Лу</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">Лама вытянула длинную шею и мягко сказала: «Меня зовут <b>Лу</b>. Коробочки По — это <em>что</em>. А я научу тебя <em>что делать</em>. Действие, которому дали имя, называется <span class="word">функция</span>. Один раз придумал — зовёшь сколько хочешь».</p>
+      <p>Лу сплела копытами волшебный узор: «Функция берёт что-то на вход, делает работу и <em>возвращает</em> ответ. Вот настоящая функция из нашей игры — она считает, сколько очков дать за ход».</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tI)"></span> заклинание Лу <span class="file">lib/core/scoring.dart</span></div>
+<pre><code><span class="cmt">// n — сколько линий очистили за ход; combo — серия подряд;</span>
+<span class="cmt">// perfect — если доска стала совсем пустой (это редко и ценно).</span>
+<span class="key">int</span> scoreForMove(<span class="key">int</span> n, <span class="key">int</span> combo, <span class="key">bool</span> perfect) {
+  <span class="key">final</span> base = n * <span class="num">10</span>;                <span class="cmt">// база: 10 очков за линию</span>
+  <span class="key">final</span> comboMult = <span class="num">1</span> + <span class="num">0.1</span> * combo;  <span class="cmt">// серия множит очки</span>
+  <span class="key">final</span> bonus = perfect ? <span class="num">15</span> : <span class="num">0</span>;    <span class="cmt">// бонус за чистую доску</span>
+  <span class="key">return</span> (base * comboMult).round() + bonus;
+}
+</code></pre>
+      <div class="spell-cap">Позвать функцию: <b class="mono">scoreForMove(2, 3, false)</b> → две линии, серия 3 → вернёт <b>26</b>. Одна формула — а работает в каждой партии.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Функция</b> — действие с именем: берёт вход (аргументы), возвращает ответ.</li>
+        <li><span class="mono">return</span> — «вот мой ответ, я закончила».</li>
+        <li>Написал раз — используешь везде. Это экономит силы (и не даёт ошибиться дважды).</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 4 ═══ -->
+  <section class="chapter" id="c4">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#alpaca"/></svg></div>
+      <div><div class="ch-num">Глава 03 · Логика</div><h2>Альпака Аля, «если» и «повтори»</h2><div class="ch-companion">спутник главы — альпака Аля</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">Пушистая альпака подпрыгнула: «А я — <b>Аля</b>! Со мной программа учится <em>решать</em> и <em>повторять</em>. "Если" по-нашему — <span class="word">if</span>. А "повтори много раз" — <span class="word">for</span>».</p>
+      <p>Аля показала: «Хочешь проверить всю доску — не будешь же трогать каждую из 81 клетки руками. Скажи <span class="mono">for</span> — и компьютер обойдёт их сам, по строчкам и столбикам».</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> заклинание Али <span class="file">Dart</span></div>
+<pre><code><span class="cmt">// «если очки больше рекорда — запомни новый рекорд»</span>
+<span class="key">if</span> (score &gt; best) {
+  best = score;
+}
+
+<span class="cmt">// «повтори для каждой строки r от 0 до 8, для каждого столбца c»</span>
+<span class="key">for</span> (<span class="key">int</span> r = <span class="num">0</span>; r &lt; <span class="num">9</span>; r++) {
+  <span class="key">for</span> (<span class="key">int</span> c = <span class="num">0</span>; c &lt; <span class="num">9</span>; c++) {
+    <span class="cmt">// сюда попадём 81 раз — по одному на каждую клетку</span>
+  }
+}
+</code></pre>
+      <div class="spell-cap"><b>if</b> — развилка: пойти сюда или туда. <b>for</b> — карусель: сделать одно и то же много раз, меняя счётчик.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><span class="mono">if</span> — принять решение по условию.</li>
+        <li><span class="mono">for</span> — повторить действие; вложенные <span class="mono">for</span> обходят всю сетку.</li>
+        <li>Компьютер не устаёт: 81 клетку или 81 000 — ему всё равно.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 5 ═══ -->
+  <section class="chapter" id="c5">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#catP"/></svg></div>
+      <div><div class="ch-num">Глава 04 · Данные-2</div><h2>Котики и сетка 9×9</h2><div class="ch-companion">спутники главы — два котика</div></div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 460 180" role="img" aria-label="Котики раскладывают клетки в сетку 9 на 9">
+        <rect width="460" height="180" rx="16" fill="var(--card)"/>
+        <use href="#catP" x="20" y="60" width="72" height="72"/>
+        <use href="#catR" x="368" y="60" width="72" height="72"/>
+        <g transform="translate(160,20)">
+          <rect width="140" height="140" rx="10" fill="var(--magic-wash)" stroke="var(--line)"/>
+          <g stroke="var(--line)">
+            <path d="M46 4V136M92 4V136M4 46H136M4 92H136" stroke-width="2"/>
+            <path d="M17 4V136M31 4V136M63 4V136M77 4V136M109 4V136M123 4V136M4 17H136M4 31H136M4 63H136M4 77H136M4 109H136M4 123H136" stroke-width=".5" opacity=".6"/>
+          </g>
+          <rect x="6" y="6" width="10" height="10" rx="3" fill="var(--tO)"/>
+          <rect x="20" y="6" width="10" height="10" rx="3" fill="var(--tO)"/>
+          <rect x="96" y="48" width="10" height="10" rx="3" fill="var(--tI)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="prose">
+      <p class="say">Два котика катали клубок из клеток. «Мы — <b>Котики</b>, — мурлыкнули они хором. — Одна коробочка хранит одно. А если нужно много — берут <span class="word">список</span>. А доска — это список <em>списков</em>: строки, а в каждой строке — клетки».</p>
+      <p>Каждая клетка знает про себя две вещи: <em>занята ли она</em> и <em>чья она</em> (какого игрока). Котики слепили это в маленькую коробочку <span class="mono">Cell</span>, а потом собрали из клеток целую доску 9×9 — совсем пустую, как в начале партии.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tT)"></span> заклинание Котиков <span class="file">lib/core/board.dart</span></div>
+<pre><code><span class="key">class</span> Cell {
+  <span class="key">final</span> <span class="key">bool</span> filled;   <span class="cmt">// клетка занята?</span>
+  <span class="key">final</span> <span class="key">int</span>? owner;    <span class="cmt">// чья она (0 или 1), либо ничья — null</span>
+  Cell({<span class="key">this</span>.filled = <span class="key">false</span>, <span class="key">this</span>.owner});
+}
+
+<span class="cmt">// Доска — это список списков клеток (строки × столбцы).</span>
+<span class="key">typedef</span> Board = List&lt;List&lt;Cell&gt;&gt;;
+
+<span class="cmt">// Пустая доска 9×9: девять строк, в каждой девять пустых клеток.</span>
+Board emptyBoard() =&gt; [
+  <span class="key">for</span> (<span class="key">int</span> r = <span class="num">0</span>; r &lt; <span class="num">9</span>; r++)
+    [<span class="key">for</span> (<span class="key">int</span> c = <span class="num">0</span>; c &lt; <span class="num">9</span>; c++) Cell()],
+];
+</code></pre>
+      <div class="spell-cap">Чтобы узнать клетку в строке <b>r</b> и столбце <b>c</b>, пишем <b class="mono">board[r][c]</b>. Первый номер — этаж, второй — квартира.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Список</b> <span class="mono">List</span> хранит много значений по порядку, по номерам (с нуля!).</li>
+        <li><b>class</b> — своя коробочка из нескольких полей (у <span class="mono">Cell</span> их два).</li>
+        <li>Сетку удобно хранить как список списков: <span class="mono">board[r][c]</span>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 6 ═══ -->
+  <section class="chapter" id="c6">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#llama"/></svg></div>
+      <div><div class="ch-num">Глава 05 · Честная случайность</div><h2>Предсказуемое волшебство</h2><div class="ch-companion">снова лама Лу — она любит числа</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«Игре нужна случайность, — сказала Лу, — какая фигурка выпадет следующей. Но есть секрет: наша случайность <em>честная и предсказуемая</em>. Если начать с одного и того же <span class="word">зерна</span> (seed) — выпадет ровно та же цепочка. Тогда игру можно точно повторить, сравнить на двух устройствах и поймать жуликов».</p>
+      <p>Это волшебство называют <span class="word">генератор псевдослучайных чисел</span>. Наш зовётся <em>mulberry32</em>. Он берёт число-зерно и каждым вызовом превращает его в новое, вроде бы «случайное», но всегда одинаковое для одного зерна.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tI)"></span> заклинание честной случайности <span class="file">lib/core/rng.dart</span></div>
+<pre><code><span class="key">class</span> Mulberry32 {
+  <span class="key">int</span> _state;
+  Mulberry32(<span class="key">int</span> seed) : _state = seed &amp; <span class="num">0xFFFFFFFF</span>;  <span class="cmt">// зерно</span>
+
+  <span class="cmt">// Каждый вызов возвращает число от 0 до 1 — но по строгой формуле.</span>
+  <span class="key">double</span> next() {
+    _state = (_state + <span class="num">0x6D2B79F5</span>) &amp; <span class="num">0xFFFFFFFF</span>;
+    <span class="key">int</span> t = _state;
+    t = (t ^ (t &gt;&gt;&gt; <span class="num">15</span>)) * (<span class="num">1</span> | t);
+    t = ((t + (t ^ (t &gt;&gt;&gt; <span class="num">7</span>)) * (<span class="num">61</span> | t)) ^ t) &amp; <span class="num">0xFFFFFFFF</span>;
+    <span class="key">return</span> ((t ^ (t &gt;&gt;&gt; <span class="num">14</span>)) &amp; <span class="num">0xFFFFFFFF</span>) / <span class="num">4294967296</span>;
+  }
+}
+</code></pre>
+      <div class="spell-cap">Два игрока с одним зерном увидят <b>одну и ту же</b> последовательность фигур. Волшебство, которое можно повторить, — самое надёжное.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Зерно (seed)</b> задаёт всю цепочку «случайных» чисел.</li>
+        <li>Одинаковое зерно → одинаковый результат. Это называют <b>детерминизмом</b>.</li>
+        <li>В игре это даёт честность: повтор партии, сравнение, защита от обмана.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 7 ═══ -->
+  <section class="chapter" id="c7">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#alpaca"/></svg></div>
+      <div><div class="ch-num">Глава 06 · Формы</div><h2>Семь фигур-тетромино</h2><div class="ch-companion">Аля раскладывает фигурки</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«В игре семь фигурок, — Аля разложила их веером. — Их зовут буквами, на которые они похожи: <b>I, O, T, S, Z, J, L</b>. Каждая — это просто <em>список клеточек</em>, которые она занимает».</p>
+      <p>Фигурку удобно описать как набор координат: «сдвинься на столько-то вправо и вниз от угла». Тогда фигурку можно поворачивать и переносить — а компьютер знает, какие клетки она накроет.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> заклинание форм <span class="file">lib/core/pieces.dart</span></div>
+<pre><code><span class="cmt">// Coord — одна клеточка фигуры: сдвиг по строке (r) и столбцу (c).</span>
+<span class="key">class</span> Coord { <span class="key">final</span> <span class="key">int</span> r, c; Coord(<span class="key">this</span>.r, <span class="key">this</span>.c); }
+
+<span class="cmt">// Фигура T: три клетки в ряд и одна сверху по центру.</span>
+<span class="key">final</span> tPiece = [
+  Coord(<span class="num">0</span>, <span class="num">1</span>),           <span class="cmt">//   ▢        верхняя клетка</span>
+  Coord(<span class="num">1</span>, <span class="num">0</span>), Coord(<span class="num">1</span>, <span class="num">1</span>), Coord(<span class="num">1</span>, <span class="num">2</span>),  <span class="cmt">// ▢▢▢  нижний ряд</span>
+];
+</code></pre>
+      <div class="spell-cap">Форма — это данные, а не картинка. Из координат мы потом и нарисуем фигуру, и проверим, поместится ли она.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li>Сложную форму можно описать простыми <b>координатами</b>.</li>
+        <li>Данные важнее картинки: из данных родится и картинка, и логика.</li>
+        <li>Семь фигур <span class="mono">I O T S Z J L</span> — весь «алфавит» тетромино.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 8 ═══ -->
+  <section class="chapter" id="c8">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#pony"/></svg></div>
+      <div><div class="ch-num">Глава 07 · Проверки</div><h2>Закон мира: «сюда можно?»</h2><div class="ch-companion">По следит за порядком</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«Каждый мир держится на законах, — строго сказал По. — Наш закон: фигуру можно ставить, только если <em>все</em> её клетки попадают на доску и <em>ни одна</em> не наезжает на занятую. Проверим — и разрешим либо откажем».</p>
+      <p>Марьям взяла оранжевую фигурку, поднесла к углу — и сама увидела: одна клетка вылезает за край. «Значит, нельзя!» — сказала она. По кивнул: «Именно это и решает функция ниже. Она обходит клетки фигуры и, чуть что не так, сразу говорит "нет"».</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> закон постановки <span class="file">lib/core/board.dart</span></div>
+<pre><code><span class="cmt">// Можно ли поставить фигуру cells с углом в (r, c)?</span>
+<span class="key">bool</span> canPlace(Board board, List&lt;Coord&gt; cells, <span class="key">int</span> r, <span class="key">int</span> c) {
+  <span class="key">for</span> (<span class="key">final</span> cell <span class="key">in</span> cells) {
+    <span class="key">final</span> rr = r + cell.r, cc = c + cell.c;
+    <span class="key">if</span> (rr &lt; <span class="num">0</span> || rr &gt;= <span class="num">9</span> || cc &lt; <span class="num">0</span> || cc &gt;= <span class="num">9</span>) <span class="key">return</span> <span class="key">false</span>; <span class="cmt">// за краем</span>
+    <span class="key">if</span> (board[rr][cc].filled) <span class="key">return</span> <span class="key">false</span>;                <span class="cmt">// клетка занята</span>
+  }
+  <span class="key">return</span> <span class="key">true</span>; <span class="cmt">// все клетки прошли проверку — ставить можно!</span>
+}
+</code></pre>
+      <div class="spell-cap">Здесь встретилось всё сразу: <b>функция</b>, <b>цикл for</b>, <b>if</b>, <b>список</b> и <b>доска</b>. Ты уже умеешь читать настоящий игровой код.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li>Функция может вернуть <span class="mono">true</span>/<span class="mono">false</span> — «да» или «нет».</li>
+        <li>«Ранний выход»: нашли нарушение — сразу <span class="mono">return false</span>, дальше не проверяем.</li>
+        <li>Правила игры — это просто аккуратные проверки.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 9 ═══ -->
+  <section class="chapter" id="c9">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#catR"/></svg></div>
+      <div><div class="ch-num">Глава 08 · Правила и счёт</div><h2>Линии гаснут, очки летят</h2><div class="ch-companion">котики считают очки</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">Котики завозились: «Самое вкусное! Когда ряд, столбик или квадрат 3×3 заполнен целиком — он <em>гаснет</em>, освобождая место. А очки за это получает тот, чей ход всё завершил».</p>
+      <p>Сначала мы находим все полные линии, потом очищаем их, потом зовём формулу Лу из главы 02 — и добавляем очки игроку. Всё, что ты выучил, сходится в один красивый ход.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tZ)"></span> ход целиком <span class="file">lib/core/board.dart + scoring.dart</span></div>
+<pre><code><span class="cmt">// Найти номера полностью заполненных строк.</span>
+List&lt;<span class="key">int</span>&gt; fullRows(Board board) {
+  <span class="key">final</span> rows = &lt;<span class="key">int</span>&gt;[];
+  <span class="key">for</span> (<span class="key">int</span> r = <span class="num">0</span>; r &lt; <span class="num">9</span>; r++) {
+    <span class="key">if</span> (board[r].every((cell) =&gt; cell.filled)) rows.add(r); <span class="cmt">// вся строка занята</span>
+  }
+  <span class="key">return</span> rows;
+}
+
+<span class="cmt">// После постановки: очистить линии и начислить очки ходившему.</span>
+<span class="key">int</span> cleared = fullRows(board).length + fullCols(board).length;
+player.score += scoreForMove(cleared, player.combo, isPerfect);
+</code></pre>
+      <div class="spell-cap">Обрати внимание: мы <b>переиспользуем</b> <b class="mono">scoreForMove</b> из главы 02. Хорошо написанная функция служит много раз.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><span class="mono">.every(...)</span> — «все ли элементы подходят?» короткая проверка списка.</li>
+        <li>Большое действие складывается из маленьких, уже знакомых.</li>
+        <li>Правила + счёт = сердце игры. И оно у нас уже бьётся.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 10 ═══ -->
+  <section class="chapter" id="c10">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#catP"/></svg></div>
+      <div><div class="ch-num">Глава 09 · Искусственный ум</div><h2>Котёнок, который научился думать</h2><div class="ch-companion">фиолетовый котик учится «думать»</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«А если рядом нет второго человека?» — спросила Марьям. Фиолетовый котик прищурился: «Тогда играет <b>бот</b> — котёнок с искусственным умом. Он не колдует: он просто <em>перебирает все ходы</em>, каждому ставит оценку и выбирает лучший».</p>
+      <p>Это и есть большой секрет «умных» программ: они пробуют много вариантов и выбирают тот, что по нашим правилам лучше. Чем умнее бот — тем дальше он заглядывает и тем хитрее считает оценку.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tT)"></span> ум бота <span class="file">lib/core/bot.dart</span></div>
+<pre><code>CandidateMove? chooseBotMove(Board board, List&lt;Piece&gt; hand) {
+  <span class="key">final</span> moves = enumerateMoves(board, hand);   <span class="cmt">// все возможные ходы</span>
+  <span class="key">if</span> (moves.isEmpty) <span class="key">return</span> <span class="key">null</span>;            <span class="cmt">// ходов нет — пас</span>
+
+  <span class="cmt">// Оценить каждый ход и поставить лучший вперёд.</span>
+  moves.sort((a, b) =&gt; scoreOf(b) - scoreOf(a));
+  <span class="key">return</span> moves.first;                          <span class="cmt">// самый выгодный ход</span>
+}
+</code></pre>
+      <div class="spell-cap">«Умно» — не значит «магия». Это <b>перебрать</b> варианты и <b>выбрать</b> лучший по честной оценке. У нас есть три бота: полегче, средний и хитрый.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Бот</b> = перебор ходов + оценка + выбор лучшего.</li>
+        <li><span class="mono">sort</span> раскладывает список по порядку — тут от лучшего к худшему.</li>
+        <li>Искусственный ум — это чёткие правила, а не волшебство.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 11 ═══ -->
+  <section class="chapter" id="c11">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#maryam"/></svg></div>
+      <div><div class="ch-num">Глава 10 · Фронтенд</div><h2>Лицо игры</h2><div class="ch-companion">теперь ведёт сама Марьям</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">До сих пор всё было «под капотом»: числа, списки, правила. Но игрок ничего этого не видит — он видит <em>картинку</em>. То, что человек видит и трогает, зовётся <span class="word">фронтенд</span>. Марьям взяла кисть из света: «Давайте нарисуем доску!»</p>
+      <p>Во Flutter картинку строят из кирпичиков — <span class="word">виджетов</span>. Виджет — это «нарисуй вот такой кусочек». Мы просто пробегаем по доске и для каждой клетки рисуем квадратик: пустой — светлый, занятый — цветной, под своего игрока.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--magic)"></span> рисуем доску <span class="file">lib/ui/widgets/board_view.dart</span></div>
+<pre><code>Widget build(BuildContext context) {
+  <span class="key">return</span> GridView.count(
+    crossAxisCount: <span class="num">9</span>,                <span class="cmt">// 9 клеток в ряд</span>
+    children: [
+      <span class="key">for</span> (<span class="key">final</span> row <span class="key">in</span> board)
+        <span class="key">for</span> (<span class="key">final</span> cell <span class="key">in</span> row)
+          Container(
+            color: cell.filled
+                ? colorFor(cell.owner)    <span class="cmt">// занята — цвет игрока</span>
+                : emptyColor,             <span class="cmt">// пусто — светлый фон</span>
+          ),
+    ],
+  );
+}
+</code></pre>
+      <div class="spell-cap">Тот же цикл <b>for</b> из главы 03 — только теперь он не считает, а <b>рисует</b>. Данные и картинка встретились.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Фронтенд</b> — то, что видит и трогает человек.</li>
+        <li>Во <b>Flutter</b> экран собирают из <b>виджетов</b>, как из кубиков.</li>
+        <li>Картинка рождается из данных: пробежались по доске — нарисовали клетки.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 12 ═══ -->
+  <section class="chapter" id="c12">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#llama"/></svg></div>
+      <div><div class="ch-num">Глава 11 · Бэкенд</div><h2>Двое через океан</h2><div class="ch-companion">Лу протягивает нить связи</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«А если два человека — на разных концах Земли?» — Марьям представила подружку в другой стране. Лу улыбнулась: «Тогда нужен <span class="word">сервер</span> — умный посредник, который живёт в интернете и передаёт ходы туда-сюда. Всё, что не на экране, а "на той стороне", зовут <span class="word">бэкенд</span>».</p>
+      <p>Наш сервер написан на <span class="word">TypeScript</span>. Он слушает игроков по «телефонной линии» <span class="word">WebSocket</span>: пришёл ход — проверил, применил, разослал обоим. А ещё он считает <span class="word">рейтинг ELO</span>: побеждаешь сильного — рейтинг растёт сильнее.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tI)"></span> сервер слушает ходы <span class="file">server/index.ts + room.ts</span></div>
+<pre><code>wss.on(<span class="str">"connection"</span>, (ws) =&gt; {          <span class="cmt">// подключился игрок</span>
+  ws.on(<span class="str">"message"</span>, (data) =&gt; {            <span class="cmt">// пришло сообщение</span>
+    <span class="key">const</span> msg = JSON.parse(String(data));
+    <span class="key">if</span> (msg.type === <span class="str">"move"</span>) handleMove(ws, msg); <span class="cmt">// это ход — обработать</span>
+  });
+});
+
+<span class="cmt">// Рейтинг ELO: насколько сдвинуть рейтинг после партии.</span>
+<span class="key">const</span> expected = <span class="num">1</span> / (<span class="num">1</span> + Math.pow(<span class="num">10</span>, (b.elo - a.elo) / <span class="num">400</span>));
+<span class="key">const</span> newA = Math.round(a.elo + <span class="num">24</span> * (score - expected));
+</code></pre>
+      <div class="spell-cap">Главное правило бэкенда: <b>сервер — судья</b>. Он не верит игрокам на слово и всё проверяет сам — чтобы никто не смошенничал.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Бэкенд</b> — часть программы «на той стороне», в интернете.</li>
+        <li><b>Сервер</b> передаёт ходы между игроками и остаётся честным судьёй.</li>
+        <li><b>WebSocket</b> — живая двусторонняя связь; <b>ELO</b> — справедливый рейтинг.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH TESTS ═══ -->
+  <section class="chapter" id="ctest">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#alpaca"/></svg></div>
+      <div><div class="ch-num">Глава 12 · Качество</div><h2>Зверята-контролёры: тесты</h2><div class="ch-companion">Аля надевает жилетку контролёра</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«Игра большая, — вздохнула Марьям, — а вдруг я что-то поменяю и случайно сломаю?» Аля улыбнулась и надела оранжевую жилетку: «Для этого есть <span class="word">тесты</span>. Тест — это крошечная программа, которая проверяет: <em>даёт ли игра правильный ответ?</em> Написал раз — и потом хоть каждую минуту проверяй всю игру за секунду».</p>
+      <p>Тест устроен просто: «сделай вот так — и я <span class="mono">жду</span> вот такой ответ». Если ответ совпал — тест <b>зелёный</b>, всё хорошо. Если нет — тест <b>красный</b>, и ты сразу знаешь: что-то сломалось, чини прямо сейчас, пока не забыл.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> проверки-контролёры <span class="file">test/…_test.dart</span></div>
+<pre><code>test(<span class="str">'одна линия без серии даёт 10 очков'</span>, () {
+  <span class="key">final</span> s = scoreForMove(<span class="num">1</span>, <span class="num">0</span>, <span class="key">false</span>);
+  expect(s, <span class="num">10</span>);        <span class="cmt">// ждём РОВНО 10 — иначе тест красный</span>
+});
+
+test(<span class="str">'одно зерно — одна и та же цепочка фигур'</span>, () {
+  <span class="key">final</span> a = Bag(<span class="num">4242</span>);
+  <span class="key">final</span> b = Bag(<span class="num">4242</span>);
+  expect(a.draw().type, b.draw().type);   <span class="cmt">// должны совпасть (детерминизм!)</span>
+});
+</code></pre>
+      <div class="spell-cap"><b class="mono">expect(что_получили, что_ждали)</b> — сердце теста. В нашей игре таких проверок больше <b>пятисот</b>, и все они зелёные. Это как армия зверят, что днём и ночью стерегут игру.</div>
+    </div>
+    <div class="task">
+      <div class="h">🍎 Задание дня</div>
+      <ol>
+        <li>Прочитай оба теста вслух — как приказ контролёру: «сделай… жду…».</li>
+        <li>Придумай на бумаге ещё один тест для <span class="mono">scoreForMove</span>: например, «две линии с серией 3 → жду 26».</li>
+        <li>Подумай: почему хорошо, что тест <em>красный</em>, а не «молча сломался»?</li>
+      </ol>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Тест</b> — маленькая программа-проверка: «сделай так — жду такой ответ».</li>
+        <li><span class="mono">expect(...)</span> сравнивает полученное с ожидаемым.</li>
+        <li>Зелёные тесты = спокойствие; можно смело менять код — контролёры поймают ошибку.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH BUGS ═══ -->
+  <section class="chapter" id="cbug">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#catR"/></svg></div>
+      <div><div class="ch-num">Глава 13 · Отладка</div><h2>Охота на баги</h2><div class="ch-companion">котики становятся детективами</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">Котики нацепили крошечные шляпы детективов. «В любой большой программе прячутся <span class="word">баги</span> — маленькие ошибки-жучки, — сказали они. — Это не стыдно! Багов не боятся, на них <em>охотятся</em>. Нашёл, понял, починил — и обязательно поставил тест, чтобы жучок не вернулся».</p>
+      <p>Расскажем про двух настоящих жучков, которых мы поймали в этой самой игре.</p>
+
+      <p><b>Жучок №1 — «Счёт, который забывал себя».</b> Когда интернет на секундочку моргал, игрок переподключался, и сервер снова говорил «здравствуй». А код по ошибке на каждое «здравствуй» <em>обнулял</em> набранные за матч очки-достижения. Обидно! Детективы поняли: сбрасывать надо не на «здравствуй», а только если начался <em>по-настоящему новый матч</em> — у каждого матча есть свой номер <span class="mono">matchId</span>.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tZ)"></span> починка жучка №1 <span class="file">lib/online/online_game_notifier.dart</span></div>
+<pre><code><span class="cmt">// БЫЛО (жучок): сбрасывали счётчики на КАЖДОЕ "здравствуй" —</span>
+<span class="cmt">// даже когда матч тот же, просто моргнул интернет.</span>
+resetMatchAcc: <span class="key">true</span>,
+
+<span class="cmt">// СТАЛО: сбрасываем ТОЛЬКО если это другой матч (по его номеру).</span>
+<span class="key">final</span> freshMatch = game.matchId != _accMatchId;
+resetMatchAcc: freshMatch,   <span class="cmt">// тот же матч после обрыва — счёт цел!</span>
+</code></pre>
+      <div class="spell-cap">Один жучок — а обидел бы каждого, у кого моргает интернет. Теперь его сторожит новый тест: «переподключение НЕ обнуляет счёт».</div>
+    </div>
+    <div class="prose">
+      <p><b>Жучок №2 — «Задания, застрявшие во вчера».</b> Каждый день игроку дают новые задания. Но программа вычисляла «какой сегодня день» <em>один раз</em> при запуске и больше не проверяла. Если приложение не закрывали, то после полуночи оно застревало на <em>вчерашних</em> заданиях. Детективы добавили привычку: <em>перед каждым действием тихо спросить — а день ещё тот же?</em></p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tT)"></span> починка жучка №2 <span class="file">lib/daily/daily_controller.dart</span></div>
+<pre><code><span class="cmt">// Перед каждым действием проверяем: не наступил ли новый день?</span>
+<span class="key">void</span> refreshDay() {
+  <span class="key">final</span> today = _todayKey();
+  <span class="key">if</span> (state.dayKey != today) {        <span class="cmt">// день сменился!</span>
+    state = DailyState.fresh(today);   <span class="cmt">// выдаём свежие задания</span>
+  }
+}
+</code></pre>
+      <div class="spell-cap">Тот же жучок жил ещё в двух местах (недельные и сезонные задания) — детективы поймали всех троих одним приёмом. Ошибки любят прятаться семьями.</div>
+    </div>
+    <div class="task">
+      <div class="h">🍎 Задание дня</div>
+      <ol>
+        <li>Расскажи своими словами, что делал каждый жучок и почему это плохо.</li>
+        <li>Правило детектива: «починил баг — <span class="mono">добавь тест</span>». Зачем? (Подсказка: чтобы жучок не вернулся незаметно.)</li>
+        <li>Вспомни свою ошибку в жизни. Как «тест» (проверка) помог бы не повторить её?</li>
+      </ol>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Баг</b> — маленькая ошибка в коде. Их не стыдятся, а находят и чинят.</li>
+        <li><b>Отладка</b> — это как детектив: найти, понять причину, починить.</li>
+        <li>Золотое правило: <b>починил → поставь тест</b>, чтобы ошибка не вернулась.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH GIT ═══ -->
+  <section class="chapter" id="cgit">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#pony"/></svg></div>
+      <div><div class="ch-num">Глава 14 · Машина времени</div><h2>Git: как не потерять свою работу</h2><div class="ch-companion">По хранит все снимки истории</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«А что, если я всё поломаю и не смогу вернуть, как было?» — испугалась Марьям. По подкатил волшебный сундук: «Для этого есть <span class="word">Git</span> — машина времени для кода. Каждый раз, когда что-то получилось, ты делаешь <span class="word">коммит</span> — снимок-фотографию всего проекта с подписью. Захотел вернуться в прошлое — открыл нужный снимок. Ничего не пропадает».</p>
+      <p>Каждый коммит — как сохранёнка в игре: «здесь у меня всё работало». А ещё Git умеет отправлять код в <span class="word">облако</span> (сайт <b>GitHub</b>) — чтобы он не жил только на твоём компьютере и чтобы можно было работать вместе с друзьями.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> заклинания машины времени <span class="file">терминал · git</span></div>
+<pre><code>git init                     <span class="cmt"># создать сундук истории в проекте</span>
+git add .                    <span class="cmt"># положить в сундук все изменения</span>
+git commit -m <span class="str">"сделал доску 9x9"</span>  <span class="cmt"># снимок с подписью — что сделал</span>
+
+git log                      <span class="cmt"># посмотреть всю историю снимков</span>
+git checkout &lt;снимок&gt;         <span class="cmt"># вернуться в прошлое (осторожно!)</span>
+git push                     <span class="cmt"># отправить снимки в облако GitHub</span>
+</code></pre>
+      <div class="spell-cap">Подпись у коммита — важная: «<b>что</b> ты сделал». У нашей игры за одну только эту книгу набралось больше <b>пятидесяти</b> таких снимков-коммитов.</div>
+    </div>
+    <div class="task">
+      <div class="h">🍎 Задание дня</div>
+      <ol>
+        <li>Заведи первый в жизни репозиторий: <span class="mono">git init</span> в папке с игрой.</li>
+        <li>Сделай три коммита с честными подписями: что менял — то и напиши.</li>
+        <li>Посмотри <span class="mono">git log</span> — это твоя личная летопись. Гордись ею!</li>
+      </ol>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Git</b> — машина времени: сохраняет снимки (<b>коммиты</b>) всего проекта.</li>
+        <li>Хорошая подпись коммита говорит, <em>что</em> ты сделал — будущему себе спасибо.</li>
+        <li><b>GitHub</b> — облако для кода: не потеряешь и сможешь работать вместе.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 15 ═══ -->
+  <section class="chapter" id="c13">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#alpaca"/></svg></div>
+      <div><div class="ch-num">Глава 15 · Кросс-платформа</div><h2>Один код — четыре мира</h2><div class="ch-companion">Аля собирает игру для всех</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">«А на чём будут играть?» — спросила Марьям. Аля подмигнула: «В том и чудо Flutter: мы пишем <em>один</em> код, а собрать его можно сразу для многих устройств. Это называют <span class="word">кросс-платформенностью</span>».</p>
+      <p>Одной командой игра превращается в сайт для браузера, в приложение для телефона Android, для iPhone и для компьютера Mac. Один труд — четыре мира.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> собрать для всех <span class="file">терминал</span></div>
+<pre><code>flutter build web      <span class="cmt"># игра в браузере</span>
+flutter build apk      <span class="cmt"># приложение для Android</span>
+flutter build ios      <span class="cmt"># приложение для iPhone</span>
+flutter build macos    <span class="cmt"># программа для Mac</span>
+</code></pre>
+      <div class="spell-cap">Четыре мира — из одной кодовой базы. Ты <b>фронтенд</b>-разработчик (лицо игры), <b>бэкенд</b>-разработчик (сервер) и делаешь это <b>кросс-платформенно</b>.</div>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Кросс-платформа</b> — один код, много устройств.</li>
+        <li>Команда <span class="mono">flutter build</span> «печёт» готовое приложение.</li>
+        <li>Ты соединила три роли: фронтенд + бэкенд + сборка под все платформы.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH 14 · EPILOGUE ═══ -->
+  <section class="chapter" id="c14">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#maryam"/></svg></div>
+      <div><div class="ch-num">Глава 16 · Эпилог</div><h2>Игра готова</h2></div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 460 170" role="img" aria-label="Марьям и друзья радуются готовой игре">
+        <rect width="460" height="170" rx="16" fill="var(--card)"/>
+        <g transform="translate(180,26)">
+          <rect width="100" height="100" rx="14" fill="#151019"/>
+          <g>
+            <rect x="14" y="18" width="16" height="16" rx="4" fill="var(--tO)"/>
+            <rect x="14" y="40" width="16" height="16" rx="4" fill="var(--tO)"/>
+            <rect x="14" y="62" width="16" height="16" rx="4" fill="var(--tO)"/>
+            <rect x="36" y="62" width="16" height="16" rx="4" fill="var(--tO)"/>
+            <rect x="58" y="40" width="16" height="16" rx="4" fill="var(--tI)"/>
+            <rect x="58" y="62" width="16" height="16" rx="4" fill="var(--tI)"/>
+            <rect x="36" y="84" width="16" height="12" rx="4" fill="var(--tI)"/>
+          </g>
+        </g>
+        <use href="#maryam" x="96" y="70" width="80" height="80"/>
+        <use href="#pony"   x="284" y="80" width="76" height="76"/>
+        <use href="#catP"   x="372" y="96" width="54" height="54"/>
+        <use href="#llama"  x="30" y="70" width="70" height="80"/>
+        <use href="#alpaca" x="358" y="34" width="56" height="56"/>
+      </svg>
+    </div>
+    <div class="prose">
+      <p>И вот всё сошлось. Коробочки По хранили данные. Функции Лу считали очки. Развилки и карусели Али вели логику. Котики держали доску и правила. Честная случайность выдавала фигуры. Бот научился думать, виджеты нарисовали лицо, а сервер соединил игроков через океан. Марьям смотрела на экран — и на нём светилась <b>настоящая игра</b>, та самая, из которой она когда-то выпала. Только теперь она знала про неё <em>всё</em>. Потому что построила её сама.</p>
+      <p class="say">«Ты пришла сюда игроком, — сказал По, — а уходишь <b>разработчиком</b>. Ты умеешь и лицо игры (фронтенд), и её сердце на сервере (бэкенд), и собрать всё это сразу для четырёх миров». Марьям улыбнулась. Фиолетовый блок снова засветился — пора домой. Но теперь она уносила с собой самое главное: <em>всё вокруг кто-то придумал и записал. А значит — и она может</em>.</p>
+      <p style="text-align:center; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--magic-ink); font-size:22px; margin-top:26px;">Конец — и начало.</p>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Кем ты стала за эту книгу</div>
+      <ul>
+        <li>Знаешь <b>переменные, функции, if/for, списки и классы</b> — азбуку любого языка.</li>
+        <li>Понимаешь <b>детерминизм</b>, игровую логику, счёт и простой <b>ИИ</b>.</li>
+        <li>Умеешь <b>фронтенд</b> (Flutter-виджеты) и <b>бэкенд</b> (сервер, WebSocket, ELO).</li>
+        <li>Собираешь одно приложение под <b>web, Android, iPhone и Mac</b>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ 200-DAY PLAN ═══ -->
+  <section class="plan" id="plan">
+    <h2>📅 Карта курса: 29 недель, каждая — с мини-проектом</h2>
+    <p>200 дней по 3 часа = ~29 недель. Каждая неделя заканчивается маленьким <b>🎯 мини-проектом</b> — чтобы новое сразу пощупать руками. Не гонись, повторять и отставать — можно.</p>
+    <div class="plan-scroll">
+    <table>
+      <tr><td>Нед. 1 · д1–7</td><td>Подготовка</td><td>🎯 запустить приложение и поменять текст на «Привет, я Марьям!»</td></tr>
+      <tr><td>Нед. 2 · д8–14</td><td>Переменные (По)</td><td>🎯 коробочки <span class="mono">score</span> и <span class="mono">nick</span>, вывести их в консоль</td></tr>
+      <tr><td>Нед. 3 · д15–21</td><td>Функции (Лу)</td><td>🎯 функции <span class="mono">приветствие(имя)</span> и <span class="mono">площадь(a,b)</span></td></tr>
+      <tr><td>Нед. 4 · д22–28</td><td>Условие if (Аля)</td><td>🎯 игра «Угадай число» с подсказками «больше / меньше»</td></tr>
+      <tr><td>Нед. 5 · д29–35</td><td>Цикл for (Аля)</td><td>🎯 таблица умножения и пирамидка из звёздочек ★</td></tr>
+      <tr><td>Нед. 6 · д36–42</td><td>Списки</td><td>🎯 список любимых игр: добавить, удалить, найти самую длинную</td></tr>
+      <tr><td>Нед. 7 · д43–49</td><td>Классы</td><td>🎯 класс <span class="mono">Котик</span> (имя, цвет) — создать троих</td></tr>
+      <tr><td>Нед. 8 · д50–56</td><td>Доска 9×9</td><td>🎯 собрать <span class="mono">emptyBoard()</span> и напечатать доску точками</td></tr>
+      <tr><td>Нед. 9 · д57–63</td><td>Случайность</td><td>🎯 «кубик» на mulberry32; показать: одно зерно = одна цепочка</td></tr>
+      <tr><td>Нед. 10 · д64–70</td><td>Детерминизм</td><td>🎯 мешок <span class="mono">Bag(seed)</span>: два мешка выдают одно и то же</td></tr>
+      <tr><td>Нед. 11 · д71–77</td><td>Фигуры</td><td>🎯 описать все 7 тетромино списками координат</td></tr>
+      <tr><td>Нед. 12 · д78–85</td><td>Повороты фигур</td><td>🎯 функция поворота фигуры на 90°</td></tr>
+      <tr><td>Нед. 13 · д86–92</td><td>Закон «сюда можно?»</td><td>🎯 <span class="mono">canPlace</span>: печатать «да / нет» для разных мест</td></tr>
+      <tr><td>Нед. 14 · д93–99</td><td>Постановка и очистка</td><td>🎯 поставить фигуру и стереть полностью заполненную строку</td></tr>
+      <tr><td>Нед. 15 · д100–105</td><td>Счёт и комбо</td><td>🎯 посчитать очки за ход по формуле, добавить серию-комбо</td></tr>
+      <tr><td>Нед. 16 · д106–112</td><td>Перебор ходов</td><td>🎯 вывести все возможные ходы для одной фигуры</td></tr>
+      <tr><td>Нед. 17 · д113–119</td><td>Оценка хода</td><td>🎯 «оценка» = сколько линий закроет; выбрать лучший</td></tr>
+      <tr><td>Нед. 18 · д120–125</td><td>Бот целиком</td><td>🎯 бот играет сам с собой — вывести, кто победил</td></tr>
+      <tr><td>Нед. 19 · д126–132</td><td>Первый экран (Flutter)</td><td>🎯 экран с заголовком и кнопкой «Играть»</td></tr>
+      <tr><td>Нед. 20 · д133–139</td><td>Доска виджетами</td><td>🎯 <span class="mono">GridView</span> 9×9 с цветными клетками</td></tr>
+      <tr><td>Нед. 21 · д140–145</td><td>Ввод (тап)</td><td>🎯 тап красит клетку; выбор фигуры из руки</td></tr>
+      <tr><td>Нед. 22 · д146–152</td><td>Сервер, WebSocket</td><td>🎯 крошечный сервер: на «привет» отвечает «привет»</td></tr>
+      <tr><td>Нед. 23 · д153–159</td><td>Два игрока</td><td>🎯 передать ход одного игрока другому через сервер</td></tr>
+      <tr><td>Нед. 24 · д160–165</td><td>Рейтинг ELO</td><td>🎯 посчитать новый рейтинг после победы и поражения</td></tr>
+      <tr><td>Нед. 25 · д166–172</td><td>Тесты</td><td>🎯 написать 5 своих тестов — и сделать все зелёными</td></tr>
+      <tr><td>Нед. 26 · д173–178</td><td>Красный → зелёный</td><td>🎯 нарочно сломать код, увидеть красный тест, починить</td></tr>
+      <tr><td>Нед. 27 · д179–185</td><td>Git (машина времени)</td><td>🎯 первый репозиторий: <span class="mono">init</span>, 3 коммита, <span class="mono">git log</span></td></tr>
+      <tr><td>Нед. 28 · д186–195</td><td>Баги + сборка</td><td>🎯 найти и починить баг; собрать под web и Android</td></tr>
+      <tr><td>Нед. 29 · д196–200</td><td>Финал 🎉</td><td>🎯 своя версия игры — показать друзьям и близким</td></tr>
+    </table>
+    </div>
+    <p style="margin-top:12px">Пройдёшь эти 29 недель — и ты <b>кросс-платформенный фронтенд- и бэкенд-разработчик</b>. Как Марьям. 🐴🦙🦥🐱</p>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ БОНУС: ПРОМПТЫ ДЛЯ ИЛЛЮСТРАЦИЙ ═══ -->
+  <section class="prompts" id="prompts">
+    <h2>🎨 Бонус-задание: промпты для иллюстраций</h2>
+    <p>Картинки в этой книге можно перерисовать своими — например, с помощью нейросети, которая рисует по описанию. Такое описание называют <b>промпт</b>. Написать хороший промпт — тоже навык (и его любят разработчики). Научимся!</p>
+
+    <div class="recipe">
+      <div class="h">🧪 Рецепт промпта — пять частей</div>
+      <span class="part">1 · КТО/ЧТО</span>
+      <span class="part">2 · СТИЛЬ</span>
+      <span class="part">3 · ЦВЕТА</span>
+      <span class="part">4 · НАСТРОЕНИЕ</span>
+      <span class="part">5 · ФОРМАТ</span>
+      <p style="margin:10px 0 0; font-size:14.5px; color:var(--muted)">Чем точнее опишешь каждую часть — тем ближе картинка к задумке. Нейросети лучше понимают английский, поэтому промпты ниже — на нём (рядом — что это).</p>
+    </div>
+
+    <p style="font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--ink); margin-top:18px">Общий стиль книги (добавляй к каждому промпту):</p>
+    <div class="cmdline" style="white-space:pre-wrap">children's book illustration, flat vector, soft rounded shapes, thick
+soft outlines, cozy and friendly, dark navy background #0E1116 with
+glowing tetromino blocks in orange #E0913E, cyan #2FB6D2, purple
+#9B5DE0, green #43AE68, warm magical storybook mood, simple, cute</div>
+
+    <div class="prompt-card">
+      <div class="pc-top"><svg><use href="#maryam"/></svg> Марьям — героиня</div>
+<pre>a cute 8-year-old girl named Maryam, two dark braided buns,
+big warm curious eyes, soft purple dress, happy brave smile,
++ [общий стиль]</pre>
+    </div>
+    <div class="prompt-card">
+      <div class="pc-top"><svg><use href="#pony"/></svg> Пони По — переменные</div>
+<pre>a small friendly cartoon pony, warm orange body, red-pink mane
+and tail, big gentle eyes, round and tiny, cheerful,
++ [общий стиль]</pre>
+    </div>
+    <div class="prompt-card">
+      <div class="pc-top"><svg><use href="#llama"/></svg> Лама Лу — функции</div>
+<pre>a tall calm cartoon llama, soft cyan wool, long graceful neck,
+small ears, wise kind eyes, gentle smile,
++ [общий стиль]</pre>
+    </div>
+    <div class="prompt-card">
+      <div class="pc-top"><svg><use href="#alpaca"/></svg> Альпака Аля — логика</div>
+<pre>a fluffy round cartoon alpaca, mint green wool, big fluffy
+cheeks, tiny ears, bright cheerful eyes, bouncy pose,
++ [общий стиль]</pre>
+    </div>
+    <div class="prompt-card">
+      <div class="pc-top"><svg><use href="#catP"/></svg><svg><use href="#catR"/></svg> Котики — доска и счёт</div>
+<pre>two tiny cute cartoon cats sitting together, one soft purple
+and one warm red, big round eyes, playful, tiny detective hats,
++ [общий стиль]</pre>
+    </div>
+    <div class="prompt-card">
+      <div class="pc-top"><svg><use href="#portal"/></svg> Обложка — портал в Мир Кода</div>
+<pre>Maryam stepping through a glowing violet portal made of floating
+code blocks, her friends around her — orange pony, cyan llama,
+green alpaca, two small cats, colorful tetromino blocks floating
+in the air, magical Code World, wide cover composition,
++ [общий стиль]</pre>
+    </div>
+    <div class="prompt-card">
+      <div class="pc-top"><svg><use href="#maryam"/></svg> Сцена — доска 9×9</div>
+<pre>the two cute cats arranging glowing blocks into a neat 9x9 grid
+game board, Maryam watching with wonder, a few orange and cyan
+tetromino pieces placed on the grid,
++ [общий стиль]</pre>
+    </div>
+
+    <div class="task" style="margin-top:18px">
+      <div class="h">🍎 Твоё задание про промпты</div>
+      <ol>
+        <li>Возьми рецепт из пяти частей и напиши <b>свой промпт</b> для нового героя книги — например, для мудрой Совы-Базы-Данных или робота-Сервера.</li>
+        <li>Сгенерируй картинку, посмотри — что вышло не так? Уточни промпт (добавь деталей) и попробуй снова. Это как отладка, только для картинок!</li>
+        <li>Собери «стайл-гайд»: один общий стиль + короткое описание каждого героя. Тогда все картинки будут как одна семья.</li>
+      </ol>
+    </div>
+    <p style="margin-bottom:0; color:var(--muted); font-size:14.5px">💡 Секрет: хороший промпт — как хорошая функция из главы 02. Точный вход → предсказуемый результат. Правишь по чуть-чуть — как код.</p>
+  </section>
+
+  <div class="tetro-rule"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <footer>
+    <div class="big">Марьям в Мире Кода</div>
+    учебник-курс · 17 глав · 29 недель · настоящий проект на GitHub<br>
+    итог курса — НАША игра BlockDuel, собранная и понятая ребёнком целиком
+    <br><a class="backtop" href="#c1">↑ к началу</a>
+  </footer>
+</div>
