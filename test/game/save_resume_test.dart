@@ -128,4 +128,40 @@ void main() {
     final bad = '${'.' * 80}X';
     expect(() => decodeBoard(bad), throwsFormatException);
   });
+
+  test('SavedGame: состояние RNG бота/force сериализуется round-trip', () {
+    final saved = SavedGame(
+      mode: MatchMode.bot,
+      botLevel: BotLevel.medium,
+      seed: 123,
+      board: '.' * 81,
+      players: const [],
+      bags: const [],
+      current: 0,
+      round: 1,
+      botRngState: 424242,
+      forceRngState: 999999,
+    );
+    final back = SavedGame.fromJson(
+      Map<String, dynamic>.from(saved.toJson()),
+    );
+    expect(back.botRngState, 424242);
+    expect(back.forceRngState, 999999);
+  });
+
+  test('SavedGame: старый снимок без RNG-полей → null (обратная совместимость)', () {
+    final legacy = {
+      'mode': 'bot',
+      'botLevel': 'medium',
+      'seed': 1,
+      'board': '.' * 81,
+      'players': const [],
+      'bags': const [],
+      'current': 0,
+      'round': 1,
+    };
+    final s = SavedGame.fromJson(legacy);
+    expect(s.botRngState, isNull);
+    expect(s.forceRngState, isNull);
+  });
 }

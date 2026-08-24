@@ -135,6 +135,14 @@ class SavedGame {
   /// Номер раунда.
   final int round;
 
+  /// Внутреннее состояние PRNG бота на момент снимка (для строгого resume).
+  /// `null` в старых сохранёнках — тогда RNG воссоздаётся от seed (прежнее
+  /// поведение, допустимая микро-расхождение).
+  final int? botRngState;
+
+  /// Внутреннее состояние PRNG force-place на момент снимка. См. [botRngState].
+  final int? forceRngState;
+
   /// Создаёт снимок партии.
   const SavedGame({
     required this.mode,
@@ -145,6 +153,8 @@ class SavedGame {
     required this.bags,
     required this.current,
     required this.round,
+    this.botRngState,
+    this.forceRngState,
   });
 
   /// JSON-представление.
@@ -157,6 +167,8 @@ class SavedGame {
     'bags': [for (final b in bags) b.toJson()],
     'current': current,
     'round': round,
+    if (botRngState != null) 'botRng': botRngState,
+    if (forceRngState != null) 'forceRng': forceRngState,
   };
 
   /// Восстанавливает из JSON.
@@ -175,6 +187,8 @@ class SavedGame {
     ],
     current: json['current'] as int,
     round: json['round'] as int,
+    botRngState: (json['botRng'] as num?)?.toInt(),
+    forceRngState: (json['forceRng'] as num?)?.toInt(),
   );
 }
 

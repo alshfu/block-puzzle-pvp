@@ -47,11 +47,12 @@ class GameNotifier extends Notifier<GameState> {
   /// Мешки фигур обоих игроков.
   late List<Bag> _bags;
 
-  /// Источник случайности для решений бота.
-  late RandomSource _botRng;
+  /// PRNG для решений бота (держим сам генератор, а не тир-офф `.next`, чтобы
+  /// снимать его состояние для строгого детерминизма resume).
+  late Mulberry32 _botRng;
 
-  /// Источник случайности для force-place на таймауте.
-  late RandomSource _forceRng;
+  /// PRNG для force-place на таймауте. См. [_botRng].
+  late Mulberry32 _forceRng;
 
   /// Таймер отложенного хода бота.
   Timer? _botTimer;
@@ -248,7 +249,7 @@ class GameNotifier extends Notifier<GameState> {
     state.currentPlayer.hand,
     BotLevel.hard,
     config.cfg,
-    _botRng,
+    _botRng.next,
   );
 
   /// Индекс ориентации в [os], совпадающей с [cells] (или 0).
@@ -309,8 +310,8 @@ class GameNotifier extends Notifier<GameState> {
   /// Создаёт стартовое состояние: новые мешки, розданные руки, пустая доска.
   GameState _freshState() {
     _bags = [Bag(config.seed), Bag(config.seed ^ 0x9e3779b9)];
-    _botRng = makeRng(config.seed + 777);
-    _forceRng = makeRng(config.seed + 999);
+    _botRng = Mulberry32(config.seed + 777);
+    _forceRng = Mulberry32(config.seed + 999);
     final names = [
       config.isSolo ? 'Ты' : 'Игрок 1',
       config.mode == MatchMode.hotseat ? 'Игрок 2' : 'Бот',
@@ -369,8 +370,14 @@ class GameNotifier extends Notifier<GameState> {
   /// force-place воссоздаются от seed (допустимая микро-расхождение).
   GameState _restore(SavedGame saved) {
     _bags = [for (final b in saved.bags) b.toBag()];
-    _botRng = makeRng(config.seed + 777);
-    _forceRng = makeRng(config.seed + 999);
+    // Строгий детерминизм: если снимок содержит состояние RNG — восстанавливаем
+    // его точно; иначе (старые сохранёнки) воссоздаём от seed (прежнее поведение).
+    _botRng = saved.botRngState != null
+        ? Mulberry32.fromState(saved.botRngState!)
+        : Mulberry32(config.seed + 777);
+    _forceRng = saved.forceRngState != null
+        ? Mulberry32.fromState(saved.forceRngState!)
+        : Mulberry32(config.seed + 999);
     final players = [
       for (final sp in saved.players)
         PlayerState(
@@ -422,6 +429,8 @@ class GameNotifier extends Notifier<GameState> {
     bags: [for (final b in _bags) BagSnapshot.of(b)],
     current: state.current,
     round: state.round,
+    botRngState: _botRng.state,
+    forceRngState: _forceRng.state,
   );
 
   /// Авто-сохранение после хода: пишем снимок (или удаляем сохранёнку по
@@ -580,7 +589,7 @@ class GameNotifier extends Notifier<GameState> {
       s.board,
       s.currentPlayer.hand,
       config.cfg,
-      _forceRng,
+      _forceRng.next,
       preferredPieceId: s.selectedPieceId,
     );
     if (move == null) {
@@ -598,7 +607,7 @@ class GameNotifier extends Notifier<GameState> {
       state.currentPlayer.hand,
       config.botLevel,
       config.cfg,
-      _botRng,
+      _botRng.next,
     );
     if (move == null) {
       state = _finishGame(state);
