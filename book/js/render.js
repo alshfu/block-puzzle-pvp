@@ -37,6 +37,14 @@
             + (r.title || "🔬 Настоящее слово") + "</div>" + (r.html || "") + "</div>";
     }
 
+    function renderDemo(demo) {
+        if (!demo) return "";
+        var t = typeof demo === "string" ? demo : demo.type;
+        var args = (typeof demo === "object" && demo.args)
+            ? " data-demo-args='" + JSON.stringify(demo.args).replace(/'/g, "&#39;") + "'" : "";
+        return '<div class="demo-mount" data-demo="' + t + '"' + args + "></div>";
+    }
+
     function renderTask(task) {
         if (!task) return "";
         var out = '<div class="task"><div class="h">' + (task.title || "") + "</div>";
@@ -77,6 +85,7 @@
             + renderHead(day)
             + renderProse(day.prose)
             + renderReal(day.real)
+            + renderDemo(day.demo)
             + renderTask(day.task);
         if (day.next) {
             html += '<div class="day-next"><a href="#d' + pad3(day.next)

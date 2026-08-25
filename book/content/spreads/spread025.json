@@ -50,6 +50,7 @@
      "html": "В ядре игры это записано одной строчкой: <span class=\"mono\">typedef Board = List&lt;List&lt;Cell&gt;&gt;</span>. Сегодня откройте <span class=\"mono\">lib/core/board.dart</span>, найдите функцию <span class=\"mono\">emptyBoard()</span> и прочитайте, как два вложенных цикла собирают восемьдесят одну пустую клетку. Это те самые карусели Али, только внутри функции Лу."
     }
    ],
+   "demo": "board",
    "task": {
     "title": "🎯 Задание дня — вместе с папой",
     "steps": [
