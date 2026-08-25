@@ -1,0 +1,1702 @@
+{
+ "title": "Марьям в Мире Кода",
+ "totalDays": 200,
+ "daysPerSpread": 2,
+ "generatedFrom": "book/web/index.html",
+ "spreads": [
+  {
+   "id": "spread001",
+   "file": "spreads/spread001.json",
+   "days": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "spread002",
+   "file": "spreads/spread002.json",
+   "days": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "spread003",
+   "file": "spreads/spread003.json",
+   "days": [
+    5,
+    6
+   ]
+  },
+  {
+   "id": "spread004",
+   "file": "spreads/spread004.json",
+   "days": [
+    7,
+    8
+   ]
+  },
+  {
+   "id": "spread005",
+   "file": "spreads/spread005.json",
+   "days": [
+    9,
+    10
+   ]
+  },
+  {
+   "id": "spread006",
+   "file": "spreads/spread006.json",
+   "days": [
+    11,
+    12
+   ]
+  },
+  {
+   "id": "spread007",
+   "file": "spreads/spread007.json",
+   "days": [
+    13,
+    14
+   ]
+  },
+  {
+   "id": "spread008",
+   "file": "spreads/spread008.json",
+   "days": [
+    15,
+    16
+   ]
+  },
+  {
+   "id": "spread009",
+   "file": "spreads/spread009.json",
+   "days": [
+    17,
+    18
+   ]
+  },
+  {
+   "id": "spread010",
+   "file": "spreads/spread010.json",
+   "days": [
+    19,
+    20
+   ]
+  },
+  {
+   "id": "spread011",
+   "file": "spreads/spread011.json",
+   "days": [
+    21,
+    22
+   ]
+  },
+  {
+   "id": "spread012",
+   "file": "spreads/spread012.json",
+   "days": [
+    23,
+    24
+   ]
+  },
+  {
+   "id": "spread013",
+   "file": "spreads/spread013.json",
+   "days": [
+    25,
+    26
+   ]
+  },
+  {
+   "id": "spread014",
+   "file": "spreads/spread014.json",
+   "days": [
+    27,
+    28
+   ]
+  },
+  {
+   "id": "spread015",
+   "file": "spreads/spread015.json",
+   "days": [
+    29,
+    30
+   ]
+  },
+  {
+   "id": "spread016",
+   "file": "spreads/spread016.json",
+   "days": [
+    31,
+    32
+   ]
+  },
+  {
+   "id": "spread017",
+   "file": "spreads/spread017.json",
+   "days": [
+    33,
+    34
+   ]
+  },
+  {
+   "id": "spread018",
+   "file": "spreads/spread018.json",
+   "days": [
+    35,
+    36
+   ]
+  },
+  {
+   "id": "spread019",
+   "file": "spreads/spread019.json",
+   "days": [
+    37,
+    38
+   ]
+  },
+  {
+   "id": "spread020",
+   "file": "spreads/spread020.json",
+   "days": [
+    39,
+    40
+   ]
+  },
+  {
+   "id": "spread021",
+   "file": "spreads/spread021.json",
+   "days": [
+    41,
+    42
+   ]
+  },
+  {
+   "id": "spread022",
+   "file": "spreads/spread022.json",
+   "days": [
+    43,
+    44
+   ]
+  },
+  {
+   "id": "spread023",
+   "file": "spreads/spread023.json",
+   "days": [
+    45,
+    46
+   ]
+  },
+  {
+   "id": "spread024",
+   "file": "spreads/spread024.json",
+   "days": [
+    47,
+    48
+   ]
+  },
+  {
+   "id": "spread025",
+   "file": "spreads/spread025.json",
+   "days": [
+    49,
+    50
+   ]
+  },
+  {
+   "id": "spread026",
+   "file": "spreads/spread026.json",
+   "days": [
+    51,
+    52
+   ]
+  },
+  {
+   "id": "spread027",
+   "file": "spreads/spread027.json",
+   "days": [
+    53,
+    54
+   ]
+  },
+  {
+   "id": "spread028",
+   "file": "spreads/spread028.json",
+   "days": [
+    55,
+    56
+   ]
+  },
+  {
+   "id": "spread029",
+   "file": "spreads/spread029.json",
+   "days": [
+    57,
+    58
+   ]
+  },
+  {
+   "id": "spread030",
+   "file": "spreads/spread030.json",
+   "days": [
+    59,
+    60
+   ]
+  },
+  {
+   "id": "spread031",
+   "file": "spreads/spread031.json",
+   "days": [
+    61,
+    62
+   ]
+  },
+  {
+   "id": "spread032",
+   "file": "spreads/spread032.json",
+   "days": [
+    63,
+    64
+   ]
+  },
+  {
+   "id": "spread033",
+   "file": "spreads/spread033.json",
+   "days": [
+    65,
+    66
+   ]
+  },
+  {
+   "id": "spread034",
+   "file": "spreads/spread034.json",
+   "days": [
+    67,
+    68
+   ]
+  },
+  {
+   "id": "spread035",
+   "file": "spreads/spread035.json",
+   "days": [
+    69,
+    70
+   ]
+  },
+  {
+   "id": "spread036",
+   "file": "spreads/spread036.json",
+   "days": [
+    71,
+    72
+   ]
+  },
+  {
+   "id": "spread037",
+   "file": "spreads/spread037.json",
+   "days": [
+    73,
+    74
+   ]
+  },
+  {
+   "id": "spread038",
+   "file": "spreads/spread038.json",
+   "days": [
+    75,
+    76
+   ]
+  },
+  {
+   "id": "spread039",
+   "file": "spreads/spread039.json",
+   "days": [
+    77,
+    78
+   ]
+  },
+  {
+   "id": "spread040",
+   "file": "spreads/spread040.json",
+   "days": [
+    79,
+    80
+   ]
+  },
+  {
+   "id": "spread041",
+   "file": "spreads/spread041.json",
+   "days": [
+    81,
+    82
+   ]
+  },
+  {
+   "id": "spread042",
+   "file": "spreads/spread042.json",
+   "days": [
+    83,
+    84
+   ]
+  },
+  {
+   "id": "spread043",
+   "file": "spreads/spread043.json",
+   "days": [
+    85,
+    86
+   ]
+  },
+  {
+   "id": "spread044",
+   "file": "spreads/spread044.json",
+   "days": [
+    87,
+    88
+   ]
+  },
+  {
+   "id": "spread045",
+   "file": "spreads/spread045.json",
+   "days": [
+    89,
+    90
+   ]
+  },
+  {
+   "id": "spread046",
+   "file": "spreads/spread046.json",
+   "days": [
+    91,
+    92
+   ]
+  },
+  {
+   "id": "spread047",
+   "file": "spreads/spread047.json",
+   "days": [
+    93,
+    94
+   ]
+  },
+  {
+   "id": "spread048",
+   "file": "spreads/spread048.json",
+   "days": [
+    95,
+    96
+   ]
+  },
+  {
+   "id": "spread049",
+   "file": "spreads/spread049.json",
+   "days": [
+    97,
+    98
+   ]
+  },
+  {
+   "id": "spread050",
+   "file": "spreads/spread050.json",
+   "days": [
+    99,
+    100
+   ]
+  },
+  {
+   "id": "spread051",
+   "file": "spreads/spread051.json",
+   "days": [
+    101,
+    102
+   ]
+  },
+  {
+   "id": "spread052",
+   "file": "spreads/spread052.json",
+   "days": [
+    103,
+    104
+   ]
+  },
+  {
+   "id": "spread053",
+   "file": "spreads/spread053.json",
+   "days": [
+    105,
+    106
+   ]
+  },
+  {
+   "id": "spread054",
+   "file": "spreads/spread054.json",
+   "days": [
+    107,
+    108
+   ]
+  },
+  {
+   "id": "spread055",
+   "file": "spreads/spread055.json",
+   "days": [
+    109,
+    110
+   ]
+  },
+  {
+   "id": "spread056",
+   "file": "spreads/spread056.json",
+   "days": [
+    111,
+    112
+   ]
+  },
+  {
+   "id": "spread057",
+   "file": "spreads/spread057.json",
+   "days": [
+    113,
+    114
+   ]
+  },
+  {
+   "id": "spread058",
+   "file": "spreads/spread058.json",
+   "days": [
+    115,
+    116
+   ]
+  },
+  {
+   "id": "spread059",
+   "file": "spreads/spread059.json",
+   "days": [
+    117,
+    118
+   ]
+  },
+  {
+   "id": "spread060",
+   "file": "spreads/spread060.json",
+   "days": [
+    119,
+    120
+   ]
+  },
+  {
+   "id": "spread061",
+   "file": "spreads/spread061.json",
+   "days": [
+    121,
+    122
+   ]
+  },
+  {
+   "id": "spread062",
+   "file": "spreads/spread062.json",
+   "days": [
+    123,
+    124
+   ]
+  },
+  {
+   "id": "spread063",
+   "file": "spreads/spread063.json",
+   "days": [
+    125,
+    126
+   ]
+  },
+  {
+   "id": "spread064",
+   "file": "spreads/spread064.json",
+   "days": [
+    127,
+    128
+   ]
+  },
+  {
+   "id": "spread065",
+   "file": "spreads/spread065.json",
+   "days": [
+    129,
+    130
+   ]
+  },
+  {
+   "id": "spread066",
+   "file": "spreads/spread066.json",
+   "days": [
+    131,
+    132
+   ]
+  },
+  {
+   "id": "spread067",
+   "file": "spreads/spread067.json",
+   "days": [
+    133,
+    134
+   ]
+  },
+  {
+   "id": "spread068",
+   "file": "spreads/spread068.json",
+   "days": [
+    135,
+    136
+   ]
+  },
+  {
+   "id": "spread069",
+   "file": "spreads/spread069.json",
+   "days": [
+    137,
+    138
+   ]
+  },
+  {
+   "id": "spread070",
+   "file": "spreads/spread070.json",
+   "days": [
+    139,
+    140
+   ]
+  },
+  {
+   "id": "spread071",
+   "file": "spreads/spread071.json",
+   "days": [
+    141,
+    142
+   ]
+  },
+  {
+   "id": "spread072",
+   "file": "spreads/spread072.json",
+   "days": [
+    143,
+    144
+   ]
+  },
+  {
+   "id": "spread073",
+   "file": "spreads/spread073.json",
+   "days": [
+    145,
+    146
+   ]
+  },
+  {
+   "id": "spread074",
+   "file": "spreads/spread074.json",
+   "days": [
+    147,
+    148
+   ]
+  },
+  {
+   "id": "spread075",
+   "file": "spreads/spread075.json",
+   "days": [
+    149,
+    150
+   ]
+  },
+  {
+   "id": "spread076",
+   "file": "spreads/spread076.json",
+   "days": [
+    151,
+    152
+   ]
+  },
+  {
+   "id": "spread077",
+   "file": "spreads/spread077.json",
+   "days": [
+    153,
+    154
+   ]
+  },
+  {
+   "id": "spread078",
+   "file": "spreads/spread078.json",
+   "days": [
+    155,
+    156
+   ]
+  },
+  {
+   "id": "spread079",
+   "file": "spreads/spread079.json",
+   "days": [
+    157,
+    158
+   ]
+  },
+  {
+   "id": "spread080",
+   "file": "spreads/spread080.json",
+   "days": [
+    159,
+    160
+   ]
+  },
+  {
+   "id": "spread081",
+   "file": "spreads/spread081.json",
+   "days": [
+    161,
+    162
+   ]
+  },
+  {
+   "id": "spread082",
+   "file": "spreads/spread082.json",
+   "days": [
+    163,
+    164
+   ]
+  },
+  {
+   "id": "spread083",
+   "file": "spreads/spread083.json",
+   "days": [
+    165,
+    166
+   ]
+  },
+  {
+   "id": "spread084",
+   "file": "spreads/spread084.json",
+   "days": [
+    167,
+    168
+   ]
+  },
+  {
+   "id": "spread085",
+   "file": "spreads/spread085.json",
+   "days": [
+    169,
+    170
+   ]
+  },
+  {
+   "id": "spread086",
+   "file": "spreads/spread086.json",
+   "days": [
+    171,
+    172
+   ]
+  },
+  {
+   "id": "spread087",
+   "file": "spreads/spread087.json",
+   "days": [
+    173,
+    174
+   ]
+  },
+  {
+   "id": "spread088",
+   "file": "spreads/spread088.json",
+   "days": [
+    175,
+    176
+   ]
+  },
+  {
+   "id": "spread089",
+   "file": "spreads/spread089.json",
+   "days": [
+    177,
+    178
+   ]
+  },
+  {
+   "id": "spread090",
+   "file": "spreads/spread090.json",
+   "days": [
+    179,
+    180
+   ]
+  },
+  {
+   "id": "spread091",
+   "file": "spreads/spread091.json",
+   "days": [
+    181,
+    182
+   ]
+  },
+  {
+   "id": "spread092",
+   "file": "spreads/spread092.json",
+   "days": [
+    183,
+    184
+   ]
+  },
+  {
+   "id": "spread093",
+   "file": "spreads/spread093.json",
+   "days": [
+    185,
+    186
+   ]
+  },
+  {
+   "id": "spread094",
+   "file": "spreads/spread094.json",
+   "days": [
+    187,
+    188
+   ]
+  },
+  {
+   "id": "spread095",
+   "file": "spreads/spread095.json",
+   "days": [
+    189,
+    190
+   ]
+  },
+  {
+   "id": "spread096",
+   "file": "spreads/spread096.json",
+   "days": [
+    191,
+    192
+   ]
+  },
+  {
+   "id": "spread097",
+   "file": "spreads/spread097.json",
+   "days": [
+    193,
+    194
+   ]
+  },
+  {
+   "id": "spread098",
+   "file": "spreads/spread098.json",
+   "days": [
+    195,
+    196
+   ]
+  },
+  {
+   "id": "spread099",
+   "file": "spreads/spread099.json",
+   "days": [
+    197,
+    198
+   ]
+  },
+  {
+   "id": "spread100",
+   "file": "spreads/spread100.json",
+   "days": [
+    199,
+    200
+   ]
+  }
+ ],
+ "dayIndex": {
+  "1": "spreads/spread001.json",
+  "2": "spreads/spread001.json",
+  "3": "spreads/spread002.json",
+  "4": "spreads/spread002.json",
+  "5": "spreads/spread003.json",
+  "6": "spreads/spread003.json",
+  "7": "spreads/spread004.json",
+  "8": "spreads/spread004.json",
+  "9": "spreads/spread005.json",
+  "10": "spreads/spread005.json",
+  "11": "spreads/spread006.json",
+  "12": "spreads/spread006.json",
+  "13": "spreads/spread007.json",
+  "14": "spreads/spread007.json",
+  "15": "spreads/spread008.json",
+  "16": "spreads/spread008.json",
+  "17": "spreads/spread009.json",
+  "18": "spreads/spread009.json",
+  "19": "spreads/spread010.json",
+  "20": "spreads/spread010.json",
+  "21": "spreads/spread011.json",
+  "22": "spreads/spread011.json",
+  "23": "spreads/spread012.json",
+  "24": "spreads/spread012.json",
+  "25": "spreads/spread013.json",
+  "26": "spreads/spread013.json",
+  "27": "spreads/spread014.json",
+  "28": "spreads/spread014.json",
+  "29": "spreads/spread015.json",
+  "30": "spreads/spread015.json",
+  "31": "spreads/spread016.json",
+  "32": "spreads/spread016.json",
+  "33": "spreads/spread017.json",
+  "34": "spreads/spread017.json",
+  "35": "spreads/spread018.json",
+  "36": "spreads/spread018.json",
+  "37": "spreads/spread019.json",
+  "38": "spreads/spread019.json",
+  "39": "spreads/spread020.json",
+  "40": "spreads/spread020.json",
+  "41": "spreads/spread021.json",
+  "42": "spreads/spread021.json",
+  "43": "spreads/spread022.json",
+  "44": "spreads/spread022.json",
+  "45": "spreads/spread023.json",
+  "46": "spreads/spread023.json",
+  "47": "spreads/spread024.json",
+  "48": "spreads/spread024.json",
+  "49": "spreads/spread025.json",
+  "50": "spreads/spread025.json",
+  "51": "spreads/spread026.json",
+  "52": "spreads/spread026.json",
+  "53": "spreads/spread027.json",
+  "54": "spreads/spread027.json",
+  "55": "spreads/spread028.json",
+  "56": "spreads/spread028.json",
+  "57": "spreads/spread029.json",
+  "58": "spreads/spread029.json",
+  "59": "spreads/spread030.json",
+  "60": "spreads/spread030.json",
+  "61": "spreads/spread031.json",
+  "62": "spreads/spread031.json",
+  "63": "spreads/spread032.json",
+  "64": "spreads/spread032.json",
+  "65": "spreads/spread033.json",
+  "66": "spreads/spread033.json",
+  "67": "spreads/spread034.json",
+  "68": "spreads/spread034.json",
+  "69": "spreads/spread035.json",
+  "70": "spreads/spread035.json",
+  "71": "spreads/spread036.json",
+  "72": "spreads/spread036.json",
+  "73": "spreads/spread037.json",
+  "74": "spreads/spread037.json",
+  "75": "spreads/spread038.json",
+  "76": "spreads/spread038.json",
+  "77": "spreads/spread039.json",
+  "78": "spreads/spread039.json",
+  "79": "spreads/spread040.json",
+  "80": "spreads/spread040.json",
+  "81": "spreads/spread041.json",
+  "82": "spreads/spread041.json",
+  "83": "spreads/spread042.json",
+  "84": "spreads/spread042.json",
+  "85": "spreads/spread043.json",
+  "86": "spreads/spread043.json",
+  "87": "spreads/spread044.json",
+  "88": "spreads/spread044.json",
+  "89": "spreads/spread045.json",
+  "90": "spreads/spread045.json",
+  "91": "spreads/spread046.json",
+  "92": "spreads/spread046.json",
+  "93": "spreads/spread047.json",
+  "94": "spreads/spread047.json",
+  "95": "spreads/spread048.json",
+  "96": "spreads/spread048.json",
+  "97": "spreads/spread049.json",
+  "98": "spreads/spread049.json",
+  "99": "spreads/spread050.json",
+  "100": "spreads/spread050.json",
+  "101": "spreads/spread051.json",
+  "102": "spreads/spread051.json",
+  "103": "spreads/spread052.json",
+  "104": "spreads/spread052.json",
+  "105": "spreads/spread053.json",
+  "106": "spreads/spread053.json",
+  "107": "spreads/spread054.json",
+  "108": "spreads/spread054.json",
+  "109": "spreads/spread055.json",
+  "110": "spreads/spread055.json",
+  "111": "spreads/spread056.json",
+  "112": "spreads/spread056.json",
+  "113": "spreads/spread057.json",
+  "114": "spreads/spread057.json",
+  "115": "spreads/spread058.json",
+  "116": "spreads/spread058.json",
+  "117": "spreads/spread059.json",
+  "118": "spreads/spread059.json",
+  "119": "spreads/spread060.json",
+  "120": "spreads/spread060.json",
+  "121": "spreads/spread061.json",
+  "122": "spreads/spread061.json",
+  "123": "spreads/spread062.json",
+  "124": "spreads/spread062.json",
+  "125": "spreads/spread063.json",
+  "126": "spreads/spread063.json",
+  "127": "spreads/spread064.json",
+  "128": "spreads/spread064.json",
+  "129": "spreads/spread065.json",
+  "130": "spreads/spread065.json",
+  "131": "spreads/spread066.json",
+  "132": "spreads/spread066.json",
+  "133": "spreads/spread067.json",
+  "134": "spreads/spread067.json",
+  "135": "spreads/spread068.json",
+  "136": "spreads/spread068.json",
+  "137": "spreads/spread069.json",
+  "138": "spreads/spread069.json",
+  "139": "spreads/spread070.json",
+  "140": "spreads/spread070.json",
+  "141": "spreads/spread071.json",
+  "142": "spreads/spread071.json",
+  "143": "spreads/spread072.json",
+  "144": "spreads/spread072.json",
+  "145": "spreads/spread073.json",
+  "146": "spreads/spread073.json",
+  "147": "spreads/spread074.json",
+  "148": "spreads/spread074.json",
+  "149": "spreads/spread075.json",
+  "150": "spreads/spread075.json",
+  "151": "spreads/spread076.json",
+  "152": "spreads/spread076.json",
+  "153": "spreads/spread077.json",
+  "154": "spreads/spread077.json",
+  "155": "spreads/spread078.json",
+  "156": "spreads/spread078.json",
+  "157": "spreads/spread079.json",
+  "158": "spreads/spread079.json",
+  "159": "spreads/spread080.json",
+  "160": "spreads/spread080.json",
+  "161": "spreads/spread081.json",
+  "162": "spreads/spread081.json",
+  "163": "spreads/spread082.json",
+  "164": "spreads/spread082.json",
+  "165": "spreads/spread083.json",
+  "166": "spreads/spread083.json",
+  "167": "spreads/spread084.json",
+  "168": "spreads/spread084.json",
+  "169": "spreads/spread085.json",
+  "170": "spreads/spread085.json",
+  "171": "spreads/spread086.json",
+  "172": "spreads/spread086.json",
+  "173": "spreads/spread087.json",
+  "174": "spreads/spread087.json",
+  "175": "spreads/spread088.json",
+  "176": "spreads/spread088.json",
+  "177": "spreads/spread089.json",
+  "178": "spreads/spread089.json",
+  "179": "spreads/spread090.json",
+  "180": "spreads/spread090.json",
+  "181": "spreads/spread091.json",
+  "182": "spreads/spread091.json",
+  "183": "spreads/spread092.json",
+  "184": "spreads/spread092.json",
+  "185": "spreads/spread093.json",
+  "186": "spreads/spread093.json",
+  "187": "spreads/spread094.json",
+  "188": "spreads/spread094.json",
+  "189": "spreads/spread095.json",
+  "190": "spreads/spread095.json",
+  "191": "spreads/spread096.json",
+  "192": "spreads/spread096.json",
+  "193": "spreads/spread097.json",
+  "194": "spreads/spread097.json",
+  "195": "spreads/spread098.json",
+  "196": "spreads/spread098.json",
+  "197": "spreads/spread099.json",
+  "198": "spreads/spread099.json",
+  "199": "spreads/spread100.json",
+  "200": "spreads/spread100.json"
+ },
+ "flow": [
+  {
+   "chrome": "\n    <!-- ═══ COVER ═══ -->\n    <header class=\"cover\">\n        <div class=\"eyebrow\">Код-РПГ · учебник-курс · 200 дней по 3 часа</div>\n        <h1>Марьям<br>в Мире Кода</h1>\n        <p class=\"tag\">Как маленькая девочка, пони, лама, альпака и два котика построили настоящую игру — и она стала\n            кросс-платформенным разработчиком.</p>\n\n        <div class=\"cover-art\">\n            <img src=\"assets/img/00_cover.jpg\" alt=\"Марьям и её друзья-зверята у волшебного портала из блоков\">\n        </div>\n        <div class=\"byline\">книга-сборник · внутри — настоящий код игры BlockDuel 9×9</div>\n    </header>\n\n    <div class=\"tetro-rule\"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>\n\n    <!-- ═══ ГЕРОИ ═══ -->\n    <section class=\"heroes\" id=\"heroes\">\n        <h2>Герои этой книги</h2>\n        <p>Они будут рядом все 200 дней. Запоминай лица — дальше они станут учителями, напарниками и контролёрами.</p>\n        <div class=\"heroes-grid\">\n            <figure class=\"hero wide\">\n                <img src=\"assets/img/01_maryam.jpg\" alt=\"Марьям\">\n                <figcaption><b>Марьям</b> девочка, которая провалилась внутрь игры и решила её построить</figcaption>\n            </figure>\n            <figure class=\"hero\">\n                <img src=\"assets/img/02_pony_po.jpg\" alt=\"Пони По\">\n                <figcaption><b>Пони По</b> хранит коробочки-переменные и все снимки истории</figcaption>\n            </figure>\n            <figure class=\"hero\">\n                <img src=\"assets/img/03_llama_lu.jpg\" alt=\"Лама Лу\">\n                <figcaption><b>Лама Лу</b> любит функции, числа и честную случайность</figcaption>\n            </figure>\n            <figure class=\"hero\">\n                <img src=\"assets/img/04_alpaca_alya.jpg\" alt=\"Альпака Аля\">\n                <figcaption><b>Альпака Аля</b> учит «если» и «повтори», раскладывает фигурки</figcaption>\n            </figure>\n            <figure class=\"hero\">\n                <img src=\"assets/img/05_cats.jpg\" alt=\"Два котика\">\n                <figcaption><b>Два котика</b> фиолетовый считает, рыжий ловит баги</figcaption>\n            </figure>\n        </div>\n    </section>\n\n    <!-- ═══ О КУРСЕ ═══ -->\n    <section class=\"course\">\n        <h2>Как учиться по этой книге</h2>\n        <p>Это не просто сказка — это <b>учебник-курс</b>. Он рассчитан на <b>200 дней по 3 часа</b> — это шестьсот\n            часов, за которые ребёнок из нуля становится настоящим разработчиком. Спешить не надо: программисты растут\n            не рывком, а <b>каждый день понемногу</b>.</p>\n        <div class=\"grid\">\n            <div class=\"tile\">\n                <div class=\"k\">200</div>\n                <div class=\"v\">дней пути</div>\n            </div>\n            <div class=\"tile\">\n                <div class=\"k\">3 ч</div>\n                <div class=\"v\">в день</div>\n            </div>\n            <div class=\"tile\">\n                <div class=\"k\">600 ч</div>\n                <div class=\"v\">до разработчика</div>\n            </div>\n        </div>\n        <p><b>Ритм одного дня</b> (3 часа делим на три части — как завтрак, обед и ужин):</p>\n        <div class=\"rhythm\">\n            <span>🥣 1 час — читаем главу и разбираем код</span>\n            <span>🍲 1 час — набираем код сами, меняем числа, смотрим что будет</span>\n            <span>🍎 1 час — своя маленькая задачка (в конце глав — «Задание»)</span>\n        </div>\n        <p style=\"margin-top:14px\">Правило для детей: <b>идём по порядку</b>. Сначала неделя 1 (семь вечеров), и только\n            потом глава про переменные. В конце книги — <a href=\"#plan\"><b>200-дневная карта</b></a>. Правило одно: <b>ошибаться\n                — нормально</b>.</p>\n        <p style=\"margin-top:10px\"><a href=\"#d001\"><b>Начать с Дня 1 →</b></a></p>\n    </section>\n\n    <!-- ═══ ПРАКТИЧЕСКИЙ ТРЕК ═══ -->\n    <section class=\"track\">\n        <h2>Как в конце получить <span class=\"em\">именно эту игру</span></h2>\n        <p><b>Честно и по-взрослому.</b> Марьям в сказке строит игру с нуля. Но настоящая игра — это тысячи строк, и ни\n            один разработчик не пишет их «на память». Секрет профессии другой: <b>берёшь настоящий проект, запускаешь\n                его в первый же день, и растёшь вместе с ним</b> — читаешь, меняешь, чиняешь. Так к концу курса у тебя\n            на экране будет <b>наша игра BlockDuel</b> — собранная твоими руками и понятная тебе до винтика.</p>\n        <ol>\n            <li><b>Поставь инструменты.</b> Flutter с сайта <span class=\"mono\">flutter.dev</span> и бесплатный редактор\n                (VS Code). Один раз — и на всю жизнь.\n            </li>\n            <li><b>Скачай настоящую игру и запусти её.</b> Уже в первый день ты увидишь её живой:\n                <div class=\"cmdline\">git clone https://github.com/alshfu/block-puzzle-pvp\ncd block-puzzle-pvp\nflutter pub get\nflutter run -d chrome <span class=\"cmt\"># и вот она, наша игра, у тебя в браузере!</span></div>\n            </li>\n            <li><b>Дальше — не «пиши с нуля», а «найди → пойми → поменяй → запусти».</b> Каждую неделю открываешь\n                настоящий файл из проекта, разбираешь его по этой книге и делаешь маленькую правку. Нажал «запустить» —\n                сразу видишь результат. Так знание становится <em>твоим</em>.\n            </li>\n            <li><b>Собери и покажи миру.</b> В конце — <span class=\"mono\">flutter build</span> под\n                web/Android/iPhone/Mac (глава 15) и документ <span class=\"mono\">RELEASE_CHECKLIST.md</span> в проекте:\n                пошагово, как выложить в Google Play и App Store.\n            </li>\n        </ol>\n        <div class=\"quests\">\n            <div class=\"h\">🔧 Мини-квесты на НАСТОЯЩЕМ коде (каждый сразу видно в игре)</div>\n            <ul>\n                <li>Поменяй цвета клеток в теме — файл <span class=\"mono\">lib/ui/theme/</span> (темы <span class=\"mono\">neutral / candy / night</span>).\n                </li>\n                <li>Сделай ход быстрее/медленнее — таймер <span class=\"mono\">turnTimeStart</span> в <span class=\"mono\">lib/core/types.dart</span>\n                    (<span class=\"mono\">defaultConfig</span>).\n                </li>\n                <li>Измени формулу очков — <span class=\"mono\">lib/core/scoring.dart</span> (например, больше очков за\n                    бокс 3×3).\n                </li>\n                <li>Сделай бота хитрее — веса в <span class=\"mono\">lib/core/bot.dart</span> (<span class=\"mono\">botWeights</span>).\n                </li>\n                <li>Добавь свою тему в конструкторе тем прямо в игре (экран «Конструктор тем»).</li>\n                <li>Напиши свой тест в <span class=\"mono\">test/</span> и запусти <span class=\"mono\">flutter test</span>\n                    — стань контролёром (глава 12).\n                </li>\n            </ul>\n        </div>\n        <div class=\"quests\" style=\"margin-top:12px\">\n            <div class=\"h\">📂 Заготовка на каждый день — в самом проекте</div>\n            <ul>\n                <li>В скачанном проекте есть папка <span class=\"mono\">course/</span> — там <b>на каждый из 200 дней свой\n                    файл-заготовка</b>: шапка с заданием дня, связь с настоящим кодом игры и место <span class=\"mono\">// TODO</span>,\n                    куда ты дописываешь свой код.\n                </li>\n                <li>Открыл файл дня (например <span class=\"mono\">course/week03_functions/day015.dart</span>) → прочитал\n                    задание → сначала подумал сам → написал код на месте <span class=\"mono\">TODO</span> → запустил →\n                    сравнил с настоящим файлом игры.\n                </li>\n            </ul>\n        </div>\n        <p style=\"margin-bottom:0\"><b>Итог курса:</b> не «похожая игрушка», а <b>наша игра целиком</b> — ты её запустил,\n            понял, поменял под себя, покрыл тестами и собрал под четыре платформы. Это и есть настоящий разработчик.</p>\n    </section>\n\n    <!-- ═══ TOC ═══ -->\n    <nav class=\"toc\">\n        <h2>Что нас ждёт</h2>\n        <p>Тринадцать глав и эпилог. В каждой — кусочек сказки, новый друг, одна настоящая идея программирования и живой\n            код, из которого по-настоящему собирается игра.</p>\n        <ol>\n            <li><a href=\"#c1\"><span class=\"n\">00</span><span class=\"t\">Портал из блока <span class=\"s\">— неделя 1, семь вечеров</span></span></a>\n            </li>\n            <li><a href=\"#c2\"><span class=\"n\">01</span><span class=\"t\">Пони По и коробочки-переменные <span class=\"s\">— неделя 2, семь вечеров</span></span></a>\n            </li>\n            <li><a href=\"#days3to6\"><span class=\"n\">3–29</span><span class=\"t\">Недели 3–29: дни 15–200 <span class=\"s\">— от функций до финала, по странице на вечер</span></span></a>\n            </li>\n            <li><a href=\"#c5\"><span class=\"n\">02</span><span class=\"t\">Котики и сетка 9×9 <span class=\"s\">— списки и доска</span></span></a>\n            </li>\n            <li><a href=\"#c6\"><span class=\"n\">03</span><span class=\"t\">Предсказуемое волшебство <span class=\"s\">— случайность, которая честная</span></span></a>\n            </li>\n            <li><a href=\"#c7\"><span class=\"n\">04</span><span class=\"t\">Семь фигур-тетромино <span class=\"s\">— как хранить формы</span></span></a>\n            </li>\n            <li><a href=\"#c8\"><span class=\"n\">05</span><span class=\"t\">Закон мира: «сюда можно?» <span class=\"s\">— проверки</span></span></a>\n            </li>\n            <li><a href=\"#c9\"><span class=\"n\">06</span><span class=\"t\">Линии гаснут, очки летят <span class=\"s\">— правила и счёт</span></span></a>\n            </li>\n            <li><a href=\"#c10\"><span class=\"n\">07</span><span class=\"t\">Котёнок, который научился думать <span\n                    class=\"s\">— искусственный ум</span></span></a></li>\n            <li><a href=\"#c11\"><span class=\"n\">08</span><span class=\"t\">Лицо игры <span class=\"s\">— фронтенд, рисуем виджетами</span></span></a>\n            </li>\n            <li><a href=\"#c12\"><span class=\"n\">09</span><span class=\"t\">Двое через океан <span class=\"s\">— бэкенд и сервер</span></span></a>\n            </li>\n            <li><a href=\"#ctest\"><span class=\"n\">10</span><span class=\"t\">Зверята-контролёры <span class=\"s\">— тесты, страж качества</span></span></a>\n            </li>\n            <li><a href=\"#cbug\"><span class=\"n\">11</span><span class=\"t\">Охота на баги <span class=\"s\">— как мы чинили жучков</span></span></a>\n            </li>\n            <li><a href=\"#cserver\"><span class=\"n\">11+</span><span class=\"t\">Крепость-сервер <span class=\"s\">— бонус: чиним серверные дыры</span></span></a>\n            </li>\n            <li><a href=\"#cgit\"><span class=\"n\">12</span><span class=\"t\">Git: машина времени <span class=\"s\">— не потерять работу</span></span></a>\n            </li>\n            <li><a href=\"#c13\"><span class=\"n\">13</span><span class=\"t\">Один код — четыре мира <span class=\"s\">— кросс-платформа</span></span></a>\n            </li>\n            <li><a href=\"#c14\"><span class=\"n\">14</span><span class=\"t\">Игра готова <span\n                    class=\"s\">— эпилог</span></span></a></li>\n        </ol>\n        <p style=\"margin:14px 0 0\"><a href=\"#plan\">📅 Карта курса на 200 дней</a> &nbsp;·&nbsp; <a href=\"#prompts\">🎨\n            Бонус: промпты для иллюстраций</a></p>\n    </nav>\n\n    <!-- ═══ CH 1 · НЕДЕЛЯ 1 · СЕМЬ ВЕЧЕРОВ ═══ -->\n    <section class=\"chapter\" id=\"c1\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#portal\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 00 · Пролог · Неделя 1 · дни 001–007</div>\n                <h2>Портал из блока</h2></div>\n        </div>\n        <p class=\"week-lead\">С детьми идём <b>только по порядку</b>. Семь вечеров — семь страниц. Сначала смотрим\n            картинку: по ней должно быть ясно, <b>какая сегодня тема</b>. Потом читаем, потом одно дело вместе — и книгу\n            закрываем. Завтра — следующий день. Не листайте вперёд.</p>\n        <nav class=\"day-nav\" aria-label=\"Дни недели 1\">\n            <a href=\"#d001\">1</a><a href=\"#d002\">2</a><a href=\"#d003\">3</a><a href=\"#d004\">4</a><a href=\"#d005\">5</a><a\n                href=\"#d006\">6</a><a href=\"#d007\">7</a>\n        </nav>\n\n        "
+  },
+  {
+   "day": 1
+  },
+  {
+   "day": 2
+  },
+  {
+   "day": 3
+  },
+  {
+   "day": 4
+  },
+  {
+   "day": 5
+  },
+  {
+   "day": 6
+  },
+  {
+   "day": 7
+  },
+  {
+   "chrome": "\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 2 · НЕДЕЛЯ 2 · СЕМЬ ВЕЧЕРОВ ═══ -->\n    <section class=\"chapter\" id=\"c2\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#pony\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 01 · Данные · Неделя 2 · дни 008–014</div>\n                <h2>Пони По и коробочки-переменные</h2>\n                <div class=\"ch-companion\">спутник главы — рыжий пони По</div>\n            </div>\n        </div>\n        <p class=\"week-lead\">Неделю 1 закрыли. Теперь семь вечеров про <b>коробочки</b>. По картинке сразу видно тему\n            дня. Не прыгаем в неделю 3.</p>\n        <nav class=\"day-nav\" aria-label=\"Дни недели 2\">\n            <a href=\"#d008\">8</a><a href=\"#d009\">9</a><a href=\"#d010\">10</a><a href=\"#d011\">11</a><a href=\"#d012\">12</a><a\n                href=\"#d013\">13</a><a href=\"#d014\">14</a>\n        </nav>\n\n        "
+  },
+  {
+   "day": 8
+  },
+  {
+   "day": 9
+  },
+  {
+   "day": 10
+  },
+  {
+   "day": 11
+  },
+  {
+   "day": 12
+  },
+  {
+   "day": 13
+  },
+  {
+   "day": 14
+  },
+  {
+   "chrome": "\n    </section>\n\n    <!-- DAYS_EXT_START (сгенерировано tools/gen_book_days.py) -->\n  <hr class=\"divide\">\n  <section class=\"chapter\" id=\"days3to6\">\n    <div class=\"ch-head\"><div class=\"ch-badge\"><svg><use href=\"#alpaca\"/></svg></div>\n      <div><div class=\"ch-num\">Недели 3–29 · страницы-дни</div><h2>Дни 15–200: продолжаем по вечерам</h2><div class=\"ch-companion\">каждый вечер — одна страница; в конце недели — мини-проект</div></div></div>\n    <div class=\"scene week-cover\" id=\"w03\"><div class=\"scene-frame\"><img src=\"assets/img/week03.jpg\" alt=\"Обложка недели 3\"><div class=\"scene-topic\"><small>Неделя 3</small>Лама Лу</div></div></div>\n    <p class=\"week-lead\">Неделя 3. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>\n    "
+  },
+  {
+   "day": 15
+  },
+  {
+   "day": 16
+  },
+  {
+   "day": 17
+  },
+  {
+   "day": 18
+  },
+  {
+   "day": 19
+  },
+  {
+   "day": 20
+  },
+  {
+   "day": 21
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w04\"><div class=\"scene-frame\"><img src=\"assets/img/week04.jpg\" alt=\"Обложка недели 4\"><div class=\"scene-topic\"><small>Неделя 4</small>Альпака Аля</div></div></div>\n    <p class=\"week-lead\">Неделя 4. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>\n    "
+  },
+  {
+   "day": 22
+  },
+  {
+   "day": 23
+  },
+  {
+   "day": 24
+  },
+  {
+   "day": 25
+  },
+  {
+   "day": 26
+  },
+  {
+   "day": 27
+  },
+  {
+   "day": 28
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w05\"><div class=\"scene-frame\"><img src=\"assets/img/week05.jpg\" alt=\"Обложка недели 5\"><div class=\"scene-topic\"><small>Неделя 5</small>Альпака Аля</div></div></div>\n    <p class=\"week-lead\">Неделя 5. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>\n    "
+  },
+  {
+   "day": 29
+  },
+  {
+   "day": 30
+  },
+  {
+   "day": 31
+  },
+  {
+   "day": 32
+  },
+  {
+   "day": 33
+  },
+  {
+   "day": 34
+  },
+  {
+   "day": 35
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w06\"><div class=\"scene-frame\"><img src=\"assets/img/week06.jpg\" alt=\"Обложка недели 6\"><div class=\"scene-topic\"><small>Неделя 6</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 6. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>\n    "
+  },
+  {
+   "day": 36
+  },
+  {
+   "day": 37
+  },
+  {
+   "day": 38
+  },
+  {
+   "day": 39
+  },
+  {
+   "day": 40
+  },
+  {
+   "day": 41
+  },
+  {
+   "day": 42
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w07\"><div class=\"scene-frame\"><img src=\"assets/img/week07.jpg\" alt=\"Обложка недели 7\"><div class=\"scene-topic\"><small>Неделя 7</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 7 · Классы. Шесть недель основ позади — теперь мы учимся описывать <b>свои</b> вещи. Котики покажут чертёж, по которому можно наделать сколько угодно одинаковых коробочек.</p>\n    "
+  },
+  {
+   "day": 43
+  },
+  {
+   "day": 44
+  },
+  {
+   "day": 45
+  },
+  {
+   "day": 46
+  },
+  {
+   "day": 47
+  },
+  {
+   "day": 48
+  },
+  {
+   "day": 49
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w08\"><div class=\"scene-frame\"><img src=\"assets/img/week08.jpg\" alt=\"Обложка недели 8\"><div class=\"scene-topic\"><small>Неделя 8</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 8 · Доска 9×9. Клетка у нас есть — теперь соберём из клеток целую доску. Девять рядов по девять клеток: список списков, по которому можно ходить как по полу.</p>\n    "
+  },
+  {
+   "day": 50
+  },
+  {
+   "day": 51
+  },
+  {
+   "day": 52
+  },
+  {
+   "day": 53
+  },
+  {
+   "day": 54
+  },
+  {
+   "day": 55
+  },
+  {
+   "day": 56
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w09\"><div class=\"scene-frame\"><img src=\"assets/img/week09.jpg\" alt=\"Обложка недели 9\"><div class=\"scene-topic\"><small>Неделя 9</small>Лама Лу</div></div></div>\n    <p class=\"week-lead\">Неделя 9 · Честная случайность. Игре нужна случайность: какая фигура придёт следующей? Но случайность должна быть <b>честной</b> — одинаковой у двух игроков и повторяемой для проверки. Лу знает, как это устроить.</p>\n    "
+  },
+  {
+   "day": 57
+  },
+  {
+   "day": 58
+  },
+  {
+   "day": 59
+  },
+  {
+   "day": 60
+  },
+  {
+   "day": 61
+  },
+  {
+   "day": 62
+  },
+  {
+   "day": 63
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w10\"><div class=\"scene-frame\"><img src=\"assets/img/week10.jpg\" alt=\"Обложка недели 10\"><div class=\"scene-topic\"><small>Неделя 10</small>Лама Лу</div></div></div>\n    <p class=\"week-lead\">Неделя 10 · Мешок фигур. Из кубика с зерном вырастает мешок: семь фигур, перетасованных честно. Один seed — один и тот же порядок фигур у обоих игроков.</p>\n    "
+  },
+  {
+   "day": 64
+  },
+  {
+   "day": 65
+  },
+  {
+   "day": 66
+  },
+  {
+   "day": 67
+  },
+  {
+   "day": 68
+  },
+  {
+   "day": 69
+  },
+  {
+   "day": 70
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w11\"><div class=\"scene-frame\"><img src=\"assets/img/week11.jpg\" alt=\"Обложка недели 11\"><div class=\"scene-topic\"><small>Неделя 11</small>Альпака Аля</div></div></div>\n    <p class=\"week-lead\">Неделя 11 · Фигуры-тетромино. Мешок выдаёт фигуры, а из чего сделана фигура? Из четырёх клеток и их координат. Аля разложит все семь на траве и покажет, как их записать числами.</p>\n    "
+  },
+  {
+   "day": 71
+  },
+  {
+   "day": 72
+  },
+  {
+   "day": 73
+  },
+  {
+   "day": 74
+  },
+  {
+   "day": 75
+  },
+  {
+   "day": 76
+  },
+  {
+   "day": 77
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w12\"><div class=\"scene-frame\"><img src=\"assets/img/week12.jpg\" alt=\"Обложка недели 12\"><div class=\"scene-topic\"><small>Неделя 12</small>Альпака Аля</div></div></div>\n    <p class=\"week-lead\">Неделя 12 · Повороты фигур. Фигуры записаны числами — значит, их можно поворачивать формулой. Восемь дней про то, как из одной записи получить все положения.</p>\n    "
+  },
+  {
+   "day": 78
+  },
+  {
+   "day": 79
+  },
+  {
+   "day": 80
+  },
+  {
+   "day": 81
+  },
+  {
+   "day": 82
+  },
+  {
+   "day": 83
+  },
+  {
+   "day": 84
+  },
+  {
+   "day": 85
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w13\"><div class=\"scene-frame\"><img src=\"assets/img/week13.jpg\" alt=\"Обложка недели 13\"><div class=\"scene-topic\"><small>Неделя 13</small>Пони По</div></div></div>\n    <p class=\"week-lead\">Неделя 13 · Закон «сюда можно?». У нас есть доска и фигуры во всех положениях. Осталось главное правило игры: можно ли поставить фигуру вот сюда. По — страж этого закона.</p>\n    "
+  },
+  {
+   "day": 86
+  },
+  {
+   "day": 87
+  },
+  {
+   "day": 88
+  },
+  {
+   "day": 89
+  },
+  {
+   "day": 90
+  },
+  {
+   "day": 91
+  },
+  {
+   "day": 92
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w14\"><div class=\"scene-frame\"><img src=\"assets/img/week14.jpg\" alt=\"Обложка недели 14\"><div class=\"scene-topic\"><small>Неделя 14</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 14 · Постановка и очистка. Закон «можно» работает — теперь фигура по-настоящему ложится на доску. А когда ряд, столбец или квадрат 3×3 заполняется целиком — гаснет. Котики любят этот момент.</p>\n    "
+  },
+  {
+   "day": 93
+  },
+  {
+   "day": 94
+  },
+  {
+   "day": 95
+  },
+  {
+   "day": 96
+  },
+  {
+   "day": 97
+  },
+  {
+   "day": 98
+  },
+  {
+   "day": 99
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w15\"><div class=\"scene-frame\"><img src=\"assets/img/week15.jpg\" alt=\"Обложка недели 15\"><div class=\"scene-topic\"><small>Неделя 15</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 15 · Счёт и комбо. Ряды гаснут — пора считать очки. Формула из свитка Лу возвращается, и теперь вы знаете достаточно, чтобы понять её целиком.</p>\n    "
+  },
+  {
+   "day": 100
+  },
+  {
+   "day": 101
+  },
+  {
+   "day": 102
+  },
+  {
+   "day": 103
+  },
+  {
+   "day": 104
+  },
+  {
+   "day": 105
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w16\"><div class=\"scene-frame\"><img src=\"assets/img/week16.jpg\" alt=\"Обложка недели 16\"><div class=\"scene-topic\"><small>Неделя 16</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 16 · Перебор ходов. Чтобы выбрать ход, сначала нужно увидеть <b>все</b> ходы. Котики покажут, как игра перебирает каждую фигуру в каждом положении на каждом месте.</p>\n    "
+  },
+  {
+   "day": 106
+  },
+  {
+   "day": 107
+  },
+  {
+   "day": 108
+  },
+  {
+   "day": 109
+  },
+  {
+   "day": 110
+  },
+  {
+   "day": 111
+  },
+  {
+   "day": 112
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w17\"><div class=\"scene-frame\"><img src=\"assets/img/week17.jpg\" alt=\"Обложка недели 17\"><div class=\"scene-topic\"><small>Неделя 17</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 17 · Оценка хода. Все ходы видны — но какой лучший? Котик, который учится думать, покажет, как превратить ход в число и сравнить числа.</p>\n    "
+  },
+  {
+   "day": 113
+  },
+  {
+   "day": 114
+  },
+  {
+   "day": 115
+  },
+  {
+   "day": 116
+  },
+  {
+   "day": 117
+  },
+  {
+   "day": 118
+  },
+  {
+   "day": 119
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w18\"><div class=\"scene-frame\"><img src=\"assets/img/week18.jpg\" alt=\"Обложка недели 18\"><div class=\"scene-topic\"><small>Неделя 18</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 18 · Бот целиком. Перебор и оценка есть — складываем их в бота, который ходит сам. На этой неделе два бота сыграют партию, и вы увидите счёт.</p>\n    "
+  },
+  {
+   "day": 120
+  },
+  {
+   "day": 121
+  },
+  {
+   "day": 122
+  },
+  {
+   "day": 123
+  },
+  {
+   "day": 124
+  },
+  {
+   "day": 125
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w19\"><div class=\"scene-frame\"><img src=\"assets/img/week19.jpg\" alt=\"Обложка недели 19\"><div class=\"scene-topic\"><small>Неделя 19</small>Марьям</div></div></div>\n    <p class=\"week-lead\">Неделя 19 · Первый экран. Половина игры, которая думает, готова. Теперь — половина, которую видно. Марьям берёт кисть из света и рисует первый экран из виджетов.</p>\n    "
+  },
+  {
+   "day": 126
+  },
+  {
+   "day": 127
+  },
+  {
+   "day": 128
+  },
+  {
+   "day": 129
+  },
+  {
+   "day": 130
+  },
+  {
+   "day": 131
+  },
+  {
+   "day": 132
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w20\"><div class=\"scene-frame\"><img src=\"assets/img/week20.jpg\" alt=\"Обложка недели 20\"><div class=\"scene-topic\"><small>Неделя 20</small>Марьям</div></div></div>\n    <p class=\"week-lead\">Неделя 20 · Доска виджетами. Доска в коде уже есть — теперь нарисуем её на экране. Восемьдесят одна клеточка-виджет, покрашенная по состоянию клетки.</p>\n    "
+  },
+  {
+   "day": 133
+  },
+  {
+   "day": 134
+  },
+  {
+   "day": 135
+  },
+  {
+   "day": 136
+  },
+  {
+   "day": 137
+  },
+  {
+   "day": 138
+  },
+  {
+   "day": 139
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w21\"><div class=\"scene-frame\"><img src=\"assets/img/week21.jpg\" alt=\"Обложка недели 21\"><div class=\"scene-topic\"><small>Неделя 21</small>Марьям</div></div></div>\n    <p class=\"week-lead\">Неделя 21 · Ввод (тап). Экран умеет показывать — теперь он научится слушать. Касание клетки, выбор фигуры, постановка по тапу: игрок берёт управление.</p>\n    "
+  },
+  {
+   "day": 140
+  },
+  {
+   "day": 141
+  },
+  {
+   "day": 142
+  },
+  {
+   "day": 143
+  },
+  {
+   "day": 144
+  },
+  {
+   "day": 145
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w22\"><div class=\"scene-frame\"><img src=\"assets/img/week22.jpg\" alt=\"Обложка недели 22\"><div class=\"scene-topic\"><small>Неделя 22</small>Лама Лу</div></div></div>\n    <p class=\"week-lead\">Неделя 22 · Сервер и WebSocket. Игра работает на одном компьютере. Чтобы играть с другом через океан, нужен посредник в интернете — сервер. Лу протягивает первую нить.</p>\n    "
+  },
+  {
+   "day": 146
+  },
+  {
+   "day": 147
+  },
+  {
+   "day": 148
+  },
+  {
+   "day": 149
+  },
+  {
+   "day": 150
+  },
+  {
+   "day": 151
+  },
+  {
+   "day": 152
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w23\"><div class=\"scene-frame\"><img src=\"assets/img/week23.jpg\" alt=\"Обложка недели 23\"><div class=\"scene-topic\"><small>Неделя 23</small>Лама Лу</div></div></div>\n    <p class=\"week-lead\">Неделя 23 · Два игрока. Сервер умеет слушать и отвечать. Теперь он посадит двух игроков за одну доску и станет судьёй, которому верят оба.</p>\n    "
+  },
+  {
+   "day": 153
+  },
+  {
+   "day": 154
+  },
+  {
+   "day": 155
+  },
+  {
+   "day": 156
+  },
+  {
+   "day": 157
+  },
+  {
+   "day": 158
+  },
+  {
+   "day": 159
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w24\"><div class=\"scene-frame\"><img src=\"assets/img/week24.jpg\" alt=\"Обложка недели 24\"><div class=\"scene-topic\"><small>Неделя 24</small>Лама Лу</div></div></div>\n    <p class=\"week-lead\">Неделя 24 · Рейтинг ELO. Как понять, кто сильнее, если люди играют с разными соперниками? Лу покажет формулу, по которой считают рейтинг в шахматах — и в нашей игре.</p>\n    "
+  },
+  {
+   "day": 160
+  },
+  {
+   "day": 161
+  },
+  {
+   "day": 162
+  },
+  {
+   "day": 163
+  },
+  {
+   "day": 164
+  },
+  {
+   "day": 165
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w25\"><div class=\"scene-frame\"><img src=\"assets/img/week25.jpg\" alt=\"Обложка недели 25\"><div class=\"scene-topic\"><small>Неделя 25</small>Альпака Аля</div></div></div>\n    <p class=\"week-lead\">Неделя 25 · Тесты. Всё, что вы построили, нужно охранять. Аля надевает жилетку контролёра и показывает, как написать проверку, которая будет работать за вас день и ночь.</p>\n    "
+  },
+  {
+   "day": 166
+  },
+  {
+   "day": 167
+  },
+  {
+   "day": 168
+  },
+  {
+   "day": 169
+  },
+  {
+   "day": 170
+  },
+  {
+   "day": 171
+  },
+  {
+   "day": 172
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w26\"><div class=\"scene-frame\"><img src=\"assets/img/week26.jpg\" alt=\"Обложка недели 26\"><div class=\"scene-topic\"><small>Неделя 26</small>Котики</div></div></div>\n    <p class=\"week-lead\">Неделя 26 · Красный → зелёный. Красный тест — это не беда, а находка: он поймал ошибку раньше игрока. Котики надевают шляпы детективов и учат читать красное.</p>\n    "
+  },
+  {
+   "day": 173
+  },
+  {
+   "day": 174
+  },
+  {
+   "day": 175
+  },
+  {
+   "day": 176
+  },
+  {
+   "day": 177
+  },
+  {
+   "day": 178
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w27\"><div class=\"scene-frame\"><img src=\"assets/img/week27.jpg\" alt=\"Обложка недели 27\"><div class=\"scene-topic\"><small>Неделя 27</small>Пони По</div></div></div>\n    <p class=\"week-lead\">Неделя 27 · Git — машина времени. Вы построили много. Как не потерять ни строчки и уметь вернуться назад? По открывает сундук со снимками проекта.</p>\n    "
+  },
+  {
+   "day": 179
+  },
+  {
+   "day": 180
+  },
+  {
+   "day": 181
+  },
+  {
+   "day": 182
+  },
+  {
+   "day": 183
+  },
+  {
+   "day": 184
+  },
+  {
+   "day": 185
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w28\"><div class=\"scene-frame\"><img src=\"assets/img/week28.jpg\" alt=\"Обложка недели 28\"><div class=\"scene-topic\"><small>Неделя 28</small>Альпака Аля</div></div></div>\n    <p class=\"week-lead\">Неделя 28 · Баги и сборка. Десять дней настоящей работы разработчика: найти баг, описать, починить, поставить стража — а потом собрать игру для браузера, телефона и компьютера.</p>\n    "
+  },
+  {
+   "day": 186
+  },
+  {
+   "day": 187
+  },
+  {
+   "day": 188
+  },
+  {
+   "day": 189
+  },
+  {
+   "day": 190
+  },
+  {
+   "day": 191
+  },
+  {
+   "day": 192
+  },
+  {
+   "day": 193
+  },
+  {
+   "day": 194
+  },
+  {
+   "day": 195
+  },
+  {
+   "chrome": "\n    <div class=\"scene week-cover\" id=\"w29\"><div class=\"scene-frame\"><img src=\"assets/img/week29.jpg\" alt=\"Обложка недели 29\"><div class=\"scene-topic\"><small>Неделя 29</small>Все вместе</div></div></div>\n    <p class=\"week-lead\">Неделя 29 · Финал. Двести дней почти позади. Пять последних вечеров — чтобы игра стала <b>твоей</b>: своя тема, свой бот, свои тесты, своя сборка — и люди, которым ты её покажешь.</p>\n    "
+  },
+  {
+   "day": 196
+  },
+  {
+   "day": 197
+  },
+  {
+   "day": 198
+  },
+  {
+   "day": 199
+  },
+  {
+   "day": 200
+  },
+  {
+   "chrome": "\n  </section>\n  <!-- DAYS_EXT_END -->\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 5 ═══ -->\n    <section class=\"chapter\" id=\"c5\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#catP\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 02 · Данные-2 <span class=\"ch-prompt\">· 🎨 image-promt/day036–056</span></div>\n                <h2>Котики и сетка 9×9</h2>\n                <div class=\"ch-companion\">спутники главы — два котика</div>\n            </div>\n        </div>\n        <div class=\"scene\">\n            <svg viewBox=\"0 0 460 180\" role=\"img\" aria-label=\"Котики раскладывают клетки в сетку 9 на 9\">\n                <rect width=\"460\" height=\"180\" rx=\"16\" fill=\"var(--card)\"/>\n                <use href=\"#catP\" x=\"20\" y=\"60\" width=\"72\" height=\"72\"/>\n                <use href=\"#catR\" x=\"368\" y=\"60\" width=\"72\" height=\"72\"/>\n                <g transform=\"translate(160,20)\">\n                    <rect width=\"140\" height=\"140\" rx=\"10\" fill=\"var(--magic-wash)\" stroke=\"var(--line)\"/>\n                    <g stroke=\"var(--line)\">\n                        <path d=\"M46 4V136M92 4V136M4 46H136M4 92H136\" stroke-width=\"2\"/>\n                        <path d=\"M17 4V136M31 4V136M63 4V136M77 4V136M109 4V136M123 4V136M4 17H136M4 31H136M4 63H136M4 77H136M4 109H136M4 123H136\"\n                              stroke-width=\".5\" opacity=\".6\"/>\n                    </g>\n                    <rect x=\"6\" y=\"6\" width=\"10\" height=\"10\" rx=\"3\" fill=\"var(--tO)\"/>\n                    <rect x=\"20\" y=\"6\" width=\"10\" height=\"10\" rx=\"3\" fill=\"var(--tO)\"/>\n                    <rect x=\"96\" y=\"48\" width=\"10\" height=\"10\" rx=\"3\" fill=\"var(--tI)\"/>\n                </g>\n            </svg>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">Два котика катали клубок из клеток. «Мы — <b>Котики</b>, — мурлыкнули они хором. — Одна\n                коробочка хранит одно. А если нужно много — берут <span class=\"word\">список</span>. А доска — это список\n                <em>списков</em>: строки, а в каждой строке — клетки».</p>\n            <p>Каждая клетка знает про себя две вещи: <em>занята ли она</em> и <em>чья она</em> (какого игрока). Котики\n                слепили это в маленькую коробочку <span class=\"mono\">Cell</span>, а потом собрали из клеток целую доску\n                9×9 — совсем пустую, как в начале партии.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tT)\"></span> заклинание Котиков <span\n                    class=\"file\">lib/core/board.dart</span></div>\n            <pre><code><span class=\"key\">class</span> Cell {\n  <span class=\"key\">final</span> <span class=\"key\">bool</span> filled;   <span class=\"cmt\">// клетка занята?</span>\n  <span class=\"key\">final</span> <span class=\"key\">int</span>? owner;    <span class=\"cmt\">// чья она (0 или 1), либо ничья — null</span>\n  Cell({<span class=\"key\">this</span>.filled = <span class=\"key\">false</span>, <span class=\"key\">this</span>.owner});\n}\n\n<span class=\"cmt\">// Доска — это список списков клеток (строки × столбцы).</span>\n<span class=\"key\">typedef</span> Board = List&lt;List&lt;Cell&gt;&gt;;\n\n<span class=\"cmt\">// Пустая доска 9×9: девять строк, в каждой девять пустых клеток.</span>\nBoard emptyBoard() =&gt; [\n  <span class=\"key\">for</span> (<span class=\"key\">int</span> r = <span class=\"num\">0</span>; r &lt; <span\n                        class=\"num\">9</span>; r++)\n    [<span class=\"key\">for</span> (<span class=\"key\">int</span> c = <span class=\"num\">0</span>; c &lt; <span\n                        class=\"num\">9</span>; c++) Cell()],\n];\n</code></pre>\n            <div class=\"spell-cap\">Чтобы узнать клетку в строке <b>r</b> и столбце <b>c</b>, пишем <b class=\"mono\">board[r][c]</b>.\n                Первый номер — этаж, второй — квартира.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Список</b> <span class=\"mono\">List</span> хранит много значений по порядку, по номерам (с нуля!).\n                </li>\n                <li><b>class</b> — своя коробочка из нескольких полей (у <span class=\"mono\">Cell</span> их два).</li>\n                <li>Сетку удобно хранить как список списков: <span class=\"mono\">board[r][c]</span>.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 6 ═══ -->\n    <section class=\"chapter\" id=\"c6\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#llama\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 03 · Честная случайность <span class=\"ch-prompt\">· 🎨 image-promt/day057–070</span></div>\n                <h2>Предсказуемое волшебство</h2>\n                <div class=\"ch-companion\">снова лама Лу — она любит числа</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«Игре нужна случайность, — сказала Лу, — какая фигурка выпадет следующей. Но есть секрет:\n                наша случайность <em>честная и предсказуемая</em>. Если начать с одного и того же <span class=\"word\">зерна</span>\n                (seed) — выпадет ровно та же цепочка. Тогда игру можно точно повторить, сравнить на двух устройствах и\n                поймать жуликов».</p>\n            <p>Это волшебство называют <span class=\"word\">генератор псевдослучайных чисел</span>. Наш зовётся <em>mulberry32</em>.\n                Он берёт число-зерно и каждым вызовом превращает его в новое, вроде бы «случайное», но всегда одинаковое\n                для одного зерна.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tI)\"></span> заклинание честной случайности\n                <span class=\"file\">lib/core/rng.dart</span></div>\n            <pre><code><span class=\"key\">class</span> Mulberry32 {\n  <span class=\"key\">int</span> _state;\n  Mulberry32(<span class=\"key\">int</span> seed) : _state = seed &amp; <span class=\"num\">0xFFFFFFFF</span>;  <span\n                        class=\"cmt\">// зерно</span>\n\n  <span class=\"cmt\">// Каждый вызов возвращает число от 0 до 1 — но по строгой формуле.</span>\n  <span class=\"key\">double</span> next() {\n    _state = (_state + <span class=\"num\">0x6D2B79F5</span>) &amp; <span class=\"num\">0xFFFFFFFF</span>;\n    <span class=\"key\">int</span> t = _state;\n    t = (t ^ (t &gt;&gt;&gt; <span class=\"num\">15</span>)) * (<span class=\"num\">1</span> | t);\n    t = ((t + (t ^ (t &gt;&gt;&gt; <span class=\"num\">7</span>)) * (<span class=\"num\">61</span> | t)) ^ t) &amp; <span\n                        class=\"num\">0xFFFFFFFF</span>;\n    <span class=\"key\">return</span> ((t ^ (t &gt;&gt;&gt; <span class=\"num\">14</span>)) &amp; <span class=\"num\">0xFFFFFFFF</span>) / <span\n                        class=\"num\">4294967296</span>;\n  }\n}\n</code></pre>\n            <div class=\"spell-cap\">Два игрока с одним зерном увидят <b>одну и ту же</b> последовательность фигур.\n                Волшебство, которое можно повторить, — самое надёжное.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Зерно (seed)</b> задаёт всю цепочку «случайных» чисел.</li>\n                <li>Одинаковое зерно → одинаковый результат. Это называют <b>детерминизмом</b>.</li>\n                <li>В игре это даёт честность: повтор партии, сравнение, защита от обмана.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 7 ═══ -->\n    <section class=\"chapter\" id=\"c7\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#alpaca\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 04 · Формы <span class=\"ch-prompt\">· 🎨 image-promt/day071–085</span></div>\n                <h2>Семь фигур-тетромино</h2>\n                <div class=\"ch-companion\">Аля раскладывает фигурки</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«В игре семь фигурок, — Аля разложила их веером. — Их зовут буквами, на которые они похожи:\n                <b>I, O, T, S, Z, J, L</b>. Каждая — это просто <em>список клеточек</em>, которые она занимает».</p>\n            <p>Фигурку удобно описать как набор координат: «сдвинься на столько-то вправо и вниз от угла». Тогда фигурку\n                можно поворачивать и переносить — а компьютер знает, какие клетки она накроет.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tS)\"></span> заклинание форм <span\n                    class=\"file\">lib/core/pieces.dart</span></div>\n            <pre><code><span class=\"cmt\">// Coord — одна клеточка фигуры: сдвиг по строке (r) и столбцу (c).</span>\n<span class=\"key\">class</span> Coord { <span class=\"key\">final</span> <span class=\"key\">int</span> r, c; Coord(<span\n                        class=\"key\">this</span>.r, <span class=\"key\">this</span>.c); }\n\n<span class=\"cmt\">// Фигура T: три клетки в ряд и одна сверху по центру.</span>\n<span class=\"key\">final</span> tPiece = [\n  Coord(<span class=\"num\">0</span>, <span class=\"num\">1</span>),           <span class=\"cmt\">//   ▢        верхняя клетка</span>\n  Coord(<span class=\"num\">1</span>, <span class=\"num\">0</span>), Coord(<span class=\"num\">1</span>, <span\n                        class=\"num\">1</span>), Coord(<span class=\"num\">1</span>, <span class=\"num\">2</span>),  <span\n                        class=\"cmt\">// ▢▢▢  нижний ряд</span>\n];\n</code></pre>\n            <div class=\"spell-cap\">Форма — это данные, а не картинка. Из координат мы потом и нарисуем фигуру, и\n                проверим, поместится ли она.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li>Сложную форму можно описать простыми <b>координатами</b>.</li>\n                <li>Данные важнее картинки: из данных родится и картинка, и логика.</li>\n                <li>Семь фигур <span class=\"mono\">I O T S Z J L</span> — весь «алфавит» тетромино.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 8 ═══ -->\n    <section class=\"chapter\" id=\"c8\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#pony\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 05 · Проверки <span class=\"ch-prompt\">· 🎨 image-promt/day086–092</span></div>\n                <h2>Закон мира: «сюда можно?»</h2>\n                <div class=\"ch-companion\">По следит за порядком</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«Каждый мир держится на законах, — строго сказал По. — Наш закон: фигуру можно ставить,\n                только если <em>все</em> её клетки попадают на доску и <em>ни одна</em> не наезжает на занятую. Проверим\n                — и разрешим либо откажем».</p>\n            <p>Марьям взяла оранжевую фигурку, поднесла к углу — и сама увидела: одна клетка вылезает за край. «Значит,\n                нельзя!» — сказала она. По кивнул: «Именно это и решает функция ниже. Она обходит клетки фигуры и, чуть\n                что не так, сразу говорит \"нет\"».</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tO)\"></span> закон постановки <span\n                    class=\"file\">lib/core/board.dart</span></div>\n            <pre><code><span class=\"cmt\">// Можно ли поставить фигуру cells с углом в (r, c)?</span>\n<span class=\"key\">bool</span> canPlace(Board board, List&lt;Coord&gt; cells, <span class=\"key\">int</span> r, <span\n                        class=\"key\">int</span> c) {\n  <span class=\"key\">for</span> (<span class=\"key\">final</span> cell <span class=\"key\">in</span> cells) {\n    <span class=\"key\">final</span> rr = r + cell.r, cc = c + cell.c;\n    <span class=\"key\">if</span> (rr &lt; <span class=\"num\">0</span> || rr &gt;= <span\n                        class=\"num\">9</span> || cc &lt; <span class=\"num\">0</span> || cc &gt;= <span\n                        class=\"num\">9</span>) <span class=\"key\">return</span> <span class=\"key\">false</span>; <span\n                        class=\"cmt\">// за краем</span>\n    <span class=\"key\">if</span> (board[rr][cc].filled) <span class=\"key\">return</span> <span class=\"key\">false</span>;                <span\n                        class=\"cmt\">// клетка занята</span>\n  }\n  <span class=\"key\">return</span> <span class=\"key\">true</span>; <span class=\"cmt\">// все клетки прошли проверку — ставить можно!</span>\n}\n</code></pre>\n            <div class=\"spell-cap\">Здесь встретилось всё сразу: <b>функция</b>, <b>цикл for</b>, <b>if</b>,\n                <b>список</b> и <b>доска</b>. Ты уже умеешь читать настоящий игровой код.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li>Функция может вернуть <span class=\"mono\">true</span>/<span class=\"mono\">false</span> — «да» или\n                    «нет».\n                </li>\n                <li>«Ранний выход»: нашли нарушение — сразу <span class=\"mono\">return false</span>, дальше не проверяем.\n                </li>\n                <li>Правила игры — это просто аккуратные проверки.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 9 ═══ -->\n    <section class=\"chapter\" id=\"c9\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#catR\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 06 · Правила и счёт <span class=\"ch-prompt\">· 🎨 image-promt/day093–105</span></div>\n                <h2>Линии гаснут, очки летят</h2>\n                <div class=\"ch-companion\">котики считают очки</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">Котики завозились: «Самое вкусное! Когда ряд, столбик или квадрат 3×3 заполнен целиком — он\n                <em>гаснет</em>, освобождая место. А очки за это получает тот, чей ход всё завершил».</p>\n            <p>Сначала мы находим все полные линии, потом очищаем их, потом зовём формулу Лу из главы 02 — и добавляем\n                очки игроку. Всё, что ты выучил, сходится в один красивый ход.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tZ)\"></span> ход целиком <span\n                    class=\"file\">lib/core/board.dart + scoring.dart</span></div>\n            <pre><code><span class=\"cmt\">// Найти номера полностью заполненных строк.</span>\nList&lt;<span class=\"key\">int</span>&gt; fullRows(Board board) {\n  <span class=\"key\">final</span> rows = &lt;<span class=\"key\">int</span>&gt;[];\n  <span class=\"key\">for</span> (<span class=\"key\">int</span> r = <span class=\"num\">0</span>; r &lt; <span\n                        class=\"num\">9</span>; r++) {\n    <span class=\"key\">if</span> (board[r].every((cell) =&gt; cell.filled)) rows.add(r); <span class=\"cmt\">// вся строка занята</span>\n  }\n  <span class=\"key\">return</span> rows;\n}\n\n<span class=\"cmt\">// После постановки: очистить линии и начислить очки ходившему.</span>\n<span class=\"key\">int</span> cleared = fullRows(board).length + fullCols(board).length;\nplayer.score += scoreForMove(cleared, player.combo, isPerfect);\n</code></pre>\n            <div class=\"spell-cap\">Обрати внимание: мы <b>переиспользуем</b> <b class=\"mono\">scoreForMove</b> из главы\n                02. Хорошо написанная функция служит много раз.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><span class=\"mono\">.every(...)</span> — «все ли элементы подходят?» короткая проверка списка.</li>\n                <li>Большое действие складывается из маленьких, уже знакомых.</li>\n                <li>Правила + счёт = сердце игры. И оно у нас уже бьётся.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 10 ═══ -->\n    <section class=\"chapter\" id=\"c10\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#catP\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 07 · Искусственный ум <span class=\"ch-prompt\">· 🎨 image-promt/day106–125</span></div>\n                <h2>Котёнок, который научился думать</h2>\n                <div class=\"ch-companion\">фиолетовый котик учится «думать»</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«А если рядом нет второго человека?» — спросила Марьям. Фиолетовый котик прищурился: «Тогда\n                играет <b>бот</b> — котёнок с искусственным умом. Он не колдует: он просто <em>перебирает все ходы</em>,\n                каждому ставит оценку и выбирает лучший».</p>\n            <p>Это и есть большой секрет «умных» программ: они пробуют много вариантов и выбирают тот, что по нашим\n                правилам лучше. Чем умнее бот — тем дальше он заглядывает и тем хитрее считает оценку.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tT)\"></span> ум бота <span class=\"file\">lib/core/bot.dart</span>\n            </div>\n            <pre><code>CandidateMove? chooseBotMove(Board board, List&lt;Piece&gt; hand) {\n  <span class=\"key\">final</span> moves = enumerateMoves(board, hand);   <span class=\"cmt\">// все возможные ходы</span>\n  <span class=\"key\">if</span> (moves.isEmpty) <span class=\"key\">return</span> <span class=\"key\">null</span>;            <span\n                        class=\"cmt\">// ходов нет — пас</span>\n\n  <span class=\"cmt\">// Оценить каждый ход и поставить лучший вперёд.</span>\n  moves.sort((a, b) =&gt; scoreOf(b) - scoreOf(a));\n  <span class=\"key\">return</span> moves.first;                          <span class=\"cmt\">// самый выгодный ход</span>\n}\n</code></pre>\n            <div class=\"spell-cap\">«Умно» — не значит «магия». Это <b>перебрать</b> варианты и <b>выбрать</b> лучший по\n                честной оценке. У нас есть три бота: полегче, средний и хитрый.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Бот</b> = перебор ходов + оценка + выбор лучшего.</li>\n                <li><span class=\"mono\">sort</span> раскладывает список по порядку — тут от лучшего к худшему.</li>\n                <li>Искусственный ум — это чёткие правила, а не волшебство.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 11 ═══ -->\n    <section class=\"chapter\" id=\"c11\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#maryam\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 08 · Фронтенд <span class=\"ch-prompt\">· 🎨 image-promt/day126–145</span></div>\n                <h2>Лицо игры</h2>\n                <div class=\"ch-companion\">теперь ведёт сама Марьям</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">До сих пор всё было «под капотом»: числа, списки, правила. Но игрок ничего этого не видит —\n                он видит <em>картинку</em>. То, что человек видит и трогает, зовётся <span class=\"word\">фронтенд</span>.\n                Марьям взяла кисть из света: «Давайте нарисуем доску!»</p>\n            <p>Во Flutter картинку строят из кирпичиков — <span class=\"word\">виджетов</span>. Виджет — это «нарисуй вот\n                такой кусочек». Мы просто пробегаем по доске и для каждой клетки рисуем квадратик: пустой — светлый,\n                занятый — цветной, под своего игрока.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--magic)\"></span> рисуем доску <span\n                    class=\"file\">lib/ui/widgets/board_view.dart</span></div>\n            <pre><code>Widget build(BuildContext context) {\n  <span class=\"key\">return</span> GridView.count(\n    crossAxisCount: <span class=\"num\">9</span>,                <span class=\"cmt\">// 9 клеток в ряд</span>\n    children: [\n      <span class=\"key\">for</span> (<span class=\"key\">final</span> row <span class=\"key\">in</span> board)\n        <span class=\"key\">for</span> (<span class=\"key\">final</span> cell <span class=\"key\">in</span> row)\n          Container(\n            color: cell.filled\n                ? colorFor(cell.owner)    <span class=\"cmt\">// занята — цвет игрока</span>\n                : emptyColor,             <span class=\"cmt\">// пусто — светлый фон</span>\n          ),\n    ],\n  );\n}\n</code></pre>\n            <div class=\"spell-cap\">Тот же цикл <b>for</b> из главы 03 — только теперь он не считает, а <b>рисует</b>.\n                Данные и картинка встретились.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Фронтенд</b> — то, что видит и трогает человек.</li>\n                <li>Во <b>Flutter</b> экран собирают из <b>виджетов</b>, как из кубиков.</li>\n                <li>Картинка рождается из данных: пробежались по доске — нарисовали клетки.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 12 ═══ -->\n    <section class=\"chapter\" id=\"c12\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#llama\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 09 · Бэкенд <span class=\"ch-prompt\">· 🎨 image-promt/day146–165</span></div>\n                <h2>Двое через океан</h2>\n                <div class=\"ch-companion\">Лу протягивает нить связи</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«А если два человека — на разных концах Земли?» — Марьям представила подружку в другой\n                стране. Лу улыбнулась: «Тогда нужен <span class=\"word\">сервер</span> — умный посредник, который живёт в\n                интернете и передаёт ходы туда-сюда. Всё, что не на экране, а \"на той стороне\", зовут <span\n                        class=\"word\">бэкенд</span>».</p>\n            <p>Наш сервер написан на <span class=\"word\">TypeScript</span>. Он слушает игроков по «телефонной линии»\n                <span class=\"word\">WebSocket</span>: пришёл ход — проверил, применил, разослал обоим. А ещё он считает\n                <span class=\"word\">рейтинг ELO</span>: побеждаешь сильного — рейтинг растёт сильнее.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tI)\"></span> сервер слушает ходы <span\n                    class=\"file\">server/index.ts + room.ts</span></div>\n            <pre><code>wss.on(<span class=\"str\">\"connection\"</span>, (ws) =&gt; {          <span class=\"cmt\">// подключился игрок</span>\n  ws.on(<span class=\"str\">\"message\"</span>, (data) =&gt; {            <span class=\"cmt\">// пришло сообщение</span>\n    <span class=\"key\">const</span> msg = JSON.parse(String(data));\n    <span class=\"key\">if</span> (msg.type === <span class=\"str\">\"move\"</span>) handleMove(ws, msg); <span class=\"cmt\">// это ход — обработать</span>\n  });\n});\n\n<span class=\"cmt\">// Рейтинг ELO: насколько сдвинуть рейтинг после партии.</span>\n<span class=\"key\">const</span> expected = <span class=\"num\">1</span> / (<span class=\"num\">1</span> + Math.pow(<span\n                        class=\"num\">10</span>, (b.elo - a.elo) / <span class=\"num\">400</span>));\n<span class=\"key\">const</span> newA = Math.round(a.elo + <span class=\"num\">24</span> * (score - expected));\n</code></pre>\n            <div class=\"spell-cap\">Главное правило бэкенда: <b>сервер — судья</b>. Он не верит игрокам на слово и всё\n                проверяет сам — чтобы никто не смошенничал.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Бэкенд</b> — часть программы «на той стороне», в интернете.</li>\n                <li><b>Сервер</b> передаёт ходы между игроками и остаётся честным судьёй.</li>\n                <li><b>WebSocket</b> — живая двусторонняя связь; <b>ELO</b> — справедливый рейтинг.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH TESTS ═══ -->\n    <section class=\"chapter\" id=\"ctest\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#alpaca\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 10 · Качество <span class=\"ch-prompt\">· 🎨 image-promt/day166–172</span></div>\n                <h2>Зверята-контролёры: тесты</h2>\n                <div class=\"ch-companion\">Аля надевает жилетку контролёра</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«Игра большая, — вздохнула Марьям, — а вдруг я что-то поменяю и случайно сломаю?» Аля\n                улыбнулась и надела оранжевую жилетку: «Для этого есть <span class=\"word\">тесты</span>. Тест — это\n                крошечная программа, которая проверяет: <em>даёт ли игра правильный ответ?</em> Написал раз — и потом\n                хоть каждую минуту проверяй всю игру за секунду».</p>\n            <p>Тест устроен просто: «сделай вот так — и я <span class=\"mono\">жду</span> вот такой ответ». Если ответ\n                совпал — тест <b>зелёный</b>, всё хорошо. Если нет — тест <b>красный</b>, и ты сразу знаешь: что-то\n                сломалось, чини прямо сейчас, пока не забыл.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tS)\"></span> проверки-контролёры <span\n                    class=\"file\">test/…_test.dart</span></div>\n            <pre><code>test(<span class=\"str\">'одна линия без серии даёт 10 очков'</span>, () {\n  <span class=\"key\">final</span> s = scoreForMove(<span class=\"num\">1</span>, <span class=\"num\">0</span>, <span\n                        class=\"key\">false</span>);\n  expect(s, <span class=\"num\">10</span>);        <span class=\"cmt\">// ждём РОВНО 10 — иначе тест красный</span>\n});\n\ntest(<span class=\"str\">'одно зерно — одна и та же цепочка фигур'</span>, () {\n  <span class=\"key\">final</span> a = Bag(<span class=\"num\">4242</span>);\n  <span class=\"key\">final</span> b = Bag(<span class=\"num\">4242</span>);\n  expect(a.draw().type, b.draw().type);   <span class=\"cmt\">// должны совпасть (детерминизм!)</span>\n});\n</code></pre>\n            <div class=\"spell-cap\"><b class=\"mono\">expect(что_получили, что_ждали)</b> — сердце теста. В нашей игре\n                таких проверок больше <b>пятисот</b>, и все они зелёные. Это как армия зверят, что днём и ночью стерегут\n                игру.\n            </div>\n        </div>\n        <div class=\"task\">\n            <div class=\"h\">🍎 Задание дня</div>\n            <ol>\n                <li>Прочитай оба теста вслух — как приказ контролёру: «сделай… жду…».</li>\n                <li>Придумай на бумаге ещё один тест для <span class=\"mono\">scoreForMove</span>: например, «две линии с\n                    серией 3 → жду 26».\n                </li>\n                <li>Подумай: почему хорошо, что тест <em>красный</em>, а не «молча сломался»?</li>\n            </ol>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Тест</b> — маленькая программа-проверка: «сделай так — жду такой ответ».</li>\n                <li><span class=\"mono\">expect(...)</span> сравнивает полученное с ожидаемым.</li>\n                <li>Зелёные тесты = спокойствие; можно смело менять код — контролёры поймают ошибку.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH BUGS ═══ -->\n    <section class=\"chapter\" id=\"cbug\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#catR\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 11 · Отладка <span class=\"ch-prompt\">· 🎨 image-promt/day173–178</span></div>\n                <h2>Охота на баги</h2>\n                <div class=\"ch-companion\">котики становятся детективами</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">Котики нацепили крошечные шляпы детективов. «В любой большой программе прячутся <span\n                    class=\"word\">баги</span> — маленькие ошибки-жучки, — сказали они. — Это не стыдно! Багов не боятся,\n                на них <em>охотятся</em>. Нашёл, понял, починил — и обязательно поставил тест, чтобы жучок не вернулся».\n            </p>\n            <p>Расскажем про двух настоящих жучков, которых мы поймали в этой самой игре.</p>\n\n            <p><b>Жучок №1 — «Счёт, который забывал себя».</b> Когда интернет на секундочку моргал, игрок\n                переподключался, и сервер снова говорил «здравствуй». А код по ошибке на каждое «здравствуй»\n                <em>обнулял</em> набранные за матч очки-достижения. Обидно! Детективы поняли: сбрасывать надо не на\n                «здравствуй», а только если начался <em>по-настоящему новый матч</em> — у каждого матча есть свой номер\n                <span class=\"mono\">matchId</span>.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tZ)\"></span> починка жучка №1 <span\n                    class=\"file\">lib/online/online_game_notifier.dart</span></div>\n            <pre><code><span class=\"cmt\">// БЫЛО (жучок): сбрасывали счётчики на КАЖДОЕ \"здравствуй\" —</span>\n<span class=\"cmt\">// даже когда матч тот же, просто моргнул интернет.</span>\nresetMatchAcc: <span class=\"key\">true</span>,\n\n<span class=\"cmt\">// СТАЛО: сбрасываем ТОЛЬКО если это другой матч (по его номеру).</span>\n<span class=\"key\">final</span> freshMatch = game.matchId != _accMatchId;\nresetMatchAcc: freshMatch,   <span class=\"cmt\">// тот же матч после обрыва — счёт цел!</span>\n</code></pre>\n            <div class=\"spell-cap\">Один жучок — а обидел бы каждого, у кого моргает интернет. Теперь его сторожит новый\n                тест: «переподключение НЕ обнуляет счёт».\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p><b>Жучок №2 — «Задания, застрявшие во вчера».</b> Каждый день игроку дают новые задания. Но программа\n                вычисляла «какой сегодня день» <em>один раз</em> при запуске и больше не проверяла. Если приложение не\n                закрывали, то после полуночи оно застревало на <em>вчерашних</em> заданиях. Детективы добавили привычку:\n                <em>перед каждым действием тихо спросить — а день ещё тот же?</em></p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tT)\"></span> починка жучка №2 <span\n                    class=\"file\">lib/daily/daily_controller.dart</span></div>\n            <pre><code><span class=\"cmt\">// Перед каждым действием проверяем: не наступил ли новый день?</span>\n<span class=\"key\">void</span> refreshDay() {\n  <span class=\"key\">final</span> today = _todayKey();\n  <span class=\"key\">if</span> (state.dayKey != today) {        <span class=\"cmt\">// день сменился!</span>\n    state = DailyState.fresh(today);   <span class=\"cmt\">// выдаём свежие задания</span>\n  }\n}\n</code></pre>\n            <div class=\"spell-cap\">Тот же жучок жил ещё в двух местах (недельные и сезонные задания) — детективы поймали\n                всех троих одним приёмом. Ошибки любят прятаться семьями.\n            </div>\n        </div>\n        <div class=\"task\">\n            <div class=\"h\">🍎 Задание дня</div>\n            <ol>\n                <li>Расскажи своими словами, что делал каждый жучок и почему это плохо.</li>\n                <li>Правило детектива: «починил баг — <span class=\"mono\">добавь тест</span>». Зачем? (Подсказка: чтобы\n                    жучок не вернулся незаметно.)\n                </li>\n                <li>Вспомни свою ошибку в жизни. Как «тест» (проверка) помог бы не повторить её?</li>\n            </ol>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Баг</b> — маленькая ошибка в коде. Их не стыдятся, а находят и чинят.</li>\n                <li><b>Отладка</b> — это как детектив: найти, понять причину, починить.</li>\n                <li>Золотое правило: <b>починил → поставь тест</b>, чтобы ошибка не вернулась.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH SERVER-FORTRESS (бонус) ═══ -->\n    <section class=\"chapter\" id=\"cserver\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#llama\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Бонус-глава · Крепость · 🎨 сервер-крепость</div>\n                <h2>Как мы сделали сервер несокрушимым</h2>\n                <div class=\"ch-companion\">лама Лу укрепляет крепость</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">Лу привела Марьям к башне-серверу. «Помнишь, сервер — это <em>судья</em> для двух игроков. А\n                судья должен быть надёжнее всех. К нам приходил злой критик и кричал, что наша крепость — картонная. Мы\n                проверили каждый камень. Кое-где и правда были щели — и мы их <b>заделали</b>. Пойдём, покажу трёх самых\n                опасных жучков-великанов».</p>\n\n            <p><b>Великан №1 — «Одно словечко роняло всю башню».</b> Оказалось: если прислать серверу пустышку-сообщение\n                <span class=\"mono\">null</span>, он спотыкался и <em>падал целиком</em> — вместе со всеми игроками разом.\n                Лу нахмурилась: «Судья не имеет права падать от кривого письма». Теперь сервер сначала смотрит, что\n                письмо вообще письмо, а уж потом читает. И на самый крайний случай поставили «последнюю линию обороны».\n            </p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tI)\"></span> щит от кривых писем <span\n                    class=\"file\">server/room.ts + index.ts</span></div>\n            <pre><code><span class=\"cmt\">// Проверяем письмо ДО того, как его читать:</span>\n<span class=\"key\">if</span> (msg === <span class=\"key\">null</span> || <span class=\"key\">typeof</span> msg !== <span\n                        class=\"str\">\"object\"</span>) <span class=\"key\">return</span>; <span\n                        class=\"cmt\">// не падаем</span>\n\n<span class=\"cmt\">// Последняя линия обороны: одна ошибка не роняет всю башню.</span>\nprocess.on(<span class=\"str\">\"uncaughtException\"</span>, (err) =&gt; console.error(err));\n</code></pre>\n            <div class=\"spell-cap\">Раньше <b>любой</b> мог уронить сервер одним сообщением. Теперь — нет. И это стерегут\n                <b>первые серверные тесты</b> (их не было вовсе!).\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p><b>Великан №2 — «Рейтинг, который забывался».</b> Сервер копил рейтинг игроков в памяти и записывал на\n                диск с ленцой. При перезапуске или внезапном падении <em>последние результаты пропадали</em>. Лу\n                покачала головой: «Соревнование без надёжного рейтинга — это не соревнование». Мы научили сервер\n                сохранять рейтинг <em>перед выключением</em>, <em>каждую минуту на всякий случай</em>, и <em>бережно\n                    прятать</em> файл, если он вдруг испортился.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tO)\"></span> рейтинг не теряется <span\n                    class=\"file\">server/index.ts + leaderboard.ts</span></div>\n            <pre><code>process.on(<span class=\"str\">\"SIGTERM\"</span>, () =&gt; leaderboard.flushNow()); <span\n                    class=\"cmt\">// перед штатным выключением</span>\n\nsetInterval(() =&gt; leaderboard.flushNow(), <span class=\"num\">60_000</span>);  <span class=\"cmt\">// и раз в минуту — на случай</span>\n                                                <span class=\"cmt\">// внезапного падения</span>\n</code></pre>\n            <div class=\"spell-cap\">Теперь рейтинг переживает и штатную остановку, и жёсткий краш, и порчу файла. Три\n                щита вместо одной щели.\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p><b>Великан №3 — «Мёртвые телефоны».</b> Когда у игрока пропадала связь, его «телефон» иногда оставался\n                «как бы поднятым» — и он не мог вернуться в игру. Лу придумала <span class=\"word\">сердцебиение</span>\n                (heartbeat): сервер раз в полминуты спрашивает «ты живой?» и мягко кладёт трубку тем, кто молчит. Тогда\n                игрок сразу может переподключиться. А сопернику мы теперь вежливо говорим: <em>«он вернулся!»</em> —\n                чтобы не висел баннер «соперник вышел».</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tS)\"></span> сердцебиение сервера <span\n                    class=\"file\">server/index.ts</span></div>\n            <pre><code><span class=\"cmt\">// Каждые 30 секунд: «ты живой?» — и отключаем молчунов.</span>\nsetInterval(() =&gt; {\n  <span class=\"key\">for</span> (<span class=\"key\">const</span> ws <span class=\"key\">of</span> clients) {\n    <span class=\"key\">if</span> (!alive.get(ws)) ws.terminate();  <span class=\"cmt\">// молчит — кладём трубку</span>\n    <span class=\"key\">else</span> { alive.set(ws, <span class=\"key\">false</span>); ws.ping(); } <span class=\"cmt\">// пинг «ты живой?»</span>\n  }\n}, <span class=\"num\">30_000</span>);\n</code></pre>\n            <div class=\"spell-cap\">Мёртвые соединения больше не держат место. Обрыв связи — не конец: игрок вернётся, а\n                соперник это увидит.\n            </div>\n        </div>\n        <div class=\"task\">\n            <div class=\"h\">🍎 Задание дня</div>\n            <ol>\n                <li>Объясни, почему <b>судья-сервер</b> должен быть надёжнее обычного игрока.</li>\n                <li>Мы спасли рейтинг <b>тремя</b> способами. Назови их и скажи, от чего каждый.</li>\n                <li>Что такое «сердцебиение» и зачем оно? Придумай, где ещё в жизни полезна проверка «ты живой?».</li>\n            </ol>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Сервер-судья</b> обязан быть устойчивым: кривой ввод не должен его ронять.</li>\n                <li>Важные данные защищают <b>несколькими</b> щитами (перед выключением + периодически + бэкап).</li>\n                <li><b>Heartbeat</b> находит мёртвые соединения; критику отвечают не обидой, а <b>проверенными фиксами и\n                    тестами</b>.\n                </li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH GIT ═══ -->\n    <section class=\"chapter\" id=\"cgit\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#pony\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 12 · Машина времени <span class=\"ch-prompt\">· 🎨 image-promt/day179–185</span></div>\n                <h2>Git: как не потерять свою работу</h2>\n                <div class=\"ch-companion\">По хранит все снимки истории</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«А что, если я всё поломаю и не смогу вернуть, как было?» — испугалась Марьям. По подкатил\n                волшебный сундук: «Для этого есть <span class=\"word\">Git</span> — машина времени для кода. Каждый раз,\n                когда что-то получилось, ты делаешь <span class=\"word\">коммит</span> — снимок-фотографию всего проекта с\n                подписью. Захотел вернуться в прошлое — открыл нужный снимок. Ничего не пропадает».</p>\n            <p>Каждый коммит — как сохранёнка в игре: «здесь у меня всё работало». А ещё Git умеет отправлять код в\n                <span class=\"word\">облако</span> (сайт <b>GitHub</b>) — чтобы он не жил только на твоём компьютере и\n                чтобы можно было работать вместе с друзьями.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tO)\"></span> заклинания машины времени\n                <span class=\"file\">терминал · git</span></div>\n            <pre><code>git init                     <span class=\"cmt\"># создать сундук истории в проекте</span>\ngit add .                    <span class=\"cmt\"># положить в сундук все изменения</span>\ngit commit -m <span class=\"str\">\"сделал доску 9x9\"</span>  <span class=\"cmt\"># снимок с подписью — что сделал</span>\n\ngit log                      <span class=\"cmt\"># посмотреть всю историю снимков</span>\ngit checkout &lt;снимок&gt;         <span class=\"cmt\"># вернуться в прошлое (осторожно!)</span>\ngit push                     <span class=\"cmt\"># отправить снимки в облако GitHub</span>\n</code></pre>\n            <div class=\"spell-cap\">Подпись у коммита — важная: «<b>что</b> ты сделал». У нашей игры за одну только эту\n                книгу набралось больше <b>пятидесяти</b> таких снимков-коммитов.\n            </div>\n        </div>\n        <div class=\"task\">\n            <div class=\"h\">🍎 Задание дня</div>\n            <ol>\n                <li>Заведи первый в жизни репозиторий: <span class=\"mono\">git init</span> в папке с игрой.</li>\n                <li>Сделай три коммита с честными подписями: что менял — то и напиши.</li>\n                <li>Посмотри <span class=\"mono\">git log</span> — это твоя личная летопись. Гордись ею!</li>\n            </ol>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Git</b> — машина времени: сохраняет снимки (<b>коммиты</b>) всего проекта.</li>\n                <li>Хорошая подпись коммита говорит, <em>что</em> ты сделал — будущему себе спасибо.</li>\n                <li><b>GitHub</b> — облако для кода: не потеряешь и сможешь работать вместе.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 15 ═══ -->\n    <section class=\"chapter\" id=\"c13\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#alpaca\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 13 · Кросс-платформа <span class=\"ch-prompt\">· 🎨 image-promt/day186–195</span></div>\n                <h2>Один код — четыре мира</h2>\n                <div class=\"ch-companion\">Аля собирает игру для всех</div>\n            </div>\n        </div>\n        <div class=\"prose\">\n            <p class=\"say\">«А на чём будут играть?» — спросила Марьям. Аля подмигнула: «В том и чудо Flutter: мы пишем\n                <em>один</em> код, а собрать его можно сразу для многих устройств. Это называют <span class=\"word\">кросс-платформенностью</span>».\n            </p>\n            <p>Одной командой игра превращается в сайт для браузера, в приложение для телефона Android, для iPhone и для\n                компьютера Mac. Один труд — четыре мира.</p>\n        </div>\n        <div class=\"spell\">\n            <div class=\"spell-top\"><span class=\"dot\" style=\"background:var(--tS)\"></span> собрать для всех <span\n                    class=\"file\">терминал</span></div>\n            <pre><code>flutter build web      <span class=\"cmt\"># игра в браузере</span>\nflutter build apk      <span class=\"cmt\"># приложение для Android</span>\nflutter build ios      <span class=\"cmt\"># приложение для iPhone</span>\nflutter build macos    <span class=\"cmt\"># программа для Mac</span>\n</code></pre>\n            <div class=\"spell-cap\">Четыре мира — из одной кодовой базы. Ты <b>фронтенд</b>-разработчик (лицо игры), <b>бэкенд</b>-разработчик\n                (сервер) и делаешь это <b>кросс-платформенно</b>.\n            </div>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Что ты выучил</div>\n            <ul>\n                <li><b>Кросс-платформа</b> — один код, много устройств.</li>\n                <li>Команда <span class=\"mono\">flutter build</span> «печёт» готовое приложение.</li>\n                <li>Ты соединила три роли: фронтенд + бэкенд + сборка под все платформы.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ CH 14 · EPILOGUE ═══ -->\n    <section class=\"chapter\" id=\"c14\">\n        <div class=\"ch-head\">\n            <div class=\"ch-badge\">\n                <svg>\n                    <use href=\"#maryam\"/>\n                </svg>\n            </div>\n            <div>\n                <div class=\"ch-num\">Глава 14 · Эпилог <span class=\"ch-prompt\">· 🎨 image-promt/day196–200</span></div>\n                <h2>Игра готова</h2></div>\n        </div>\n        <div class=\"scene\">\n            <svg viewBox=\"0 0 460 170\" role=\"img\" aria-label=\"Марьям и друзья радуются готовой игре\">\n                <rect width=\"460\" height=\"170\" rx=\"16\" fill=\"var(--card)\"/>\n                <g transform=\"translate(180,26)\">\n                    <rect width=\"100\" height=\"100\" rx=\"14\" fill=\"#151019\"/>\n                    <g>\n                        <rect x=\"14\" y=\"18\" width=\"16\" height=\"16\" rx=\"4\" fill=\"var(--tO)\"/>\n                        <rect x=\"14\" y=\"40\" width=\"16\" height=\"16\" rx=\"4\" fill=\"var(--tO)\"/>\n                        <rect x=\"14\" y=\"62\" width=\"16\" height=\"16\" rx=\"4\" fill=\"var(--tO)\"/>\n                        <rect x=\"36\" y=\"62\" width=\"16\" height=\"16\" rx=\"4\" fill=\"var(--tO)\"/>\n                        <rect x=\"58\" y=\"40\" width=\"16\" height=\"16\" rx=\"4\" fill=\"var(--tI)\"/>\n                        <rect x=\"58\" y=\"62\" width=\"16\" height=\"16\" rx=\"4\" fill=\"var(--tI)\"/>\n                        <rect x=\"36\" y=\"84\" width=\"16\" height=\"12\" rx=\"4\" fill=\"var(--tI)\"/>\n                    </g>\n                </g>\n                <use href=\"#maryam\" x=\"96\" y=\"70\" width=\"80\" height=\"80\"/>\n                <use href=\"#pony\" x=\"284\" y=\"80\" width=\"76\" height=\"76\"/>\n                <use href=\"#catP\" x=\"372\" y=\"96\" width=\"54\" height=\"54\"/>\n                <use href=\"#llama\" x=\"30\" y=\"70\" width=\"70\" height=\"80\"/>\n                <use href=\"#alpaca\" x=\"358\" y=\"34\" width=\"56\" height=\"56\"/>\n            </svg>\n        </div>\n        <div class=\"prose\">\n            <p>И вот всё сошлось. Коробочки По хранили данные. Функции Лу считали очки. Развилки и карусели Али вели\n                логику. Котики держали доску и правила. Честная случайность выдавала фигуры. Бот научился думать,\n                виджеты нарисовали лицо, а сервер соединил игроков через океан. Марьям смотрела на экран — и на нём\n                светилась <b>настоящая игра</b>, та самая, из которой она когда-то выпала. Только теперь она знала про\n                неё <em>всё</em>. Потому что построила её сама.</p>\n            <p class=\"say\">«Ты пришла сюда игроком, — сказал По, — а уходишь <b>разработчиком</b>. Ты умеешь и лицо игры\n                (фронтенд), и её сердце на сервере (бэкенд), и собрать всё это сразу для четырёх миров». Марьям\n                улыбнулась. Фиолетовый блок снова засветился — пора домой. Но теперь она уносила с собой самое главное:\n                <em>всё вокруг кто-то придумал и записал. А значит — и она может</em>.</p>\n            <p style=\"text-align:center; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--magic-ink); font-size:22px; margin-top:26px;\">\n                Конец — и начало.</p>\n        </div>\n        <div class=\"learn\">\n            <div class=\"h\"><span class=\"star\">★</span> Кем ты стала за эту книгу</div>\n            <ul>\n                <li>Знаешь <b>переменные, функции, if/for, списки и классы</b> — азбуку любого языка.</li>\n                <li>Понимаешь <b>детерминизм</b>, игровую логику, счёт и простой <b>ИИ</b>.</li>\n                <li>Умеешь <b>фронтенд</b> (Flutter-виджеты) и <b>бэкенд</b> (сервер, WebSocket, ELO).</li>\n                <li>Собираешь одно приложение под <b>web, Android, iPhone и Mac</b>.</li>\n            </ul>\n        </div>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ 200-DAY PLAN ═══ -->\n    <section class=\"plan\" id=\"plan\">\n        <h2>📅 Карта курса: 29 недель, каждая — с мини-проектом</h2>\n        <p>200 дней по 3 часа = ~29 недель. Каждая неделя заканчивается маленьким <b>🎯 мини-проектом</b> — чтобы новое\n            сразу пощупать руками. Не гонись, повторять и отставать — можно.</p>\n        <div class=\"plan-scroll\">\n            <table>\n                <tr>\n                    <td>Нед. 1 · д1–7</td>\n                    <td>Подготовка</td>\n                    <td>🎯 запустить приложение и поменять текст на «Привет, я Марьям!»</td>\n                </tr>\n                <tr>\n                    <td>Нед. 2 · д8–14</td>\n                    <td>Переменные (По)</td>\n                    <td>🎯 коробочки <span class=\"mono\">score</span> и <span class=\"mono\">nick</span>, вывести их в\n                        консоль\n                    </td>\n                </tr>\n                <tr>\n                    <td>Нед. 3 · д15–21</td>\n                    <td>Функции (Лу)</td>\n                    <td>🎯 функции <span class=\"mono\">приветствие(имя)</span> и <span class=\"mono\">площадь(a,b)</span>\n                    </td>\n                </tr>\n                <tr>\n                    <td>Нед. 4 · д22–28</td>\n                    <td>Условие if (Аля)</td>\n                    <td>🎯 игра «Угадай число» с подсказками «больше / меньше»</td>\n                </tr>\n                <tr>\n                    <td>Нед. 5 · д29–35</td>\n                    <td>Цикл for (Аля)</td>\n                    <td>🎯 таблица умножения и пирамидка из звёздочек ★</td>\n                </tr>\n                <tr>\n                    <td>Нед. 6 · д36–42</td>\n                    <td>Списки</td>\n                    <td>🎯 список любимых игр: добавить, удалить, найти самую длинную</td>\n                </tr>\n                <tr>\n                    <td>Нед. 7 · д43–49</td>\n                    <td>Классы</td>\n                    <td>🎯 класс <span class=\"mono\">Котик</span> (имя, цвет) — создать троих</td>\n                </tr>\n                <tr>\n                    <td>Нед. 8 · д50–56</td>\n                    <td>Доска 9×9</td>\n                    <td>🎯 собрать <span class=\"mono\">emptyBoard()</span> и напечатать доску точками</td>\n                </tr>\n                <tr>\n                    <td>Нед. 9 · д57–63</td>\n                    <td>Случайность</td>\n                    <td>🎯 «кубик» на mulberry32; показать: одно зерно = одна цепочка</td>\n                </tr>\n                <tr>\n                    <td>Нед. 10 · д64–70</td>\n                    <td>Детерминизм</td>\n                    <td>🎯 мешок <span class=\"mono\">Bag(seed)</span>: два мешка выдают одно и то же</td>\n                </tr>\n                <tr>\n                    <td>Нед. 11 · д71–77</td>\n                    <td>Фигуры</td>\n                    <td>🎯 описать все 7 тетромино списками координат</td>\n                </tr>\n                <tr>\n                    <td>Нед. 12 · д78–85</td>\n                    <td>Повороты фигур</td>\n                    <td>🎯 функция поворота фигуры на 90°</td>\n                </tr>\n                <tr>\n                    <td>Нед. 13 · д86–92</td>\n                    <td>Закон «сюда можно?»</td>\n                    <td>🎯 <span class=\"mono\">canPlace</span>: печатать «да / нет» для разных мест</td>\n                </tr>\n                <tr>\n                    <td>Нед. 14 · д93–99</td>\n                    <td>Постановка и очистка</td>\n                    <td>🎯 поставить фигуру и стереть полностью заполненную строку</td>\n                </tr>\n                <tr>\n                    <td>Нед. 15 · д100–105</td>\n                    <td>Счёт и комбо</td>\n                    <td>🎯 посчитать очки за ход по формуле, добавить серию-комбо</td>\n                </tr>\n                <tr>\n                    <td>Нед. 16 · д106–112</td>\n                    <td>Перебор ходов</td>\n                    <td>🎯 вывести все возможные ходы для одной фигуры</td>\n                </tr>\n                <tr>\n                    <td>Нед. 17 · д113–119</td>\n                    <td>Оценка хода</td>\n                    <td>🎯 «оценка» = сколько линий закроет; выбрать лучший</td>\n                </tr>\n                <tr>\n                    <td>Нед. 18 · д120–125</td>\n                    <td>Бот целиком</td>\n                    <td>🎯 бот играет сам с собой — вывести, кто победил</td>\n                </tr>\n                <tr>\n                    <td>Нед. 19 · д126–132</td>\n                    <td>Первый экран (Flutter)</td>\n                    <td>🎯 экран с заголовком и кнопкой «Играть»</td>\n                </tr>\n                <tr>\n                    <td>Нед. 20 · д133–139</td>\n                    <td>Доска виджетами</td>\n                    <td>🎯 <span class=\"mono\">GridView</span> 9×9 с цветными клетками</td>\n                </tr>\n                <tr>\n                    <td>Нед. 21 · д140–145</td>\n                    <td>Ввод (тап)</td>\n                    <td>🎯 тап красит клетку; выбор фигуры из руки</td>\n                </tr>\n                <tr>\n                    <td>Нед. 22 · д146–152</td>\n                    <td>Сервер, WebSocket</td>\n                    <td>🎯 крошечный сервер: на «привет» отвечает «привет»</td>\n                </tr>\n                <tr>\n                    <td>Нед. 23 · д153–159</td>\n                    <td>Два игрока</td>\n                    <td>🎯 передать ход одного игрока другому через сервер</td>\n                </tr>\n                <tr>\n                    <td>Нед. 24 · д160–165</td>\n                    <td>Рейтинг ELO</td>\n                    <td>🎯 посчитать новый рейтинг после победы и поражения</td>\n                </tr>\n                <tr>\n                    <td>Нед. 25 · д166–172</td>\n                    <td>Тесты</td>\n                    <td>🎯 написать 5 своих тестов — и сделать все зелёными</td>\n                </tr>\n                <tr>\n                    <td>Нед. 26 · д173–178</td>\n                    <td>Красный → зелёный</td>\n                    <td>🎯 нарочно сломать код, увидеть красный тест, починить</td>\n                </tr>\n                <tr>\n                    <td>Нед. 27 · д179–185</td>\n                    <td>Git (машина времени)</td>\n                    <td>🎯 первый репозиторий: <span class=\"mono\">init</span>, 3 коммита, <span\n                            class=\"mono\">git log</span></td>\n                </tr>\n                <tr>\n                    <td>Нед. 28 · д186–195</td>\n                    <td>Баги + сборка</td>\n                    <td>🎯 найти и починить баг; собрать под web и Android</td>\n                </tr>\n                <tr>\n                    <td>Нед. 29 · д196–200</td>\n                    <td>Финал 🎉</td>\n                    <td>🎯 своя версия игры — показать друзьям и близким</td>\n                </tr>\n            </table>\n        </div>\n        <p style=\"margin-top:12px\">Пройдёшь эти 29 недель — и ты <b>кросс-платформенный фронтенд- и\n            бэкенд-разработчик</b>. Как Марьям. 🐴🦙🦥🐱</p>\n    </section>\n\n    <hr class=\"divide\">\n\n    <!-- ═══ БОНУС: ПРОМПТЫ ДЛЯ ИЛЛЮСТРАЦИЙ ═══ -->\n    <section class=\"prompts\" id=\"prompts\">\n        <h2>🎨 Бонус-задание: промпты для иллюстраций</h2>\n        <p>Картинки в этой книге можно перерисовать своими — например, с помощью нейросети, которая рисует по описанию.\n            Такое описание называют <b>промпт</b>. Написать хороший промпт — тоже навык (и его любят разработчики).\n            Научимся!</p>\n\n        <div class=\"recipe\">\n            <div class=\"h\">🧪 Рецепт промпта — пять частей</div>\n            <span class=\"part\">1 · КТО/ЧТО</span>\n            <span class=\"part\">2 · СТИЛЬ</span>\n            <span class=\"part\">3 · ЦВЕТА</span>\n            <span class=\"part\">4 · НАСТРОЕНИЕ</span>\n            <span class=\"part\">5 · ФОРМАТ</span>\n            <p style=\"margin:10px 0 0; font-size:14.5px; color:var(--muted)\">Чем точнее опишешь каждую часть — тем ближе\n                картинка к задумке. Нейросети лучше понимают английский, поэтому промпты ниже — на нём (рядом — что\n                это).</p>\n        </div>\n\n        <p style=\"font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--ink); margin-top:18px\">Общий стиль\n            книги (добавляй к каждому промпту):</p>\n        <div class=\"cmdline\" style=\"white-space:pre-wrap\">children's book illustration, flat vector, soft rounded\n            shapes, thick\n            soft outlines, cozy and friendly, dark navy background #0E1116 with\n            glowing tetromino blocks in orange #E0913E, cyan #2FB6D2, purple\n            #9B5DE0, green #43AE68, warm magical storybook mood, simple, cute\n        </div>\n\n        <div class=\"prompt-card\">\n            <div class=\"pc-top\">\n                <svg>\n                    <use href=\"#maryam\"/>\n                </svg>\n                Марьям — героиня\n            </div>\n            <pre>a cute 8-year-old girl named Maryam, two dark braided buns,\nbig warm curious eyes, soft purple dress, happy brave smile,\n+ [общий стиль]</pre>\n        </div>\n        <div class=\"prompt-card\">\n            <div class=\"pc-top\">\n                <svg>\n                    <use href=\"#pony\"/>\n                </svg>\n                Пони По — переменные\n            </div>\n            <pre>a small friendly cartoon pony, warm orange body, red-pink mane\nand tail, big gentle eyes, round and tiny, cheerful,\n+ [общий стиль]</pre>\n        </div>\n        <div class=\"prompt-card\">\n            <div class=\"pc-top\">\n                <svg>\n                    <use href=\"#llama\"/>\n                </svg>\n                Лама Лу — функции\n            </div>\n            <pre>a tall calm cartoon llama, soft cyan wool, long graceful neck,\nsmall ears, wise kind eyes, gentle smile,\n+ [общий стиль]</pre>\n        </div>\n        <div class=\"prompt-card\">\n            <div class=\"pc-top\">\n                <svg>\n                    <use href=\"#alpaca\"/>\n                </svg>\n                Альпака Аля — логика\n            </div>\n            <pre>a fluffy round cartoon alpaca, mint green wool, big fluffy\ncheeks, tiny ears, bright cheerful eyes, bouncy pose,\n+ [общий стиль]</pre>\n        </div>\n        <div class=\"prompt-card\">\n            <div class=\"pc-top\">\n                <svg>\n                    <use href=\"#catP\"/>\n                </svg>\n                <svg>\n                    <use href=\"#catR\"/>\n                </svg>\n                Котики — доска и счёт\n            </div>\n            <pre>two tiny cute cartoon cats sitting together, one soft purple\nand one warm red, big round eyes, playful, tiny detective hats,\n+ [общий стиль]</pre>\n        </div>\n        <div class=\"prompt-card\">\n            <div class=\"pc-top\">\n                <svg>\n                    <use href=\"#portal\"/>\n                </svg>\n                Обложка — портал в Мир Кода\n            </div>\n            <pre>Maryam stepping through a glowing violet portal made of floating\ncode blocks, her friends around her — orange pony, cyan llama,\ngreen alpaca, two small cats, colorful tetromino blocks floating\nin the air, magical Code World, wide cover composition,\n+ [общий стиль]</pre>\n        </div>\n        <div class=\"prompt-card\">\n            <div class=\"pc-top\">\n                <svg>\n                    <use href=\"#maryam\"/>\n                </svg>\n                Сцена — доска 9×9\n            </div>\n            <pre>the two cute cats arranging glowing blocks into a neat 9x9 grid\ngame board, Maryam watching with wonder, a few orange and cyan\ntetromino pieces placed on the grid,\n+ [общий стиль]</pre>\n        </div>\n\n        <div class=\"task\" style=\"margin-top:18px\">\n            <div class=\"h\">🍎 Твоё задание про промпты</div>\n            <ol>\n                <li>Возьми рецепт из пяти частей и напиши <b>свой промпт</b> для нового героя книги — например, для\n                    мудрой Совы-Базы-Данных или робота-Сервера.\n                </li>\n                <li>Сгенерируй картинку, посмотри — что вышло не так? Уточни промпт (добавь деталей) и попробуй снова.\n                    Это как отладка, только для картинок!\n                </li>\n                <li>Собери «стайл-гайд»: один общий стиль + короткое описание каждого героя. Тогда все картинки будут\n                    как одна семья.\n                </li>\n            </ol>\n        </div>\n        <p style=\"margin-bottom:0; color:var(--muted); font-size:14.5px\">💡 Секрет: хороший промпт — как хорошая функция\n            из главы 02. Точный вход → предсказуемый результат. Правишь по чуть-чуть — как код.</p>\n    </section>\n\n    <div class=\"tetro-rule\"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>\n\n    <footer>\n        <div class=\"big\">Марьям в Мире Кода</div>\n        учебник-курс · 15 глав + бонус · 29 недель · настоящий проект на GitHub<br>\n        итог курса — НАША игра BlockDuel, собранная и понятая ребёнком целиком\n        <br><a class=\"backtop\" href=\"#c1\">↑ к началу</a>\n    </footer>\n"
+  }
+ ]
+}

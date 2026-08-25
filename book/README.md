@@ -8,9 +8,12 @@
 
 - **Онлайн (GitHub Pages):** <https://alshfu.github.io/block-puzzle-pvp/book/> —
   отдельное web-приложение (`web/`), ставится на телефон, работает офлайн.
+  Лёгкая читалка — `web/app.html` (**data-driven**: контент в JSON, страницы
+  собираются на лету; оболочка ~12 КБ, картинки по URL).
 - **Файл:** `maryam_v_mire_koda.html` — исходник книги (нужна папка `images/` рядом).
-  `maryam_v_mire_koda_online.html` — самодостаточный монолит с картинками внутри
-  (для артефакта / отправки одним файлом).
+  `maryam_v_mire_koda_online.html` — теперь **тонкий редирект** на `web/app.html`
+  (раньше был монолит на ~10 МБ с картинками в base64; упразднён — страница не
+  должна весить десятки мегабайт).
 - Открывается **как настоящая книга**: сначала заставка (детская комната зимним
   вечером, камин, котик, книга на полке — клик, и она раскрывается), потом
   разворот из двух страниц с переплётом и фолио. Листать: ← →, свайп, тап по краям.
@@ -35,12 +38,21 @@
 | Исходник книги (CSS/JS/разметка, недели 1–2 руками) | `maryam_v_mire_koda.html` | — |
 | Сюжет недель 3–6 | `../tools/gen_book_days.py` (`WEEKS` + `STORY`) | `python3 tools/gen_book_days.py` |
 | Сюжет недель 7–29 | `../tools/book_days/weekNN.py` — по файлу на неделю (словарь `WEEK`) | то же |
-| Онлайн-монолит с картинками | `maryam_v_mire_koda_online.html` | `python3 tools/gen_book_online.py` |
-| Web-приложение (PWA) | `web/` — index/css/js/assets/manifest/sw | `python3 tools/gen_book_app.py` |
+| **Контент-данные (JSON)** | `web/content/book.json` + `web/content/spreads/*.json` (по 2 дня) | `python3 tools/gen_book_data.py` |
+| **Движок сборки страниц** | `../tools/book_assets/render.js` → `web/js/render.js` | (копируется при сборке web) |
+| Онлайн-редирект (старая ссылка) | `maryam_v_mire_koda_online.html` → `web/app.html` | `python3 tools/gen_book_online.py` |
+| Web-приложение (PWA) | `web/` — app/index/css/js/content/assets/manifest/sw | `python3 tools/gen_book_app.py` |
 | Промпты иллюстраций | `image-promt/` | `python3 tools/gen_image_prompts.py` |
 
-Правило: правим исходник или сюжет → пересобираем дни → онлайн → web → push в `main`
-(Action сам выложит `web/` в `/book`).
+**Data-driven архитектура.** Контент книги хранится как данные, а не как один
+тяжёлый HTML: `web/content/spreads/spreadNNN.json` — по 2 дня в файле («каждые две
+страницы — файл»), `web/content/book.json` — манифест (порядок страниц + список
+разворотов). Лёгкая оболочка `web/app.html` + `web/js/render.js` собирают страницы
+из этих JSON на лету; картинки всегда по URL (`assets/img/…`), никогда в base64.
+`gen_book_app.py` делает всё за один прогон (web/ → render.js → app.html → content/).
+
+Правило: правим исходник или сюжет → `gen_book_app.py` (пересоберёт всё, включая
+JSON) → push в `main` (Action сам выложит `web/` в `/book`).
 
 ## Иллюстрации
 

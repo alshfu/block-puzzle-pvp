@@ -1,91 +1,68 @@
 #!/usr/bin/env python3
-"""gen_book_online.py — самодостаточная онлайн-версия книги (картинки внутри).
+"""gen_book_online.py — тонкий редирект на data-driven ридер книги.
 
-Берёт book/maryam_v_mire_koda.html (ссылается на картинки как images/NAME) и
-встраивает каждую использованную картинку прямо в HTML как data:-URI. На выходе —
-ОДИН файл book/maryam_v_mire_koda_online.html, который открывается где угодно без
-папки images/ и годится для публикации артефактом (там локальные файлы не грузятся).
+ИСТОРИЯ. Раньше здесь собирался «самодостаточный» онлайн-HTML: каждая из 75+
+картинок впечатывалась в файл как base64 data:-URI. Результат — монолит на ~10 МБ.
+Это плохо: страница в 2026-м не должна весить десятки мегабайт, а один файл нельзя
+ни закэшировать по кусочкам, ни отдать по одной странице.
 
-Запуск: python3 tools/gen_book_online.py
+СЕЙЧАС. Книга — data-driven: оболочка book/web/app.html + контент в
+book/web/content/ (book.json + spreads/*.json, по 2 дня на файл), картинки — по URL
+(assets/img/…). Генерирует контент tools/gen_book_data.py.
+
+Этот скрипт лишь превращает старый путь book/maryam_v_mire_koda_online.html в
+КРОШЕЧНУЮ страницу-редирект на web/app.html — чтобы старые ссылки/закладки не
+ломались. Никакого base64. Запуск: python3 tools/gen_book_online.py
 """
 
-import base64
 import os
-import re
-import shutil
-import subprocess
-import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BOOK = os.path.join(ROOT, "book", "maryam_v_mire_koda.html")
-IMG_DIR = os.path.join(ROOT, "book", "images")
 OUT = os.path.join(ROOT, "book", "maryam_v_mire_koda_online.html")
+TARGET = "web/app.html"  # относительный путь от book/
 
-MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
-        ".webp": "image/webp", ".gif": "image/gif"}
-
-# Картинок много (75+), в base64 они бы вышли за лимит артефакта (16MB), поэтому
-# перед встраиванием ужимаем через sips (macOS): макс. сторона MAX_PX, качество Q.
-MAX_PX = 820
-JPEG_Q = 70
-
-
-def load_bytes(path, tmpdir):
-    """Возвращает байты картинки, по возможности сжатой sips (иначе оригинал)."""
-    ext = os.path.splitext(path)[1].lower()
-    if ext in (".jpg", ".jpeg") and shutil.which("sips"):
-        out = os.path.join(tmpdir, os.path.basename(path))
-        try:
-            subprocess.run(
-                ["sips", "-Z", str(MAX_PX), "-s", "formatOptions", str(JPEG_Q),
-                 path, "--out", out],
-                check=True, capture_output=True)
-            if os.path.getsize(out) > 0:
-                with open(out, "rb") as fp:
-                    return fp.read()
-        except Exception:
-            pass
-    with open(path, "rb") as fp:
-        return fp.read()
+REDIRECT_HTML = """<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Марьям в Мире Кода — читалка переехала</title>
+<meta http-equiv="refresh" content="0; url=%(target)s">
+<link rel="canonical" href="%(target)s">
+<style>
+  html,body{margin:0;height:100%%;display:grid;place-items:center;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#F6F1E7;color:#2E2620}
+  .card{max-width:520px;padding:32px;text-align:center;background:#fff;border-radius:18px;
+    box-shadow:0 12px 40px rgba(0,0,0,.12)}
+  h1{font-size:22px;margin:0 0 10px}
+  p{font-size:15px;line-height:1.5;color:#5b5346;margin:0 0 18px}
+  a.btn{display:inline-block;padding:12px 22px;border-radius:12px;background:#5238C6;color:#fff;
+    text-decoration:none;font-weight:700}
+  small{display:block;margin-top:16px;color:#9a8f7d;font-size:12px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>📖 Читалка переехала</h1>
+    <p>Книга теперь <b>лёгкая и data-driven</b>: страницы собираются из JSON
+       (по файлу на разворот), а не из одного тяжёлого HTML. Секунду — перенаправляем…</p>
+    <a class="btn" href="%(target)s">Открыть книгу →</a>
+    <small>Если не открылось автоматически — нажми на кнопку.
+       Прежний 10 МБ-файл с картинками в base64 упразднён.</small>
+  </div>
+  <script>location.replace("%(target)s");</script>
+</body>
+</html>
+"""
 
 
 def main():
-    with open(BOOK, encoding="utf-8") as f:
-        html = f.read()
-
-    used = sorted(set(re.findall(r'src="images/([^"]+)"', html)))
-    cache = {}
-    total = 0
-    missing = []
-    tmpdir = tempfile.mkdtemp(prefix="bookimg-")
-    for name in used:
-        path = os.path.join(IMG_DIR, name)
-        if not os.path.isfile(path):
-            missing.append(name)
-            continue
-        ext = os.path.splitext(name)[1].lower()
-        mime = MIME.get(ext, "application/octet-stream")
-        raw = load_bytes(path, tmpdir)
-        total += len(raw)
-        cache[name] = f"data:{mime};base64," + base64.b64encode(raw).decode("ascii")
-    shutil.rmtree(tmpdir, ignore_errors=True)
-
-    def repl(m):
-        name = m.group(1)
-        return f'src="{cache[name]}"' if name in cache else m.group(0)
-
-    html = re.sub(r'src="images/([^"]+)"', repl, html)
-
+    html = REDIRECT_HTML % {"target": TARGET}
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(html)
-
-    out_mb = os.path.getsize(OUT) / (1024 * 1024)
-    print(f"  {os.path.relpath(OUT, ROOT)} — встроено {len(cache)} картинок "
-          f"({total/1024/1024:.1f}MB raw), итоговый файл {out_mb:.1f}MB")
-    if missing:
-        print(f"  ! не найдены: {missing}")
-    if out_mb > 16:
-        print(f"  ! ВНИМАНИЕ: файл {out_mb:.1f}MB > лимита артефакта 16MB — нужно сжать картинки")
+    kb = os.path.getsize(OUT) / 1024
+    print("✓ %s — тонкий редирект на %s (%.1f КБ, было ~10 МБ base64)"
+          % (os.path.relpath(OUT, ROOT), TARGET, kb))
 
 
 if __name__ == "__main__":

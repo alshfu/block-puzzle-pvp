@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Марьям в Мире Кода</title>
+<meta name="description" content="Детская книга-учебник: девочка Марьям с друзьями-зверятами собирает настоящую игру за 200 дней.">
+<meta name="theme-color" content="#5238C6">
+<link rel="icon" href="assets/icons/favicon.png" sizes="48x48">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link rel="stylesheet" href="css/book.css">
+</head>
+<body>
+<!-- ═══ SVG character sprite (reused) ═══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+        <!-- Марьям -->
+        <symbol id="maryam" viewBox="0 0 100 100">
+            <circle cx="50" cy="42" r="20" fill="#F1C9A5"/>
+            <path d="M30 40a20 20 0 0140 0c0-16-9-24-20-24S30 24 30 40z" fill="#4A3B2E"/>
+            <circle cx="27" cy="42" r="7" fill="#4A3B2E"/>
+            <circle cx="73" cy="42" r="7" fill="#4A3B2E"/>
+            <circle cx="43" cy="44" r="2.6" fill="#2E2620"/>
+            <circle cx="57" cy="44" r="2.6" fill="#2E2620"/>
+            <path d="M45 52q5 4 10 0" stroke="#B5654A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <path d="M32 96V72a18 18 0 0136 0v24z" fill="#6B4FE0"/>
+            <circle cx="50" cy="78" r="4" fill="#EDE6D6"/>
+        </symbol>
+        <!-- Пони По (orange) -->
+        <symbol id="pony" viewBox="0 0 100 100">
+            <ellipse cx="52" cy="62" rx="30" ry="20" fill="#E0913E"/>
+            <path d="M70 30c14-4 22 6 20 16-8 2-14 0-18-4z" fill="#E0913E"/>
+            <circle cx="82" cy="36" r="13" fill="#E0913E"/>
+            <path d="M74 24c-4-6 2-12 8-10 0 6-2 9-8 10z" fill="#DE5A61"/>
+            <path d="M84 24c4-6 12-4 12 2-5 4-9 4-12-2z" fill="#DE5A61"/>
+            <circle cx="86" cy="36" r="2.6" fill="#2E2620"/>
+            <ellipse cx="92" cy="42" rx="4" ry="3" fill="#B5654A"/>
+            <rect x="34" y="76" width="6" height="16" rx="3" fill="#C97A2E"/>
+            <rect x="52" y="76" width="6" height="16" rx="3" fill="#C97A2E"/>
+            <path d="M24 56c-10-2-14 6-10 14 6 0 10-4 12-10z" fill="#DE5A61"/>
+        </symbol>
+        <!-- Лама Лу (cyan) -->
+        <symbol id="llama" viewBox="0 0 100 100">
+            <ellipse cx="46" cy="72" rx="24" ry="16" fill="#2FB6D2"/>
+            <path d="M52 74V34a11 11 0 0122 0v40z" fill="#2FB6D2"/>
+            <circle cx="63" cy="30" r="12" fill="#37C2DE"/>
+            <path d="M56 20c-2-8 6-10 8-4 0 4-3 6-8 4z" fill="#2FB6D2"/>
+            <path d="M70 20c2-8 10-8 10-2-3 5-7 5-10 2z" fill="#2FB6D2"/>
+            <circle cx="60" cy="30" r="2.4" fill="#1B2E33"/>
+            <circle cx="68" cy="30" r="2.4" fill="#1B2E33"/>
+            <ellipse cx="64" cy="38" rx="4" ry="3" fill="#1B7E92"/>
+            <rect x="30" y="84" width="6" height="12" rx="3" fill="#1B7E92"/>
+            <rect x="52" y="84" width="6" height="12" rx="3" fill="#1B7E92"/>
+        </symbol>
+        <!-- Альпака Аля (green, fluffy) -->
+        <symbol id="alpaca" viewBox="0 0 100 100">
+            <circle cx="48" cy="66" r="26" fill="#43AE68"/>
+            <circle cx="30" cy="58" r="10" fill="#43AE68"/>
+            <circle cx="66" cy="56" r="11" fill="#43AE68"/>
+            <circle cx="40" cy="46" r="9" fill="#43AE68"/>
+            <circle cx="58" cy="44" r="9" fill="#43AE68"/>
+            <ellipse cx="60" cy="36" rx="12" ry="13" fill="#57C47C"/>
+            <path d="M52 24c-1-7 6-8 7-3 0 4-3 5-7 3z" fill="#43AE68"/>
+            <path d="M67 24c2-7 9-6 8-1-3 4-6 4-8 1z" fill="#43AE68"/>
+            <circle cx="57" cy="36" r="2.3" fill="#173D28"/>
+            <circle cx="65" cy="35" r="2.3" fill="#173D28"/>
+            <ellipse cx="61" cy="42" rx="3.4" ry="2.6" fill="#2A6B44"/>
+            <rect x="36" y="84" width="6" height="11" rx="3" fill="#2A6B44"/>
+            <rect x="54" y="84" width="6" height="11" rx="3" fill="#2A6B44"/>
+        </symbol>
+        <!-- Котик (purple) -->
+        <symbol id="catP" viewBox="0 0 100 100">
+            <path d="M28 40l8-16 10 12z" fill="#9B5DE0"/>
+            <path d="M72 40l-8-16-10 12z" fill="#9B5DE0"/>
+            <circle cx="50" cy="52" r="26" fill="#9B5DE0"/>
+            <circle cx="41" cy="50" r="3" fill="#2A1740"/>
+            <circle cx="59" cy="50" r="3" fill="#2A1740"/>
+            <path d="M47 58q3 3 6 0" stroke="#2A1740" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="50" cy="55" rx="3" ry="2" fill="#E7B7C8"/>
+            <path d="M74 66c14 2 18 12 10 20" stroke="#9B5DE0" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </symbol>
+        <!-- Котик (red) -->
+        <symbol id="catR" viewBox="0 0 100 100">
+            <path d="M28 40l8-16 10 12z" fill="#DE5A61"/>
+            <path d="M72 40l-8-16-10 12z" fill="#DE5A61"/>
+            <circle cx="50" cy="52" r="26" fill="#DE5A61"/>
+            <circle cx="41" cy="50" r="3" fill="#3D1518"/>
+            <circle cx="59" cy="50" r="3" fill="#3D1518"/>
+            <path d="M47 58q3 3 6 0" stroke="#3D1518" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="50" cy="55" rx="3" ry="2" fill="#F6D6C0"/>
+            <path d="M26 66c-14 2-18 12-10 20" stroke="#DE5A61" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </symbol>
+        <!-- Портал-блок -->
+        <symbol id="portal" viewBox="0 0 100 100">
+            <rect x="16" y="16" width="68" height="68" rx="16" fill="none" stroke="#6B4FE0" stroke-width="4"
+                  opacity=".5"/>
+            <rect x="26" y="26" width="48" height="48" rx="12" fill="none" stroke="#6B4FE0" stroke-width="4"
+                  opacity=".8"/>
+            <rect x="38" y="38" width="24" height="24" rx="8" fill="#6B4FE0"/>
+        </symbol>
+    </defs>
+</svg>
+
+<!-- ═══ Панель читалки (режим книги / печать) ═══ -->
+<div class="reader-ui" role="toolbar" aria-label="Управление книгой">
+    <button class="btn" id="rdMode" type="button">📖 Режим книги</button>
+    <div class="title">Марьям в Мире Кода</div>
+    <div class="pager">
+        <button class="btn ico" id="rdPrev" type="button" aria-label="Предыдущая страница" title="Назад (←)">‹</button>
+        <span class="ind" id="rdInd" aria-live="polite">1 / 1</span>
+        <button class="btn ico" id="rdNext" type="button" aria-label="Следующая страница" title="Вперёд (→)">›</button>
+        <button class="btn ico" id="rdPrint" type="button" aria-label="Печать или PDF" title="Печать / сохранить PDF">
+            🖨
+        </button>
+    </div>
+</div>
+
+<!-- ═══ ЗАСТАВКА: комната зимним вечером, камин, книга на полке ═══ -->
+<noscript><style>#intro{display:none!important}</style></noscript>
+<div id="intro" aria-label="Заставка: нажми на книгу, чтобы открыть">
+    <div class="fire-glow"></div>
+
+    <div class="window">
+        <div class="moon"></div>
+        <div class="snow" id="snow"></div>
+        <span class="bar-v"></span><span class="bar-h"></span>
+    </div>
+
+    <div class="fireplace">
+        <div class="mantel"></div>
+        <div class="stone">
+            <div class="opening">
+                <div class="flames"><i></i><i></i><i></i></div>
+                <div class="logs"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- котик у камина, греется и смотрит на огонь -->
+    <div class="cat" aria-hidden="true">
+        <svg viewBox="0 0 120 150">
+            <g class="tail">
+                <path d="M30 132 C2 130 -2 104 16 96 C6 106 20 116 40 112 C46 118 44 132 30 132 Z"/>
+            </g>
+            <path d="M60 146 C34 146 28 126 33 108 C21 102 17 66 30 46 L25 16 L46 40
+                     C52 36 68 36 74 40 L95 16 L90 46 C103 66 99 104 87 108
+                     C92 126 86 146 60 146 Z"/>
+            <ellipse class="eye" cx="50" cy="62" rx="3.4" ry="4.6"/>
+            <ellipse class="eye" cx="70" cy="62" rx="3.4" ry="4.6"/>
+        </svg>
+    </div>
+
+    <div class="bookshelf">
+        <div class="brow" id="shelfTop">
+            <span class="spine" style="height:78%;background:linear-gradient(#b5533f,#8f3d2e)"></span>
+            <span class="spine" style="height:92%;background:linear-gradient(#3f7fae,#2f5f86)"></span>
+            <span class="spine" style="height:70%;background:linear-gradient(#5aa06a,#3e7a4e)"></span>
+            <button class="ourbook" id="ourbook" type="button" aria-label="Открыть книгу «Марьям в Мире Кода»">
+                <span class="b-inside"></span>
+                <span class="b-thick"></span>
+                <span class="b-cover">
+                    <span class="bc-eyebrow">КОД-РПГ · 200 ДНЕЙ</span>
+                    <span class="bc-title">Марьям<br>в Мире Кода</span>
+                    <span class="bc-cat">🐱</span>
+                    <span class="bc-tetro">
+                        <i style="background:var(--tI)"></i><i style="background:var(--tO)"></i>
+                        <i style="background:var(--tT)"></i><i style="background:var(--tZ)"></i>
+                    </span>
+                </span>
+            </button>
+            <span class="spine" style="height:86%;background:linear-gradient(#c8923a,#a06e26)"></span>
+            <span class="spine" style="height:74%;background:linear-gradient(#8a6bd0,#6a4bb0)"></span>
+        </div>
+        <div class="brow">
+            <span class="spine" style="height:88%;background:linear-gradient(#4f8f9e,#357180)"></span>
+            <span class="spine" style="height:72%;background:linear-gradient(#c46a5a,#9c4c3e)"></span>
+            <span class="spine" style="height:94%;background:linear-gradient(#6a9a55,#4c7a3a)"></span>
+            <span class="spine" style="height:66%;background:linear-gradient(#b58a3a,#906a26)"></span>
+            <span class="spine" style="height:84%;background:linear-gradient(#7a6bd0,#5a4bb0)"></span>
+            <span class="spine" style="height:78%;background:linear-gradient(#b5533f,#8f3d2e)"></span>
+            <span class="spine" style="height:90%;background:linear-gradient(#3f7fae,#2f5f86)"></span>
+        </div>
+    </div>
+
+    <div class="floor"><div class="rug"></div></div>
+
+    <div class="title-room">Зимний вечер · время для сказки</div>
+    <div class="hint">На полке стоит наша книга —<br><b>нажми на неё</b>, и она раскроется ✨</div>
+    <button class="skip" id="introSkip" type="button">пропустить →</button>
+</div>
+
+<div class="book-clip">
+<div class="wrap">
+    <!-- Контент собирается из content/book.json + content/spreads/*.json скриптом render.js -->
+</div><!-- /.wrap -->
+    <!-- переплёт по центру разворота (со стежками) -->
+    <div class="binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <!-- загнутый уголок страницы -->
+    <div class="curl" aria-hidden="true"></div>
+    <!-- переворачивающийся лист (анимация) -->
+    <div class="leaf" id="leaf" aria-hidden="true"></div>
+    <!-- фолио: номера страниц -->
+    <span class="folio l" id="folioL" aria-hidden="true"></span>
+    <span class="folio r" id="folioR" aria-hidden="true"></span>
+</div><!-- /.book-clip -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Читалка: постраничное перелистывание (режим книги).
+     Контент раскладывается в вертикальные CSS-колонки фиксированной
+     высоты; каждая колонка = страница. Листаем, сдвигая .wrap через
+     CSS-переменную --pg (одна страница = ширина колонки + межстраничный
+     зазор). Ссылки-якоря (оглавление, day-nav) перехватываются и
+     переводят на нужную страницу. Печать использует @media print (поток).
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Оркестратор заставки: снег, полёт книги с полки и раскрытие.
+     Клик по книге → measure центра → летит в центр экрана (scale) →
+     обложка распахивается и книга вырастает на весь экран → показываем
+     читалку. Esc / «пропустить» / no-JS — сразу к чтению.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<script defer src="js/reader.js"></script>
+<script defer src="js/render.js"></script>
+<script defer src="js/intro.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>

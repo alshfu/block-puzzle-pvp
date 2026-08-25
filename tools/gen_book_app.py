@@ -90,7 +90,7 @@ MANIFEST = """{
   "name": "Марьям в Мире Кода",
   "short_name": "Марьям",
   "description": "Детская книга-учебник: собери настоящую игру за 200 дней.",
-  "start_url": "./index.html",
+  "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
@@ -130,19 +130,31 @@ self.addEventListener("fetch", (e) => {
 
 README = """# Марьям в Мире Кода — web-приложение
 
-Отдельное статическое web-приложение книги. Структура:
+Отдельное статическое web-приложение книги. **Data-driven**: контент — это данные
+(JSON, по файлу на разворот), страницы собираются рендером на лету. Никаких
+тяжёлых монолитов и картинок в base64. Структура:
 
 ```
 web/
-  index.html              страница (разметка + <head>)
+  app.html                ⭐ ЛЁГКАЯ читалка (~12 КБ): оболочка, контент из JSON
+  js/render.js            сборка страниц из content/*.json (по 2 дня на файл)
+  content/
+    book.json             манифест: порядок страниц (flow) + список разворотов
+    spreads/spreadNNN.json 100 файлов, по 2 дня в каждом («две страницы — файл»)
+  index.html              тяжёлый вид: все 200 дней инлайном (fallback для file://
+                          и ИСТОЧНИК данных для генератора content/)
   css/book.css            все стили
   js/reader.js            читалка: режим книги (разворот из 2 страниц), печать A4
   js/intro.js             заставка: комната зимним вечером, камин, книга с полки
-  assets/img/             иллюстрации (ужаты под web)
+  assets/img/             иллюстрации (ужаты под web, всегда по URL)
   assets/icons/           иконки приложения (для установки на телефон)
-  manifest.webmanifest    PWA-манифест
-  sw.js                   офлайн-кеш
+  manifest.webmanifest    PWA-манифест (start_url → app.html)
+  sw.js                   офлайн-кеш (cache-first: JSON и картинки кешируются сами)
 ```
+
+**Что открывать:** `app.html` — лёгкая читалка (нужен http-сервер: fetch по
+file:// браузер блокирует). `index.html` — тот же вид, но всё инлайном; работает
+даже двойным кликом (file://), просто весит больше.
 
 ## Запуск локально
 Нужен любой статический сервер (из-за манифеста и service worker):
@@ -150,24 +162,29 @@ web/
 ```bash
 cd book/web
 python3 -m http.server 8000
-# открой http://localhost:8000
+# открой http://localhost:8000/app.html   (лёгкая data-driven читалка)
 ```
 
-Открывать `index.html` двойным кликом (file://) тоже можно — читалка и заставка
-работают; не заработает только офлайн-кеш и установка приложения (нужен http).
+`app.html` тянет контент через fetch — нужен http-сервер (file:// браузер
+блокирует). Если сервера нет — открой `index.html` двойным кликом: тот же вид,
+всё инлайном, но тяжелее; офлайн-кеш и установка приложения тоже требуют http.
 
 ## Деплой
 Залей содержимое папки `web/` на любой статический хостинг (GitHub Pages,
 Netlify, nginx). Всё относительное — работает из любой подпапки.
 
 ## Пересборка
-Файлы генерируются из монолита `book/maryam_v_mire_koda.html`:
+Одна команда собирает всё: `web/` из монолита `book/maryam_v_mire_koda.html`
+(вырезает CSS/JS, ужимает картинки, пишет `index.html`), затем лёгкий слой —
+`js/render.js`, `app.html` и `content/` (JSON) из свежего `index.html`:
 
 ```bash
 python3 tools/gen_book_app.py
 ```
 
-Правь исходник (или генератор), затем пересобирай — руками файлы в `web/` не меняем.
+Отдельно контент-JSON можно пересобрать так: `python3 tools/gen_book_data.py`.
+Канонический `render.js` живёт в `tools/book_assets/render.js` (в `web/js/` он
+копируется). Правь исходник/генератор → пересобирай; руками файлы в `web/` не меняем.
 """
 
 
@@ -265,6 +282,34 @@ def main():
 """
     with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
         f.write(index)
+
+    # ── data-driven слой: render.js + app.html + content/ ──
+    # index.html выше — тяжёлый монолит (все 200 дней инлайном): он остаётся как
+    # запасной вид для file:// и как ИСТОЧНИК данных для gen_book_data. Ниже строим
+    # лёгкую data-driven читалку: контент — в JSON (content/spreads/*.json, по 2 дня
+    # на файл), а app.html — почти пустая оболочка, наполняемая render.js на лету.
+    render_src = os.path.join(ROOT, "tools", "book_assets", "render.js")
+    with open(render_src, encoding="utf-8") as f:
+        render_js = f.read()
+    with open(os.path.join(OUT, "js", "render.js"), "w", encoding="utf-8") as f:
+        f.write(render_js)
+
+    # app.html = index.html, но .wrap пустой (контент придёт из JSON) + подключён render.js
+    app = re.sub(r'(<div class="wrap">).*(</div><!-- /\.wrap -->)',
+                 r'\1\n    <!-- Контент собирается из content/book.json + content/spreads/*.json скриптом render.js -->\n\2',
+                 index, flags=re.S)
+    app = app.replace('<script defer src="js/reader.js"></script>',
+                      '<script defer src="js/reader.js"></script>\n<script defer src="js/render.js"></script>')
+    with open(os.path.join(OUT, "app.html"), "w", encoding="utf-8") as f:
+        f.write(app)
+
+    # content/ из свежесобранного index.html (единый источник — 200 дней)
+    import importlib.util
+    data_gen = os.path.join(ROOT, "tools", "gen_book_data.py")
+    spec = importlib.util.spec_from_file_location("gen_book_data", data_gen)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    mod.main()
 
     # ── отчёт ──
     def kb(n):
