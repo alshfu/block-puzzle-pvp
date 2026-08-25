@@ -62,6 +62,12 @@
             ind.textContent = (cols === 2 && right > left)
                 ? (left + "–" + right + " / " + count)
                 : (left + " / " + count);
+            // фолио по углам: слева — левая страница, справа — правая (или единственная)
+            var fl = document.getElementById("folioL"), fr = document.getElementById("folioR");
+            if (fl && fr) {
+                if (cols === 2) { fl.textContent = left; fr.textContent = right > left ? right : ""; }
+                else { fl.textContent = ""; fr.textContent = left; }
+            }
         }
 
         function apply(anim) {
@@ -182,5 +188,5 @@
         setMode(saved !== "0", false);
 
         // хук для заставки: пересчитать разбивку/перейти на страницу
-        window.__reader = { layout: layout, go: function (i) { setPage(i); }, setMode: setMode };
+        window.__reader = { layout: layout, go: function (i) { setPage(i); }, jump: jumpTo, setMode: setMode };
     })();
