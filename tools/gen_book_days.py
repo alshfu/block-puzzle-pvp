@@ -131,7 +131,7 @@ WEEKS = [
          "котики раскладывают предметы в нумерованный ряд с нуля",
          "«Один — переменная, а много — список», — мурлыкнули котики.",
          ["Открой course/week06_lists/day036.dart",
-          "Заведи List<String> games = ['A','B','C']; и напечатай."]),
+          "Заведи List&lt;String&gt; games = ['A','B','C']; и напечатай."]),
         (37, "добавить и убрать", "Добавляем и удаляем",
          "в список кладут новый элемент, другой убирают",
          "Список умеет расти и уменьшаться.",
@@ -267,16 +267,15 @@ STORY = {
 IMG_DIR = os.path.join(ROOT, "book", "images")
 
 
-def has_day_image(day):
+def has_day_image(day: int):
     """Есть ли иллюстрация дня (book/images/dayNNN.jpg). Для недель 7–29 картинки
     ещё рисуются по промптам из book/image-promt/ — пока их нет, страница-день
     выходит без сцены, со значком героя недели рядом с заголовком."""
     return os.path.isfile(os.path.join(IMG_DIR, f"day{day:03d}.jpg"))
 
 
-def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, story=None,
-             real=None, demo=None):
-    ext = "dart"
+def day_page(day: int, theme, h3, seen, say, steps, badge=None,
+             story=None, real=None, demo=None):
     steps_html = "\n".join(f"          <li>{s}</li>" for s in steps)
     paras = story or STORY.get(day) or [say]
     say_cls = ' class="say"'
@@ -306,6 +305,9 @@ def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, stor
         scene = ""
         head = (f'      <div class="day-head"><div class="day-badge" title="{seen}">'
                 f'<svg><use href="#{badge or "maryam"}"/></svg></div><h3>{h3}</h3></div>')
+    # «следующий день» — у всех, кроме последнего дня книги (иначе битый якорь #d201)
+    next_html = ("" if day >= 200 else
+                 f'\n      <div class="day-next"><a href="#d{day+1:03d}">День {day+1} →</a></div>')
     return f'''    <article class="day-page" id="d{day:03d}">
       <div class="day-kicker">День {day} · из 200 · тема: {theme}</div>
 {head}
@@ -319,8 +321,7 @@ def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, stor
 {steps_html}
         </ol>
         <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
-      </div>
-      <div class="day-next"><a href="#d{day+1:03d}">День {day+1} →</a></div>
+      </div>{next_html}
     </article>'''
 
 
@@ -338,21 +339,20 @@ def build():
            '  <section class="chapter" id="days3to6">',
            '    <div class="ch-head"><div class="ch-badge"><svg><use href="#alpaca"/></svg></div>',
            '      <div><div class="ch-num">Недели 3–29 · страницы-дни</div><h2>Дни 15–200: продолжаем по вечерам</h2><div class="ch-companion">каждый вечер — одна страница; в конце недели — мини-проект</div></div></div>']
-    # недели 3–6 — описаны в этом файле (WEEKS + STORY)
-    for wnum, folder, companion, days in WEEKS:
+    # недели 3–6 — описаны в этом файле (WEEKS + STORY); folder в кортеже недели
+    # больше не нужен day_page (заготовки course/ адресуются в тексте шагов)
+    for wnum, _folder, companion, days in WEEKS:
         out.append(week_opener(wnum, companion,
                                f'Неделя {wnum}. Семь вечеров по одной странице. '
                                f'Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.'))
-        n = len(days)
-        for i, (day, theme, h3, seen, say, steps) in enumerate(days):
-            out.append(day_page(day, theme, h3, seen, say, steps, folder, i == n - 1))
+        for day, theme, h3, seen, say, steps in days:
+            out.append(day_page(day, theme, h3, seen, say, steps))
     # недели 7–29 — пакет tools/book_days (по модулю на неделю)
     for w in load_weeks():
         out.append(week_opener(w["num"], w["companion"], f'Неделя {w["num"]} · {w["title"]}. {w["lead"]}'))
-        n = len(w["days"])
-        for i, d in enumerate(w["days"]):
+        for d in w["days"]:
             out.append(day_page(d["day"], d["theme"], d["h3"], d["seen"], "", d["steps"],
-                                w["folder"], i == n - 1, badge=w["badge"], story=d["story"],
+                                badge=w["badge"], story=d["story"],
                                 real=d.get("real"), demo=d.get("demo")))
     out.append('  </section>')
     out.append('  <!-- DAYS_EXT_END -->')
@@ -362,7 +362,7 @@ def build():
 CSS = """  .weeks-gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin:16px 0; }
   .weeks-gallery figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-sm); }
   .weeks-gallery img { width:100%; height:auto; display:block; }
-  .weeks-gallery figcaption { padding:8px 10px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:13.5px; color:var(--ink); }
+  .weeks-gallery figcaption { padding:8px 10px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; color:var(--ink); }
   .weeks-gallery figcaption small { color:var(--muted); font-weight:500; }
 """
 

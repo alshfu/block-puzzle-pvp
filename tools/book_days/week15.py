@@ -1,7 +1,7 @@
 # week15.py — Неделя 15 «Счёт и комбо» (дни 100–105, шесть дней). Спутники — котики и Марьям.
 # Идея недели: scoreForMove(n, combo, perfect, cfg): base = n(n+1)/2,
 # множитель 1 + 0.1·min(combo, cap), +15 за perfect clear.
-from . import M, W
+from . import M
 
 WEEK = dict(
     num=15, folder="week15_score", companion="Котики", badge="catP", title="Счёт и комбо",
