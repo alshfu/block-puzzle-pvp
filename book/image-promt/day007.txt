@@ -1,12 +1,9 @@
-День 007 · Неделя 1: Подготовка / Портал
-Тип: 🎯 МИНИ-ПРОЕКТ (праздничная сцена)   ·   Герои: maryam
+День 007 · Неделя 1: Подготовка / Мини-проект
+Тип: информативная иллюстрация дня   ·   Герои: maryam, pony, llama, alpaca, cats
+Тема по картинке: меняем слова на экране (логотип)
 
-Что иллюстрируем (кратко): meeting all the animal friends for the first time, group scene
+Что иллюстрируем: Марьям огромным карандашом перекрашивает вывеску игры, друзья радуются. Сразу ясно: «сегодня меняем слова на экране».
 
-─── ГОТОВЫЙ ПРОМПТ (англ. — вставь в генератор изображений) ───
+─── ГОТОВЫЙ ПРОМПТ ───
 
-flat vector children's book illustration, soft rounded shapes, thick soft outlines, cozy friendly mood, dark navy background #0E1116, glowing tetromino blocks in orange #E0913E, cyan #2FB6D2, purple #9B5DE0 and green #43AE68, warm magical Code World, cute, simple, centered square composition. Characters: Maryam, a cute 8-year-old girl with two dark braided buns, big warm curious eyes, soft purple dress. Scene: meeting all the animal friends for the first time, group scene.
-
-─── ПОДСКАЗКА ───
-Правь по чуть-чуть, как код: не нравится поза/цвет — добавь деталь и
-сгенерируй снова. Держи единый стиль, чтобы все картинки были «одной семьёй».
+flat vector children's book illustration, soft rounded shapes, thick soft outlines, cozy friendly mood, dark navy Code World. Maryam paints a bright greeting on a big wooden game sign with a giant pencil, while the orange pony, cyan llama, mint alpaca and two tiny cats cheer. No readable extra words. The picture must read as “today we change the words on the screen.”

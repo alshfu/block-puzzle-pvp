@@ -69,9 +69,40 @@
   .cover .eyebrow { font-family:"JetBrains Mono",monospace; font-size: 12.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--magic-ink); }
   .cover h1 { font-size: clamp(40px, 9vw, 76px); font-weight: 800; margin: 18px 0 6px; }
   .cover .tag { color: var(--muted); font-size: clamp(16px,2.6vw,20px); font-style: italic; max-width: 34ch; margin: 0 auto; }
-  .cover-art { margin: 26px auto 8px; max-width: 460px; }
-  .cover-art svg { width: 100%; height: auto; display:block; filter: drop-shadow(0 16px 30px rgba(60,45,20,.14)); }
+  .cover-art { margin: 26px auto 8px; max-width: 420px; }
+  .cover-art svg, .cover-art img { width: 100%; height: auto; display:block; border-radius: 20px; filter: drop-shadow(0 16px 30px rgba(60,45,20,.14)); }
   .byline { margin-top: 20px; color: var(--faint); font-size: 14px; font-family:"JetBrains Mono",monospace; }
+
+  /* ── Heroes gallery ────────────────────────────────── */
+  .heroes { background: var(--card); border:1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 24px 26px 20px; margin: 8px 0 30px; }
+  .heroes h2 { font-size: 23px; margin-bottom: 4px; }
+  .heroes > p { color: var(--muted); font-size: 15.5px; margin: 8px 0 16px; }
+  .heroes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .heroes-grid .hero { margin: 0; }
+  .heroes-grid .hero img { width: 100%; height: auto; display: block; border-radius: 14px; }
+  .heroes-grid .hero figcaption { font-size: 13.5px; color: var(--muted); padding: 8px 4px 2px; line-height: 1.4; }
+  .heroes-grid .hero figcaption b { font-family: "Baloo 2", sans-serif; color: var(--ink); font-weight: 700; display: block; font-size: 16px; margin-bottom: 2px; }
+  .heroes-grid .hero.wide { grid-column: 1 / -1; }
+  @media (max-width:520px){ .heroes-grid { grid-template-columns: 1fr; } .heroes-grid .hero.wide { grid-column: auto; } }
+
+  .scene img { width: 100%; height: auto; display: block; border-radius: 12px; }
+
+  .week-lead { color: var(--muted); font-size: 16.5px; margin: 14px 0 10px; }
+  .day-nav { display:flex; gap:8px; flex-wrap:wrap; margin: 8px 0 18px; }
+  .day-nav a {
+    width: 38px; height: 38px; border-radius: 11px; display:grid; place-items:center;
+    background: var(--magic-wash); color: var(--magic-ink); text-decoration:none;
+    font-family:"Baloo 2",sans-serif; font-weight:800; font-size:16px;
+  }
+  .day-nav a:hover { background: var(--magic); color:#fff; }
+  .day-page { margin: 8px 0 28px; padding-top: 18px; border-top: 1px dashed var(--line); }
+  .day-page:first-of-type { border-top: 0; padding-top: 4px; }
+  .day-kicker { font-family:"JetBrains Mono",monospace; font-size: 12px; letter-spacing:.16em; text-transform:uppercase; color: var(--magic-ink); }
+  .day-page h3 { font-size: clamp(22px, 4vw, 28px); font-weight:800; margin: 4px 0 10px; }
+  .day-next { display:flex; justify-content:flex-end; margin-top: 8px; }
+  .day-next a { font-family:"Baloo 2",sans-serif; font-weight:700; text-decoration:none; background: var(--magic-wash); color: var(--magic-ink); border-radius: 20px; padding: 6px 14px; font-size: 14.5px; }
+  .day-next a:hover { background: var(--magic); color:#fff; }
+  .together { font-size: 13px; color: var(--faint); font-style: italic; margin-top: 6px; }
 
   /* tetromino divider */
   .tetro-rule { display:flex; gap:5px; justify-content:center; margin: 30px 0; }
@@ -104,6 +135,26 @@
 
   .scene { margin: 20px 0 8px; background: linear-gradient(160deg, var(--magic-wash), var(--card)); border:1px solid var(--line); border-radius: 20px; padding: 12px; box-shadow: var(--shadow-sm); }
   .scene svg { width: 100%; height: auto; display: block; border-radius: 12px; }
+  .scene-frame { position: relative; }
+  .scene-topic {
+    position: absolute; left: 10px; right: 10px; bottom: 10px;
+    background: rgba(16,14,22,.88); color: #F0E9DA;
+    border-radius: 12px; padding: 8px 14px;
+    font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 17px; line-height: 1.2;
+    text-align: left;
+  }
+  .scene-topic small {
+    display: block; font-family: "JetBrains Mono", monospace; font-size: 10.5px;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: #BBA6FF; font-weight: 500; margin-bottom: 3px;
+  }
+  .pic-read { margin: 10px 6px 2px; font-size: 15.5px; color: var(--muted); }
+  .pic-read b { color: var(--ink); font-family: "Baloo 2", sans-serif; font-weight: 700; }
+  .pic-key { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 4px 2px; }
+  .pic-key span {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 5px 11px; font-size: 13.5px; color: var(--ink);
+  }
 
   .prose p { margin: 18px 0; }
   .prose p:first-of-type::first-letter {
@@ -287,31 +338,40 @@
     <p class="tag">Как маленькая девочка, пони, лама, альпака и два котика построили настоящую игру — и она стала кросс-платформенным разработчиком.</p>
 
     <div class="cover-art">
-      <svg viewBox="0 0 460 260" role="img" aria-label="Марьям и её друзья-зверята у волшебного портала-блока">
-        <rect x="0" y="0" width="460" height="260" rx="24" fill="var(--card)"/>
-        <!-- floor -->
-        <path d="M0 210h460v50H0z" fill="var(--magic-wash)"/>
-        <!-- portal -->
-        <use href="#portal" x="180" y="30" width="120" height="120"/>
-        <circle cx="240" cy="90" r="70" fill="none" stroke="var(--magic)" stroke-width="1.5" opacity=".25"/>
-        <!-- floating code blocks -->
-        <rect x="70" y="40" width="26" height="26" rx="7" fill="var(--tO)" opacity=".9"/>
-        <rect x="360" y="60" width="26" height="26" rx="7" fill="var(--tI)" opacity=".9"/>
-        <rect x="392" y="120" width="20" height="20" rx="6" fill="var(--tT)" opacity=".9"/>
-        <rect x="52" y="110" width="20" height="20" rx="6" fill="var(--tS)" opacity=".9"/>
-        <!-- characters standing -->
-        <use href="#maryam" x="196" y="150" width="88" height="88"/>
-        <use href="#pony"   x="286" y="158" width="86" height="86"/>
-        <use href="#llama"  x="120" y="150" width="80" height="94"/>
-        <use href="#alpaca" x="52"  y="160" width="82" height="82"/>
-        <use href="#catP"   x="352" y="176" width="60" height="60"/>
-        <use href="#catR"   x="14"  y="182" width="58" height="58"/>
-      </svg>
+      <img src="images/00_cover.jpg" alt="Марьям и её друзья-зверята у волшебного портала из блоков">
     </div>
     <div class="byline">книга-сборник · внутри — настоящий код игры BlockDuel 9×9</div>
   </header>
 
   <div class="tetro-rule"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <!-- ═══ ГЕРОИ ═══ -->
+  <section class="heroes" id="heroes">
+    <h2>Герои этой книги</h2>
+    <p>Они будут рядом все 200 дней. Запоминай лица — дальше они станут учителями, напарниками и контролёрами.</p>
+    <div class="heroes-grid">
+      <figure class="hero wide">
+        <img src="images/01_maryam.jpg" alt="Марьям">
+        <figcaption><b>Марьям</b> девочка, которая провалилась внутрь игры и решила её построить</figcaption>
+      </figure>
+      <figure class="hero">
+        <img src="images/02_pony_po.jpg" alt="Пони По">
+        <figcaption><b>Пони По</b> хранит коробочки-переменные и все снимки истории</figcaption>
+      </figure>
+      <figure class="hero">
+        <img src="images/03_llama_lu.jpg" alt="Лама Лу">
+        <figcaption><b>Лама Лу</b> любит функции, числа и честную случайность</figcaption>
+      </figure>
+      <figure class="hero">
+        <img src="images/04_alpaca_alya.jpg" alt="Альпака Аля">
+        <figcaption><b>Альпака Аля</b> учит «если» и «повтори», раскладывает фигурки</figcaption>
+      </figure>
+      <figure class="hero">
+        <img src="images/05_cats.jpg" alt="Два котика">
+        <figcaption><b>Два котика</b> фиолетовый считает, рыжий ловит баги</figcaption>
+      </figure>
+    </div>
+  </section>
 
   <!-- ═══ О КУРСЕ ═══ -->
   <section class="course">
@@ -328,7 +388,8 @@
       <span>🍲 1 час — набираем код сами, меняем числа, смотрим что будет</span>
       <span>🍎 1 час — своя маленькая задачка (в конце глав — «Задание»)</span>
     </div>
-    <p style="margin-top:14px">В конце книги — <a href="#plan"><b>200-дневная карта</b></a>: какая глава на какие дни и что делать. Правило одно: <b>ошибаться — нормально</b>. Именно из ошибок рождается мастерство (об этом — целая глава про баги).</p>
+    <p style="margin-top:14px">Правило для детей: <b>идём по порядку</b>. Сначала неделя 1 (семь вечеров), и только потом глава про переменные. В конце книги — <a href="#plan"><b>200-дневная карта</b></a>. Правило одно: <b>ошибаться — нормально</b>.</p>
+    <p style="margin-top:10px"><a href="#d001"><b>Начать с Дня 1 →</b></a></p>
   </section>
 
   <!-- ═══ ПРАКТИЧЕСКИЙ ТРЕК ═══ -->
@@ -372,8 +433,8 @@ flutter run -d chrome   <span class="cmt"># и вот она, наша игра,
     <h2>Что нас ждёт</h2>
     <p>Тринадцать глав и эпилог. В каждой — кусочек сказки, новый друг, одна настоящая идея программирования и живой код, из которого по-настоящему собирается игра.</p>
     <ol>
-      <li><a href="#c1"><span class="n">00</span><span class="t">Портал из блока <span class="s">— что такое программа</span></span></a></li>
-      <li><a href="#c2"><span class="n">01</span><span class="t">Пони По и коробочки-переменные <span class="s">— данные</span></span></a></li>
+      <li><a href="#c1"><span class="n">00</span><span class="t">Портал из блока <span class="s">— неделя 1, семь вечеров</span></span></a></li>
+      <li><a href="#c2"><span class="n">01</span><span class="t">Пони По и коробочки-переменные <span class="s">— неделя 2, семь вечеров</span></span></a></li>
       <li><a href="#c3"><span class="n">02</span><span class="t">Лама Лу и волшебные функции <span class="s">— действия</span></span></a></li>
       <li><a href="#c4"><span class="n">03</span><span class="t">Альпака Аля, «если» и «повтори» <span class="s">— логика</span></span></a></li>
       <li><a href="#c5"><span class="n">04</span><span class="t">Котики и сетка 9×9 <span class="s">— списки и доска</span></span></a></li>
@@ -393,70 +454,404 @@ flutter run -d chrome   <span class="cmt"># и вот она, наша игра,
     <p style="margin:14px 0 0"><a href="#plan">📅 Карта курса на 200 дней</a> &nbsp;·&nbsp; <a href="#prompts">🎨 Бонус: промпты для иллюстраций</a></p>
   </nav>
 
-  <!-- ═══ CH 1 ═══ -->
+  <!-- ═══ CH 1 · НЕДЕЛЯ 1 · СЕМЬ ВЕЧЕРОВ ═══ -->
   <section class="chapter" id="c1">
     <div class="ch-head">
       <div class="ch-badge"><svg><use href="#portal"/></svg></div>
-      <div><div class="ch-num">Глава 00 · Пролог · 🎨 image-promt/day001–007 + обложка</div><h2>Портал из блока</h2></div>
+      <div><div class="ch-num">Глава 00 · Пролог · Неделя 1 · дни 001–007</div><h2>Портал из блока</h2></div>
     </div>
-    <div class="prose">
-      <p>Марьям было восемь, и больше всего на свете она любила складывать. Кубики, пазлы, слова из букв — что угодно, лишь бы из маленького получалось большое. В тот дождливый вечер она играла в игру на старом планшете: разноцветные фигурки-<span class="word">тетромино</span> падали на сетку, и когда ряд заполнялся целиком — <em>вжух!</em> — он вспыхивал и исчезал.</p>
-      <p>Марьям потянулась поставить оранжевую фигурку в самый угол — и вдруг экран под её пальцем стал глубоким, как колодец. Оранжевый блок засветился фиолетовым, комната закружилась, и Марьям <em>провалилась внутрь игры</em>.</p>
-      <p class="say">Она приземлилась на мягкий пол из светящихся клеток. Вокруг парили кубики всех цветов радуги, а в воздухе плавали строчки из букв и значков. «Где это я?» — прошептала Марьям. «В <b>Мире Кода</b>, — ответил кто-то тёплым голосом. — Здесь всё, что ты видишь, кто-то придумал и <em>записал</em>. И игра, из которой ты выпала, — тоже. Хочешь, научим тебя её строить?»</p>
-      <p>Из-за парящего блока вышли четверо: рыжий пони, высокая лама, пушистая альпака и два маленьких котика. Марьям кивнула так быстро, что чуть не потеряла бантик.</p>
-    </div>
-    <div class="learn">
-      <div class="h"><span class="star">★</span> Что такое программа</div>
-      <ul>
-        <li><b>Программа</b> — это очень точный список указаний, записанный так, что его понимает компьютер.</li>
-        <li>Игра, сайт, приложение — всё это программы. Мы будем строить игру <b>BlockDuel 9×9</b>: тетромино на доске 9×9, как та, из которой выпала Марьям.</li>
-        <li>Язык, на котором мы напишем игру, называется <span class="word">Dart</span>, а её «тело» — <span class="word">Flutter</span>. Сервер (для игры вдвоём) — на <span class="word">TypeScript</span>.</li>
-      </ul>
-    </div>
+    <p class="week-lead">С детьми идём <b>только по порядку</b>. Семь вечеров — семь страниц. Сначала смотрим картинку: по ней должно быть ясно, <b>какая сегодня тема</b>. Потом читаем, потом одно дело вместе — и книгу закрываем. Завтра — следующий день. Не листайте вперёд.</p>
+    <nav class="day-nav" aria-label="Дни недели 1">
+      <a href="#d001">1</a><a href="#d002">2</a><a href="#d003">3</a><a href="#d004">4</a><a href="#d005">5</a><a href="#d006">6</a><a href="#d007">7</a>
+    </nav>
+
+    <article class="day-page" id="d001">
+      <div class="day-kicker">День 1 · из 200 · тема: инструменты</div>
+      <h3>Ставим инструменты</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day001.jpg" alt="Марьям рядом с ящиком инструментов, зелёными галочками и компьютером-доктором">
+          <div class="scene-topic"><small>Тема дня</small>Ставим инструменты и проверяем</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> ящик с гаечными ключами и кубиками, компьютер с большой зелёной галочкой. Галочки = доктор сказал «всё хорошо».</p>
+      </div>
+      <div class="prose">
+        <p>Марьям было восемь, и больше всего на свете она любила складывать. Кубики, пазлы, слова из букв — что угодно, лишь бы из маленького получалось большое.</p>
+        <p>В тот дождливый вечер она играла в игру на старом планшете: разноцветные фигурки-<span class="word">тетромино</span> падали на сетку, и когда ряд заполнялся целиком — <em>вжух!</em> — он вспыхивал и исчезал.</p>
+        <p>И вдруг посередине экрана открылся портал. Фиолетовый. Из тех самых кубиков. Марьям остановилась и смотрела.</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Откройте сайт <span class="mono">flutter.dev</span>.</li>
+          <li>Поставьте Flutter (папа нажимает, ребёнок смотрит, куда кладутся файлы).</li>
+          <li>В терминале напишите <span class="mono">flutter doctor</span> и нажмите Enter.</li>
+        </ol>
+        <p class="together">Готово, когда доктор Flutter ответил и не испугался. Сегодня больше ничего не надо.</p>
+      </div>
+      <div class="day-next"><a href="#d002">День 2 →</a></div>
+    </article>
+
+    <article class="day-page" id="d002">
+      <div class="day-kicker">День 2 · из 200 · тема: редактор</div>
+      <h3>Окно, где живут программы</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day002.jpg" alt="Марьям у компьютера: слева папки, в середине цветные строки кода, зелёная кнопка запуска">
+          <div class="scene-topic"><small>Тема дня</small>Редактор кода</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> слева папки, в середине цветные строчки-код, зелёная кнопка ▶ — это «запустить». Сегодня знакомимся с окном, в котором пишут программы.</p>
+      </div>
+      <div class="prose">
+        <p>Марьям протянула руку к светящемуся кубику. Он был тёплый, как лампочка, и чуть дрожал — будто внутри кто-то дышал.</p>
+        <p>«Интересно, — шепнула она, — кто тебя собрал?»</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Откройте <b>IntelliJ IDEA</b> — тот редактор, в котором папа собирает эту игру.</li>
+          <li>Папа покажет: вот дерево файлов слева, вот место, где пишут код, вот кнопка запуска.</li>
+          <li>Ребёнок сам нажимает на папки и смотрит, что внутри. Ничего не удаляем.</li>
+        </ol>
+        <p class="together">Готово, когда ребёнок знает, где «открыть проект» и где «запустить».</p>
+      </div>
+      <div class="day-next"><a href="#d003">День 3 →</a></div>
+    </article>
+
+    <article class="day-page" id="d003">
+      <div class="day-kicker">День 3 · из 200 · тема: скачиваем игру</div>
+      <h3>Игра приходит в коробке</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day003.jpg" alt="Из облака к Марьям летит подарочная коробка, внутри доска с тетромино">
+          <div class="scene-topic"><small>Тема дня</small>Скачиваем игру на компьютер</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> из облака выезжает подарок, а внутри — наша доска с фигурками. Сегодня игра переезжает с интернета на наш компьютер.</p>
+      </div>
+      <div class="prose">
+        <p>Марьям поставила одну ногу в портал. Пол под пяткой стал мягким, как свет. Комната закружилась — и планшет вдруг стал <em>глубоким</em>, как колодец.</p>
+        <p>Она не упала. Она <em>вошла</em>.</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Скачайте игру (это и есть наша книга в коде):</li>
+        </ol>
+        <div class="cmdline">git clone https://github.com/alshfu/block-puzzle-pvp
+cd block-puzzle-pvp</div>
+        <p class="together">Готово, когда на компьютере появилась папка <span class="mono">block_puzzle_pvp</span> (или <span class="mono">block-puzzle-pvp</span>) и внутри видны <span class="mono">lib/</span>, <span class="mono">test/</span>, <span class="mono">book/</span>.</p>
+      </div>
+      <div class="day-next"><a href="#d004">День 4 →</a></div>
+    </article>
+
+    <article class="day-page" id="d004">
+      <div class="day-kicker">День 4 · из 200 · тема: пакеты</div>
+      <h3>Коробочки-пакеты</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day004.jpg" alt="Марьям несёт стопку цветных коробок-пакетов к маленькому домику-приложению">
+          <div class="scene-topic"><small>Тема дня</small>Собираем нужные коробочки</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> Марьям несёт цветные коробки к домику. Коробки — это пакеты, без которых игра не соберётся. Команда дня: <span class="mono">flutter pub get</span>.</p>
+      </div>
+      <div class="prose">
+        <p>Вокруг Марьям вспыхнули значки. Скобки <span class="mono">{ }</span>, стрелочки, маленькие <span class="mono">&lt;/&gt;</span> — они летали, как светлячки.</p>
+        <p>«Это не просто картинки, — поняла Марьям. — Это <em>слова, из которых собран мир</em>.»</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>В папке игры в терминале напишите:</li>
+        </ol>
+        <div class="cmdline">flutter pub get</div>
+        <p class="together">Это как сказать: «принеси все нужные коробочки». Готово, когда команда закончилась без красной ошибки.</p>
+      </div>
+      <div class="day-next"><a href="#d005">День 5 →</a></div>
+    </article>
+
+    <article class="day-page" id="d005">
+      <div class="day-kicker">День 5 · из 200 · тема: запуск</div>
+      <h3>Запускаем и играем</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day005.jpg" alt="Марьям ставит зелёную фигурку на светящуюся доску 9×9">
+          <div class="scene-topic"><small>Тема дня</small>Игра живая — запускаем</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> доска 9×9 и фигурки в руках. Сегодня не пишем код — запускаем игру и играем своими руками.</p>
+      </div>
+      <div class="prose">
+        <p>Марьям мягко приземлилась на пол из светящихся клеток. Точь-в-точь как сетка той игры — только теперь она стояла <em>на ней</em>.</p>
+        <p>Клетки пружинили под ногами. Можно было ходить по самой доске.</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Запустите игру:</li>
+        </ol>
+        <div class="cmdline">flutter run -d chrome</div>
+        <ol start="2">
+          <li>Дождитесь окна в браузере.</li>
+          <li>Поиграйте. Просто поиграйте. Поставьте фигурку. Посмотрите, как гаснет ряд.</li>
+        </ol>
+        <p class="together">Готово, когда ребёнок сам увидел живую игру BlockDuel. Сегодня код не трогаем.</p>
+      </div>
+      <div class="day-next"><a href="#d006">День 6 →</a></div>
+    </article>
+
+    <article class="day-page" id="d006">
+      <div class="day-kicker">День 6 · из 200 · тема: карта папок</div>
+      <h3>Три двери проекта</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day006.jpg" alt="Три двери: книга и шестерёнка, кисть, галочка и лупа — Марьям показывает на них">
+          <div class="scene-topic"><small>Тема дня</small>Правила · картинка · проверки</div>
+        </div>
+        <div class="pic-key">
+          <span>📘 синяя дверь — правила · <span class="mono">lib/core</span></span>
+          <span>🎨 жёлтая дверь — картинка · <span class="mono">lib/ui</span></span>
+          <span>✅ зелёная дверь — проверки · <span class="mono">test</span></span>
+        </div>
+      </div>
+      <div class="prose">
+        <p class="say">Марьям огляделась. Кубики всех цветов парили, как фонарики. «Где это я?» — прошептала она.</p>
+        <p>Голос ответил тепло, ещё из-за угла: «В <b>Мире Кода</b>. Здесь всё, что ты видишь, кто-то придумал и <em>записал</em>.»</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Откройте в редакторе папки <span class="mono">lib/</span> и <span class="mono">test/</span>.</li>
+          <li>Папа коротко говорит, что где: <span class="mono">lib/core/</span> — правила игры, <span class="mono">lib/ui/</span> — картинка на экране, <span class="mono">test/</span> — проверки «всё ли честно».</li>
+          <li>Ребёнок выбирает один файл, открывает и просто смотрит на буквы. Ничего не меняем.</li>
+        </ol>
+        <p class="together">Готово, когда ребёнок может показать пальцем: вот правила, вот экран, вот проверки.</p>
+      </div>
+      <div class="day-next"><a href="#d007">День 7 →</a></div>
+    </article>
+
+    <article class="day-page" id="d007">
+      <div class="day-kicker">День 7 · из 200 · мини-проект · тема: меняем слова</div>
+      <h3>Свои слова на экране</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day007.jpg" alt="Марьям огромным карандашом перекрашивает вывеску игры, друзья радуются">
+          <div class="scene-topic"><small>Тема дня</small>Меняем слова на экране</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> Марьям закрашивает старую вывеску своим рисунком. Сегодня вы так же поменяете слова <span class="mono">BlockDuel</span> на своё приветствие — и игра скажет его вслух.</p>
+      </div>
+      <div class="prose">
+        <p class="say">Из портала вышли четверо: рыжий пони, высокая лама, пушистая альпака и два маленьких котика. «Игра, из которой ты выпала, — тоже записана, — сказал тёплый голос. — Хочешь, научим тебя её строить?»</p>
+        <p>Марьям кивнула так быстро, что чуть не потеряла бантик.</p>
+      </div>
+      <div class="learn">
+        <div class="h"><span class="star">★</span> Что такое программа</div>
+        <ul>
+          <li><b>Программа</b> — это очень точный список указаний, записанный так, что его понимает компьютер.</li>
+          <li>Игра, сайт, приложение — всё это программы. Мы будем строить игру <b>BlockDuel 9×9</b>: тетромино на доске 9×9, как та, из которой выпала Марьям.</li>
+          <li>Язык, на котором мы напишем игру, называется <span class="word">Dart</span>, а её «тело» — <span class="word">Flutter</span>.</li>
+        </ul>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Мини-проект недели</div>
+        <ol>
+          <li>Вместе найдите на экране игры большое слово <span class="mono">BlockDuel</span>.</li>
+          <li>Папа откроет файл <span class="mono">lib/ui/widgets/logo.dart</span>. Ребёнок меняет слова <span class="mono">Block</span> и <span class="mono">Duel</span> на своё приветствие, например:</li>
+        </ol>
+        <div class="cmdline">Привет, я Марьям!</div>
+        <ol start="3">
+          <li>Снова <span class="mono">flutter run -d chrome</span> — и смотрите: игра поздоровалась вашими словами.</li>
+        </ol>
+        <p class="together">Неделя 1 закрыта, когда на экране видно ваше «Привет, я Марьям!». Дальше — только глава 01, день 8. Не раньше.</p>
+      </div>
+    </article>
   </section>
 
   <hr class="divide">
 
-  <!-- ═══ CH 2 ═══ -->
+  <!-- ═══ CH 2 · НЕДЕЛЯ 2 · СЕМЬ ВЕЧЕРОВ ═══ -->
   <section class="chapter" id="c2">
     <div class="ch-head">
       <div class="ch-badge"><svg><use href="#pony"/></svg></div>
-      <div><div class="ch-num">Глава 01 · Данные · 🎨 image-promt/day008–014</div><h2>Пони По и коробочки-переменные</h2><div class="ch-companion">спутник главы — рыжий пони По</div></div>
+      <div><div class="ch-num">Глава 01 · Данные · Неделя 2 · дни 008–014</div><h2>Пони По и коробочки-переменные</h2><div class="ch-companion">спутник главы — рыжий пони По</div></div>
     </div>
-    <div class="scene">
-      <svg viewBox="0 0 460 160" role="img" aria-label="Пони По показывает Марьям подписанные коробочки">
-        <rect width="460" height="160" rx="16" fill="var(--card)"/>
-        <use href="#pony" x="24" y="42" width="96" height="96"/>
-        <use href="#maryam" x="350" y="46" width="86" height="86"/>
-        <g font-family="JetBrains Mono, monospace" font-size="12" fill="var(--ink)">
-          <rect x="150" y="40" width="150" height="30" rx="8" fill="var(--magic-wash)" stroke="var(--line)"/>
-          <text x="162" y="59">score = <tspan fill="var(--tO)">0</tspan></text>
-          <rect x="150" y="82" width="150" height="30" rx="8" fill="var(--magic-wash)" stroke="var(--line)"/>
-          <text x="162" y="101">nick = <tspan fill="var(--tS)">"Марьям"</tspan></text>
-        </g>
-      </svg>
-    </div>
-    <div class="prose">
-      <p class="say">Рыжий пони топнул копытцем и представился: «Я — <b>По</b>. Пони — значит "маленький", но память у меня о-го-го. Смотри: чтобы компьютер что-то запомнил, мы кладём это в <span class="word">переменную</span> — коробочку с подписью».</p>
-      <p>По подкатил две коробочки. На одной написал <span class="mono">score</span> и положил внутрь число <span class="mono">0</span> — это очки. На другой написал <span class="mono">nick</span> и положил слово <span class="mono">"Марьям"</span>. «Подпись — это <em>имя</em> коробочки. То, что внутри, — <em>значение</em>. А ещё у коробочки есть <span class="word">тип</span>: в одной живут числа, в другой — буквы. Числа мы зовём <span class="mono">int</span>, а буквы — <span class="mono">String</span>».</p>
-    </div>
-    <div class="spell">
-      <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> заклинание По <span class="file">Dart</span></div>
+    <p class="week-lead">Неделю 1 закрыли. Теперь семь вечеров про <b>коробочки</b>. По картинке сразу видно тему дня. Не прыгаем в неделю 3.</p>
+    <nav class="day-nav" aria-label="Дни недели 2">
+      <a href="#d008">8</a><a href="#d009">9</a><a href="#d010">10</a><a href="#d011">11</a><a href="#d012">12</a><a href="#d013">13</a><a href="#d014">14</a>
+    </nav>
+
+    <article class="day-page" id="d008">
+      <div class="day-kicker">День 8 · из 200 · тема: две коробочки</div>
+      <h3>Коробочки с именами</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day008.jpg" alt="Пони По показывает Марьям две коробочки: с числом и с портретом-именем">
+          <div class="scene-topic"><small>Тема дня</small>Переменная — коробочка с подписью</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> две коробочки. В одной — число (очки <span class="mono">score</span>), в другой — имя (<span class="mono">nick</span>). Подпись снаружи, значение внутри.</p>
+      </div>
+      <div class="prose">
+        <p class="say">Рыжий пони топнул копытцем и представился: «Я — <b>По</b>. Чтобы компьютер что-то запомнил, мы кладём это в <span class="word">переменную</span> — коробочку с подписью».</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Откройте файл дня <span class="mono">course/week02_variables/day008.dart</span>.</li>
+          <li>Напишите: <span class="mono">int score = 0;</span></li>
+          <li>Рядом: <span class="mono">print(score);</span> и запустите.</li>
+        </ol>
+        <p class="together">Готово, когда в консоли появился ноль. Сегодня только одна коробочка.</p>
+      </div>
+      <div class="day-next"><a href="#d009">День 9 →</a></div>
+    </article>
+
+    <article class="day-page" id="d009">
+      <div class="day-kicker">День 9 · из 200 · тема: кладём число</div>
+      <h3>Ноль в коробочку очков</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day009.jpg" alt="Марьям и пони кладут светящийся ноль в открытую коробочку">
+          <div class="scene-topic"><small>Тема дня</small>Кладём число в <span class="mono">score</span></div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> в коробочку кладут ноль. Это старт очков. Тип коробочки — <span class="mono">int</span> (целые числа).</p>
+      </div>
+      <div class="prose">
+        <p>По подкатил первую коробочку. На ней написал <span class="mono">score</span> и положил внутрь число <span class="mono">0</span> — это очки. Партия ещё не началась, поэтому внутри тихо.</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Ещё раз напишите <span class="mono">int score = 0;</span></li>
+          <li>Скажите вслух: «подпись — score, внутри — ноль».</li>
+        </ol>
+        <p class="together">Готово, когда ребёнок пальцем показывает: вот имя, вот значение.</p>
+      </div>
+      <div class="day-next"><a href="#d010">День 10 →</a></div>
+    </article>
+
+    <article class="day-page" id="d010">
+      <div class="day-kicker">День 10 · из 200 · тема: кладём имя</div>
+      <h3>Имя в коробочку</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day010.jpg" alt="Марьям кладёт ленточку с портретом в коробочку имени">
+          <div class="scene-topic"><small>Тема дня</small>Кладём слово в <span class="mono">nick</span></div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> во вторую коробочку кладут имя. Это текст. Тип — <span class="mono">String</span>. Слова всегда в кавычках: <span class="mono">"Марьям"</span>.</p>
+      </div>
+      <div class="prose">
+        <p>На второй коробочке По написал <span class="mono">nick</span> и положил слово <span class="mono">"Марьям"</span>. «Подпись — это <em>имя</em> коробочки. То, что внутри, — <em>значение</em>.»</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Напишите <span class="mono">String nick = "Марьям";</span> (можно своё имя).</li>
+          <li><span class="mono">print(nick);</span></li>
+        </ol>
+        <p class="together">Готово, когда консоль сказала имя ребёнка.</p>
+      </div>
+      <div class="day-next"><a href="#d011">День 11 →</a></div>
+    </article>
+
+    <article class="day-page" id="d011">
+      <div class="day-kicker">День 11 · из 200 · тема: прибавляем</div>
+      <h3>Пятнадцать очков в коробку</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day011.jpg" alt="Светящиеся кубики летят в коробочку очков, пони и Марьям радуются">
+          <div class="scene-topic"><small>Тема дня</small>Прибавляем к числу</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> в коробочку досыпают кубики. Очистили ряд — прибавили 15. Коробочка стала ярче, внутри уже не ноль.</p>
+      </div>
+      <div class="prose">
+        <p>Ряд вспыхнул — и По бросил в коробочку ещё пятнадцать. «Смотри: <span class="mono">score = score + 15</span>. Сначала считаем справа, потом кладём слева.»</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>После нуля напишите <span class="mono">score = score + 15;</span></li>
+          <li><span class="mono">print(score);</span> — должно быть 15.</li>
+        </ol>
+        <p class="together">Готово, когда консоль показала пятнадцать, не ноль.</p>
+      </div>
+      <div class="day-next"><a href="#d012">День 12 →</a></div>
+    </article>
+
+    <article class="day-page" id="d012">
+      <div class="day-kicker">День 12 · из 200 · тема: два типа</div>
+      <h3>Числа и буквы — разные дома</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day012.jpg" alt="Оранжевая коробка с кубиками-числами и фиолетовая коробка с буквами">
+          <div class="scene-topic"><small>Тема дня</small>Тип: int и String</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> слева дом для чисел, справа дом для букв. В числовую коробочку нельзя запихнуть слово — у каждой свой тип.</p>
+      </div>
+      <div class="prose">
+        <p>«У коробочки есть <span class="word">тип</span>: в одной живут числа, в другой — буквы. Числа мы зовём <span class="mono">int</span>, а буквы — <span class="mono">String</span>. Есть ещё <span class="mono">bool</span> — да или нет.»</p>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Нарисуйте две коробки на бумаге: «числа» и «буквы».</li>
+          <li>Разложите: 0, 15, "Марьям", true — куда что кладётся.</li>
+        </ol>
+        <p class="together">Готово, когда ни одно слово не лежит в коробке чисел.</p>
+      </div>
+      <div class="day-next"><a href="#d013">День 13 →</a></div>
+    </article>
+
+    <article class="day-page" id="d013">
+      <div class="day-kicker">День 13 · из 200 · тема: знак =</div>
+      <h3>Равно значит «положи»</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day013.jpg" alt="Кубики справа по стрелке падают в открытую коробочку слева">
+          <div class="scene-topic"><small>Тема дня</small>= — это «положи в коробочку»</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> кубики справа едут в коробку слева. Знак <span class="mono">=</span> в коде — не «равно как в школе», а «возьми то, что справа, и положи налево».</p>
+      </div>
+      <div class="prose">
+        <p>По нарисовал стрелку. «Сначала считается то, что справа, потом кладётся в имя слева. Поэтому пишем <span class="mono">score = score + 15</span>, а не наоборот.»</p>
+      </div>
+      <div class="spell">
+        <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> заклинание По <span class="file">Dart</span></div>
 <pre><code><span class="key">int</span> score = <span class="num">0</span>;          <span class="cmt">// коробочка с числом: очки игрока</span>
 <span class="key">String</span> nick = <span class="str">"Марьям"</span>;  <span class="cmt">// коробочка с буквами: имя</span>
 
 score = score + <span class="num">15</span>;      <span class="cmt">// очистили ряд — прибавили 15 очков</span>
 </code></pre>
-      <div class="spell-cap">Знак <b>=</b> здесь не «равно», а «<b>положи в коробочку</b>». Сначала считается то, что справа, потом кладётся в имя слева.</div>
-    </div>
-    <div class="learn">
-      <div class="h"><span class="star">★</span> Что ты выучил</div>
-      <ul>
-        <li><b>Переменная</b> — именованная коробочка для данных.</li>
-        <li>У каждого значения есть <b>тип</b>: <span class="mono">int</span> (числа), <span class="mono">String</span> (текст), <span class="mono">bool</span> (да/нет).</li>
-        <li><span class="mono">=</span> — это «присвоить», а не «равно».</li>
-      </ul>
-    </div>
+        <div class="spell-cap">Знак <b>=</b> здесь не «равно», а «<b>положи в коробочку</b>».</div>
+      </div>
+      <div class="day-next"><a href="#d014">День 14 →</a></div>
+    </article>
+
+    <article class="day-page" id="d014">
+      <div class="day-kicker">День 14 · из 200 · мини-проект · тема: карточка игрока</div>
+      <h3>Карточка: имя и очки</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day014.jpg" alt="Марьям держит карточку игрока с портретом и звёздами-очками, пони ставит печать">
+          <div class="scene-topic"><small>Тема дня</small>Мини-проект: имя + очки</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> карточка игрока. Слева лицо (имя), справа звёзды (очки). Сегодня вы собираете обе коробочки вместе и печатаете их.</p>
+      </div>
+      <div class="learn">
+        <div class="h"><span class="star">★</span> Что ты выучил за неделю</div>
+        <ul>
+          <li><b>Переменная</b> — именованная коробочка для данных.</li>
+          <li>У каждого значения есть <b>тип</b>: <span class="mono">int</span>, <span class="mono">String</span>, <span class="mono">bool</span>.</li>
+          <li><span class="mono">=</span> — это «присвоить», а не «равно».</li>
+        </ul>
+      </div>
+      <div class="task">
+        <div class="h">🎯 Мини-проект недели</div>
+        <ol>
+          <li>В одном файле заведите <span class="mono">score</span> и <span class="mono">nick</span>.</li>
+          <li>Прибавьте 15 к очкам.</li>
+          <li>Напечатайте оба значения в консоль.</li>
+        </ol>
+        <p class="together">Неделя 2 закрыта, когда консоль показала имя и число. Дальше — неделя 3, лама Лу и функции. Не раньше.</p>
+      </div>
+    </article>
   </section>
 
   <hr class="divide">

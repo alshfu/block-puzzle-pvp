@@ -101,6 +101,14 @@ const heartbeat = setInterval(() => {
 }, HEARTBEAT_MS);
 heartbeat.unref();
 
+// Периодический авто-флаш лидерборда: SIGTERM-хендлер спасает при штатной
+// остановке, но ЖЁСТКИЙ краш (SIGKILL / OOM / потеря питания) его обходит.
+// Регулярный сброс раз в минуту ограничивает потерю данных при жёстком падении
+// последней минутой (а не всем несохранённым дебаунсом). flushNow идемпотентен.
+const AUTOSAVE_MS = 60_000;
+const autosave = setInterval(() => void leaderboard.flushNow(), AUTOSAVE_MS);
+autosave.unref();
+
 httpServer.on("upgrade", (req, socket, head) => {
   // M5 (CSWSH): если задан ALLOWED_ORIGINS — пускаем только эти Origin.
   // Запросы без Origin (нативные клиенты Flutter/desktop, curl) пропускаем.
@@ -187,6 +195,7 @@ async function shutdown(signal: string): Promise<void> {
   if (shuttingDown) return;
   shuttingDown = true;
   clearInterval(heartbeat);
+  clearInterval(autosave);
   console.log(`[server] ${signal} — flushing leaderboard`);
   try {
     await leaderboard.flushNow();

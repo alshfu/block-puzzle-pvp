@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang='ru'><head><meta charset='utf-8'><title>Марьям в Мире Кода — печать</title></head><body>
+
+<style>
+  @page { size: 210mm 210mm; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; color: #302A22;
+    font-family: Georgia, "Times New Roman", serif; font-size: 15.5pt; line-height: 1.45; }
+  .page { width: 210mm; height: 210mm; page-break-after: always; break-after: page;
+    overflow: hidden; position: relative; }
+  .page:last-child { page-break-after: auto; }
+  .bleed { padding: 0; background: #0E1116; }
+  .bleed .full { width: 210mm; height: 210mm; object-fit: cover; display: block; }
+  .cover-title { position: absolute; left: 14mm; right: 14mm; top: 14mm; color: #F0E9DA; text-align: center; }
+  .cover-title h1 { font-family: "Trebuchet MS", system-ui, sans-serif; font-size: 36pt; margin: 6mm 0 0; line-height: 1.05; }
+  .kicker { font-family: "Trebuchet MS", system-ui, sans-serif; font-size: 9pt; letter-spacing: .18em;
+    text-transform: uppercase; color: #6B4FE0; margin: 0 0 4mm; }
+  .bleed .kicker { color: #BBA6FF; }
+  h2 { font-family: "Trebuchet MS", system-ui, sans-serif; font-size: 26pt; margin: 0 0 6mm; line-height: 1.1; }
+  .text { padding: 16mm 16mm 14mm; }
+  .lead { font-size: 16.5pt; color: #5a5044; }
+  .seen { background: #ECE7FB; border-radius: 8pt; padding: 3mm 4mm; }
+  .task { border: 1.2pt dashed #6B4FE0; border-radius: 8pt; padding: 3.5mm 4mm; margin-top: 6mm; }
+  .foot { position: absolute; bottom: 12mm; left: 16mm; right: 16mm; font-size: 10pt; color: #8a7d6a; }
+  .plain { padding-left: 6mm; }
+  .heroes { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .heroes figure { margin: 0; }
+  .heroes img { width: 100%; height: 48mm; object-fit: cover; border-radius: 4mm; display: block; }
+  .heroes figcaption { font-size: 10pt; margin-top: 1.5mm; }
+  .heroes figcaption b { display: block; font-family: "Trebuchet MS", sans-serif; font-size: 12pt; }
+  .art { padding: 10mm; }
+  .art figure { margin: 0; }
+  .art img { width: 190mm; height: 168mm; object-fit: cover; border-radius: 5mm; display: block; }
+  .art figcaption { margin-top: 3mm; font-family: "Trebuchet MS", sans-serif; font-size: 14pt; }
+  .art figcaption span { display: block; font-size: 8pt; letter-spacing: .16em; text-transform: uppercase; color: #6B4FE0; }
+</style>
+
+
+<section class="page bleed">
+  <img class="full" src="images/00_cover.jpg" alt="Обложка: Марьям и друзья у портала">
+  <div class="cover-title">
+    <p class="kicker">Код-РПГ · учебник-курс · 29 недель</p>
+    <h1>Марьям<br>в Мире Кода</h1>
+  </div>
+</section>
+
+<section class="page text">
+  <p class="kicker">книга для печати</p>
+  <h2>Марьям в Мире Кода</h2>
+  <p class="lead">Как девочка, пони, лама, альпака и два котика построили настоящую игру BlockDuel 9×9 — и стали разработчиками.</p>
+  <p>Читаем <b>неделю за неделей</b>. Сначала картинка: по ней видно тему. Потом одно дело вместе с папой. Вперёд не прыгаем.</p>
+  <ul class="plain">
+    <li>Неделя 1 — семь вечеров у портала</li>
+    <li>Неделя 2 — коробочки-переменные</li>
+    <li>Недели 3–29 — по одной теме, пока игра не заговорит на четырёх экранах</li>
+  </ul>
+  <p class="foot">Формат 210×210 мм · внутри настоящий код игры</p>
+</section>
+
+<section class="page text">
+  <p class="kicker">герои</p>
+  <h2>Кто идёт с нами</h2>
+  <div class="heroes"><figure><img src="images/01_maryam.jpg" alt="Марьям"><figcaption><b>Марьям</b>провалилась в игру и решила её построить</figcaption></figure><figure><img src="images/02_pony_po.jpg" alt="Пони По"><figcaption><b>Пони По</b>коробочки и снимки истории</figcaption></figure><figure><img src="images/03_llama_lu.jpg" alt="Лама Лу"><figcaption><b>Лама Лу</b>функции, числа, честная случайность</figcaption></figure><figure><img src="images/04_alpaca_alya.jpg" alt="Альпака Аля"><figcaption><b>Альпака Аля</b>если, повтори, фигуры, тесты</figcaption></figure><figure><img src="images/05_cats.jpg" alt="Два котика"><figcaption><b>Два котика</b>списки, доска, бот и баги</figcaption></figure></div>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 1 · дни 1–7</p>
+  <h2>Портал из блока</h2>
+  <p class="lead">Семь вечеров. Ставим инструменты, открываем редактор, скачиваем игру, запускаем её и меняем слова на экране.</p>
+  <p>Дальше — по одной странице на вечер. Книгу после задания закрываем.</p>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day001.jpg" alt="Ставим инструменты">
+    <figcaption><span>Тема</span>Ставим инструменты</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 1 · из 200</p>
+  <h2>Ставим инструменты</h2>
+  <p class="seen"><b>Что видно:</b> Ящик, ключи, зелёные галочки. Доктор сказал: всё хорошо.</p>
+  <p>Марьям входит в Мир Кода. Каждый вечер — один шаг.</p>
+  <div class="task"><b>Вместе с папой.</b> Поставьте Flutter. В терминале: flutter doctor.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day002.jpg" alt="Редактор кода">
+    <figcaption><span>Тема</span>Редактор кода</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 2 · из 200</p>
+  <h2>Редактор кода</h2>
+  <p class="seen"><b>Что видно:</b> Папки слева, цветные строки, кнопка ▶.</p>
+  <p>Марьям входит в Мир Кода. Каждый вечер — один шаг.</p>
+  <div class="task"><b>Вместе с папой.</b> Откройте IntelliJ IDEA. Найдите дерево файлов и кнопку запуска.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day003.jpg" alt="Игра приходит в коробке">
+    <figcaption><span>Тема</span>Игра приходит в коробке</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 3 · из 200</p>
+  <h2>Игра приходит в коробке</h2>
+  <p class="seen"><b>Что видно:</b> Из облака — подарок, внутри доска.</p>
+  <p>Марьям входит в Мир Кода. Каждый вечер — один шаг.</p>
+  <div class="task"><b>Вместе с папой.</b> git clone репозиторий игры (или откройте папку, если она уже есть).</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day004.jpg" alt="Коробочки-пакеты">
+    <figcaption><span>Тема</span>Коробочки-пакеты</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 4 · из 200</p>
+  <h2>Коробочки-пакеты</h2>
+  <p class="seen"><b>Что видно:</b> Несём цветные коробки к домику. Это пакеты.</p>
+  <p>Марьям входит в Мир Кода. Каждый вечер — один шаг.</p>
+  <div class="task"><b>Вместе с папой.</b> В папке игры: flutter pub get.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day005.jpg" alt="Запускаем и играем">
+    <figcaption><span>Тема</span>Запускаем и играем</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 5 · из 200</p>
+  <h2>Запускаем и играем</h2>
+  <p class="seen"><b>Что видно:</b> Живая доска 9×9, фигурка в руках.</p>
+  <p>Марьям входит в Мир Кода. Каждый вечер — один шаг.</p>
+  <div class="task"><b>Вместе с папой.</b> flutter run -d chrome — и просто поиграйте.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day006.jpg" alt="Три двери проекта">
+    <figcaption><span>Тема</span>Три двери проекта</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 6 · из 200</p>
+  <h2>Три двери проекта</h2>
+  <p class="seen"><b>Что видно:</b> Синяя — правила, жёлтая — картинка, зелёная — проверки.</p>
+  <p>Марьям входит в Мир Кода. Каждый вечер — один шаг.</p>
+  <div class="task"><b>Вместе с папой.</b> Откройте lib/core, lib/ui и test. Ничего не меняем.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day007.jpg" alt="Свои слова на экране">
+    <figcaption><span>Тема</span>Свои слова на экране</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 7 · из 200</p>
+  <h2>Свои слова на экране</h2>
+  <p class="seen"><b>Что видно:</b> Закрашиваем вывеску. Мини-проект недели 1.</p>
+  <p>Марьям входит в Мир Кода. Каждый вечер — один шаг.</p>
+  <div class="task"><b>Вместе с папой.</b> В lib/ui/widgets/logo.dart поменяйте Block / Duel на своё приветствие.</div>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 2 · дни 8–14</p>
+  <h2>Пони По и коробочки</h2>
+  <p class="lead">Переменная — коробочка с подписью. В одной живут числа, в другой — буквы. Знак = значит «положи внутрь».</p>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day008.jpg" alt="Коробочки с именами">
+    <figcaption><span>Тема</span>Коробочки с именами</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 8 · из 200</p>
+  <h2>Коробочки с именами</h2>
+  <p class="seen"><b>Что видно:</b> Две коробочки: число и имя. Подпись снаружи, значение внутри.</p>
+  <p>Пони По учит Марьям помнить данные.</p>
+  <div class="task"><b>Вместе с папой.</b> int score = 0; и print(score);</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day009.jpg" alt="Ноль в коробочку очков">
+    <figcaption><span>Тема</span>Ноль в коробочку очков</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 9 · из 200</p>
+  <h2>Ноль в коробочку очков</h2>
+  <p class="seen"><b>Что видно:</b> В score кладут ноль. Тип — int.</p>
+  <p>Пони По учит Марьям помнить данные.</p>
+  <div class="task"><b>Вместе с папой.</b> Пальцем: вот имя коробочки, вот значение.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day010.jpg" alt="Имя в коробочку">
+    <figcaption><span>Тема</span>Имя в коробочку</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 10 · из 200</p>
+  <h2>Имя в коробочку</h2>
+  <p class="seen"><b>Что видно:</b> В nick кладут слово. Тип — String, всегда в кавычках.</p>
+  <p>Пони По учит Марьям помнить данные.</p>
+  <div class="task"><b>Вместе с папой.</b> String nick = "Марьям"; print(nick); — можно своё имя.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day011.jpg" alt="Прибавляем пятнадцать">
+    <figcaption><span>Тема</span>Прибавляем пятнадцать</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 11 · из 200</p>
+  <h2>Прибавляем пятнадцать</h2>
+  <p class="seen"><b>Что видно:</b> В коробочку досыпают кубики. Ряд гаснет — очки растут.</p>
+  <p>Пони По учит Марьям помнить данные.</p>
+  <div class="task"><b>Вместе с папой.</b> score = score + 15; print(score); → 15.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day012.jpg" alt="Числа и буквы — разные дома">
+    <figcaption><span>Тема</span>Числа и буквы — разные дома</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 12 · из 200</p>
+  <h2>Числа и буквы — разные дома</h2>
+  <p class="seen"><b>Что видно:</b> Слева дом чисел, справа дом букв. У каждой коробочки свой тип.</p>
+  <p>Пони По учит Марьям помнить данные.</p>
+  <div class="task"><b>Вместе с папой.</b> На бумаге разложите 0, 15, "Марьям", true по коробкам.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day013.jpg" alt="Равно значит «положи»">
+    <figcaption><span>Тема</span>Равно значит «положи»</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 13 · из 200</p>
+  <h2>Равно значит «положи»</h2>
+  <p class="seen"><b>Что видно:</b> Справа считают, налево кладут. = — не школьное «равно».</p>
+  <p>Пони По учит Марьям помнить данные.</p>
+  <div class="task"><b>Вместе с папой.</b> Прочитайте заклинание По вслух.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/day014.jpg" alt="Карточка игрока">
+    <figcaption><span>Тема</span>Карточка игрока</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">день 14 · из 200</p>
+  <h2>Карточка игрока</h2>
+  <p class="seen"><b>Что видно:</b> Имя и очки на одной карточке. Мини-проект недели 2.</p>
+  <p>Пони По учит Марьям помнить данные.</p>
+  <div class="task"><b>Вместе с папой.</b> В одном файле score + nick, прибавьте 15, напечатайте оба.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week03.jpg" alt="Функции">
+    <figcaption><span>Тема</span>Машина: вход → работа → ответ</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 3 · дни 15–21 · Лама Лу</p>
+  <h2>Функции</h2>
+  <p class="seen"><b>Что видно:</b> Машина: вход → работа → ответ</p>
+  <p>Функция — действие с именем. Один раз придумал — зовёшь сколько хочешь.</p>
+  <div class="task"><b>Вместе с папой.</b> Напиши приветствие(имя) и площадь(a, b). Позови каждую дважды.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week04.jpg" alt="Условие if">
+    <figcaption><span>Тема</span>Развилка: да или нет</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 4 · дни 22–28 · Альпака Аля</p>
+  <h2>Условие if</h2>
+  <p class="seen"><b>Что видно:</b> Развилка: да или нет</p>
+  <p>if — это развилка на дороге. Программа смотрит на условие и выбирает путь.</p>
+  <div class="task"><b>Вместе с папой.</b> Собери игру «Угадай число» с подсказками больше / меньше.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week05.jpg" alt="Цикл for">
+    <figcaption><span>Тема</span>Карусель: повтори много раз</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 5 · дни 29–35 · Альпака Аля</p>
+  <h2>Цикл for</h2>
+  <p class="seen"><b>Что видно:</b> Карусель: повтори много раз</p>
+  <p>for — карусель. Компьютер не устаёт: 9 раз или 81 — ему всё равно.</p>
+  <div class="task"><b>Вместе с папой.</b> Напечатай таблицу умножения и пирамидку из звёздочек.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week06.jpg" alt="Списки">
+    <figcaption><span>Тема</span>Вещи в ряд, с нуля</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 6 · дни 36–42 · Котики</p>
+  <h2>Списки</h2>
+  <p class="seen"><b>Что видно:</b> Вещи в ряд, с нуля</p>
+  <p>Список — ряд коробочек. Первая клетка — номер 0. Можно добавить, убрать, найти.</p>
+  <div class="task"><b>Вместе с папой.</b> Список любимых игр: добавить, удалить, найти самое длинное слово.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week07.jpg" alt="Классы">
+    <figcaption><span>Тема</span>Чертёж становится живым</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 7 · дни 43–49 · Котики</p>
+  <h2>Классы</h2>
+  <p class="seen"><b>Что видно:</b> Чертёж становится живым</p>
+  <p>Класс — чертёж. Объект — живое существо по этому чертежу. У каждого свои поля.</p>
+  <div class="task"><b>Вместе с папой.</b> Класс Котик (имя, цвет) — создай троих разных.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week08.jpg" alt="Доска 9×9">
+    <figcaption><span>Тема</span>Сетка, на которой живёт игра</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 8 · дни 50–56 · Котики и Марьям</p>
+  <h2>Доска 9×9</h2>
+  <p class="seen"><b>Что видно:</b> Сетка, на которой живёт игра</p>
+  <p>Доска — 9 строк и 9 столбцов. 81 клетка. Пустая клетка молчит, занятая светится.</p>
+  <div class="task"><b>Вместе с папой.</b> Собери emptyBoard() и напечатай доску точками.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week09.jpg" alt="Честная случайность">
+    <figcaption><span>Тема</span>Одно зерно — одна цепочка</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 9 · дни 57–63 · Лама Лу</p>
+  <h2>Честная случайность</h2>
+  <p class="seen"><b>Что видно:</b> Одно зерно — одна цепочка</p>
+  <p>Настоящий волшебник честен: одно и то же зерно всегда даёт ту же цепочку чисел.</p>
+  <div class="task"><b>Вместе с папой.</b> Кубик на mulberry32: покажи, что одно зерно = одна цепочка.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week10.jpg" alt="Мешок фигур">
+    <figcaption><span>Тема</span>Семь фигур по разу, без обмана</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 10 · дни 64–70 · Лама Лу</p>
+  <h2>Мешок фигур</h2>
+  <p class="seen"><b>Что видно:</b> Семь фигур по разу, без обмана</p>
+  <p>7-bag: в мешке все семь тетромино по одному. Два мешка с одним зерном выдают одно и то же.</p>
+  <div class="task"><b>Вместе с папой.</b> Bag(seed): два мешка должны выдать одну и ту же очередь.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week11.jpg" alt="Семь фигур">
+    <figcaption><span>Тема</span>Алфавит тетромино</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 11 · дни 71–77 · Альпака Аля</p>
+  <h2>Семь фигур</h2>
+  <p class="seen"><b>Что видно:</b> Алфавит тетромино</p>
+  <p>Семь букв мира: I O T S Z J L. Каждая — список клеток.</p>
+  <div class="task"><b>Вместе с папой.</b> Опиши все 7 тетромино списками координат.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week12.jpg" alt="Повороты">
+    <figcaption><span>Тема</span>Фигура умеет крутиться</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 12 · дни 78–85 · Альпака Аля</p>
+  <h2>Повороты</h2>
+  <p class="seen"><b>Что видно:</b> Фигура умеет крутиться</p>
+  <p>Поворот на 90° — и T становится другой T. Четыре положения — одна фигура.</p>
+  <div class="task"><b>Вместе с папой.</b> Функция поворота фигуры на 90°.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week13.jpg" alt="Сюда можно?">
+    <figcaption><span>Тема</span>Закон мира: проверка перед постановкой</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 13 · дни 86–92 · Пони По</p>
+  <h2>Сюда можно?</h2>
+  <p class="seen"><b>Что видно:</b> Закон мира: проверка перед постановкой</p>
+  <p>По — страж. Прежде чем поставить фигуру, спрашиваем: не вылезли ли за край? не сели ли на занятое?</p>
+  <div class="task"><b>Вместе с папой.</b> canPlace: печатай «да / нет» для разных мест.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week14.jpg" alt="Линия гаснет">
+    <figcaption><span>Тема</span>Поставили — ряд вспыхнул и исчез</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 14 · дни 93–99 · Котики</p>
+  <h2>Линия гаснет</h2>
+  <p class="seen"><b>Что видно:</b> Поставили — ряд вспыхнул и исчез</p>
+  <p>Заполнили строку, столбец или бокс 3×3 — они гаснут. Это сердце игры.</p>
+  <div class="task"><b>Вместе с папой.</b> Поставь фигуру и сотри полностью заполненную строку.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week15.jpg" alt="Очки и комбо">
+    <figcaption><span>Тема</span>Линии становятся очками, серия множит</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 15 · дни 100–105 · Котики</p>
+  <h2>Очки и комбо</h2>
+  <p class="seen"><b>Что видно:</b> Линии становятся очками, серия множит</p>
+  <p>Формула: база за линии, множитель за серию, бонус за пустую доску.</p>
+  <div class="task"><b>Вместе с папой.</b> Посчитай очки за ход по формуле, добавь серию-комбо.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week16.jpg" alt="Все ходы">
+    <figcaption><span>Тема</span>Призраки всех возможных постановок</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 16 · дни 106–112 · Котики</p>
+  <h2>Все ходы</h2>
+  <p class="seen"><b>Что видно:</b> Призраки всех возможных постановок</p>
+  <p>Чтобы думать, сначала надо увидеть все ходы. Даже те, что кажутся слабыми.</p>
+  <div class="task"><b>Вместе с папой.</b> Выведи все возможные ходы для одной фигуры.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week17.jpg" alt="Оценка хода">
+    <figcaption><span>Тема</span>Весы: какой ход лучше</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 17 · дни 113–119 · Котики</p>
+  <h2>Оценка хода</h2>
+  <p class="seen"><b>Что видно:</b> Весы: какой ход лучше</p>
+  <p>Каждому ходу — оценка. Лучший светится ярче. Так котёнок учится выбирать.</p>
+  <div class="task"><b>Вместе с папой.</b> Оценка = сколько линий закроет; выбери лучший.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week18.jpg" alt="Бот">
+    <figcaption><span>Тема</span>Котёнок, который играет сам</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 18 · дни 120–125 · Котики</p>
+  <h2>Бот</h2>
+  <p class="seen"><b>Что видно:</b> Котёнок, который играет сам</p>
+  <p>Бот смотрит все ходы, ставит оценку, выбирает лучший. Потом играет с собой.</p>
+  <div class="task"><b>Вместе с папой.</b> Бот играет сам с собой — выведи, кто победил.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week19.jpg" alt="Первый экран">
+    <figcaption><span>Тема</span>Рисуем лицо игры</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 19 · дни 126–132 · Марьям</p>
+  <h2>Первый экран</h2>
+  <p class="seen"><b>Что видно:</b> Рисуем лицо игры</p>
+  <p>Flutter — кисть. Экран, заголовок, кнопка «Играть». Мир впервые получает лицо.</p>
+  <div class="task"><b>Вместе с папой.</b> Экран с заголовком и кнопкой «Играть».</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week20.jpg" alt="Доска виджетами">
+    <figcaption><span>Тема</span>Сетка из кирпичиков-виджетов</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 20 · дни 133–139 · Марьям</p>
+  <h2>Доска виджетами</h2>
+  <p class="seen"><b>Что видно:</b> Сетка из кирпичиков-виджетов</p>
+  <p>Каждая клетка — маленький виджет. 81 кирпичик складываются в живую доску.</p>
+  <div class="task"><b>Вместе с папой.</b> GridView 9×9 с цветными клетками.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week21.jpg" alt="Тап">
+    <figcaption><span>Тема</span>Палец ставит фигуру</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 21 · дни 140–145 · Марьям</p>
+  <h2>Тап</h2>
+  <p class="seen"><b>Что видно:</b> Палец ставит фигуру</p>
+  <p>Тап — это слово руке компьютера. Нажал клетку — она ожила.</p>
+  <div class="task"><b>Вместе с папой.</b> Тап красит клетку; выбор фигуры из руки.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week22.jpg" alt="Сервер">
+    <figcaption><span>Тема</span>Домик в облаке отвечает «привет»</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 22 · дни 146–152 · Лама Лу</p>
+  <h2>Сервер</h2>
+  <p class="seen"><b>Что видно:</b> Домик в облаке отвечает «привет»</p>
+  <p>Сервер — дом на облаке. Провод несёт конверт туда и обратно. Это WebSocket.</p>
+  <div class="task"><b>Вместе с папой.</b> Крошечный сервер: на «привет» отвечает «привет».</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week23.jpg" alt="Двое через океан">
+    <figcaption><span>Тема</span>Ход летит по нити к другу</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 23 · дни 153–159 · Лама Лу</p>
+  <h2>Двое через океан</h2>
+  <p class="seen"><b>Что видно:</b> Ход летит по нити к другу</p>
+  <p>Два берега, одна нить, справедливый дом посередине. Ход одного становится ходом другого.</p>
+  <div class="task"><b>Вместе с папой.</b> Передай ход одного игрока другому через сервер.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week24.jpg" alt="Рейтинг ELO">
+    <figcaption><span>Тема</span>Победа поднимает столбик</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 24 · дни 160–165 · Лама Лу</p>
+  <h2>Рейтинг ELO</h2>
+  <p class="seen"><b>Что видно:</b> Победа поднимает столбик</p>
+  <p>Сильного победить — рейтинг прыгает выше. Слабого — чуть-чуть. Ничья почти не двигает.</p>
+  <div class="task"><b>Вместе с папой.</b> Посчитай новый рейтинг после победы и поражения.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week25.jpg" alt="Тесты">
+    <figcaption><span>Тема</span>Зелёные галочки-стражи</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 25 · дни 166–172 · Альпака Аля</p>
+  <h2>Тесты</h2>
+  <p class="seen"><b>Что видно:</b> Зелёные галочки-стражи</p>
+  <p>Тест — зверек-контролёр. Он проверяет игру день и ночь, даже когда мы спим.</p>
+  <div class="task"><b>Вместе с папой.</b> Напиши 5 своих тестов — и сделай все зелёными.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week26.jpg" alt="Красный → зелёный">
+    <figcaption><span>Тема</span>Поймали баг и починили</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 26 · дни 173–178 · Котики</p>
+  <h2>Красный → зелёный</h2>
+  <p class="seen"><b>Что видно:</b> Поймали баг и починили</p>
+  <p>Сначала красный кристалл — «сломано». Потом зелёная галочка — «живо». Так растут мастера.</p>
+  <div class="task"><b>Вместе с папой.</b> Нарочно сломай код, увидь красный тест, почини.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week27.jpg" alt="Git">
+    <figcaption><span>Тема</span>Снимки, чтобы ничего не потерять</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 27 · дни 179–185 · Пони По</p>
+  <h2>Git</h2>
+  <p class="seen"><b>Что видно:</b> Снимки, чтобы ничего не потерять</p>
+  <p>Git — полка со снимками работы. Шаг назад всегда можно. Ничего не пропадает.</p>
+  <div class="task"><b>Вместе с папой.</b> Первый репозиторий: init, 3 коммита, git log.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week28.jpg" alt="Четыре мира">
+    <figcaption><span>Тема</span>Один код — телефон, планшет, компьютер, браузер</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 28 · дни 186–195 · Альпака Аля</p>
+  <h2>Четыре мира</h2>
+  <p class="seen"><b>Что видно:</b> Один код — телефон, планшет, компьютер, браузер</p>
+  <p>Flutter обещает: написал раз — собрал везде. Аля держит четыре экрана с одной игрой.</p>
+  <div class="task"><b>Вместе с папой.</b> Найди и почини баг; собери под web и Android.</div>
+</section>
+
+<section class="page art">
+  <figure>
+    <img src="images/week29.jpg" alt="Финал">
+    <figcaption><span>Тема</span>Игра готова. Покажи её миру</figcaption>
+  </figure>
+</section>
+
+<section class="page text">
+  <p class="kicker">неделя 29 · дни 196–200 · Все герои</p>
+  <h2>Финал</h2>
+  <p class="seen"><b>Что видно:</b> Игра готова. Покажи её миру</p>
+  <p>Двести вечеров. Портал, коробочки, функции, доска, бот, сервер, четыре экрана. Игра — ваша.</p>
+  <div class="task"><b>Вместе с папой.</b> Своя версия игры — показать друзьям и близким.</div>
+</section>
+
+<section class="page text">
+  <p class="kicker">конец</p>
+  <h2>Игра — ваша</h2>
+  <p class="lead">Двести вечеров позади. Портал, коробочки, функции, доска, бот, сервер, четыре экрана.</p>
+  <p>Ошибаться было можно. Именно из ошибок родилось мастерство.</p>
+  <p class="foot">«Марьям в Мире Кода» · BlockDuel 9×9 · книга-сборник</p>
+</section>
+</body></html>
