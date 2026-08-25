@@ -283,9 +283,9 @@
             </li>
             <li><b>Скачай настоящую игру и запусти её.</b> Уже в первый день ты увидишь её живой:
                 <div class="cmdline">git clone https://github.com/alshfu/block-puzzle-pvp
-                    cd block-puzzle-pvp
-                    flutter pub get
-                    flutter run -d chrome <span class="cmt"># и вот она, наша игра, у тебя в браузере!</span></div>
+cd block-puzzle-pvp
+flutter pub get
+flutter run -d chrome <span class="cmt"># и вот она, наша игра, у тебя в браузере!</span></div>
             </li>
             <li><b>Дальше — не «пиши с нуля», а «найди → пойми → поменяй → запусти».</b> Каждую неделю открываешь
                 настоящий файл из проекта, разбираешь его по этой книге и делаешь маленькую правку. Нажал «запустить» —
@@ -482,8 +482,8 @@
                     <li>Скачайте игру (это и есть наша книга в коде):</li>
                 </ol>
                 <div class="cmdline">git clone https://github.com/alshfu/block-puzzle-pvp
-                    cd block-puzzle-pvp
-                </div>
+cd block-puzzle-pvp
+</div>
                 <p class="together">Готово, когда на компьютере появилась папка <span
                         class="mono">block_puzzle_pvp</span> (или <span class="mono">block-puzzle-pvp</span>) и внутри
                     видны <span class="mono">lib/</span>, <span class="mono">test/</span>, <span
@@ -1486,7 +1486,7 @@ score = score + <span class="num">15</span>;      <span class="cmt">// очис�
         <h2 style="margin-top:36px">Недели 7–29: обложки курса</h2>
         <p class="week-lead">Дальше день-картинки ещё рисуются — а обложки недель уже готовы. Каждую можно раскрыть в
             свою неделю страниц-дней по образцу выше.</p>
-        <div class="weeks-gallery">
+        <div class="weeks-gallery" id="weeksgal">
             <figure><img src="assets/img/week07.jpg" alt="Неделя 7: Классы">
                 <figcaption>Неделя 7<br><small>Классы</small></figcaption>
             </figure>
@@ -1571,7 +1571,7 @@ score = score + <span class="num">15</span>;      <span class="cmt">// очис�
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 02 · Данные-2 · 🎨 image-promt/day036–056</div>
+                <div class="ch-num">Глава 02 · Данные-2 <span class="ch-prompt">· 🎨 image-promt/day036–056</span></div>
                 <h2>Котики и сетка 9×9</h2>
                 <div class="ch-companion">спутники главы — два котика</div>
             </div>
@@ -1648,7 +1648,7 @@ Board emptyBoard() =&gt; [
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 03 · Честная случайность · 🎨 image-promt/day057–070</div>
+                <div class="ch-num">Глава 03 · Честная случайность <span class="ch-prompt">· 🎨 image-promt/day057–070</span></div>
                 <h2>Предсказуемое волшебство</h2>
                 <div class="ch-companion">снова лама Лу — она любит числа</div>
             </div>
@@ -1707,7 +1707,7 @@ Board emptyBoard() =&gt; [
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 04 · Формы · 🎨 image-promt/day071–085</div>
+                <div class="ch-num">Глава 04 · Формы <span class="ch-prompt">· 🎨 image-promt/day071–085</span></div>
                 <h2>Семь фигур-тетромино</h2>
                 <div class="ch-companion">Аля раскладывает фигурки</div>
             </div>
@@ -1758,7 +1758,7 @@ Board emptyBoard() =&gt; [
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 05 · Проверки · 🎨 image-promt/day086–092</div>
+                <div class="ch-num">Глава 05 · Проверки <span class="ch-prompt">· 🎨 image-promt/day086–092</span></div>
                 <h2>Закон мира: «сюда можно?»</h2>
                 <div class="ch-companion">По следит за порядком</div>
             </div>
@@ -1817,7 +1817,7 @@ Board emptyBoard() =&gt; [
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 06 · Правила и счёт · 🎨 image-promt/day093–105</div>
+                <div class="ch-num">Глава 06 · Правила и счёт <span class="ch-prompt">· 🎨 image-promt/day093–105</span></div>
                 <h2>Линии гаснут, очки летят</h2>
                 <div class="ch-companion">котики считают очки</div>
             </div>
@@ -1870,7 +1870,7 @@ player.score += scoreForMove(cleared, player.combo, isPerfect);
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 07 · Искусственный ум · 🎨 image-promt/day106–125</div>
+                <div class="ch-num">Глава 07 · Искусственный ум <span class="ch-prompt">· 🎨 image-promt/day106–125</span></div>
                 <h2>Котёнок, который научился думать</h2>
                 <div class="ch-companion">фиолетовый котик учится «думать»</div>
             </div>
@@ -1920,7 +1920,7 @@ player.score += scoreForMove(cleared, player.combo, isPerfect);
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 08 · Фронтенд · 🎨 image-promt/day126–145</div>
+                <div class="ch-num">Глава 08 · Фронтенд <span class="ch-prompt">· 🎨 image-promt/day126–145</span></div>
                 <h2>Лицо игры</h2>
                 <div class="ch-companion">теперь ведёт сама Марьям</div>
             </div>
@@ -1976,7 +1976,7 @@ player.score += scoreForMove(cleared, player.combo, isPerfect);
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 09 · Бэкенд · 🎨 image-promt/day146–165</div>
+                <div class="ch-num">Глава 09 · Бэкенд <span class="ch-prompt">· 🎨 image-promt/day146–165</span></div>
                 <h2>Двое через океан</h2>
                 <div class="ch-companion">Лу протягивает нить связи</div>
             </div>
@@ -2030,7 +2030,7 @@ player.score += scoreForMove(cleared, player.combo, isPerfect);
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 10 · Качество · 🎨 image-promt/day166–172</div>
+                <div class="ch-num">Глава 10 · Качество <span class="ch-prompt">· 🎨 image-promt/day166–172</span></div>
                 <h2>Зверята-контролёры: тесты</h2>
                 <div class="ch-companion">Аля надевает жилетку контролёра</div>
             </div>
@@ -2095,7 +2095,7 @@ test(<span class="str">'одно зерно — одна и та же цепоч
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 11 · Отладка · 🎨 image-promt/day173–178</div>
+                <div class="ch-num">Глава 11 · Отладка <span class="ch-prompt">· 🎨 image-promt/day173–178</span></div>
                 <h2>Охота на баги</h2>
                 <div class="ch-companion">котики становятся детективами</div>
             </div>
@@ -2285,7 +2285,7 @@ setInterval(() =&gt; {
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 12 · Машина времени · 🎨 image-promt/day179–185</div>
+                <div class="ch-num">Глава 12 · Машина времени <span class="ch-prompt">· 🎨 image-promt/day179–185</span></div>
                 <h2>Git: как не потерять свою работу</h2>
                 <div class="ch-companion">По хранит все снимки истории</div>
             </div>
@@ -2343,7 +2343,7 @@ git push                     <span class="cmt"># отправить снимки
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 13 · Кросс-платформа · 🎨 image-promt/day186–195</div>
+                <div class="ch-num">Глава 13 · Кросс-платформа <span class="ch-prompt">· 🎨 image-promt/day186–195</span></div>
                 <h2>Один код — четыре мира</h2>
                 <div class="ch-companion">Аля собирает игру для всех</div>
             </div>
@@ -2388,7 +2388,7 @@ flutter build macos    <span class="cmt"># программа для Mac</span>
                 </svg>
             </div>
             <div>
-                <div class="ch-num">Глава 14 · Эпилог · 🎨 image-promt/day196–200</div>
+                <div class="ch-num">Глава 14 · Эпилог <span class="ch-prompt">· 🎨 image-promt/day196–200</span></div>
                 <h2>Игра готова</h2></div>
         </div>
         <div class="scene">
@@ -2748,6 +2748,9 @@ tetromino pieces placed on the grid,
     <div class="curl" aria-hidden="true"></div>
     <!-- переворачивающийся лист (анимация) -->
     <div class="leaf" id="leaf" aria-hidden="true"></div>
+    <!-- фолио: номера страниц -->
+    <span class="folio l" id="folioL" aria-hidden="true"></span>
+    <span class="folio r" id="folioR" aria-hidden="true"></span>
 </div><!-- /.book-clip -->
 
 <!-- ═══════════════════════════════════════════════════════════════

@@ -502,6 +502,10 @@
 
     .scene-frame {
         position: relative;
+        /* рамка ужимается до ширины картинки — плашка «тема дня» всегда внутри неё */
+        width: fit-content;
+        max-width: 100%;
+        margin: 0 auto;
     }
 
     .scene-topic {
@@ -982,6 +986,8 @@
         font-family: "JetBrains Mono", monospace;
         font-size: 13px;
         overflow-x: auto;
+        white-space: pre-wrap;   /* команды — каждая на своей строке */
+        line-height: 1.55;
     }
 
     .cmdline .cmt {
@@ -1297,7 +1303,7 @@
     body.mode-book .wrap {
         position: absolute; top: 0; left: 0; height: 100%;
         width: calc(var(--colW) + 2 * var(--pad)); max-width: none; margin: 0;
-        padding: var(--pad) var(--pad) calc(var(--pad) - 8px);
+        padding: var(--pad) var(--pad) calc(var(--pad) + 12px);   /* низ: место под фолио и уголок */
         column-width: var(--colW); column-gap: var(--gutter); column-fill: auto;
         overflow: visible; font-size: 16px; line-height: 1.6;
         transform: translateX(calc(-1 * var(--pg, 0) * (var(--colW) + var(--gutter))));
@@ -1342,7 +1348,7 @@
     @keyframes leafBwd { from { transform: rotateY(0); } to { transform: rotateY(176deg); } }
 
     /* одностраничный режим (узкие экраны) — без переплёта и загиба-в-центре */
-    body.mode-book.single .binding,
+    body.mode-book.single .binding, body.mode-book.single .curl,
     body.mode-book.single .book-clip::before,
     body.mode-book.single .book-clip::after { display: none; }
 
@@ -1352,12 +1358,59 @@
     body.mode-book .cover h1 { font-size: clamp(26px, 6.5vmin, 42px); }
     body.mode-book .cover-art { max-width: 80%; }
     body.mode-book .scene svg { max-height: 36vh; width: auto; }
-    body.mode-book .weeks-gallery { grid-template-columns: 1fr; }
+    body.mode-book .scene img { max-height: 38vh; }
+    /* код в книге не уезжает за край страницы — переносим строки, чуть мельче */
+    body.mode-book .spell pre, body.mode-book .prompt-card pre, body.mode-book .cmdline {
+        white-space: pre-wrap; word-break: break-word; overflow: visible; font-size: 12.5px; line-height: 1.55;
+    }
+    body.mode-book .spell pre { padding: 12px 14px; }
+    /* техническая ссылка на промпты картинок в шапке главы — не для читателя */
+    body.mode-book .ch-prompt { display: none; }
+
+    /* ── типографика книги: что с чего начинается и что не рвём ── */
+    /* каждая глава и каждый день — с новой страницы (как в настоящей книге) */
+    body.mode-book .chapter, body.mode-book .day-page,
+    body.mode-book .plan, body.mode-book .prompts, body.mode-book .toc,
+    body.mode-book .heroes, body.mode-book .course, body.mode-book .track { break-before: column; }
+    body.mode-book .day-page { border-top: 0; padding-top: 0; margin-top: 0; }
+    body.mode-book .chapter { padding-top: 0; }
+    body.mode-book .divide { display: none; }             /* разделители не нужны: страница = разделитель */
+    /* заголовки и шапки не остаются сиротами внизу страницы */
+    body.mode-book h2, body.mode-book h3, body.mode-book .day-page h3,
+    body.mode-book .ch-head, body.mode-book .day-kicker, body.mode-book .week-lead { break-after: avoid; }
+    /* мелкие блоки не рвём между страницами */
     body.mode-book .scene, body.mode-book .learn, body.mode-book .task,
     body.mode-book .prompt-card, body.mode-book .recipe, body.mode-book figure,
     body.mode-book .heroes-grid .hero, body.mode-book .course .tile,
-    body.mode-book .track .quests { break-inside: avoid; }
-    body.mode-book h2, body.mode-book h3, body.mode-book .day-page h3 { break-after: avoid; }
+    body.mode-book .track .quests, body.mode-book .spell, body.mode-book .cmdline,
+    body.mode-book .day-nav, body.mode-book .plan tr, body.mode-book .toc li { break-inside: avoid; }
+    /* большие «карточки» (ТОС, о курсе, трек, план, промпты) длиннее страницы —
+       снимаем с них рамку/тень, чтобы перенос внутри выглядел как обычный текст */
+    body.mode-book .toc, body.mode-book .heroes, body.mode-book .course,
+    body.mode-book .track, body.mode-book .plan, body.mode-book .prompts {
+        background: none; border: 0; box-shadow: none; padding: 0; margin: 0 0 8px; border-radius: 0;
+    }
+    body.mode-book .track { border-top: 3px solid var(--magic); padding-top: 12px; }
+
+    /* галерея недель: две карточки в ряд, компактно (inline-block корректно
+       переносится между колонками построчно, в отличие от grid) */
+    body.mode-book .weeks-gallery { display: block; margin: 8px 0; }
+    body.mode-book .weeks-gallery figure {
+        display: inline-block; vertical-align: top; width: calc(50% - 8px); margin: 0 3px 12px;
+    }
+    body.mode-book .weeks-gallery img { max-height: none; width: 100%; }
+
+    /* фолио — номера страниц по нижним углам разворота */
+    body.mode-book .folio {
+        position: absolute; bottom: 12px; z-index: 6; pointer-events: none;
+        font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--faint);
+        font-variant-numeric: tabular-nums; letter-spacing: .08em;
+    }
+    body.mode-book .folio.l { left: var(--pad); }
+    body.mode-book .folio.r { right: calc(var(--pad) + 16px); }
+    body.mode-book.single .folio.l { display: none; }
+    .folio { display: none; }
+    body.mode-book .folio { display: block; }
 
     /* ═══════════════════════════════════════════════════════════════
        ЗАСТАВКА: детская комната, зимний вечер, горит камин, на полке —
@@ -1535,7 +1588,7 @@
             font-size: 12pt;
         }
 
-        #intro, .reader-ui, .end-probe, .day-nav, .day-next, .backtop, footer .backtop {
+        #intro, .reader-ui, .end-probe, .day-nav, .day-next, .backtop, footer .backtop, .ch-prompt {
             display: none !important;
         }
 
@@ -1565,7 +1618,7 @@
             box-shadow: none !important;
             background: #fff !important;
         }
-        .binding, .curl, .leaf { display: none !important; }
+        .binding, .curl, .leaf, .folio { display: none !important; }
 
         .chapter, .day-page, .plan, .prompts {
             break-before: page;
