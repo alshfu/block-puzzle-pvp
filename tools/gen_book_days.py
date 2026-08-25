@@ -16,8 +16,11 @@
 
 import os
 import re
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+from book_days import load_weeks  # noqa: E402 — недели 7–29, по модулю на неделю
 BOOK = os.path.join(ROOT, "book", "maryam_v_mire_koda.html")
 
 # Недели 3–6: (номер, папка course, компаньон, [ (день, тема, h3, что_видно,
@@ -261,22 +264,40 @@ STORY = {
 }
 
 
-def day_page(day, theme, h3, seen, say, steps, folder, is_last):
+IMG_DIR = os.path.join(ROOT, "book", "images")
+
+
+def has_day_image(day):
+    """Есть ли иллюстрация дня (book/images/dayNNN.jpg). Для недель 7–29 картинки
+    ещё рисуются по промптам из book/image-promt/ — пока их нет, страница-день
+    выходит без сцены, со значком героя недели рядом с заголовком."""
+    return os.path.isfile(os.path.join(IMG_DIR, f"day{day:03d}.jpg"))
+
+
+def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, story=None):
     ext = "dart"
     steps_html = "\n".join(f"          <li>{s}</li>" for s in steps)
-    paras = STORY.get(day) or [say]
+    paras = story or STORY.get(day) or [say]
     say_cls = ' class="say"'
     prose_html = "\n".join(
         f'        <p{say_cls if i == 0 else ""}>{p}</p>' for i, p in enumerate(paras))
-    return f'''    <article class="day-page" id="d{day:03d}">
-      <div class="day-kicker">День {day} · из 200 · тема: {theme}</div>
-      <h3>{h3}</h3>
-      <div class="scene">
+    if has_day_image(day):
+        scene = f'''      <div class="scene">
         <div class="scene-frame">
           <img src="images/day{day:03d}.jpg" alt="Что видно: {seen}.">
           <div class="scene-topic"><small>Тема дня</small>{theme}</div>
         </div>
-      </div>
+      </div>'''
+        head = f"      <h3>{h3}</h3>"
+    else:
+        # без картинки: значок героя недели у заголовка; описание сцены — в title
+        scene = ""
+        head = (f'      <div class="day-head"><div class="day-badge" title="{seen}">'
+                f'<svg><use href="#{badge or "maryam"}"/></svg></div><h3>{h3}</h3></div>')
+    return f'''    <article class="day-page" id="d{day:03d}">
+      <div class="day-kicker">День {day} · из 200 · тема: {theme}</div>
+{head}
+{scene}
       <div class="prose">
 {prose_html}
       </div>
@@ -291,30 +312,35 @@ def day_page(day, theme, h3, seen, say, steps, folder, is_last):
     </article>'''
 
 
+def week_opener(wnum, companion, lead):
+    """Обложка недели (images/weekNN.jpg) + подводка."""
+    return (f'    <div class="scene week-cover" id="w{wnum:02d}"><div class="scene-frame">'
+            f'<img src="images/week{wnum:02d}.jpg" alt="Обложка недели {wnum}">'
+            f'<div class="scene-topic"><small>Неделя {wnum}</small>{companion}</div></div></div>\n'
+            f'    <p class="week-lead">{lead}</p>')
+
+
 def build():
     out = ['  <!-- DAYS_EXT_START (сгенерировано tools/gen_book_days.py) -->',
            '  <hr class="divide">',
            '  <section class="chapter" id="days3to6">',
            '    <div class="ch-head"><div class="ch-badge"><svg><use href="#alpaca"/></svg></div>',
-           '      <div><div class="ch-num">Недели 3–6 · страницы-дни</div><h2>Дни 15–42: продолжаем по вечерам</h2><div class="ch-companion">по картинке — тема дня</div></div></div>']
+           '      <div><div class="ch-num">Недели 3–29 · страницы-дни</div><h2>Дни 15–200: продолжаем по вечерам</h2><div class="ch-companion">каждый вечер — одна страница; в конце недели — мини-проект</div></div></div>']
+    # недели 3–6 — описаны в этом файле (WEEKS + STORY)
     for wnum, folder, companion, days in WEEKS:
-        out.append(f'    <div class="scene"><div class="scene-frame">'
-                   f'<img src="images/week{wnum:02d}.jpg" alt="Обложка недели {wnum}">'
-                   f'<div class="scene-topic"><small>Неделя {wnum}</small>{companion}</div></div></div>')
-        out.append(f'    <p class="week-lead">Неделя {wnum}. Семь вечеров по одной странице. '
-                   f'Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>')
+        out.append(week_opener(wnum, companion,
+                               f'Неделя {wnum}. Семь вечеров по одной странице. '
+                               f'Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.'))
         n = len(days)
         for i, (day, theme, h3, seen, say, steps) in enumerate(days):
             out.append(day_page(day, theme, h3, seen, say, steps, folder, i == n - 1))
-    # галерея недель 7–29
-    out.append('    <h2 style="margin-top:36px">Недели 7–29: обложки курса</h2>')
-    out.append('    <p class="week-lead">Дальше день-картинки ещё рисуются — а обложки недель '
-               'уже готовы. Каждую можно раскрыть в свою неделю страниц-дней по образцу выше.</p>')
-    out.append('    <div class="weeks-gallery" id="weeksgal">')
-    for wnum, theme in GALLERY:
-        out.append(f'      <figure><img src="images/week{wnum:02d}.jpg" alt="Неделя {wnum}: {theme}">'
-                   f'<figcaption>Неделя {wnum}<br><small>{theme}</small></figcaption></figure>')
-    out.append('    </div>')
+    # недели 7–29 — пакет tools/book_days (по модулю на неделю)
+    for w in load_weeks():
+        out.append(week_opener(w["num"], w["companion"], f'Неделя {w["num"]} · {w["title"]}. {w["lead"]}'))
+        n = len(w["days"])
+        for i, d in enumerate(w["days"]):
+            out.append(day_page(d["day"], d["theme"], d["h3"], d["seen"], "", d["steps"],
+                                w["folder"], i == n - 1, badge=w["badge"], story=d["story"]))
     out.append('  </section>')
     out.append('  <!-- DAYS_EXT_END -->')
     return "\n".join(out)
