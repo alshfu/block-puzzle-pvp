@@ -1358,7 +1358,24 @@
     body.mode-book .cover h1 { font-size: clamp(26px, 6.5vmin, 42px); }
     body.mode-book .cover-art { max-width: 80%; }
     body.mode-book .scene svg { max-height: 36vh; width: auto; }
-    body.mode-book .scene img { max-height: 38vh; }
+    body.mode-book .scene img { max-height: 30vh; }
+    /* плотность текста: картинка компактнее, отступы короче — на странице
+       помещается больше сюжета, меньше пустых мест (правило книги) */
+    body.mode-book .wrap { font-size: 15.5px; line-height: 1.55; }
+    body.mode-book .prose p { margin: 9px 0; }
+    body.mode-book .prose p:first-of-type::first-letter { font-size: 3em; padding: 4px 8px 0 0; }
+    body.mode-book .scene { margin: 8px 0 6px; padding: 8px; }
+    body.mode-book .scene-topic { padding: 6px 12px; font-size: 15px; }
+    body.mode-book .pic-key { margin: 6px 2px 0; gap: 6px; }
+    body.mode-book .day-page h3 { font-size: 22px; margin: 2px 0 6px; }
+    body.mode-book .learn, body.mode-book .task { margin: 10px 0; padding: 10px 14px; }
+    body.mode-book .learn li, body.mode-book .task li { margin: 3px 0; font-size: 14.5px; }
+    body.mode-book .together { margin-top: 4px; }
+    body.mode-book .day-next { margin-top: 4px; }
+    body.mode-book .spell { margin: 12px 0; }
+    body.mode-book .spell-cap { padding: 8px 14px; font-size: 13px; }
+    body.mode-book .week-lead { margin: 8px 0 6px; font-size: 15px; }
+    body.mode-book .day-nav { margin: 4px 0 8px; }
     /* код в книге не уезжает за край страницы — переносим строки, чуть мельче */
     body.mode-book .spell pre, body.mode-book .prompt-card pre, body.mode-book .cmdline {
         white-space: pre-wrap; word-break: break-word; overflow: visible; font-size: 12.5px; line-height: 1.55;
@@ -1369,15 +1386,21 @@
 
     /* ── типографика книги: что с чего начинается и что не рвём ── */
     /* каждая глава и каждый день — с новой страницы (как в настоящей книге) */
-    body.mode-book .chapter, body.mode-book .day-page,
+    body.mode-book .chapter,
     body.mode-book .plan, body.mode-book .prompts, body.mode-book .toc,
     body.mode-book .heroes, body.mode-book .course, body.mode-book .track { break-before: column; }
-    body.mode-book .day-page { border-top: 0; padding-top: 0; margin-top: 0; }
+    /* дни идут подряд (без пустых полустраниц), разделяясь пунктиром;
+       шапка дня и её картинка не отрываются друг от друга */
+    body.mode-book .day-page { border-top: 1px dashed var(--line); padding-top: 12px; margin: 6px 0 14px; }
+    body.mode-book .day-page:first-of-type { border-top: 0; padding-top: 0; }
+    body.mode-book .day-kicker { break-before: auto; }
     body.mode-book .chapter { padding-top: 0; }
     body.mode-book .divide { display: none; }             /* разделители не нужны: страница = разделитель */
     /* заголовки и шапки не остаются сиротами внизу страницы */
     body.mode-book h2, body.mode-book h3, body.mode-book .day-page h3,
-    body.mode-book .ch-head, body.mode-book .day-kicker, body.mode-book .week-lead { break-after: avoid; }
+    body.mode-book .ch-head, body.mode-book .day-kicker { break-after: avoid; }
+    /* подводка недели остаётся под обложкой недели (не тянется к первому дню) */
+    body.mode-book .week-lead { break-before: avoid; }
     /* мелкие блоки не рвём между страницами */
     body.mode-book .scene, body.mode-book .learn, body.mode-book .task,
     body.mode-book .prompt-card, body.mode-book .recipe, body.mode-book figure,
