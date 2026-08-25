@@ -31,6 +31,12 @@
         return out + "</div>";
     }
 
+    function renderReal(r) {
+        if (!r) return "";
+        return '<div class="real-word"><div class="h">'
+            + (r.title || "🔬 Настоящее слово") + "</div>" + (r.html || "") + "</div>";
+    }
+
     function renderTask(task) {
         if (!task) return "";
         var out = '<div class="task"><div class="h">' + (task.title || "") + "</div>";
@@ -70,6 +76,7 @@
             + '<div class="day-kicker">' + kicker + "</div>"
             + renderHead(day)
             + renderProse(day.prose)
+            + renderReal(day.real)
             + renderTask(day.task);
         if (day.next) {
             html += '<div class="day-next"><a href="#d' + pad3(day.next)
