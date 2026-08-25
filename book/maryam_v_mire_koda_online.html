@@ -1271,103 +1271,101 @@
         height: 0;
     }
 
-    /* ── режим книги: горизонтальные страницы через CSS-колонки ── */
-    body.mode-book {
-        overflow: hidden;
-        height: 100dvh;
+    /* ── режим книги: настоящий разворот (две страницы, обложка, переплёт) ── */
+    :root {
+        --cols: 2; --colW: 300px; --pad: 34px; --gutter: 56px; --spreadW: 720px; --spreadH: 480px;
     }
 
+    /* базово декор скрыт — включается только в режиме книги */
+    .binding, .curl, .leaf { display: none; }
+
+    body.mode-book { overflow: hidden; height: 100dvh; background: #e9dfcb; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body.mode-book { background: #15111c; } }
+    :root[data-theme="dark"] body.mode-book { background: #15111c; }
+
+    /* твёрдая обложка-рамка + клип разворота (тень как у настоящей книги) */
+    body.mode-book .book-clip {
+        position: fixed; left: 50%;
+        top: calc(var(--barH) + (100dvh - var(--barH) - var(--spreadH)) / 2);
+        transform: translateX(-50%);
+        width: var(--spreadW); height: var(--spreadH);
+        overflow: hidden; border-radius: 5px 8px 8px 5px; background: var(--card);
+        box-shadow: 0 0 0 8px #d8cbb2, 0 0 0 9px rgba(0, 0, 0, .12),
+                    0 30px 60px rgba(40, 28, 10, .40), 0 10px 24px rgba(40, 28, 10, .28);
+    }
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) body.mode-book .book-clip {
+            box-shadow: 0 0 0 8px #2a2436, 0 0 0 9px rgba(0, 0, 0, .5),
+                        0 30px 60px rgba(0, 0, 0, .6), 0 10px 24px rgba(0, 0, 0, .5);
+        }
+    }
+
+    /* страница = колонка; .wrap шириной в одну колонку, лишние колонки уходят
+       вбок и обрезаются клипом; листаем сдвигом через --pg (в «страницах») */
     body.mode-book .wrap {
-        position: fixed;
-        top: var(--barH);
-        bottom: 0;
-        left: 50%;
-        width: var(--pageW);
-        max-width: none;
-        margin: 0;
-        padding: 16px var(--pad) 20px;
-        column-width: calc(var(--pageW) - 2 * var(--pad));
-        column-gap: var(--gutter);
-        column-fill: auto;
-        overflow: visible;
-        transform: translateX(calc(-50% - var(--pg, 0) * (var(--pageW) - 2 * var(--pad) + var(--gutter))));
-        transition: transform .34s cubic-bezier(.22, .61, .36, 1);
-        will-change: transform;
+        position: absolute; top: 0; left: 0; height: 100%;
+        width: calc(var(--colW) + 2 * var(--pad)); max-width: none; margin: 0;
+        padding: var(--pad) var(--pad) calc(var(--pad) - 8px);
+        column-width: var(--colW); column-gap: var(--gutter); column-fill: auto;
+        overflow: visible; font-size: 16px; line-height: 1.6;
+        transform: translateX(calc(-1 * var(--pg, 0) * (var(--colW) + var(--gutter))));
+        transition: transform .5s cubic-bezier(.33, 0, .2, 1); will-change: transform;
+    }
+    body.mode-book .wrap.no-anim { transition: none !important; }
+
+    /* мягкая тень от переплёта на внутренних краях страниц */
+    body.mode-book .book-clip::before, body.mode-book .book-clip::after {
+        content: ""; position: absolute; top: 0; bottom: 0; width: 46px; z-index: 5; pointer-events: none;
+    }
+    body.mode-book .book-clip::before { left: 50%; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(60, 45, 20, .13)); }
+    body.mode-book .book-clip::after { left: 50%; background: linear-gradient(270deg, transparent, rgba(60, 45, 20, .13)); }
+
+    /* переплёт по центру со стежками */
+    body.mode-book .binding {
+        display: flex; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 2px; z-index: 6;
+        background: linear-gradient(180deg, rgba(60, 45, 20, .16), rgba(60, 45, 20, .34), rgba(60, 45, 20, .16));
+        flex-direction: column; justify-content: space-around; align-items: center; padding: 9% 0;
+    }
+    body.mode-book .binding i { width: 2px; height: 13px; background: var(--faint); border-radius: 2px; opacity: .6; }
+
+    /* загнутый уголок нижней страницы */
+    body.mode-book .curl {
+        display: block; position: absolute; right: 0; bottom: 0; width: 60px; height: 60px; z-index: 7; pointer-events: none;
+        background: linear-gradient(135deg, transparent 45%, rgba(0, 0, 0, .10) 46%, var(--card) 48%);
+        box-shadow: -3px -3px 8px rgba(0, 0, 0, .12);
     }
 
-    body.mode-book .wrap.no-anim {
-        transition: none !important;
+    /* переворачивающийся лист (анимация листания) */
+    body.mode-book .leaf {
+        position: absolute; top: 0; height: 100%; width: calc(var(--colW) + var(--pad) + var(--gutter) / 2); z-index: 8;
+        background: linear-gradient(90deg, #f7f0de, #ece2cc); box-shadow: 0 0 26px rgba(0, 0, 0, .2);
+        backface-visibility: hidden; pointer-events: none;
     }
+    body.mode-book.turning .leaf { display: block; }
+    body.mode-book .leaf.fwd { right: 0; transform-origin: left center; }
+    body.mode-book .leaf.bwd { left: 0; transform-origin: right center; }
+    body.mode-book .leaf.fwd.go { animation: leafFwd .55s ease-in forwards; }
+    body.mode-book .leaf.bwd.go { animation: leafBwd .55s ease-in forwards; }
+    @keyframes leafFwd { from { transform: rotateY(0); } to { transform: rotateY(-176deg); } }
+    @keyframes leafBwd { from { transform: rotateY(0); } to { transform: rotateY(176deg); } }
 
-    /* чтобы одна страница выглядела как страница: ограничиваем высоту медиа */
-    body.mode-book img {
-        max-height: 54vh;
-        width: auto;
-        max-width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-    }
+    /* одностраничный режим (узкие экраны) — без переплёта и загиба-в-центре */
+    body.mode-book.single .binding,
+    body.mode-book.single .book-clip::before,
+    body.mode-book.single .book-clip::after { display: none; }
 
-    body.mode-book .cover {
-        padding: 24px 0 20px;
-    }
-
-    body.mode-book .cover-art {
-        max-width: 320px;
-    }
-
-    body.mode-book .scene svg {
-        max-height: 46vh;
-        width: auto;
-    }
-
-    body.mode-book .weeks-gallery {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    /* не рвём мелкие блоки между страницами */
+    /* медиа и блоки внутри страниц */
+    body.mode-book img { max-height: 40vh; width: auto; max-width: 100%; margin-left: auto; margin-right: auto; }
+    body.mode-book .cover { padding: 8px 0 12px; }
+    body.mode-book .cover h1 { font-size: clamp(26px, 6.5vmin, 42px); }
+    body.mode-book .cover-art { max-width: 80%; }
+    body.mode-book .scene svg { max-height: 36vh; width: auto; }
+    body.mode-book .weeks-gallery { grid-template-columns: 1fr; }
     body.mode-book .scene, body.mode-book .learn, body.mode-book .task,
     body.mode-book .prompt-card, body.mode-book .recipe, body.mode-book figure,
     body.mode-book .heroes-grid .hero, body.mode-book .course .tile,
-    body.mode-book .track .quests {
-        break-inside: avoid;
-    }
-
-    body.mode-book h2, body.mode-book h3, body.mode-book .day-page h3 {
-        break-after: avoid;
-    }
-
-    /* лёгкая «книжная» тень по краям страницы */
-    body.mode-book::before, body.mode-book::after {
-        content: "";
-        position: fixed;
-        top: var(--barH);
-        bottom: 0;
-        width: 40px;
-        z-index: 40;
-        pointer-events: none;
-    }
-
-    body.mode-book::before {
-        left: 0;
-        background: linear-gradient(90deg, rgba(60, 45, 20, .10), transparent);
-    }
-
-    body.mode-book::after {
-        right: 0;
-        background: linear-gradient(270deg, rgba(60, 45, 20, .10), transparent);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        :root:not([data-theme="light"]) ~ * body.mode-book::before,
-        body.mode-book::before {
-            background: linear-gradient(90deg, rgba(0, 0, 0, .35), transparent);
-        }
-
-        body.mode-book::after {
-            background: linear-gradient(270deg, rgba(0, 0, 0, .35), transparent);
-        }
-    }
+    body.mode-book .track .quests { break-inside: avoid; }
+    body.mode-book h2, body.mode-book h3, body.mode-book .day-page h3 { break-after: avoid; }
 
     /* ═══════════════════════════════════════════════════════════════
        ЗАСТАВКА: детская комната, зимний вечер, горит камин, на полке —
@@ -1434,6 +1432,18 @@
         background: radial-gradient(circle, rgba(255, 150, 60, .30), transparent 60%); animation: glow 3.4s ease-in-out infinite; }
     @keyframes glow { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
 
+    /* котик у камина (силуэт с тёплым отсветом от огня) */
+    #intro .cat { position: absolute; left: 21%; bottom: 15%; width: 12vmin; min-width: 68px; z-index: 5;
+        filter: drop-shadow(-5px 0 7px rgba(255, 150, 60, .40)) drop-shadow(0 6px 8px rgba(0, 0, 0, .35));
+        transform-origin: bottom center; animation: catbreathe 4.5s ease-in-out infinite; }
+    #intro .cat svg { width: 100%; height: auto; display: block; fill: #150f16; }
+    #intro .cat .eye { fill: #ffcf6a; animation: catblink 5.5s ease-in-out infinite; }
+    #intro .cat .tail { transform-origin: 34% 88%; animation: cattail 3.6s ease-in-out infinite; }
+    @keyframes catbreathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.02); } }
+    @keyframes cattail { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-7deg); } }
+    @keyframes catblink { 0%, 92%, 100% { opacity: 1; } 95% { opacity: .1; } }
+    @media (max-width: 640px) { #intro .cat { left: 16%; bottom: 20%; width: 15vmin; } }
+
     /* книжный шкаф */
     #intro .bookshelf { position: absolute; right: 7%; bottom: 18%; width: 34vmin; min-width: 216px;
         background: linear-gradient(#5b3d25, #432b18); border: 4px solid #38230f; border-radius: 8px;
@@ -1498,7 +1508,8 @@
         #intro .ourbook { width: 17vmin; height: 22vmin; }
     }
     @media (prefers-reduced-motion: reduce) {
-        #intro .flames i, #intro .fire-glow, #intro .snow i, #intro .ourbook { animation: none !important; }
+        #intro .flames i, #intro .fire-glow, #intro .snow i, #intro .ourbook,
+        #intro .cat, #intro .cat .eye, #intro .cat .tail { animation: none !important; }
     }
 
     /* ── ПЕЧАТЬ: чистый A4 ── */
@@ -1546,11 +1557,12 @@
             display: none !important;
         }
 
-        .wrap, body.mode-book .wrap {
+        .wrap, body.mode-book .wrap, .book-clip, body.mode-book .book-clip {
             position: static !important;
             transform: none !important;
             inset: auto !important;
             width: auto !important;
+            height: auto !important;
             max-width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
@@ -1558,7 +1570,10 @@
             column-width: auto !important;
             column-gap: 0 !important;
             overflow: visible !important;
+            box-shadow: none !important;
+            background: #fff !important;
         }
+        .binding, .curl, .leaf { display: none !important; }
 
         .chapter, .day-page, .plan, .prompts {
             break-before: page;
@@ -1728,6 +1743,20 @@
         </div>
     </div>
 
+    <!-- котик у камина, греется и смотрит на огонь -->
+    <div class="cat" aria-hidden="true">
+        <svg viewBox="0 0 120 150">
+            <g class="tail">
+                <path d="M30 132 C2 130 -2 104 16 96 C6 106 20 116 40 112 C46 118 44 132 30 132 Z"/>
+            </g>
+            <path d="M60 146 C34 146 28 126 33 108 C21 102 17 66 30 46 L25 16 L46 40
+                     C52 36 68 36 74 40 L95 16 L90 46 C103 66 99 104 87 108
+                     C92 126 86 146 60 146 Z"/>
+            <ellipse class="eye" cx="50" cy="62" rx="3.4" ry="4.6"/>
+            <ellipse class="eye" cx="70" cy="62" rx="3.4" ry="4.6"/>
+        </svg>
+    </div>
+
     <div class="bookshelf">
         <div class="brow" id="shelfTop">
             <span class="spine" style="height:78%;background:linear-gradient(#b5533f,#8f3d2e)"></span>
@@ -1767,6 +1796,7 @@
     <button class="skip" id="introSkip" type="button">пропустить →</button>
 </div>
 
+<div class="book-clip">
 <div class="wrap">
     <!-- ═══ COVER ═══ -->
     <header class="cover">
@@ -4314,7 +4344,14 @@ tetromino pieces placed on the grid,
         итог курса — НАША игра BlockDuel, собранная и понятая ребёнком целиком
         <br><a class="backtop" href="#c1">↑ к началу</a>
     </footer>
-</div>
+</div><!-- /.wrap -->
+    <!-- переплёт по центру разворота (со стежками) -->
+    <div class="binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <!-- загнутый уголок страницы -->
+    <div class="curl" aria-hidden="true"></div>
+    <!-- переворачивающийся лист (анимация) -->
+    <div class="leaf" id="leaf" aria-hidden="true"></div>
+</div><!-- /.book-clip -->
 
 <!-- ═══════════════════════════════════════════════════════════════
      Читалка: постраничное перелистывание (режим книги).
@@ -4328,9 +4365,13 @@ tetromino pieces placed on the grid,
     (function () {
         var body = document.body, root = document.documentElement;
         var wrap = document.querySelector(".wrap");
+        var clip = document.querySelector(".book-clip");
+        var leaf = document.getElementById("leaf");
         var ind = document.getElementById("rdInd");
         var KEY = "maryam-reader-mode";
-        var pg = 0, count = 1, pageW = 680, gutter = 64, pad = 26;
+        var BAR = parseInt(getComputedStyle(root).getPropertyValue("--barH")) || 52;
+        var pg = 0, count = 1, cols = 2, colW = 300, gutter = 56, pad = 34, spreadW = 720, spreadH = 480;
+        var turning = false;
 
         // невидимый маркер конца — по нему считаем число страниц
         var probe = document.createElement("span");
@@ -4338,57 +4379,105 @@ tetromino pieces placed on the grid,
         probe.setAttribute("aria-hidden", "true");
         wrap.appendChild(probe);
 
-        function inBook() {
-            return body.classList.contains("mode-book");
-        }
+        function inBook() { return body.classList.contains("mode-book"); }
+        function reduce() { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+        function stride() { return colW + gutter; }
+        function centerX(el) { var r = el.getBoundingClientRect(); return r.left + r.width / 2; }
+        function maxPg() { return Math.max(0, (Math.ceil(count / cols) - 1) * cols); }
 
-        function stride() {
-            return pageW - 2 * pad + gutter;
-        }        // шаг = ширина колонки + зазор
-        function centerX(el) {
-            var r = el.getBoundingClientRect();
-            return r.left + r.width / 2;
-        }
-
-        // страница элемента: отсчитываем от текущей центрированной страницы
-        function pageOf(el) {
-            return pg + Math.round((centerX(el) - window.innerWidth / 2) / stride());
-        }
+        // левый край первой колонки на экране (центр видимой колонки pg)
+        function baseX() { return clip.getBoundingClientRect().left + pad + colW / 2; }
+        // индекс страницы элемента (в «одиночных» страницах)
+        function pageOf(el) { return pg + Math.round((centerX(el) - baseX()) / stride()); }
 
         function dims() {
-            var w = window.innerWidth;
-            pageW = Math.min(680, Math.max(300, w - 40));
-            gutter = w < 560 ? 34 : 64;
-            pad = w < 560 ? 16 : 26;
-            root.style.setProperty("--pageW", pageW + "px");
-            root.style.setProperty("--gutter", gutter + "px");
+            var w = window.innerWidth, h = window.innerHeight;
+            cols = w >= 820 ? 2 : 1;
+            var mX = Math.max(14, Math.round(w * 0.03));
+            var mY = Math.max(10, Math.round(h * 0.02));
+            var availW = w - 2 * mX;
+            var availH = h - BAR - 2 * mY;
+            if (cols === 2) {
+                spreadH = Math.min(availH, Math.round(availW / 1.5));
+                spreadW = Math.min(availW, Math.round(spreadH * 1.5));
+                gutter = Math.max(30, Math.round(spreadW * 0.055));
+                pad = Math.max(20, Math.round(spreadW * 0.04));
+                colW = Math.floor((spreadW - gutter - 2 * pad) / 2);
+                spreadW = 2 * colW + gutter + 2 * pad;
+            } else {
+                spreadH = availH;
+                pad = Math.max(16, Math.round(w * 0.055));
+                spreadW = Math.min(availW, Math.round(spreadH * 0.72));
+                colW = spreadW - 2 * pad;
+                gutter = 60;
+                spreadW = colW + 2 * pad;
+            }
+            body.classList.toggle("single", cols === 1);
+            root.style.setProperty("--cols", cols);
+            root.style.setProperty("--colW", colW + "px");
             root.style.setProperty("--pad", pad + "px");
+            root.style.setProperty("--gutter", gutter + "px");
+            root.style.setProperty("--spreadW", spreadW + "px");
+            root.style.setProperty("--spreadH", spreadH + "px");
+        }
+
+        function label() {
+            var left = pg + 1, right = Math.min(pg + cols, count);
+            ind.textContent = (cols === 2 && right > left)
+                ? (left + "–" + right + " / " + count)
+                : (left + " / " + count);
         }
 
         function apply(anim) {
             if (anim === false) wrap.classList.add("no-anim");
             root.style.setProperty("--pg", pg);
-            ind.textContent = (pg + 1) + " / " + count;
-            if (anim === false) {
-                void wrap.offsetWidth;
-                wrap.classList.remove("no-anim");
-            }
+            label();
+            if (anim === false) { void wrap.offsetWidth; wrap.classList.remove("no-anim"); }
         }
 
-        function go(i, anim) {
-            pg = Math.max(0, Math.min(count - 1, i));
+        // перейти на страницу i (выравниваем к началу разворота)
+        function setPage(i, anim) {
+            i = Math.max(0, Math.min(maxPg(), i));
+            pg = Math.floor(i / cols) * cols;
             apply(anim);
+        }
+
+        // листание с анимацией переворота листа
+        function flip(dir) {
+            if (!inBook() || turning) return;
+            var target = pg + dir * cols;
+            if (target < 0 || target > maxPg()) return;
+            if (reduce()) { setPage(target); return; }
+            turning = true;
+            leaf.className = "leaf " + (dir > 0 ? "fwd" : "bwd");
+            body.classList.add("turning");
+            void leaf.offsetWidth;
+            leaf.classList.add("go");
+            // на середине переворота (лист ребром) — меняем разворот под ним
+            setTimeout(function () { setPage(target, false); }, 280);
+            setTimeout(function () {
+                body.classList.remove("turning");
+                leaf.className = "leaf";
+                turning = false;
+            }, 570);
+        }
+
+        // прыжок к якорю (оглавление, day-nav): на начало нужного разворота
+        function jumpTo(el) {
+            var i = pageOf(el);
+            setPage(Math.floor(i / cols) * cols);
         }
 
         function layout() {
             if (!inBook()) return;
             dims();
             wrap.classList.add("no-anim");
+            pg = Math.floor(pg / cols) * cols;
             root.style.setProperty("--pg", pg);
-            void wrap.offsetWidth;                                       // форсим пересчёт колонок
-            var last = pg + Math.round((centerX(probe) - window.innerWidth / 2) / stride());
+            void wrap.offsetWidth;                                  // форсим пересчёт колонок
+            var last = pg + Math.round((centerX(probe) - baseX()) / stride());
             count = Math.max(1, last + 1);
-            if (pg > count - 1) pg = count - 1;
+            if (pg > maxPg()) pg = maxPg();
             apply(false);
         }
 
@@ -4396,116 +4485,68 @@ tetromino pieces placed on the grid,
             body.classList.toggle("mode-book", on);
             document.getElementById("rdMode").textContent = on ? "📜 Обычный вид" : "📖 Режим книги";
             document.getElementById("rdMode").setAttribute("aria-pressed", on ? "true" : "false");
-            if (save !== false) {
-                try {
-                    localStorage.setItem(KEY, on ? "1" : "0");
-                } catch (e) {
-                }
-            }
-            if (on) {
-                layout();
-            } else {
-                wrap.style.removeProperty("transform");
-            }
+            if (save !== false) { try { localStorage.setItem(KEY, on ? "1" : "0"); } catch (e) {} }
+            if (on) { layout(); }
+            else { wrap.style.removeProperty("transform"); body.classList.remove("single"); }
         }
 
-        document.getElementById("rdMode").addEventListener("click", function () {
-            setMode(!inBook());
-        });
-        document.getElementById("rdPrev").addEventListener("click", function () {
-            go(pg - 1);
-        });
-        document.getElementById("rdNext").addEventListener("click", function () {
-            go(pg + 1);
-        });
-        document.getElementById("rdPrint").addEventListener("click", function () {
-            window.print();
-        });
+        document.getElementById("rdMode").addEventListener("click", function () { setMode(!inBook()); });
+        document.getElementById("rdPrev").addEventListener("click", function () { flip(-1); });
+        document.getElementById("rdNext").addEventListener("click", function () { flip(1); });
+        document.getElementById("rdPrint").addEventListener("click", function () { window.print(); });
 
         window.addEventListener("keydown", function (e) {
             if (!inBook() || e.metaKey || e.ctrlKey || e.altKey) return;
-            if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
-                e.preventDefault();
-                go(pg + 1);
-            } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
-                e.preventDefault();
-                go(pg - 1);
-            } else if (e.key === "Home") {
-                e.preventDefault();
-                go(0);
-            } else if (e.key === "End") {
-                e.preventDefault();
-                go(count - 1);
-            }
+            if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); flip(1); }
+            else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); flip(-1); }
+            else if (e.key === "Home") { e.preventDefault(); setPage(0); }
+            else if (e.key === "End") { e.preventDefault(); setPage(maxPg()); }
         });
 
-        // клики: якоря → нужная страница; пустые зоны слева/справа → листание
+        // клики: якоря → нужный разворот; пустые зоны слева/справа → листание
         document.addEventListener("click", function (e) {
             var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
             if (a) {
                 var id = a.getAttribute("href").slice(1);
                 var t = id && document.getElementById(id);
-                if (t && inBook()) {
-                    e.preventDefault();
-                    go(pageOf(t));
-                }
+                if (t && inBook()) { e.preventDefault(); jumpTo(t); }
                 return;
             }
             if (inBook() && !(e.target.closest && e.target.closest("a,button,input,select,textarea,pre,code"))) {
                 var x = e.clientX, w = window.innerWidth;
-                if (x < w * 0.28) go(pg - 1);
-                else if (x > w * 0.72) go(pg + 1);
+                if (x < w * 0.30) flip(-1);
+                else if (x > w * 0.70) flip(1);
             }
         });
 
         // свайп на тач-экранах
-        var sx = 0, sy = 0, on = false;
+        var sx = 0, sy = 0, sw = false;
         window.addEventListener("touchstart", function (e) {
             if (!inBook()) return;
-            var t = e.touches[0];
-            sx = t.clientX;
-            sy = t.clientY;
-            on = true;
+            var t = e.touches[0]; sx = t.clientX; sy = t.clientY; sw = true;
         }, {passive: true});
         window.addEventListener("touchend", function (e) {
-            if (!inBook() || !on) return;
-            on = false;
-            var t = e.changedTouches[0];
-            var dx = t.clientX - sx, dy = t.clientY - sy;
-            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-                dx < 0 ? go(pg + 1) : go(pg - 1);
-            }
+            if (!inBook() || !sw) return; sw = false;
+            var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) flip(dx < 0 ? 1 : -1);
         }, {passive: true});
 
         var rt;
-
-        function relayout() {
-            clearTimeout(rt);
-            rt = setTimeout(layout, 150);
-        }
-
+        function relayout() { clearTimeout(rt); rt = setTimeout(layout, 150); }
         window.addEventListener("resize", relayout);
-        window.addEventListener("load", function () {
-            if (inBook()) layout();
-        });
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () {
-            if (inBook()) layout();
-        });
-        // пересчёт, когда догружаются картинки (их высота меняет разбивку)
+        window.addEventListener("load", function () { if (inBook()) layout(); });
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (inBook()) layout(); });
         Array.prototype.forEach.call(document.images, function (im) {
             if (!im.complete) im.addEventListener("load", relayout);
         });
 
         // старт: книга по умолчанию (пока пользователь явно не выбрал обычный вид)
         var saved = null;
-        try {
-            saved = localStorage.getItem(KEY);
-        } catch (e) {
-        }
+        try { saved = localStorage.getItem(KEY); } catch (e) {}
         setMode(saved !== "0", false);
 
         // хук для заставки: пересчитать разбивку/перейти на страницу
-        window.__reader = { layout: layout, go: go, setMode: setMode };
+        window.__reader = { layout: layout, go: function (i) { setPage(i); }, setMode: setMode };
     })();
 </script>
 
