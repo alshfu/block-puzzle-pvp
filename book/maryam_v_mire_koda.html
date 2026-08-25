@@ -447,6 +447,7 @@ flutter run -d chrome   <span class="cmt"># и вот она, наша игра,
       <li><a href="#c12"><span class="n">11</span><span class="t">Двое через океан <span class="s">— бэкенд и сервер</span></span></a></li>
       <li><a href="#ctest"><span class="n">12</span><span class="t">Зверята-контролёры <span class="s">— тесты, страж качества</span></span></a></li>
       <li><a href="#cbug"><span class="n">13</span><span class="t">Охота на баги <span class="s">— как мы чинили жучков</span></span></a></li>
+      <li><a href="#cserver"><span class="n">13+</span><span class="t">Крепость-сервер <span class="s">— бонус: чиним серверные дыры</span></span></a></li>
       <li><a href="#cgit"><span class="n">14</span><span class="t">Git: машина времени <span class="s">— не потерять работу</span></span></a></li>
       <li><a href="#c13"><span class="n">15</span><span class="t">Один код — четыре мира <span class="s">— кросс-платформа</span></span></a></li>
       <li><a href="#c14"><span class="n">16</span><span class="t">Игра готова <span class="s">— эпилог</span></span></a></li>
@@ -1348,6 +1349,74 @@ resetMatchAcc: freshMatch,   <span class="cmt">// тот же матч посл�
         <li><b>Баг</b> — маленькая ошибка в коде. Их не стыдятся, а находят и чинят.</li>
         <li><b>Отладка</b> — это как детектив: найти, понять причину, починить.</li>
         <li>Золотое правило: <b>починил → поставь тест</b>, чтобы ошибка не вернулась.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divide">
+
+  <!-- ═══ CH SERVER-FORTRESS (бонус) ═══ -->
+  <section class="chapter" id="cserver">
+    <div class="ch-head">
+      <div class="ch-badge"><svg><use href="#llama"/></svg></div>
+      <div><div class="ch-num">Бонус-глава · Крепость · 🎨 сервер-крепость</div><h2>Как мы сделали сервер несокрушимым</h2><div class="ch-companion">лама Лу укрепляет крепость</div></div>
+    </div>
+    <div class="prose">
+      <p class="say">Лу привела Марьям к башне-серверу. «Помнишь, сервер — это <em>судья</em> для двух игроков. А судья должен быть надёжнее всех. К нам приходил злой критик и кричал, что наша крепость — картонная. Мы проверили каждый камень. Кое-где и правда были щели — и мы их <b>заделали</b>. Пойдём, покажу трёх самых опасных жучков-великанов».</p>
+
+      <p><b>Великан №1 — «Одно словечко роняло всю башню».</b> Оказалось: если прислать серверу пустышку-сообщение <span class="mono">null</span>, он спотыкался и <em>падал целиком</em> — вместе со всеми игроками разом. Лу нахмурилась: «Судья не имеет права падать от кривого письма». Теперь сервер сначала смотрит, что письмо вообще письмо, а уж потом читает. И на самый крайний случай поставили «последнюю линию обороны».</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tI)"></span> щит от кривых писем <span class="file">server/room.ts + index.ts</span></div>
+<pre><code><span class="cmt">// Проверяем письмо ДО того, как его читать:</span>
+<span class="key">if</span> (msg === <span class="key">null</span> || <span class="key">typeof</span> msg !== <span class="str">"object"</span>) <span class="key">return</span>; <span class="cmt">// не падаем</span>
+
+<span class="cmt">// Последняя линия обороны: одна ошибка не роняет всю башню.</span>
+process.on(<span class="str">"uncaughtException"</span>, (err) =&gt; console.error(err));
+</code></pre>
+      <div class="spell-cap">Раньше <b>любой</b> мог уронить сервер одним сообщением. Теперь — нет. И это стерегут <b>первые серверные тесты</b> (их не было вовсе!).</div>
+    </div>
+    <div class="prose">
+      <p><b>Великан №2 — «Рейтинг, который забывался».</b> Сервер копил рейтинг игроков в памяти и записывал на диск с ленцой. При перезапуске или внезапном падении <em>последние результаты пропадали</em>. Лу покачала головой: «Соревнование без надёжного рейтинга — это не соревнование». Мы научили сервер сохранять рейтинг <em>перед выключением</em>, <em>каждую минуту на всякий случай</em>, и <em>бережно прятать</em> файл, если он вдруг испортился.</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> рейтинг не теряется <span class="file">server/index.ts + leaderboard.ts</span></div>
+<pre><code>process.on(<span class="str">"SIGTERM"</span>, () =&gt; leaderboard.flushNow()); <span class="cmt">// перед штатным выключением</span>
+
+setInterval(() =&gt; leaderboard.flushNow(), <span class="num">60_000</span>);  <span class="cmt">// и раз в минуту — на случай</span>
+                                                <span class="cmt">// внезапного падения</span>
+</code></pre>
+      <div class="spell-cap">Теперь рейтинг переживает и штатную остановку, и жёсткий краш, и порчу файла. Три щита вместо одной щели.</div>
+    </div>
+    <div class="prose">
+      <p><b>Великан №3 — «Мёртвые телефоны».</b> Когда у игрока пропадала связь, его «телефон» иногда оставался «как бы поднятым» — и он не мог вернуться в игру. Лу придумала <span class="word">сердцебиение</span> (heartbeat): сервер раз в полминуты спрашивает «ты живой?» и мягко кладёт трубку тем, кто молчит. Тогда игрок сразу может переподключиться. А сопернику мы теперь вежливо говорим: <em>«он вернулся!»</em> — чтобы не висел баннер «соперник вышел».</p>
+    </div>
+    <div class="spell">
+      <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> сердцебиение сервера <span class="file">server/index.ts</span></div>
+<pre><code><span class="cmt">// Каждые 30 секунд: «ты живой?» — и отключаем молчунов.</span>
+setInterval(() =&gt; {
+  <span class="key">for</span> (<span class="key">const</span> ws <span class="key">of</span> clients) {
+    <span class="key">if</span> (!alive.get(ws)) ws.terminate();  <span class="cmt">// молчит — кладём трубку</span>
+    <span class="key">else</span> { alive.set(ws, <span class="key">false</span>); ws.ping(); } <span class="cmt">// пинг «ты живой?»</span>
+  }
+}, <span class="num">30_000</span>);
+</code></pre>
+      <div class="spell-cap">Мёртвые соединения больше не держат место. Обрыв связи — не конец: игрок вернётся, а соперник это увидит.</div>
+    </div>
+    <div class="task">
+      <div class="h">🍎 Задание дня</div>
+      <ol>
+        <li>Объясни, почему <b>судья-сервер</b> должен быть надёжнее обычного игрока.</li>
+        <li>Мы спасли рейтинг <b>тремя</b> способами. Назови их и скажи, от чего каждый.</li>
+        <li>Что такое «сердцебиение» и зачем оно? Придумай, где ещё в жизни полезна проверка «ты живой?».</li>
+      </ol>
+    </div>
+    <div class="learn">
+      <div class="h"><span class="star">★</span> Что ты выучил</div>
+      <ul>
+        <li><b>Сервер-судья</b> обязан быть устойчивым: кривой ввод не должен его ронять.</li>
+        <li>Важные данные защищают <b>несколькими</b> щитами (перед выключением + периодически + бэкап).</li>
+        <li><b>Heartbeat</b> находит мёртвые соединения; критику отвечают не обидой, а <b>проверенными фиксами и тестами</b>.</li>
       </ul>
     </div>
   </section>
