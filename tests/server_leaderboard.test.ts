@@ -101,6 +101,22 @@ describe("Leaderboard — персистентность", () => {
   });
 });
 
+describe("Leaderboard — сериализация записей (без гонки)", () => {
+  it("параллельные flushNow не портят файл, данные целы", async () => {
+    const lb = new Leaderboard(path);
+    lb.reportMatch({ participants: [A, B], winner: 0 });
+    // Пачка одновременных сбросов (как дебаунс + автосейв + SIGTERM разом).
+    await Promise.all([lb.flushNow(), lb.flushNow(), lb.flushNow()]);
+    expect(existsSync(path)).toBe(true);
+    const lb2 = new Leaderboard(path); // читаем — файл валиден
+    expect(entryOf(lb2, "a")!.elo).toBe(1012);
+    expect(entryOf(lb2, "b")!.elo).toBe(988);
+    // Временных .tmp-* не осталось «висящими» как боевой файл.
+    const junk = readdirSync(dir).filter((f) => f.endsWith(".json"));
+    expect(junk).toEqual(["leaderboard.json"]);
+  });
+});
+
 describe("Leaderboard — устойчивость к битому файлу (L-C)", () => {
   it("повреждённый JSON не роняет и бэкапится в .corrupt-*", () => {
     writeFileSync(path, "не json {{{{");

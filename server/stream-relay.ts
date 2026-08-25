@@ -111,6 +111,11 @@ class StreamSession {
     const rtmpUrl = `${RTMP_BASE}/${msg.streamKey}`;
     const ff = spawn("ffmpeg", ffmpegArgs(rtmpUrl));
     ff.on("error", (e) => this.fail(`ffmpeg spawn failed: ${e.message}`));
+    // EPIPE и прочие ошибки stdin (ffmpeg умер между write и событием close) —
+    // ловим, иначе unhandled 'error' на потоке уронил бы весь процесс релея.
+    ff.stdin.on("error", (e) => this.fail(`ffmpeg stdin error: ${e.message}`));
+    // Backpressure: если stdin переполнен — приостанавливаем приём чанков.
+    ff.stdin.on("drain", () => { try { this.ws.resume(); } catch { /* ignore */ } });
     ff.stderr.on("data", (d) => process.stderr.write(`[ffmpeg] ${d}`));
     ff.on("close", (code) => {
       this.send({ type: "ended", code });
@@ -121,10 +126,15 @@ class StreamSession {
     this.send({ type: "live" });
   }
 
-  /** Пишет бинарный WebM-чанк в stdin ffmpeg. */
+  /** Пишет бинарный WebM-чанк в stdin ffmpeg (с учётом backpressure). */
   handleChunk(data: Buffer): void {
     if (!this.ffmpeg || this.ffmpeg.stdin.destroyed) return;
-    this.ffmpeg.stdin.write(data);
+    // write() вернёт false при переполнении буфера — тогда приостанавливаем
+    // приём из сокета до события 'drain', чтобы память не росла безгранично.
+    const ok = this.ffmpeg.stdin.write(data);
+    if (!ok) {
+      try { this.ws.pause(); } catch { /* ignore */ }
+    }
   }
 
   /** Завершает stdin (конец эфира). */
@@ -157,7 +167,12 @@ class StreamSession {
 }
 
 const server = createServer();
-const wss = new WebSocketServer({ noServer: true });
+// maxPayload ограничивает размер одного бинарного фрейма (анти-DoS по памяти).
+const wss = new WebSocketServer({ noServer: true, maxPayload: 4 * 1024 * 1024 });
+
+// Last-line defense: кривой ввод/промис не должен ронять процесс релея целиком.
+process.on("uncaughtException", (err) => console.error("[relay] uncaughtException:", err));
+process.on("unhandledRejection", (err) => console.error("[relay] unhandledRejection:", err));
 
 server.on("upgrade", (req: IncomingMessage, socket, head) => {
   const origin = req.headers.origin;

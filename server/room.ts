@@ -207,11 +207,22 @@ export class Room {
       this.applyRequestedCfg(requestedCfg);
     }
 
+    // Матч уже шёл ДО этого hello? Тогда это реконнект (а не первый вход).
+    const wasPlaying = this.state.status === "playing";
     const bothIn = this.state.players.every((p) => p.conn);
     if (this.state.status === "waiting" && bothIn) {
       this.state.status = "playing";
       this.resetDeadline();
       this.startTimer();
+    }
+    // Reconnect посреди матча: снимаем у соперника «залипший» баннер
+    // «соперник вышел» (иначе он висел бы до конца партии). Только при настоящем
+    // реконнекте (матч уже шёл), не на первом входе второго игрока.
+    if (wasPlaying) {
+      const other = this.state.players[(1 - idx) as 0 | 1].conn;
+      if (other && other !== conn) {
+        this.send(other, { type: "opponent_reconnected" });
+      }
     }
     this.send(conn, { type: "joined", you: idx as 0 | 1, state: this.publicState() });
     if (bothIn) this.broadcastState();

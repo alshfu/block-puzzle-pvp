@@ -228,6 +228,24 @@ function bothInRoom(onOver?: (winner: number) => [number, number]): {
   return { room, c0, c1 };
 }
 
+describe("Room — reconnect уведомляет соперника", () => {
+  it("после reconnect у соперника снимается баннер (opponent_reconnected)", () => {
+    const room = makeRoom();
+    const c0 = new FakeConn();
+    const c1 = new FakeConn();
+    room.handleConnection(c0 as never);
+    room.handleConnection(c1 as never);
+    c0.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    c1.emit("message", JSON.stringify({ type: "hello", profile: p1, token: "tb" }));
+    c0.emit("close", undefined); // игрок 0 вышел → c1 получил opponent_left
+    const c0b = new FakeConn();
+    room.handleConnection(c0b as never);
+    c0b.emit("message", JSON.stringify({ type: "hello", profile: p0, token: "ta" }));
+    // Соперник (c1) получает opponent_reconnected — баннер можно снять.
+    expect(c1.sent.some((m) => (m as { type?: string }).type === "opponent_reconnected")).toBe(true);
+  });
+});
+
 describe("Room — очередь ходов и реванш", () => {
   it("ход не в свою очередь отклоняется", () => {
     const { room, c1 } = bothInRoom();

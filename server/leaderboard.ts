@@ -27,6 +27,11 @@ export class Leaderboard {
   private entries = new Map<string, LeaderboardEntry>();
   private subscribers = new Map<Conn, string | null>(); // conn → myId
   private saveTimer: NodeJS.Timeout | null = null;
+  // Сериализация записей: все flush чейнятся в одну цепочку, чтобы дебаунс,
+  // автосейв и SIGTERM-флаш НИКОГДА не писали в файл параллельно (иначе гонка
+  // writeFile/rename в общий tmp могла бы дать обрезанный файл).
+  private writing: Promise<void> = Promise.resolve();
+  private tmpSeq = 0;
 
   constructor(private storagePath: string) {
     this.load();
@@ -60,16 +65,22 @@ export class Leaderboard {
     if (this.saveTimer) return;
     this.saveTimer = setTimeout(() => {
       this.saveTimer = null;
-      void this.flush();
+      this.flush();
     }, SAVE_DEBOUNCE_MS);
   }
 
-  /** Атомарная async-запись (temp + rename) — без блокировки event-loop и без
-   *  риска повреждённого JSON при крахе посреди записи. */
-  private async flush(): Promise<void> {
+  /** Ставит запись в очередь (сериализованно). Fire-and-forget. */
+  private flush(): void {
+    this.writing = this.writing.then(() => this.doWrite());
+  }
+
+  /** Атомарная async-запись (уникальный temp + rename) — без блокировки
+   *  event-loop и без риска повреждённого JSON при крахе посреди записи.
+   *  Уникальный tmp на каждую запись исключает гонку в общий файл. */
+  private async doWrite(): Promise<void> {
+    const tmp = `${this.storagePath}.tmp-${process.pid}-${this.tmpSeq++}`;
     try {
       mkdirSync(dirname(this.storagePath), { recursive: true });
-      const tmp = `${this.storagePath}.tmp`;
       await writeFile(tmp, JSON.stringify([...this.entries.values()], null, 2));
       await rename(tmp, this.storagePath);
     } catch (err) {
@@ -77,15 +88,16 @@ export class Leaderboard {
     }
   }
 
-  /** M-C: немедленный сброс на диск для graceful shutdown (SIGTERM при деплое).
-   *  Гасит отложенный дебаунс и пишет сразу — иначе результаты за последнюю ≤1с
-   *  теряются при каждом `systemctl restart`. */
+  /** M-C: немедленный сброс на диск для graceful shutdown (SIGTERM) и
+   *  периодического автосейва. Гасит дебаунс и дожидается завершения ВСЕЙ
+   *  очереди записей (сериализованно — без гонки). */
   async flushNow(): Promise<void> {
     if (this.saveTimer) {
       clearTimeout(this.saveTimer);
       this.saveTimer = null;
     }
-    await this.flush();
+    this.writing = this.writing.then(() => this.doWrite());
+    await this.writing;
   }
 
   /** Возвращает рейтинги [pa, pb] ПОСЛЕ матча (для доставки клиенту). */
