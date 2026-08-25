@@ -12,6 +12,9 @@
 import base64
 import os
 import re
+import shutil
+import subprocess
+import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BOOK = os.path.join(ROOT, "book", "maryam_v_mire_koda.html")
@@ -20,6 +23,30 @@ OUT = os.path.join(ROOT, "book", "maryam_v_mire_koda_online.html")
 
 MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
         ".webp": "image/webp", ".gif": "image/gif"}
+
+# Картинок много (75+), в base64 они бы вышли за лимит артефакта (16MB), поэтому
+# перед встраиванием ужимаем через sips (macOS): макс. сторона MAX_PX, качество Q.
+MAX_PX = 820
+JPEG_Q = 70
+
+
+def load_bytes(path, tmpdir):
+    """Возвращает байты картинки, по возможности сжатой sips (иначе оригинал)."""
+    ext = os.path.splitext(path)[1].lower()
+    if ext in (".jpg", ".jpeg") and shutil.which("sips"):
+        out = os.path.join(tmpdir, os.path.basename(path))
+        try:
+            subprocess.run(
+                ["sips", "-Z", str(MAX_PX), "-s", "formatOptions", str(JPEG_Q),
+                 path, "--out", out],
+                check=True, capture_output=True)
+            if os.path.getsize(out) > 0:
+                with open(out, "rb") as fp:
+                    return fp.read()
+        except Exception:
+            pass
+    with open(path, "rb") as fp:
+        return fp.read()
 
 
 def main():
@@ -30,6 +57,7 @@ def main():
     cache = {}
     total = 0
     missing = []
+    tmpdir = tempfile.mkdtemp(prefix="bookimg-")
     for name in used:
         path = os.path.join(IMG_DIR, name)
         if not os.path.isfile(path):
@@ -37,10 +65,10 @@ def main():
             continue
         ext = os.path.splitext(name)[1].lower()
         mime = MIME.get(ext, "application/octet-stream")
-        with open(path, "rb") as fp:
-            raw = fp.read()
+        raw = load_bytes(path, tmpdir)
         total += len(raw)
         cache[name] = f"data:{mime};base64," + base64.b64encode(raw).decode("ascii")
+    shutil.rmtree(tmpdir, ignore_errors=True)
 
     def repl(m):
         name = m.group(1)

@@ -251,6 +251,11 @@
   .backtop { display:inline-block; margin-top: 10px; }
 
   @media (max-width:520px){ body{font-size:17px} .ch-badge{width:52px;height:52px} .ch-badge svg{width:40px;height:40px} }
+  .weeks-gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .weeks-gallery figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-sm); }
+  .weeks-gallery img { width:100%; height:auto; display:block; }
+  .weeks-gallery figcaption { padding:8px 10px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:13.5px; color:var(--ink); }
+  .weeks-gallery figcaption small { color:var(--muted); font-weight:500; }
 </style>
 
 <!-- ═══ SVG character sprite (reused) ═══ -->
@@ -1544,6 +1549,620 @@ flutter build macos    <span class="cmt"># программа для Mac</span>
   <hr class="divide">
 
   <!-- ═══ 200-DAY PLAN ═══ -->
+  <!-- DAYS_EXT_START (сгенерировано tools/gen_book_days.py) -->
+  <hr class="divide">
+  <section class="chapter" id="days3to6">
+    <div class="ch-head"><div class="ch-badge"><svg><use href="#alpaca"/></svg></div>
+      <div><div class="ch-num">Недели 3–6 · страницы-дни</div><h2>Дни 15–42: продолжаем по вечерам</h2><div class="ch-companion">по картинке — тема дня</div></div></div>
+    <div class="scene"><div class="scene-frame"><img src="images/week03.jpg" alt="Обложка недели 3"><div class="scene-topic"><small>Неделя 3</small>Лама Лу</div></div></div>
+    <p class="week-lead">Неделя 3. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>
+    <article class="day-page" id="d015">
+      <div class="day-kicker">День 15 · из 200 · тема: функция-приветствие</div>
+      <h3>Волшебная машина-функция</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day015.jpg" alt="лама Лу плетёт машину: слева вход, справа — ответ">
+          <div class="scene-topic"><small>Тема дня</small>функция-приветствие</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> лама Лу плетёт машину: слева вход, справа — ответ.</p>
+      </div>
+      <div class="prose"><p class="say">«Действие с именем — это функция, — сказала Лу. — Позови сколько хочешь».</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Открой course/week03_functions/day015.dart</li>
+          <li>Напиши функцию String привет(String имя) { return 'Привет, $имя!'; }</li>
+          <li>Позови привет('Марьям') и напечатай результат.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d016">День 16 →</a></div>
+    </article>
+    <article class="day-page" id="d016">
+      <div class="day-kicker">День 16 · из 200 · тема: функция площади</div>
+      <h3>Функция считает площадь</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day016.jpg" alt="машина берёт два числа и выдаёт одно">
+          <div class="scene-topic"><small>Тема дня</small>функция площади</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> машина берёт два числа и выдаёт одно.</p>
+      </div>
+      <div class="prose"><p class="say">Функция берёт вход и возвращает ответ через return.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Напиши int площадь(int a, int b) => a * b;</li>
+          <li>Позови площадь(3, 4) и напечатай 12.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d017">День 17 →</a></div>
+    </article>
+    <article class="day-page" id="d017">
+      <div class="day-kicker">День 17 · из 200 · тема: функция суммы</div>
+      <h3>Складываем в функции</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day017.jpg" alt="две цифры входят, сумма выходит">
+          <div class="scene-topic"><small>Тема дня</small>функция суммы</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> две цифры входят, сумма выходит.</p>
+      </div>
+      <div class="prose"><p class="say">Один раз придумал функцию — пользуешься везде.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Напиши int сумма(int a, int b) => a + b;</li>
+          <li>Проверь на нескольких числах.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d018">День 18 →</a></div>
+    </article>
+    <article class="day-page" id="d018">
+      <div class="day-kicker">День 18 · из 200 · тема: читаем настоящую функцию</div>
+      <h3>Настоящая функция очков</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day018.jpg" alt="светящийся свиток формулы очков из игры">
+          <div class="scene-topic"><small>Тема дня</small>читаем настоящую функцию</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> светящийся свиток формулы очков из игры.</p>
+      </div>
+      <div class="prose"><p class="say">Это функция из нашей игры — она считает очки за ход.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Открой lib/core/scoring.dart и найди scoreForMove.</li>
+          <li>Прочитай её построчно, ничего не меняя.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d019">День 19 →</a></div>
+    </article>
+    <article class="day-page" id="d019">
+      <div class="day-kicker">День 19 · из 200 · тема: зовём функцию игры</div>
+      <h3>Пробуем очки на числах</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day019.jpg" alt="линии превращаются в летящие очки">
+          <div class="scene-topic"><small>Тема дня</small>зовём функцию игры</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> линии превращаются в летящие очки.</p>
+      </div>
+      <div class="prose"><p class="say">Позови функцию с разными числами и сравни ответы.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Позови scoreForMove(1, 0, false) — сколько вышло?</li>
+          <li>Позови scoreForMove(2, 3, false) — сравни.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d020">День 20 →</a></div>
+    </article>
+    <article class="day-page" id="d020">
+      <div class="day-kicker">День 20 · из 200 · тема: своя формула</div>
+      <h3>Своя формула очков</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day020.jpg" alt="Марьям и Лу собирают свою машину очков">
+          <div class="scene-topic"><small>Тема дня</small>своя формула</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> Марьям и Лу собирают свою машину очков.</p>
+      </div>
+      <div class="prose"><p class="say">Собери функцию по образцу — теперь своими руками.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Напиши int очки(int линии, int комбо) по формуле из книги.</li>
+          <li>Проверь: очки(2, 3) должно дать 26.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d021">День 21 →</a></div>
+    </article>
+    <article class="day-page" id="d021">
+      <div class="day-kicker">День 21 · из 200 · тема: мини-проект недели</div>
+      <h3>🎯 Машина очков готова</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day021.jpg" alt="готовая машина-функция сияет, все радуются">
+          <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> готовая машина-функция сияет, все радуются.</p>
+      </div>
+      <div class="prose"><p class="say">Неделю функций закрыли. Функция — твой первый инструмент.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Доведи функцию очки(...) до рабочего вида.</li>
+          <li>Позови её три раза с разными входами и напечатай.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d022">День 22 →</a></div>
+    </article>
+    <div class="scene"><div class="scene-frame"><img src="images/week04.jpg" alt="Обложка недели 4"><div class="scene-topic"><small>Неделя 4</small>Альпака Аля</div></div></div>
+    <p class="week-lead">Неделя 4. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>
+    <article class="day-page" id="d022">
+      <div class="day-kicker">День 22 · из 200 · тема: развилка if</div>
+      <h3>Развилка: если…</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day022.jpg" alt="альпака Аля на развилке с двумя стрелками да/нет">
+          <div class="scene-topic"><small>Тема дня</small>развилка if</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> альпака Аля на развилке с двумя стрелками да/нет.</p>
+      </div>
+      <div class="prose"><p class="say">«if — это выбор: пойти сюда или туда», — прыгнула Аля.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Открой course/week04_if/day022.dart</li>
+          <li>Напиши: if (score > best) best = score;</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d023">День 23 →</a></div>
+    </article>
+    <article class="day-page" id="d023">
+      <div class="day-kicker">День 23 · из 200 · тема: чётное число</div>
+      <h3>Чётное или нет</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day023.jpg" alt="число делится на два — загорается зелёным">
+          <div class="scene-topic"><small>Тема дня</small>чётное число</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> число делится на два — загорается зелёным.</p>
+      </div>
+      <div class="prose"><p class="say">Условие проверяет — и решает, что делать дальше.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Проверь: if (n % 2 == 0) print('чётное');</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d024">День 24 →</a></div>
+    </article>
+    <article class="day-page" id="d024">
+      <div class="day-kicker">День 24 · из 200 · тема: три ветки</div>
+      <h3>Если / иначе / иначе</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day024.jpg" alt="три двери, светится одна">
+          <div class="scene-topic"><small>Тема дня</small>три ветки</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> три двери, светится одна.</p>
+      </div>
+      <div class="prose"><p class="say">if / else if / else — три пути на выбор.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Сделай три ветки по значению числа (мало/средне/много).</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d025">День 25 →</a></div>
+    </article>
+    <article class="day-page" id="d025">
+      <div class="day-kicker">День 25 · из 200 · тема: знак сравнения</div>
+      <h3>Больше, меньше, равно</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day025.jpg" alt="большой светящийся знак > над двумя числами">
+          <div class="scene-topic"><small>Тема дня</small>знак сравнения</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> большой светящийся знак > над двумя числами.</p>
+      </div>
+      <div class="prose"><p class="say">Сравнил два числа — напечатал знак.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Сравни a и b, напечатай >, < или =.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d026">День 26 →</a></div>
+    </article>
+    <article class="day-page" id="d026">
+      <div class="day-kicker">День 26 · из 200 · тема: закрепляем if</div>
+      <h3>Тренируем развилки</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day026.jpg" alt="Аля жонглирует условиями">
+          <div class="scene-topic"><small>Тема дня</small>закрепляем if</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> Аля жонглирует условиями.</p>
+      </div>
+      <div class="prose"><p class="say">Условие — сердце любой логики.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Придумай своё условие и проверь его в коде.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d027">День 27 →</a></div>
+    </article>
+    <article class="day-page" id="d027">
+      <div class="day-kicker">День 27 · из 200 · тема: готовим игру</div>
+      <h3>К игре «Угадай число»</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day027.jpg" alt="загадочная коробка с числом внутри">
+          <div class="scene-topic"><small>Тема дня</small>готовим игру</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> загадочная коробка с числом внутри.</p>
+      </div>
+      <div class="prose"><p class="say">Соберём маленькую игру на условиях.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Заведи задуманное число и переменную-догадку.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d028">День 28 →</a></div>
+    </article>
+    <article class="day-page" id="d028">
+      <div class="day-kicker">День 28 · из 200 · тема: мини-проект недели</div>
+      <h3>🎯 Угадай число</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day028.jpg" alt="радостная игра с подсказками «больше/меньше»">
+          <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> радостная игра с подсказками «больше/меньше».</p>
+      </div>
+      <div class="prose"><p class="say">Условия ожили в настоящей маленькой игре.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Сделай игру: подсказки «больше/меньше», пока не угадал.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d029">День 29 →</a></div>
+    </article>
+    <div class="scene"><div class="scene-frame"><img src="images/week05.jpg" alt="Обложка недели 5"><div class="scene-topic"><small>Неделя 5</small>Альпака Аля</div></div></div>
+    <p class="week-lead">Неделя 5. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>
+    <article class="day-page" id="d029">
+      <div class="day-kicker">День 29 · из 200 · тема: карусель for</div>
+      <h3>Карусель, что повторяет</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day029.jpg" alt="Аля крутит светящуюся карусель со счётчиком">
+          <div class="scene-topic"><small>Тема дня</small>карусель for</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> Аля крутит светящуюся карусель со счётчиком.</p>
+      </div>
+      <div class="prose"><p class="say">«for — повтори много раз, меняя счётчик», — сказала Аля.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Открой course/week05_for/day029.dart</li>
+          <li>Напечатай числа от 0 до 8 циклом for.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d030">День 30 →</a></div>
+    </article>
+    <article class="day-page" id="d030">
+      <div class="day-kicker">День 30 · из 200 · тема: сетка 9×9</div>
+      <h3>Обходим всю доску</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day030.jpg" alt="стрелки обходят клетки 9×9 одну за другой">
+          <div class="scene-topic"><small>Тема дня</small>сетка 9×9</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> стрелки обходят клетки 9×9 одну за другой.</p>
+      </div>
+      <div class="prose"><p class="say">Вложенный for обходит всю сетку сам.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Вложенным for пройди 9×9 (81 клетку).</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d031">День 31 →</a></div>
+    </article>
+    <article class="day-page" id="d031">
+      <div class="day-kicker">День 31 · из 200 · тема: сумма чисел</div>
+      <h3>Складываем много</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day031.jpg" alt="числа один за другим падают в копилку">
+          <div class="scene-topic"><small>Тема дня</small>сумма чисел</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> числа один за другим падают в копилку.</p>
+      </div>
+      <div class="prose"><p class="say">Цикл не устаёт — хоть сто, хоть сто тысяч.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Посчитай сумму чисел от 1 до 100.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d032">День 32 →</a></div>
+    </article>
+    <article class="day-page" id="d032">
+      <div class="day-kicker">День 32 · из 200 · тема: таблица умножения</div>
+      <h3>Таблица на 5</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day032.jpg" alt="светящаяся таблица умножения строится сама">
+          <div class="scene-topic"><small>Тема дня</small>таблица умножения</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> светящаяся таблица умножения строится сама.</p>
+      </div>
+      <div class="prose"><p class="say">Повторяем действие — рождается таблица.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Напечатай таблицу умножения на 5 циклом.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d033">День 33 →</a></div>
+    </article>
+    <article class="day-page" id="d033">
+      <div class="day-kicker">День 33 · из 200 · тема: закрепляем for</div>
+      <h3>Тренируем карусель</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day033.jpg" alt="разноцветные повторы кружатся">
+          <div class="scene-topic"><small>Тема дня</small>закрепляем for</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> разноцветные повторы кружатся.</p>
+      </div>
+      <div class="prose"><p class="say">for — самый частый инструмент программиста.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Напечатай свою последовательность циклом.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d034">День 34 →</a></div>
+    </article>
+    <article class="day-page" id="d034">
+      <div class="day-kicker">День 34 · из 200 · тема: готовим узор</div>
+      <h3>К узору из звёздочек</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day034.jpg" alt="первые звёздочки складываются в ряд">
+          <div class="scene-topic"><small>Тема дня</small>готовим узор</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> первые звёздочки складываются в ряд.</p>
+      </div>
+      <div class="prose"><p class="say">Из циклов можно строить картинки из символов.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Напечатай строку из N звёздочек ★.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d035">День 35 →</a></div>
+    </article>
+    <article class="day-page" id="d035">
+      <div class="day-kicker">День 35 · из 200 · тема: мини-проект недели</div>
+      <h3>🎯 Пирамидка из звёзд</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day035.jpg" alt="яркая пирамидка ★ построена ряд за рядом">
+          <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> яркая пирамидка ★ построена ряд за рядом.</p>
+      </div>
+      <div class="prose"><p class="say">Циклы нарисовали целую пирамидку.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Построй пирамидку ★ вложенным for (1,2,3… звезды).</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d036">День 36 →</a></div>
+    </article>
+    <div class="scene"><div class="scene-frame"><img src="images/week06.jpg" alt="Обложка недели 6"><div class="scene-topic"><small>Неделя 6</small>Котики</div></div></div>
+    <p class="week-lead">Неделя 6. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня. Не листаем вперёд.</p>
+    <article class="day-page" id="d036">
+      <div class="day-kicker">День 36 · из 200 · тема: список</div>
+      <h3>Много в одной коробке</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day036.jpg" alt="котики раскладывают предметы в нумерованный ряд с нуля">
+          <div class="scene-topic"><small>Тема дня</small>список</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> котики раскладывают предметы в нумерованный ряд с нуля.</p>
+      </div>
+      <div class="prose"><p class="say">«Один — переменная, а много — список», — мурлыкнули котики.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Открой course/week06_lists/day036.dart</li>
+          <li>Заведи List<String> games = ['A','B','C']; и напечатай.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d037">День 37 →</a></div>
+    </article>
+    <article class="day-page" id="d037">
+      <div class="day-kicker">День 37 · из 200 · тема: добавить и убрать</div>
+      <h3>Добавляем и удаляем</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day037.jpg" alt="в список кладут новый элемент, другой убирают">
+          <div class="scene-topic"><small>Тема дня</small>добавить и убрать</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> в список кладут новый элемент, другой убирают.</p>
+      </div>
+      <div class="prose"><p class="say">Список умеет расти и уменьшаться.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>.add('D') добавит, .remove('A') уберёт — проверь.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d038">День 38 →</a></div>
+    </article>
+    <article class="day-page" id="d038">
+      <div class="day-kicker">День 38 · из 200 · тема: обходим список</div>
+      <h3>Идём по списку</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day038.jpg" alt="стрелка идёт по элементам по порядку">
+          <div class="scene-topic"><small>Тема дня</small>обходим список</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> стрелка идёт по элементам по порядку.</p>
+      </div>
+      <div class="prose"><p class="say">for-in проходит список от начала до конца.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Пройди список циклом for (final g in games).</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d039">День 39 →</a></div>
+    </article>
+    <article class="day-page" id="d039">
+      <div class="day-kicker">День 39 · из 200 · тема: ищем в списке</div>
+      <h3>Самое длинное слово</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day039.jpg" alt="среди карточек светится самая длинная">
+          <div class="scene-topic"><small>Тема дня</small>ищем в списке</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> среди карточек светится самая длинная.</p>
+      </div>
+      <div class="prose"><p class="say">В списке можно искать по правилу.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Найди самое длинное слово в списке.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d040">День 40 →</a></div>
+    </article>
+    <article class="day-page" id="d040">
+      <div class="day-kicker">День 40 · из 200 · тема: закрепляем списки</div>
+      <h3>Тренируем списки</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day040.jpg" alt="котики играют со списком-клубком">
+          <div class="scene-topic"><small>Тема дня</small>закрепляем списки</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> котики играют со списком-клубком.</p>
+      </div>
+      <div class="prose"><p class="say">Списки — основа доски и руки фигур.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Сделай список чисел и посчитай их сумму.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d041">День 41 →</a></div>
+    </article>
+    <article class="day-page" id="d041">
+      <div class="day-kicker">День 41 · из 200 · тема: готовим руку</div>
+      <h3>К руке из фигур</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day041.jpg" alt="рука с тремя фигурками-тетромино">
+          <div class="scene-topic"><small>Тема дня</small>готовим руку</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> рука с тремя фигурками-тетромино.</p>
+      </div>
+      <div class="prose"><p class="say">Рука игрока — это тоже список фигур.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Заведи список из трёх фигур (строками).</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d042">День 42 →</a></div>
+    </article>
+    <article class="day-page" id="d042">
+      <div class="day-kicker">День 42 · из 200 · тема: мини-проект недели</div>
+      <h3>🎯 Рука фигур</h3>
+      <div class="scene">
+        <div class="scene-frame">
+          <img src="images/day042.jpg" alt="аккуратная рука фигур в лапке котика">
+          <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+        </div>
+        <p class="pic-read"><b>Что видно:</b> аккуратная рука фигур в лапке котика.</p>
+      </div>
+      <div class="prose"><p class="say">Списками мы собрали руку игрока.</p></div>
+      <div class="task">
+        <div class="h">🎯 Задание дня — вместе с папой</div>
+        <ol>
+          <li>Сделай список-руку: добавь, убери, покажи фигуры.</li>
+        </ol>
+        <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+      </div>
+      <div class="day-next"><a href="#d043">День 43 →</a></div>
+    </article>
+    <h2 style="margin-top:36px">Недели 7–29: обложки курса</h2>
+    <p class="week-lead">Дальше день-картинки ещё рисуются — а обложки недель уже готовы. Каждую можно раскрыть в свою неделю страниц-дней по образцу выше.</p>
+    <div class="weeks-gallery">
+      <figure><img src="images/week07.jpg" alt="Неделя 7: Классы"><figcaption>Неделя 7<br><small>Классы</small></figcaption></figure>
+      <figure><img src="images/week08.jpg" alt="Неделя 8: Доска 9×9"><figcaption>Неделя 8<br><small>Доска 9×9</small></figcaption></figure>
+      <figure><img src="images/week09.jpg" alt="Неделя 9: Честная случайность"><figcaption>Неделя 9<br><small>Честная случайность</small></figcaption></figure>
+      <figure><img src="images/week10.jpg" alt="Неделя 10: Мешок фигур"><figcaption>Неделя 10<br><small>Мешок фигур</small></figcaption></figure>
+      <figure><img src="images/week11.jpg" alt="Неделя 11: Фигуры-тетромино"><figcaption>Неделя 11<br><small>Фигуры-тетромино</small></figcaption></figure>
+      <figure><img src="images/week12.jpg" alt="Неделя 12: Повороты"><figcaption>Неделя 12<br><small>Повороты</small></figcaption></figure>
+      <figure><img src="images/week13.jpg" alt="Неделя 13: Закон «сюда можно?»"><figcaption>Неделя 13<br><small>Закон «сюда можно?»</small></figcaption></figure>
+      <figure><img src="images/week14.jpg" alt="Неделя 14: Постановка и очистка"><figcaption>Неделя 14<br><small>Постановка и очистка</small></figcaption></figure>
+      <figure><img src="images/week15.jpg" alt="Неделя 15: Счёт и комбо"><figcaption>Неделя 15<br><small>Счёт и комбо</small></figcaption></figure>
+      <figure><img src="images/week16.jpg" alt="Неделя 16: Перебор ходов"><figcaption>Неделя 16<br><small>Перебор ходов</small></figcaption></figure>
+      <figure><img src="images/week17.jpg" alt="Неделя 17: Оценка хода"><figcaption>Неделя 17<br><small>Оценка хода</small></figcaption></figure>
+      <figure><img src="images/week18.jpg" alt="Неделя 18: Бот целиком"><figcaption>Неделя 18<br><small>Бот целиком</small></figcaption></figure>
+      <figure><img src="images/week19.jpg" alt="Неделя 19: Первый экран"><figcaption>Неделя 19<br><small>Первый экран</small></figcaption></figure>
+      <figure><img src="images/week20.jpg" alt="Неделя 20: Доска виджетами"><figcaption>Неделя 20<br><small>Доска виджетами</small></figcaption></figure>
+      <figure><img src="images/week21.jpg" alt="Неделя 21: Ввод (тап)"><figcaption>Неделя 21<br><small>Ввод (тап)</small></figcaption></figure>
+      <figure><img src="images/week22.jpg" alt="Неделя 22: Сервер и WebSocket"><figcaption>Неделя 22<br><small>Сервер и WebSocket</small></figcaption></figure>
+      <figure><img src="images/week23.jpg" alt="Неделя 23: Два игрока"><figcaption>Неделя 23<br><small>Два игрока</small></figcaption></figure>
+      <figure><img src="images/week24.jpg" alt="Неделя 24: Рейтинг ELO"><figcaption>Неделя 24<br><small>Рейтинг ELO</small></figcaption></figure>
+      <figure><img src="images/week25.jpg" alt="Неделя 25: Тесты"><figcaption>Неделя 25<br><small>Тесты</small></figcaption></figure>
+      <figure><img src="images/week26.jpg" alt="Неделя 26: Красный → зелёный"><figcaption>Неделя 26<br><small>Красный → зелёный</small></figcaption></figure>
+      <figure><img src="images/week27.jpg" alt="Неделя 27: Git — машина времени"><figcaption>Неделя 27<br><small>Git — машина времени</small></figcaption></figure>
+      <figure><img src="images/week28.jpg" alt="Неделя 28: Баги и сборка"><figcaption>Неделя 28<br><small>Баги и сборка</small></figcaption></figure>
+      <figure><img src="images/week29.jpg" alt="Неделя 29: Финал 🎉"><figcaption>Неделя 29<br><small>Финал 🎉</small></figcaption></figure>
+    </div>
+  </section>
+  <!-- DAYS_EXT_END -->
+
   <section class="plan" id="plan">
     <h2>📅 Карта курса: 29 недель, каждая — с мини-проектом</h2>
     <p>200 дней по 3 часа = ~29 недель. Каждая неделя заканчивается маленьким <b>🎯 мини-проектом</b> — чтобы новое сразу пощупать руками. Не гонись, повторять и отставать — можно.</p>
