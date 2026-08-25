@@ -274,13 +274,20 @@ def has_day_image(day):
     return os.path.isfile(os.path.join(IMG_DIR, f"day{day:03d}.jpg"))
 
 
-def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, story=None):
+def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, story=None,
+             real=None):
     ext = "dart"
     steps_html = "\n".join(f"          <li>{s}</li>" for s in steps)
     paras = story or STORY.get(day) or [say]
     say_cls = ' class="say"'
     prose_html = "\n".join(
         f'        <p{say_cls if i == 0 else ""}>{p}</p>' for i, p in enumerate(paras))
+    # честная врезка «настоящее слово»: метафора → реальная концепция (для дней с
+    # технически нагруженной идеей — PRNG/WebSocket/ELO), чтобы не «зубрить магию»
+    real_html = ""
+    if real:
+        real_html = (f'\n      <div class="real-word"><div class="h">🔬 Настоящее слово</div>'
+                     f'{real}</div>')
     if has_day_image(day):
         scene = f'''      <div class="scene">
         <div class="scene-frame">
@@ -300,7 +307,7 @@ def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, stor
 {scene}
       <div class="prose">
 {prose_html}
-      </div>
+      </div>{real_html}
       <div class="task">
         <div class="h">🎯 Задание дня — вместе с папой</div>
         <ol>
@@ -340,7 +347,8 @@ def build():
         n = len(w["days"])
         for i, d in enumerate(w["days"]):
             out.append(day_page(d["day"], d["theme"], d["h3"], d["seen"], "", d["steps"],
-                                w["folder"], i == n - 1, badge=w["badge"], story=d["story"]))
+                                w["folder"], i == n - 1, badge=w["badge"], story=d["story"],
+                                real=d.get("real")))
     out.append('  </section>')
     out.append('  <!-- DAYS_EXT_END -->')
     return "\n".join(out)

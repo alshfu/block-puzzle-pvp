@@ -994,6 +994,81 @@
         color: var(--code-cmt);
     }
 
+    .cmt-note {
+        display: block;
+        margin-top: 8px;
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: var(--muted);
+    }
+
+    /* «Настоящее слово»: честная врезка — метафора → реальная концепция.
+       Ставится в конце дней с математически/технически нагруженной идеей
+       (PRNG/Mulberry32, WebSocket, ELO), чтобы ребёнок не «зубрил заклинание»,
+       а видел настоящий термин и суть. */
+    .real-word {
+        margin: 12px 0 2px;
+        padding: 12px 14px;
+        background: var(--magic-wash);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--magic);
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .real-word .h {
+        font-family: 'Baloo 2', sans-serif;
+        font-weight: 700;
+        font-size: 13.5px;
+        color: var(--magic-ink);
+        margin-bottom: 4px;
+    }
+
+    .glossary {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 22px 24px;
+        margin: 22px 0;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .gloss-wrap {
+        overflow-x: auto;
+    }
+
+    table.gloss {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14.5px;
+        margin: 6px 0 14px;
+    }
+
+    table.gloss th, table.gloss td {
+        text-align: left;
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+    }
+
+    table.gloss thead th {
+        font-family: 'Baloo 2', sans-serif;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--muted);
+        border-bottom: 2px solid var(--line);
+    }
+
+    table.gloss tbody tr:hover {
+        background: var(--magic-wash);
+    }
+
+    table.gloss td:nth-child(2) b {
+        color: var(--magic-ink);
+    }
+
     .prompts {
         background: var(--card);
         border: 1px solid var(--line);

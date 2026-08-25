@@ -120,6 +120,15 @@ def parse_day(num, body):
             prose.append(node)
     day["prose"] = prose
 
+    # честная врезка «настоящее слово» (метафора → реальная концепция)
+    rw = inner(body, "real-word")
+    if rw:
+        hm = re.match(r'\s*<div class="h">(.*?)</div>(.*)', rw, re.S)
+        if hm:
+            day["real"] = {"title": hm.group(1).strip(), "html": hm.group(2).strip()}
+        else:
+            day["real"] = {"html": rw.strip()}
+
     # задание дня
     task_html = inner(body, "task")
     if task_html:
