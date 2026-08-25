@@ -1376,6 +1376,15 @@
     body.mode-book .spell-cap { padding: 8px 14px; font-size: 13px; }
     body.mode-book .week-lead { margin: 8px 0 6px; font-size: 15px; }
     body.mode-book .day-nav { margin: 4px 0 8px; }
+
+    /* страница-день без иллюстрации (недели 7–29, картинки ещё рисуются):
+       значок героя недели рядом с заголовком */
+    .day-head { display: flex; align-items: center; gap: 12px; margin: 4px 0 8px; }
+    .day-head h3 { margin: 0; }
+    .day-badge { flex: none; width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center;
+        background: var(--magic-wash); border: 1px solid var(--line); }
+    .day-badge svg { width: 36px; height: 36px; }
+    body.mode-book .day-head { break-after: avoid; }
     /* код в книге не уезжает за край страницы — переносим строки, чуть мельче */
     body.mode-book .spell pre, body.mode-book .prompt-card pre, body.mode-book .cmdline {
         white-space: pre-wrap; word-break: break-word; overflow: visible; font-size: 12.5px; line-height: 1.55;
