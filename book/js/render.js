@@ -10,21 +10,31 @@
 // а reader.js (листание/пагинация) продолжает работать без изменений.
 //
 // Картинки всегда по URL (assets/img/…), никогда в base64 — файл-оболочка лёгкий.
+//
+// Формы данных (из content/*.json) — для самодокументации и резолва в IDE:
+/**
+ * @typedef {{cls?:string, html:string}} Para
+ * @typedef {{title?:string, steps?:string[], together?:string}} Task
+ * @typedef {{src:string, alt?:string}} Img
+ * @typedef {{day:number, of?:number, theme?:string, title?:string, image?:Img,
+ *   topic?:string, badge?:string, seen?:string, prose?:Para[], real?:Object,
+ *   demo?:(string|Object), next?:number}} Day
+ * @typedef {{id:string, file:string, days:Day[]}} Spread
+ * @typedef {{title?:string, spreads:Spread[], flow:Array<Object>}} Book
+ */
 (function () {
     "use strict";
 
-    var BASE = "content/";
-    var wrap = document.querySelector(".wrap");
+    let BASE = "content/";
+    let wrap = document.querySelector(".wrap");
     if (!wrap) return;
-
-    function esc() { /* контент доверенный (наш генератор) — html вставляется как есть */ }
 
     // --- шаблоны дня (1:1 с исходной вёрсткой index.html) ---
     function renderProse(prose) {
         if (!prose || !prose.length) return "";
-        var out = '<div class="prose">';
-        for (var i = 0; i < prose.length; i++) {
-            var p = prose[i];
+        let out = '<div class="prose">';
+        for (let i = 0; i < prose.length; i++) {
+            let p = prose[i];
             out += p.cls ? '<p class="' + p.cls + '">' + p.html + "</p>"
                          : "<p>" + p.html + "</p>";
         }
@@ -39,24 +49,26 @@
 
     function renderDemo(demo) {
         if (!demo) return "";
-        var t = typeof demo === "string" ? demo : demo.type;
-        var args = (typeof demo === "object" && demo.args)
+        let t = typeof demo === "string" ? demo : demo.type;
+        let args = (typeof demo === "object" && demo.args)
             ? " data-demo-args='" + JSON.stringify(demo.args).replace(/'/g, "&#39;") + "'" : "";
         return '<div class="demo-mount" data-demo="' + t + '"' + args + "></div>";
     }
 
+    /** @param {Task} task */
     function renderTask(task) {
         if (!task) return "";
-        var out = '<div class="task"><div class="h">' + (task.title || "") + "</div>";
+        let out = '<div class="task"><div class="h">' + (task.title || "") + "</div>";
         if (task.steps && task.steps.length) {
             out += "<ol>";
-            for (var i = 0; i < task.steps.length; i++) out += "<li>" + task.steps[i] + "</li>";
+            for (let i = 0; i < task.steps.length; i++) out += "<li>" + task.steps[i] + "</li>";
             out += "</ol>";
         }
         if (task.together) out += '<p class="together">' + task.together + "</p>";
         return out + "</div>";
     }
 
+    /** @param {Day} day */
     function renderHead(day) {
         // вариант B (недели 7–29): бейдж-спрайт + заголовок в day-head
         if (day.badge) {
@@ -65,7 +77,7 @@
                 + '"/></svg></div><h3>' + (day.title || "") + "</h3></div>";
         }
         // вариант A (недели 1–6): отдельный h3 + фото-сцена
-        var out = "<h3>" + (day.title || "") + "</h3>";
+        let out = "<h3>" + (day.title || "") + "</h3>";
         if (day.image) {
             out += '<div class="scene"><div class="scene-frame"><img src="'
                 + day.image.src + '" alt="' + (day.image.alt || "") + '">';
@@ -78,9 +90,9 @@
     }
 
     function renderDay(day) {
-        var kicker = "День " + day.day + " · из " + (day.of || 200)
+        let kicker = "День " + day.day + " · из " + (day.of || 200)
             + (day.theme ? " · тема: " + day.theme : "");
-        var html = '<article class="day-page" id="d' + pad3(day.day) + '">'
+        let html = '<article class="day-page" id="d' + pad3(day.day) + '">'
             + '<div class="day-kicker">' + kicker + "</div>"
             + renderHead(day)
             + renderProse(day.prose)
@@ -112,21 +124,23 @@
         });
     }
 
-    getJSON(BASE + "book.json").then(function (book) {
+    getJSON(BASE + "book.json").then(function (bookRaw) {
+        let book = /** @type {Book} */ (bookRaw);
         // собрать словарь дней из всех разворотов (параллельно)
-        var files = book.spreads.map(function (s) { return BASE + s.file; });
+        let files = book.spreads.map(function (s) { return BASE + s.file; });
         return Promise.all(files.map(getJSON)).then(function (spreads) {
-            var days = {};
-            spreads.forEach(function (sp) {
+            let days = {};
+            spreads.forEach(function (spRaw) {
+                let sp = /** @type {Spread} */ (spRaw);
                 sp.days.forEach(function (d) { days[d.day] = d; });
             });
             // склеить flow: дословный хром + отрендеренные дни
-            var parts = [];
+            let parts = [];
             book.flow.forEach(function (node) {
                 if (node.chrome != null) parts.push(node.chrome);
                 else if (node.day != null && days[node.day]) parts.push(renderDay(days[node.day]));
             });
-            var probe = wrap.querySelector(".end-probe");
+            let probe = wrap.querySelector(".end-probe");
             wrap.insertAdjacentHTML("afterbegin", parts.join(""));
             // маркер конца (reader.js считает по нему число страниц) — держим последним
             if (probe) wrap.appendChild(probe);
@@ -134,7 +148,7 @@
             if (window.__reader && window.__reader.layout) window.__reader.layout();
             // если целились в якорь (#dNNN) — прыгнуть к нему
             if (location.hash && window.__reader && window.__reader.jump) {
-                var t = document.getElementById(location.hash.slice(1));
+                let t = document.getElementById(location.hash.slice(1));
                 if (t) window.__reader.jump(t);
             }
             document.dispatchEvent(new Event("book:rendered"));
