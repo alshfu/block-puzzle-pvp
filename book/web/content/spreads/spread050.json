@@ -50,6 +50,7 @@
      "html": "Сегодня позовите <span class=\"mono\">scoreForMove(1, 0, false, defaultConfig)</span> и получите 10. Потом откройте <span class=\"mono\">lib/core/scoring.dart</span> и найдите, откуда берётся база: <span class=\"mono\">n * (n + 1) / 2</span> и множитель. Запишите формулу в тетрадь — на этой неделе мы соберём её сами."
     }
    ],
+   "demo": "score",
    "task": {
     "title": "🎯 Задание дня — вместе с папой",
     "steps": [

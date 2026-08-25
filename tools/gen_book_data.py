@@ -129,6 +129,19 @@ def parse_day(num, body):
         else:
             day["real"] = {"html": rw.strip()}
 
+    # живое демо (интерактивный виджет по теме дня)
+    dm = re.search(r'<div class="demo-mount" data-demo="([^"]+)"'
+                   r'(?:\s+data-demo-args=\'([^\']*)\')?', body)
+    if dm:
+        if dm.group(2):
+            try:
+                day["demo"] = {"type": dm.group(1), "args": json.loads(
+                    dm.group(2).replace("&#39;", "'"))}
+            except Exception:
+                day["demo"] = dm.group(1)
+        else:
+            day["demo"] = dm.group(1)
+
     # задание дня
     task_html = inner(body, "task")
     if task_html:

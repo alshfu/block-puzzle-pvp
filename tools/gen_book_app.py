@@ -146,6 +146,8 @@ web/
   css/book.css            все стили
   js/reader.js            читалка: режим книги (разворот из 2 страниц), печать A4
   js/intro.js             заставка: комната зимним вечером, камин, книга с полки
+  js/render.js            data-driven сборка страниц из content/*.json
+  js/interactive.js       интерактив: прогресс/навигация/поиск/раскрытия/живые демо
   assets/img/             иллюстрации (ужаты под web, всегда по URL)
   assets/icons/           иконки приложения (для установки на телефон)
   manifest.webmanifest    PWA-манифест (start_url → app.html)
@@ -270,6 +272,7 @@ def main():
 
 <script defer src="js/reader.js"></script>
 <script defer src="js/intro.js"></script>
+<script defer src="js/interactive.js"></script>
 <script>
   if ("serviceWorker" in navigator) {{
     window.addEventListener("load", function () {{
@@ -293,6 +296,13 @@ def main():
         render_js = f.read()
     with open(os.path.join(OUT, "js", "render.js"), "w", encoding="utf-8") as f:
         f.write(render_js)
+
+    # интерактивный слой (прогресс, навигация/поиск, раскрываемые блоки, демо)
+    inter_src = os.path.join(ROOT, "tools", "book_assets", "interactive.js")
+    with open(inter_src, encoding="utf-8") as f:
+        inter_js = f.read()
+    with open(os.path.join(OUT, "js", "interactive.js"), "w", encoding="utf-8") as f:
+        f.write(inter_js)
 
     # app.html = index.html, но .wrap пустой (контент придёт из JSON) + подключён render.js
     app = re.sub(r'(<div class="wrap">).*(</div><!-- /\.wrap -->)',

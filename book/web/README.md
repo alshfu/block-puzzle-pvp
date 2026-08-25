@@ -16,6 +16,8 @@ web/
   css/book.css            все стили
   js/reader.js            читалка: режим книги (разворот из 2 страниц), печать A4
   js/intro.js             заставка: комната зимним вечером, камин, книга с полки
+  js/render.js            data-driven сборка страниц из content/*.json
+  js/interactive.js       интерактив: прогресс/навигация/поиск/раскрытия/живые демо
   assets/img/             иллюстрации (ужаты под web, всегда по URL)
   assets/icons/           иконки приложения (для установки на телефон)
   manifest.webmanifest    PWA-манифест (start_url → app.html)

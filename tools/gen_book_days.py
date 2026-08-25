@@ -275,7 +275,7 @@ def has_day_image(day):
 
 
 def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, story=None,
-             real=None):
+             real=None, demo=None):
     ext = "dart"
     steps_html = "\n".join(f"          <li>{s}</li>" for s in steps)
     paras = story or STORY.get(day) or [say]
@@ -288,6 +288,11 @@ def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, stor
     if real:
         real_html = (f'\n      <div class="real-word"><div class="h">🔬 Настоящее слово</div>'
                      f'{real}</div>')
+    # живое демо по теме дня (наполняется js/interactive.js)
+    demo_html = ""
+    if demo:
+        dtype = demo if isinstance(demo, str) else demo.get("type", "")
+        demo_html = f'\n      <div class="demo-mount" data-demo="{dtype}"></div>'
     if has_day_image(day):
         scene = f'''      <div class="scene">
         <div class="scene-frame">
@@ -307,7 +312,7 @@ def day_page(day, theme, h3, seen, say, steps, folder, is_last, badge=None, stor
 {scene}
       <div class="prose">
 {prose_html}
-      </div>{real_html}
+      </div>{real_html}{demo_html}
       <div class="task">
         <div class="h">🎯 Задание дня — вместе с папой</div>
         <ol>
@@ -348,7 +353,7 @@ def build():
         for i, d in enumerate(w["days"]):
             out.append(day_page(d["day"], d["theme"], d["h3"], d["seen"], "", d["steps"],
                                 w["folder"], i == n - 1, badge=w["badge"], story=d["story"],
-                                real=d.get("real")))
+                                real=d.get("real"), demo=d.get("demo")))
     out.append('  </section>')
     out.append('  <!-- DAYS_EXT_END -->')
     return "\n".join(out)

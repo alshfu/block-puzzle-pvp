@@ -1721,6 +1721,7 @@ score = score + <span class="num">15</span>;      <span class="cmt">// очис�
         <p>«Ряд — это список клеток, — сказал фиолетовый. — А доска — список рядов. Значит, доска — это <span class="word">список списков</span>: снаружи девять рядов, внутри каждого девять клеток». Марьям вспомнила клубок из недели списков и кивнула: она тогда уже угадала.</p>
         <p>В ядре игры это записано одной строчкой: <span class="mono">typedef Board = List&lt;List&lt;Cell&gt;&gt;</span>. Сегодня откройте <span class="mono">lib/core/board.dart</span>, найдите функцию <span class="mono">emptyBoard()</span> и прочитайте, как два вложенных цикла собирают восемьдесят одну пустую клетку. Это те самые карусели Али, только внутри функции Лу.</p>
       </div>
+      <div class="demo-mount" data-demo="board"></div>
       <div class="task">
         <div class="h">🎯 Задание дня — вместе с папой</div>
         <ol>
@@ -1864,6 +1865,7 @@ score = score + <span class="num">15</span>;      <span class="cmt">// очис�
         <p>В нашей игре зерно называется <span class="mono">matchSeed</span>, и из него растёт всё: порядок фигур, мешок, даже ходы бота. Сегодня откройте <span class="mono">lib/core/rng.dart</span> и найдите класс <span class="mono">Mulberry32</span> — это и есть наша «формула роста». Читать её целиком не нужно, найдите только конструктор с зерном и метод <span class="mono">next()</span>.</p>
       </div>
       <div class="real-word"><div class="h">🔬 Настоящее слово</div>Взрослые называют такую «формулу роста» <span class="word">генератором псевдослучайных чисел</span> (PRNG), а <span class="mono">Mulberry32</span> — его конкретный рецепт: горстка сложений и битовых сдвигов, которая из одного 32-битного числа делает следующее. Формулу <b>не нужно</b> заучивать — важно другое, и это по-настоящему: одинаковое зерно всегда даёт одну и ту же цепочку. Это свойство называется <span class="word">детерминизм</span>; благодаря ему онлайн честный (сервер и оба игрока считают одинаково), реплеи повторяются, а тесты не «мигают». «Псевдо» значит «как будто»: числа выглядят случайными, но полностью предсказуемы, если знаешь зерно.</div>
+      <div class="demo-mount" data-demo="prng"></div>
       <div class="task">
         <div class="h">🎯 Задание дня — вместе с папой</div>
         <ol>
@@ -2736,6 +2738,7 @@ score = score + <span class="num">15</span>;      <span class="cmt">// очис�
         <p>«Очки считает функция <span class="mono">scoreForMove</span>, — напомнил рыжий. — Ей дают, сколько линий погасло, какая сейчас серия, была ли идеальная очистка, и правила. За одну линию без серии — базовые десять». Полпути пройдено, и Марьям впервые прочитала формулу как свою.</p>
         <p>Сегодня позовите <span class="mono">scoreForMove(1, 0, false, defaultConfig)</span> и получите 10. Потом откройте <span class="mono">lib/core/scoring.dart</span> и найдите, откуда берётся база: <span class="mono">n * (n + 1) / 2</span> и множитель. Запишите формулу в тетрадь — на этой неделе мы соберём её сами.</p>
       </div>
+      <div class="demo-mount" data-demo="score"></div>
       <div class="task">
         <div class="h">🎯 Задание дня — вместе с папой</div>
         <ol>
@@ -3956,6 +3959,7 @@ score = score + <span class="num">15</span>;      <span class="cmt">// очис�
         <p>В сервере игры рейтинг считает <span class="mono">server/leaderboard.ts</span>: старт 1000, <span class="mono">K = 24</span>. Сегодня откройте файл и найдите формулу: ожидание победы и новое значение. Выпишите её в тетрадь — на этой неделе вы посчитаете её руками.</p>
       </div>
       <div class="real-word"><div class="h">🔬 Настоящее слово</div>«Столбик» считается настоящей формулой, и её не страшно увидеть целиком. Сначала <span class="word">ожидаемая вероятность победы</span>: <span class="mono">E = 1 / (1 + 10^((Rб − Rа) / 400))</span> — она превращает разницу рейтингов в число от 0 до 1 (насколько ты «должен» выиграть). Потом <span class="word">новый рейтинг</span>: <span class="mono">R′ = R + K · (результат − E)</span>, где результат = 1 за победу, 0 за поражение, а <span class="mono">K = 24</span> — «шаг». Степень <span class="mono">10^(…)</span> тут не для красоты: она мягко растягивает разницу в вероятность. Смысл честный: если ты и так был сильнее (E близко к 1), победа почти ожидаема — прибавка маленькая; обыграл сильного (E близко к 0) — это сюрприз, и рейтинг прыгает вверх. ELO измеряет не победы, а их неожиданность.</div>
+      <div class="demo-mount" data-demo="elo"></div>
       <div class="task">
         <div class="h">🎯 Задание дня — вместе с папой</div>
         <ol>
@@ -5991,6 +5995,7 @@ tetromino pieces placed on the grid,
 
 <script defer src="js/reader.js"></script>
 <script defer src="js/intro.js"></script>
+<script defer src="js/interactive.js"></script>
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
