@@ -303,6 +303,17 @@ npm run deploy           # пере-публикует TS-сборку (dist/) �
 Если уже включали `REQUIRE_ROOM_TOKEN=1` — снять его и перезапустить сервер
 (старый TS-клиент токен не шлёт).
 
+## Книга-приложение (book/web/)
+
+Web-приложение книги «Марьям в Мире Кода» деплоится **вместе** с прод-сборкой
+как подпапка `/book` (шаг «Bundle book web-app under /book» в `deploy.yml`;
+в ручном `npm run deploy:flutter` — тот же `cp -R book/web/. build/web/book/`).
+Живёт по адресу **https://alshfu.github.io/block-puzzle-pvp/book/** и переживает
+каждый автодеплой (peaceiris публикует всю папку `build/web` целиком).
+
+Обновить книгу: правишь `book/maryam_v_mire_koda.html` → `python3 tools/gen_book_app.py`
+(пересобрать `book/web/`) → commit/push в main → Action задеплоит.
+
 ## Дальше (отдельной задачей)
 
 Реструктуризация репо ВЫПОЛНЕНА (2026-06-09): `flutter/` → корень, `src/` →

@@ -56,6 +56,14 @@ jobs:
           --dart-define=PARTY_HOST=pvp.alshfu.com
           --dart-define=PARTY_TLS=true
 
+      # Книга-приложение едет вместе с прод-сборкой в подпапку /book,
+      # чтобы жить рядом с игрой и переживать каждый автодеплой.
+      # Доступна по адресу /block-puzzle-pvp/book/
+      - name: Bundle book web-app under /book
+        run: |
+          mkdir -p build/web/book
+          cp -R book/web/. build/web/book/
+
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
