@@ -1,0 +1,2779 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Марьям в Мире Кода</title>
+<meta name="description" content="Детская книга-учебник: девочка Марьям с друзьями-зверятами собирает настоящую игру за 200 дней.">
+<meta name="theme-color" content="#5238C6">
+<link rel="icon" href="assets/icons/favicon.png" sizes="48x48">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link rel="stylesheet" href="css/book.css">
+</head>
+<body>
+<!-- ═══ SVG character sprite (reused) ═══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+        <!-- Марьям -->
+        <symbol id="maryam" viewBox="0 0 100 100">
+            <circle cx="50" cy="42" r="20" fill="#F1C9A5"/>
+            <path d="M30 40a20 20 0 0140 0c0-16-9-24-20-24S30 24 30 40z" fill="#4A3B2E"/>
+            <circle cx="27" cy="42" r="7" fill="#4A3B2E"/>
+            <circle cx="73" cy="42" r="7" fill="#4A3B2E"/>
+            <circle cx="43" cy="44" r="2.6" fill="#2E2620"/>
+            <circle cx="57" cy="44" r="2.6" fill="#2E2620"/>
+            <path d="M45 52q5 4 10 0" stroke="#B5654A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <path d="M32 96V72a18 18 0 0136 0v24z" fill="#6B4FE0"/>
+            <circle cx="50" cy="78" r="4" fill="#EDE6D6"/>
+        </symbol>
+        <!-- Пони По (orange) -->
+        <symbol id="pony" viewBox="0 0 100 100">
+            <ellipse cx="52" cy="62" rx="30" ry="20" fill="#E0913E"/>
+            <path d="M70 30c14-4 22 6 20 16-8 2-14 0-18-4z" fill="#E0913E"/>
+            <circle cx="82" cy="36" r="13" fill="#E0913E"/>
+            <path d="M74 24c-4-6 2-12 8-10 0 6-2 9-8 10z" fill="#DE5A61"/>
+            <path d="M84 24c4-6 12-4 12 2-5 4-9 4-12-2z" fill="#DE5A61"/>
+            <circle cx="86" cy="36" r="2.6" fill="#2E2620"/>
+            <ellipse cx="92" cy="42" rx="4" ry="3" fill="#B5654A"/>
+            <rect x="34" y="76" width="6" height="16" rx="3" fill="#C97A2E"/>
+            <rect x="52" y="76" width="6" height="16" rx="3" fill="#C97A2E"/>
+            <path d="M24 56c-10-2-14 6-10 14 6 0 10-4 12-10z" fill="#DE5A61"/>
+        </symbol>
+        <!-- Лама Лу (cyan) -->
+        <symbol id="llama" viewBox="0 0 100 100">
+            <ellipse cx="46" cy="72" rx="24" ry="16" fill="#2FB6D2"/>
+            <path d="M52 74V34a11 11 0 0122 0v40z" fill="#2FB6D2"/>
+            <circle cx="63" cy="30" r="12" fill="#37C2DE"/>
+            <path d="M56 20c-2-8 6-10 8-4 0 4-3 6-8 4z" fill="#2FB6D2"/>
+            <path d="M70 20c2-8 10-8 10-2-3 5-7 5-10 2z" fill="#2FB6D2"/>
+            <circle cx="60" cy="30" r="2.4" fill="#1B2E33"/>
+            <circle cx="68" cy="30" r="2.4" fill="#1B2E33"/>
+            <ellipse cx="64" cy="38" rx="4" ry="3" fill="#1B7E92"/>
+            <rect x="30" y="84" width="6" height="12" rx="3" fill="#1B7E92"/>
+            <rect x="52" y="84" width="6" height="12" rx="3" fill="#1B7E92"/>
+        </symbol>
+        <!-- Альпака Аля (green, fluffy) -->
+        <symbol id="alpaca" viewBox="0 0 100 100">
+            <circle cx="48" cy="66" r="26" fill="#43AE68"/>
+            <circle cx="30" cy="58" r="10" fill="#43AE68"/>
+            <circle cx="66" cy="56" r="11" fill="#43AE68"/>
+            <circle cx="40" cy="46" r="9" fill="#43AE68"/>
+            <circle cx="58" cy="44" r="9" fill="#43AE68"/>
+            <ellipse cx="60" cy="36" rx="12" ry="13" fill="#57C47C"/>
+            <path d="M52 24c-1-7 6-8 7-3 0 4-3 5-7 3z" fill="#43AE68"/>
+            <path d="M67 24c2-7 9-6 8-1-3 4-6 4-8 1z" fill="#43AE68"/>
+            <circle cx="57" cy="36" r="2.3" fill="#173D28"/>
+            <circle cx="65" cy="35" r="2.3" fill="#173D28"/>
+            <ellipse cx="61" cy="42" rx="3.4" ry="2.6" fill="#2A6B44"/>
+            <rect x="36" y="84" width="6" height="11" rx="3" fill="#2A6B44"/>
+            <rect x="54" y="84" width="6" height="11" rx="3" fill="#2A6B44"/>
+        </symbol>
+        <!-- Котик (purple) -->
+        <symbol id="catP" viewBox="0 0 100 100">
+            <path d="M28 40l8-16 10 12z" fill="#9B5DE0"/>
+            <path d="M72 40l-8-16-10 12z" fill="#9B5DE0"/>
+            <circle cx="50" cy="52" r="26" fill="#9B5DE0"/>
+            <circle cx="41" cy="50" r="3" fill="#2A1740"/>
+            <circle cx="59" cy="50" r="3" fill="#2A1740"/>
+            <path d="M47 58q3 3 6 0" stroke="#2A1740" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="50" cy="55" rx="3" ry="2" fill="#E7B7C8"/>
+            <path d="M74 66c14 2 18 12 10 20" stroke="#9B5DE0" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </symbol>
+        <!-- Котик (red) -->
+        <symbol id="catR" viewBox="0 0 100 100">
+            <path d="M28 40l8-16 10 12z" fill="#DE5A61"/>
+            <path d="M72 40l-8-16-10 12z" fill="#DE5A61"/>
+            <circle cx="50" cy="52" r="26" fill="#DE5A61"/>
+            <circle cx="41" cy="50" r="3" fill="#3D1518"/>
+            <circle cx="59" cy="50" r="3" fill="#3D1518"/>
+            <path d="M47 58q3 3 6 0" stroke="#3D1518" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="50" cy="55" rx="3" ry="2" fill="#F6D6C0"/>
+            <path d="M26 66c-14 2-18 12-10 20" stroke="#DE5A61" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </symbol>
+        <!-- Портал-блок -->
+        <symbol id="portal" viewBox="0 0 100 100">
+            <rect x="16" y="16" width="68" height="68" rx="16" fill="none" stroke="#6B4FE0" stroke-width="4"
+                  opacity=".5"/>
+            <rect x="26" y="26" width="48" height="48" rx="12" fill="none" stroke="#6B4FE0" stroke-width="4"
+                  opacity=".8"/>
+            <rect x="38" y="38" width="24" height="24" rx="8" fill="#6B4FE0"/>
+        </symbol>
+    </defs>
+</svg>
+
+<!-- ═══ Панель читалки (режим книги / печать) ═══ -->
+<div class="reader-ui" role="toolbar" aria-label="Управление книгой">
+    <button class="btn" id="rdMode" type="button">📖 Режим книги</button>
+    <div class="title">Марьям в Мире Кода</div>
+    <div class="pager">
+        <button class="btn ico" id="rdPrev" type="button" aria-label="Предыдущая страница" title="Назад (←)">‹</button>
+        <span class="ind" id="rdInd" aria-live="polite">1 / 1</span>
+        <button class="btn ico" id="rdNext" type="button" aria-label="Следующая страница" title="Вперёд (→)">›</button>
+        <button class="btn ico" id="rdPrint" type="button" aria-label="Печать или PDF" title="Печать / сохранить PDF">
+            🖨
+        </button>
+    </div>
+</div>
+
+<!-- ═══ ЗАСТАВКА: комната зимним вечером, камин, книга на полке ═══ -->
+<noscript><style>#intro{display:none!important}</style></noscript>
+<div id="intro" aria-label="Заставка: нажми на книгу, чтобы открыть">
+    <div class="fire-glow"></div>
+
+    <div class="window">
+        <div class="moon"></div>
+        <div class="snow" id="snow"></div>
+        <span class="bar-v"></span><span class="bar-h"></span>
+    </div>
+
+    <div class="fireplace">
+        <div class="mantel"></div>
+        <div class="stone">
+            <div class="opening">
+                <div class="flames"><i></i><i></i><i></i></div>
+                <div class="logs"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- котик у камина, греется и смотрит на огонь -->
+    <div class="cat" aria-hidden="true">
+        <svg viewBox="0 0 120 150">
+            <g class="tail">
+                <path d="M30 132 C2 130 -2 104 16 96 C6 106 20 116 40 112 C46 118 44 132 30 132 Z"/>
+            </g>
+            <path d="M60 146 C34 146 28 126 33 108 C21 102 17 66 30 46 L25 16 L46 40
+                     C52 36 68 36 74 40 L95 16 L90 46 C103 66 99 104 87 108
+                     C92 126 86 146 60 146 Z"/>
+            <ellipse class="eye" cx="50" cy="62" rx="3.4" ry="4.6"/>
+            <ellipse class="eye" cx="70" cy="62" rx="3.4" ry="4.6"/>
+        </svg>
+    </div>
+
+    <div class="bookshelf">
+        <div class="brow" id="shelfTop">
+            <span class="spine" style="height:78%;background:linear-gradient(#b5533f,#8f3d2e)"></span>
+            <span class="spine" style="height:92%;background:linear-gradient(#3f7fae,#2f5f86)"></span>
+            <span class="spine" style="height:70%;background:linear-gradient(#5aa06a,#3e7a4e)"></span>
+            <button class="ourbook" id="ourbook" type="button" aria-label="Открыть книгу «Марьям в Мире Кода»">
+                <span class="b-inside"></span>
+                <span class="b-thick"></span>
+                <span class="b-cover">
+                    <span class="bc-eyebrow">КОД-РПГ · 200 ДНЕЙ</span>
+                    <span class="bc-title">Марьям<br>в Мире Кода</span>
+                    <span class="bc-cat">🐱</span>
+                    <span class="bc-tetro">
+                        <i style="background:var(--tI)"></i><i style="background:var(--tO)"></i>
+                        <i style="background:var(--tT)"></i><i style="background:var(--tZ)"></i>
+                    </span>
+                </span>
+            </button>
+            <span class="spine" style="height:86%;background:linear-gradient(#c8923a,#a06e26)"></span>
+            <span class="spine" style="height:74%;background:linear-gradient(#8a6bd0,#6a4bb0)"></span>
+        </div>
+        <div class="brow">
+            <span class="spine" style="height:88%;background:linear-gradient(#4f8f9e,#357180)"></span>
+            <span class="spine" style="height:72%;background:linear-gradient(#c46a5a,#9c4c3e)"></span>
+            <span class="spine" style="height:94%;background:linear-gradient(#6a9a55,#4c7a3a)"></span>
+            <span class="spine" style="height:66%;background:linear-gradient(#b58a3a,#906a26)"></span>
+            <span class="spine" style="height:84%;background:linear-gradient(#7a6bd0,#5a4bb0)"></span>
+            <span class="spine" style="height:78%;background:linear-gradient(#b5533f,#8f3d2e)"></span>
+            <span class="spine" style="height:90%;background:linear-gradient(#3f7fae,#2f5f86)"></span>
+        </div>
+    </div>
+
+    <div class="floor"><div class="rug"></div></div>
+
+    <div class="title-room">Зимний вечер · время для сказки</div>
+    <div class="hint">На полке стоит наша книга —<br><b>нажми на неё</b>, и она раскроется ✨</div>
+    <button class="skip" id="introSkip" type="button">пропустить →</button>
+</div>
+
+<div class="book-clip">
+<div class="wrap">
+    <!-- ═══ COVER ═══ -->
+    <header class="cover">
+        <div class="eyebrow">Код-РПГ · учебник-курс · 200 дней по 3 часа</div>
+        <h1>Марьям<br>в Мире Кода</h1>
+        <p class="tag">Как маленькая девочка, пони, лама, альпака и два котика построили настоящую игру — и она стала
+            кросс-платформенным разработчиком.</p>
+
+        <div class="cover-art">
+            <img src="assets/img/00_cover.jpg" alt="Марьям и её друзья-зверята у волшебного портала из блоков">
+        </div>
+        <div class="byline">книга-сборник · внутри — настоящий код игры BlockDuel 9×9</div>
+    </header>
+
+    <div class="tetro-rule"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+    <!-- ═══ ГЕРОИ ═══ -->
+    <section class="heroes" id="heroes">
+        <h2>Герои этой книги</h2>
+        <p>Они будут рядом все 200 дней. Запоминай лица — дальше они станут учителями, напарниками и контролёрами.</p>
+        <div class="heroes-grid">
+            <figure class="hero wide">
+                <img src="assets/img/01_maryam.jpg" alt="Марьям">
+                <figcaption><b>Марьям</b> девочка, которая провалилась внутрь игры и решила её построить</figcaption>
+            </figure>
+            <figure class="hero">
+                <img src="assets/img/02_pony_po.jpg" alt="Пони По">
+                <figcaption><b>Пони По</b> хранит коробочки-переменные и все снимки истории</figcaption>
+            </figure>
+            <figure class="hero">
+                <img src="assets/img/03_llama_lu.jpg" alt="Лама Лу">
+                <figcaption><b>Лама Лу</b> любит функции, числа и честную случайность</figcaption>
+            </figure>
+            <figure class="hero">
+                <img src="assets/img/04_alpaca_alya.jpg" alt="Альпака Аля">
+                <figcaption><b>Альпака Аля</b> учит «если» и «повтори», раскладывает фигурки</figcaption>
+            </figure>
+            <figure class="hero">
+                <img src="assets/img/05_cats.jpg" alt="Два котика">
+                <figcaption><b>Два котика</b> фиолетовый считает, рыжий ловит баги</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <!-- ═══ О КУРСЕ ═══ -->
+    <section class="course">
+        <h2>Как учиться по этой книге</h2>
+        <p>Это не просто сказка — это <b>учебник-курс</b>. Он рассчитан на <b>200 дней по 3 часа</b> — это шестьсот
+            часов, за которые ребёнок из нуля становится настоящим разработчиком. Спешить не надо: программисты растут
+            не рывком, а <b>каждый день понемногу</b>.</p>
+        <div class="grid">
+            <div class="tile">
+                <div class="k">200</div>
+                <div class="v">дней пути</div>
+            </div>
+            <div class="tile">
+                <div class="k">3 ч</div>
+                <div class="v">в день</div>
+            </div>
+            <div class="tile">
+                <div class="k">600 ч</div>
+                <div class="v">до разработчика</div>
+            </div>
+        </div>
+        <p><b>Ритм одного дня</b> (3 часа делим на три части — как завтрак, обед и ужин):</p>
+        <div class="rhythm">
+            <span>🥣 1 час — читаем главу и разбираем код</span>
+            <span>🍲 1 час — набираем код сами, меняем числа, смотрим что будет</span>
+            <span>🍎 1 час — своя маленькая задачка (в конце глав — «Задание»)</span>
+        </div>
+        <p style="margin-top:14px">Правило для детей: <b>идём по порядку</b>. Сначала неделя 1 (семь вечеров), и только
+            потом глава про переменные. В конце книги — <a href="#plan"><b>200-дневная карта</b></a>. Правило одно: <b>ошибаться
+                — нормально</b>.</p>
+        <p style="margin-top:10px"><a href="#d001"><b>Начать с Дня 1 →</b></a></p>
+    </section>
+
+    <!-- ═══ ПРАКТИЧЕСКИЙ ТРЕК ═══ -->
+    <section class="track">
+        <h2>Как в конце получить <span class="em">именно эту игру</span></h2>
+        <p><b>Честно и по-взрослому.</b> Марьям в сказке строит игру с нуля. Но настоящая игра — это тысячи строк, и ни
+            один разработчик не пишет их «на память». Секрет профессии другой: <b>берёшь настоящий проект, запускаешь
+                его в первый же день, и растёшь вместе с ним</b> — читаешь, меняешь, чиняешь. Так к концу курса у тебя
+            на экране будет <b>наша игра BlockDuel</b> — собранная твоими руками и понятная тебе до винтика.</p>
+        <ol>
+            <li><b>Поставь инструменты.</b> Flutter с сайта <span class="mono">flutter.dev</span> и бесплатный редактор
+                (VS Code). Один раз — и на всю жизнь.
+            </li>
+            <li><b>Скачай настоящую игру и запусти её.</b> Уже в первый день ты увидишь её живой:
+                <div class="cmdline">git clone https://github.com/alshfu/block-puzzle-pvp
+                    cd block-puzzle-pvp
+                    flutter pub get
+                    flutter run -d chrome <span class="cmt"># и вот она, наша игра, у тебя в браузере!</span></div>
+            </li>
+            <li><b>Дальше — не «пиши с нуля», а «найди → пойми → поменяй → запусти».</b> Каждую неделю открываешь
+                настоящий файл из проекта, разбираешь его по этой книге и делаешь маленькую правку. Нажал «запустить» —
+                сразу видишь результат. Так знание становится <em>твоим</em>.
+            </li>
+            <li><b>Собери и покажи миру.</b> В конце — <span class="mono">flutter build</span> под
+                web/Android/iPhone/Mac (глава 15) и документ <span class="mono">RELEASE_CHECKLIST.md</span> в проекте:
+                пошагово, как выложить в Google Play и App Store.
+            </li>
+        </ol>
+        <div class="quests">
+            <div class="h">🔧 Мини-квесты на НАСТОЯЩЕМ коде (каждый сразу видно в игре)</div>
+            <ul>
+                <li>Поменяй цвета клеток в теме — файл <span class="mono">lib/ui/theme/</span> (темы <span class="mono">neutral / candy / night</span>).
+                </li>
+                <li>Сделай ход быстрее/медленнее — таймер <span class="mono">turnTimeStart</span> в <span class="mono">lib/core/types.dart</span>
+                    (<span class="mono">defaultConfig</span>).
+                </li>
+                <li>Измени формулу очков — <span class="mono">lib/core/scoring.dart</span> (например, больше очков за
+                    бокс 3×3).
+                </li>
+                <li>Сделай бота хитрее — веса в <span class="mono">lib/core/bot.dart</span> (<span class="mono">botWeights</span>).
+                </li>
+                <li>Добавь свою тему в конструкторе тем прямо в игре (экран «Конструктор тем»).</li>
+                <li>Напиши свой тест в <span class="mono">test/</span> и запусти <span class="mono">flutter test</span>
+                    — стань контролёром (глава 12).
+                </li>
+            </ul>
+        </div>
+        <div class="quests" style="margin-top:12px">
+            <div class="h">📂 Заготовка на каждый день — в самом проекте</div>
+            <ul>
+                <li>В скачанном проекте есть папка <span class="mono">course/</span> — там <b>на каждый из 200 дней свой
+                    файл-заготовка</b>: шапка с заданием дня, связь с настоящим кодом игры и место <span class="mono">// TODO</span>,
+                    куда ты дописываешь свой код.
+                </li>
+                <li>Открыл файл дня (например <span class="mono">course/week03_functions/day015.dart</span>) → прочитал
+                    задание → сначала подумал сам → написал код на месте <span class="mono">TODO</span> → запустил →
+                    сравнил с настоящим файлом игры.
+                </li>
+            </ul>
+        </div>
+        <p style="margin-bottom:0"><b>Итог курса:</b> не «похожая игрушка», а <b>наша игра целиком</b> — ты её запустил,
+            понял, поменял под себя, покрыл тестами и собрал под четыре платформы. Это и есть настоящий разработчик.</p>
+    </section>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Что нас ждёт</h2>
+        <p>Тринадцать глав и эпилог. В каждой — кусочек сказки, новый друг, одна настоящая идея программирования и живой
+            код, из которого по-настоящему собирается игра.</p>
+        <ol>
+            <li><a href="#c1"><span class="n">00</span><span class="t">Портал из блока <span class="s">— неделя 1, семь вечеров</span></span></a>
+            </li>
+            <li><a href="#c2"><span class="n">01</span><span class="t">Пони По и коробочки-переменные <span class="s">— неделя 2, семь вечеров</span></span></a>
+            </li>
+            <li><a href="#days3to6"><span class="n">3–6</span><span class="t">Недели 3–6: дни 15–42 <span class="s">— функции, логика, циклы, списки + галерея недель 7–29</span></span></a>
+            </li>
+            <li><a href="#c5"><span class="n">02</span><span class="t">Котики и сетка 9×9 <span class="s">— списки и доска</span></span></a>
+            </li>
+            <li><a href="#c6"><span class="n">03</span><span class="t">Предсказуемое волшебство <span class="s">— случайность, которая честная</span></span></a>
+            </li>
+            <li><a href="#c7"><span class="n">04</span><span class="t">Семь фигур-тетромино <span class="s">— как хранить формы</span></span></a>
+            </li>
+            <li><a href="#c8"><span class="n">05</span><span class="t">Закон мира: «сюда можно?» <span class="s">— проверки</span></span></a>
+            </li>
+            <li><a href="#c9"><span class="n">06</span><span class="t">Линии гаснут, очки летят <span class="s">— правила и счёт</span></span></a>
+            </li>
+            <li><a href="#c10"><span class="n">07</span><span class="t">Котёнок, который научился думать <span
+                    class="s">— искусственный ум</span></span></a></li>
+            <li><a href="#c11"><span class="n">08</span><span class="t">Лицо игры <span class="s">— фронтенд, рисуем виджетами</span></span></a>
+            </li>
+            <li><a href="#c12"><span class="n">09</span><span class="t">Двое через океан <span class="s">— бэкенд и сервер</span></span></a>
+            </li>
+            <li><a href="#ctest"><span class="n">10</span><span class="t">Зверята-контролёры <span class="s">— тесты, страж качества</span></span></a>
+            </li>
+            <li><a href="#cbug"><span class="n">11</span><span class="t">Охота на баги <span class="s">— как мы чинили жучков</span></span></a>
+            </li>
+            <li><a href="#cserver"><span class="n">11+</span><span class="t">Крепость-сервер <span class="s">— бонус: чиним серверные дыры</span></span></a>
+            </li>
+            <li><a href="#cgit"><span class="n">12</span><span class="t">Git: машина времени <span class="s">— не потерять работу</span></span></a>
+            </li>
+            <li><a href="#c13"><span class="n">13</span><span class="t">Один код — четыре мира <span class="s">— кросс-платформа</span></span></a>
+            </li>
+            <li><a href="#c14"><span class="n">14</span><span class="t">Игра готова <span
+                    class="s">— эпилог</span></span></a></li>
+        </ol>
+        <p style="margin:14px 0 0"><a href="#plan">📅 Карта курса на 200 дней</a> &nbsp;·&nbsp; <a href="#prompts">🎨
+            Бонус: промпты для иллюстраций</a></p>
+    </nav>
+
+    <!-- ═══ CH 1 · НЕДЕЛЯ 1 · СЕМЬ ВЕЧЕРОВ ═══ -->
+    <section class="chapter" id="c1">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#portal"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 00 · Пролог · Неделя 1 · дни 001–007</div>
+                <h2>Портал из блока</h2></div>
+        </div>
+        <p class="week-lead">С детьми идём <b>только по порядку</b>. Семь вечеров — семь страниц. Сначала смотрим
+            картинку: по ней должно быть ясно, <b>какая сегодня тема</b>. Потом читаем, потом одно дело вместе — и книгу
+            закрываем. Завтра — следующий день. Не листайте вперёд.</p>
+        <nav class="day-nav" aria-label="Дни недели 1">
+            <a href="#d001">1</a><a href="#d002">2</a><a href="#d003">3</a><a href="#d004">4</a><a href="#d005">5</a><a
+                href="#d006">6</a><a href="#d007">7</a>
+        </nav>
+
+        <article class="day-page" id="d001">
+            <div class="day-kicker">День 1 · из 200 · тема: инструменты</div>
+            <h3>Ставим инструменты</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day001.jpg"
+                         alt="Марьям рядом с ящиком инструментов, зелёными галочками и компьютером-доктором">
+                    <div class="scene-topic"><small>Тема дня</small>Ставим инструменты и проверяем</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> ящик с гаечными ключами и кубиками, компьютер с большой зелёной
+                    галочкой. Галочки = доктор сказал «всё хорошо».</p>
+            </div>
+            <div class="prose">
+                <p>Марьям было восемь, и больше всего на свете она любила складывать. Кубики, пазлы, слова из букв — что
+                    угодно, лишь бы из маленького получалось большое.</p>
+                <p>В тот дождливый вечер она играла в игру на старом планшете: разноцветные фигурки-<span class="word">тетромино</span>
+                    падали на сетку, и когда ряд заполнялся целиком — <em>вжух!</em> — он вспыхивал и исчезал.</p>
+                <p>И вдруг посередине экрана открылся портал. Фиолетовый. Из тех самых кубиков. Марьям остановилась и
+                    смотрела.</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Откройте сайт <span class="mono">flutter.dev</span>.</li>
+                    <li>Поставьте Flutter (папа нажимает, ребёнок смотрит, куда кладутся файлы).</li>
+                    <li>В терминале напишите <span class="mono">flutter doctor</span> и нажмите Enter.</li>
+                </ol>
+                <p class="together">Готово, когда доктор Flutter ответил и не испугался. Сегодня больше ничего не
+                    надо.</p>
+            </div>
+            <div class="day-next"><a href="#d002">День 2 →</a></div>
+        </article>
+
+        <article class="day-page" id="d002">
+            <div class="day-kicker">День 2 · из 200 · тема: редактор</div>
+            <h3>Окно, где живут программы</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day002.jpg"
+                         alt="Марьям у компьютера: слева папки, в середине цветные строки кода, зелёная кнопка запуска">
+                    <div class="scene-topic"><small>Тема дня</small>Редактор кода</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> слева папки, в середине цветные строчки-код, зелёная кнопка ▶ —
+                    это «запустить». Сегодня знакомимся с окном, в котором пишут программы.</p>
+            </div>
+            <div class="prose">
+                <p>Марьям протянула руку к светящемуся кубику. Он был тёплый, как лампочка, и чуть дрожал — будто внутри
+                    кто-то дышал.</p>
+                <p>«Интересно, — шепнула она, — кто тебя собрал?»</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Откройте <b>IntelliJ IDEA</b> — тот редактор, в котором папа собирает эту игру.</li>
+                    <li>Папа покажет: вот дерево файлов слева, вот место, где пишут код, вот кнопка запуска.</li>
+                    <li>Ребёнок сам нажимает на папки и смотрит, что внутри. Ничего не удаляем.</li>
+                </ol>
+                <p class="together">Готово, когда ребёнок знает, где «открыть проект» и где «запустить».</p>
+            </div>
+            <div class="day-next"><a href="#d003">День 3 →</a></div>
+        </article>
+
+        <article class="day-page" id="d003">
+            <div class="day-kicker">День 3 · из 200 · тема: скачиваем игру</div>
+            <h3>Игра приходит в коробке</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day003.jpg"
+                         alt="Из облака к Марьям летит подарочная коробка, внутри доска с тетромино">
+                    <div class="scene-topic"><small>Тема дня</small>Скачиваем игру на компьютер</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> из облака выезжает подарок, а внутри — наша доска с фигурками.
+                    Сегодня игра переезжает с интернета на наш компьютер.</p>
+            </div>
+            <div class="prose">
+                <p>Марьям поставила одну ногу в портал. Пол под пяткой стал мягким, как свет. Комната закружилась — и
+                    планшет вдруг стал <em>глубоким</em>, как колодец.</p>
+                <p>Она не упала. Она <em>вошла</em>.</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Скачайте игру (это и есть наша книга в коде):</li>
+                </ol>
+                <div class="cmdline">git clone https://github.com/alshfu/block-puzzle-pvp
+                    cd block-puzzle-pvp
+                </div>
+                <p class="together">Готово, когда на компьютере появилась папка <span
+                        class="mono">block_puzzle_pvp</span> (или <span class="mono">block-puzzle-pvp</span>) и внутри
+                    видны <span class="mono">lib/</span>, <span class="mono">test/</span>, <span
+                            class="mono">book/</span>.</p>
+            </div>
+            <div class="day-next"><a href="#d004">День 4 →</a></div>
+        </article>
+
+        <article class="day-page" id="d004">
+            <div class="day-kicker">День 4 · из 200 · тема: пакеты</div>
+            <h3>Коробочки-пакеты</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day004.jpg"
+                         alt="Марьям несёт стопку цветных коробок-пакетов к маленькому домику-приложению">
+                    <div class="scene-topic"><small>Тема дня</small>Собираем нужные коробочки</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> Марьям несёт цветные коробки к домику. Коробки — это пакеты, без
+                    которых игра не соберётся. Команда дня: <span class="mono">flutter pub get</span>.</p>
+            </div>
+            <div class="prose">
+                <p>Вокруг Марьям вспыхнули значки. Скобки <span class="mono">{ }</span>, стрелочки, маленькие <span
+                        class="mono">&lt;/&gt;</span> — они летали, как светлячки.</p>
+                <p>«Это не просто картинки, — поняла Марьям. — Это <em>слова, из которых собран мир</em>.»</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>В папке игры в терминале напишите:</li>
+                </ol>
+                <div class="cmdline">flutter pub get</div>
+                <p class="together">Это как сказать: «принеси все нужные коробочки». Готово, когда команда закончилась
+                    без красной ошибки.</p>
+            </div>
+            <div class="day-next"><a href="#d005">День 5 →</a></div>
+        </article>
+
+        <article class="day-page" id="d005">
+            <div class="day-kicker">День 5 · из 200 · тема: запуск</div>
+            <h3>Запускаем и играем</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day005.jpg" alt="Марьям ставит зелёную фигурку на светящуюся доску 9×9">
+                    <div class="scene-topic"><small>Тема дня</small>Игра живая — запускаем</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> доска 9×9 и фигурки в руках. Сегодня не пишем код — запускаем игру
+                    и играем своими руками.</p>
+            </div>
+            <div class="prose">
+                <p>Марьям мягко приземлилась на пол из светящихся клеток. Точь-в-точь как сетка той игры — только теперь
+                    она стояла <em>на ней</em>.</p>
+                <p>Клетки пружинили под ногами. Можно было ходить по самой доске.</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Запустите игру:</li>
+                </ol>
+                <div class="cmdline">flutter run -d chrome</div>
+                <ol start="2">
+                    <li>Дождитесь окна в браузере.</li>
+                    <li>Поиграйте. Просто поиграйте. Поставьте фигурку. Посмотрите, как гаснет ряд.</li>
+                </ol>
+                <p class="together">Готово, когда ребёнок сам увидел живую игру BlockDuel. Сегодня код не трогаем.</p>
+            </div>
+            <div class="day-next"><a href="#d006">День 6 →</a></div>
+        </article>
+
+        <article class="day-page" id="d006">
+            <div class="day-kicker">День 6 · из 200 · тема: карта папок</div>
+            <h3>Три двери проекта</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day006.jpg"
+                         alt="Три двери: книга и шестерёнка, кисть, галочка и лупа — Марьям показывает на них">
+                    <div class="scene-topic"><small>Тема дня</small>Правила · картинка · проверки</div>
+                </div>
+                <div class="pic-key">
+                    <span>📘 синяя дверь — правила · <span class="mono">lib/core</span></span>
+                    <span>🎨 жёлтая дверь — картинка · <span class="mono">lib/ui</span></span>
+                    <span>✅ зелёная дверь — проверки · <span class="mono">test</span></span>
+                </div>
+            </div>
+            <div class="prose">
+                <p class="say">Марьям огляделась. Кубики всех цветов парили, как фонарики. «Где это я?» — прошептала
+                    она.</p>
+                <p>Голос ответил тепло, ещё из-за угла: «В <b>Мире Кода</b>. Здесь всё, что ты видишь, кто-то придумал и
+                    <em>записал</em>.»</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Откройте в редакторе папки <span class="mono">lib/</span> и <span class="mono">test/</span>.
+                    </li>
+                    <li>Папа коротко говорит, что где: <span class="mono">lib/core/</span> — правила игры, <span
+                            class="mono">lib/ui/</span> — картинка на экране, <span class="mono">test/</span> — проверки
+                        «всё ли честно».
+                    </li>
+                    <li>Ребёнок выбирает один файл, открывает и просто смотрит на буквы. Ничего не меняем.</li>
+                </ol>
+                <p class="together">Готово, когда ребёнок может показать пальцем: вот правила, вот экран, вот
+                    проверки.</p>
+            </div>
+            <div class="day-next"><a href="#d007">День 7 →</a></div>
+        </article>
+
+        <article class="day-page" id="d007">
+            <div class="day-kicker">День 7 · из 200 · мини-проект · тема: меняем слова</div>
+            <h3>Свои слова на экране</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day007.jpg"
+                         alt="Марьям огромным карандашом перекрашивает вывеску игры, друзья радуются">
+                    <div class="scene-topic"><small>Тема дня</small>Меняем слова на экране</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> Марьям закрашивает старую вывеску своим рисунком. Сегодня вы так
+                    же поменяете слова <span class="mono">BlockDuel</span> на своё приветствие — и игра скажет его
+                    вслух.</p>
+            </div>
+            <div class="prose">
+                <p class="say">Из портала вышли четверо: рыжий пони, высокая лама, пушистая альпака и два маленьких
+                    котика. «Игра, из которой ты выпала, — тоже записана, — сказал тёплый голос. — Хочешь, научим тебя
+                    её строить?»</p>
+                <p>Марьям кивнула так быстро, что чуть не потеряла бантик.</p>
+            </div>
+            <div class="learn">
+                <div class="h"><span class="star">★</span> Что такое программа</div>
+                <ul>
+                    <li><b>Программа</b> — это очень точный список указаний, записанный так, что его понимает компьютер.
+                    </li>
+                    <li>Игра, сайт, приложение — всё это программы. Мы будем строить игру <b>BlockDuel 9×9</b>:
+                        тетромино на доске 9×9, как та, из которой выпала Марьям.
+                    </li>
+                    <li>Язык, на котором мы напишем игру, называется <span class="word">Dart</span>, а её «тело» — <span
+                            class="word">Flutter</span>.
+                    </li>
+                </ul>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Мини-проект недели</div>
+                <ol>
+                    <li>Вместе найдите на экране игры большое слово <span class="mono">BlockDuel</span>.</li>
+                    <li>Папа откроет файл <span class="mono">lib/ui/widgets/logo.dart</span>. Ребёнок меняет слова <span
+                            class="mono">Block</span> и <span class="mono">Duel</span> на своё приветствие, например:
+                    </li>
+                </ol>
+                <div class="cmdline">Привет, я Марьям!</div>
+                <ol start="3">
+                    <li>Снова <span class="mono">flutter run -d chrome</span> — и смотрите: игра поздоровалась вашими
+                        словами.
+                    </li>
+                </ol>
+                <p class="together">Неделя 1 закрыта, когда на экране видно ваше «Привет, я Марьям!». Дальше — только
+                    глава 01, день 8. Не раньше.</p>
+            </div>
+        </article>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 2 · НЕДЕЛЯ 2 · СЕМЬ ВЕЧЕРОВ ═══ -->
+    <section class="chapter" id="c2">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#pony"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 01 · Данные · Неделя 2 · дни 008–014</div>
+                <h2>Пони По и коробочки-переменные</h2>
+                <div class="ch-companion">спутник главы — рыжий пони По</div>
+            </div>
+        </div>
+        <p class="week-lead">Неделю 1 закрыли. Теперь семь вечеров про <b>коробочки</b>. По картинке сразу видно тему
+            дня. Не прыгаем в неделю 3.</p>
+        <nav class="day-nav" aria-label="Дни недели 2">
+            <a href="#d008">8</a><a href="#d009">9</a><a href="#d010">10</a><a href="#d011">11</a><a href="#d012">12</a><a
+                href="#d013">13</a><a href="#d014">14</a>
+        </nav>
+
+        <article class="day-page" id="d008">
+            <div class="day-kicker">День 8 · из 200 · тема: две коробочки</div>
+            <h3>Коробочки с именами</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day008.jpg"
+                         alt="Пони По показывает Марьям две коробочки: с числом и с портретом-именем">
+                    <div class="scene-topic"><small>Тема дня</small>Переменная — коробочка с подписью</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> две коробочки. В одной — число (очки <span
+                        class="mono">score</span>), в другой — имя (<span class="mono">nick</span>). Подпись снаружи,
+                    значение внутри.</p>
+            </div>
+            <div class="prose">
+                <p class="say">Рыжий пони топнул копытцем и представился: «Я — <b>По</b>. Чтобы компьютер что-то
+                    запомнил, мы кладём это в <span class="word">переменную</span> — коробочку с подписью».</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Откройте файл дня <span class="mono">course/week02_variables/day008.dart</span>.</li>
+                    <li>Напишите: <span class="mono">int score = 0;</span></li>
+                    <li>Рядом: <span class="mono">print(score);</span> и запустите.</li>
+                </ol>
+                <p class="together">Готово, когда в консоли появился ноль. Сегодня только одна коробочка.</p>
+            </div>
+            <div class="day-next"><a href="#d009">День 9 →</a></div>
+        </article>
+
+        <article class="day-page" id="d009">
+            <div class="day-kicker">День 9 · из 200 · тема: кладём число</div>
+            <h3>Ноль в коробочку очков</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day009.jpg" alt="Марьям и пони кладут светящийся ноль в открытую коробочку">
+                    <div class="scene-topic"><small>Тема дня</small>Кладём число в <span class="mono">score</span></div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> в коробочку кладут ноль. Это старт очков. Тип коробочки — <span
+                        class="mono">int</span> (целые числа).</p>
+            </div>
+            <div class="prose">
+                <p>По подкатил первую коробочку. На ней написал <span class="mono">score</span> и положил внутрь число
+                    <span class="mono">0</span> — это очки. Партия ещё не началась, поэтому внутри тихо.</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Ещё раз напишите <span class="mono">int score = 0;</span></li>
+                    <li>Скажите вслух: «подпись — score, внутри — ноль».</li>
+                </ol>
+                <p class="together">Готово, когда ребёнок пальцем показывает: вот имя, вот значение.</p>
+            </div>
+            <div class="day-next"><a href="#d010">День 10 →</a></div>
+        </article>
+
+        <article class="day-page" id="d010">
+            <div class="day-kicker">День 10 · из 200 · тема: кладём имя</div>
+            <h3>Имя в коробочку</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day010.jpg" alt="Марьям кладёт ленточку с портретом в коробочку имени">
+                    <div class="scene-topic"><small>Тема дня</small>Кладём слово в <span class="mono">nick</span></div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> во вторую коробочку кладут имя. Это текст. Тип — <span
+                        class="mono">String</span>. Слова всегда в кавычках: <span class="mono">"Марьям"</span>.</p>
+            </div>
+            <div class="prose">
+                <p>На второй коробочке По написал <span class="mono">nick</span> и положил слово <span class="mono">"Марьям"</span>.
+                    «Подпись — это <em>имя</em> коробочки. То, что внутри, — <em>значение</em>.»</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Напишите <span class="mono">String nick = "Марьям";</span> (можно своё имя).</li>
+                    <li><span class="mono">print(nick);</span></li>
+                </ol>
+                <p class="together">Готово, когда консоль сказала имя ребёнка.</p>
+            </div>
+            <div class="day-next"><a href="#d011">День 11 →</a></div>
+        </article>
+
+        <article class="day-page" id="d011">
+            <div class="day-kicker">День 11 · из 200 · тема: прибавляем</div>
+            <h3>Пятнадцать очков в коробку</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day011.jpg"
+                         alt="Светящиеся кубики летят в коробочку очков, пони и Марьям радуются">
+                    <div class="scene-topic"><small>Тема дня</small>Прибавляем к числу</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> в коробочку досыпают кубики. Очистили ряд — прибавили 15.
+                    Коробочка стала ярче, внутри уже не ноль.</p>
+            </div>
+            <div class="prose">
+                <p>Ряд вспыхнул — и По бросил в коробочку ещё пятнадцать. «Смотри: <span
+                        class="mono">score = score + 15</span>. Сначала считаем справа, потом кладём слева.»</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>После нуля напишите <span class="mono">score = score + 15;</span></li>
+                    <li><span class="mono">print(score);</span> — должно быть 15.</li>
+                </ol>
+                <p class="together">Готово, когда консоль показала пятнадцать, не ноль.</p>
+            </div>
+            <div class="day-next"><a href="#d012">День 12 →</a></div>
+        </article>
+
+        <article class="day-page" id="d012">
+            <div class="day-kicker">День 12 · из 200 · тема: два типа</div>
+            <h3>Числа и буквы — разные дома</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day012.jpg"
+                         alt="Оранжевая коробка с кубиками-числами и фиолетовая коробка с буквами">
+                    <div class="scene-topic"><small>Тема дня</small>Тип: int и String</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> слева дом для чисел, справа дом для букв. В числовую коробочку
+                    нельзя запихнуть слово — у каждой свой тип.</p>
+            </div>
+            <div class="prose">
+                <p>«У коробочки есть <span class="word">тип</span>: в одной живут числа, в другой — буквы. Числа мы
+                    зовём <span class="mono">int</span>, а буквы — <span class="mono">String</span>. Есть ещё <span
+                            class="mono">bool</span> — да или нет.»</p>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Нарисуйте две коробки на бумаге: «числа» и «буквы».</li>
+                    <li>Разложите: 0, 15, "Марьям", true — куда что кладётся.</li>
+                </ol>
+                <p class="together">Готово, когда ни одно слово не лежит в коробке чисел.</p>
+            </div>
+            <div class="day-next"><a href="#d013">День 13 →</a></div>
+        </article>
+
+        <article class="day-page" id="d013">
+            <div class="day-kicker">День 13 · из 200 · тема: знак =</div>
+            <h3>Равно значит «положи»</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day013.jpg" alt="Кубики справа по стрелке падают в открытую коробочку слева">
+                    <div class="scene-topic"><small>Тема дня</small>= — это «положи в коробочку»</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> кубики справа едут в коробку слева. Знак <span
+                        class="mono">=</span> в коде — не «равно как в школе», а «возьми то, что справа, и положи
+                    налево».</p>
+            </div>
+            <div class="prose">
+                <p>По нарисовал стрелку. «Сначала считается то, что справа, потом кладётся в имя слева. Поэтому пишем
+                    <span class="mono">score = score + 15</span>, а не наоборот.»</p>
+            </div>
+            <div class="spell">
+                <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> заклинание По <span
+                        class="file">Dart</span></div>
+                <pre><code><span class="key">int</span> score = <span class="num">0</span>;          <span class="cmt">// коробочка с числом: очки игрока</span>
+<span class="key">String</span> nick = <span class="str">"Марьям"</span>;  <span
+                            class="cmt">// коробочка с буквами: имя</span>
+
+score = score + <span class="num">15</span>;      <span class="cmt">// очистили ряд — прибавили 15 очков</span>
+</code></pre>
+                <div class="spell-cap">Знак <b>=</b> здесь не «равно», а «<b>положи в коробочку</b>».</div>
+            </div>
+            <div class="day-next"><a href="#d014">День 14 →</a></div>
+        </article>
+
+        <article class="day-page" id="d014">
+            <div class="day-kicker">День 14 · из 200 · мини-проект · тема: карточка игрока</div>
+            <h3>Карточка: имя и очки</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day014.jpg"
+                         alt="Марьям держит карточку игрока с портретом и звёздами-очками, пони ставит печать">
+                    <div class="scene-topic"><small>Тема дня</small>Мини-проект: имя + очки</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> карточка игрока. Слева лицо (имя), справа звёзды (очки). Сегодня
+                    вы собираете обе коробочки вместе и печатаете их.</p>
+            </div>
+            <div class="learn">
+                <div class="h"><span class="star">★</span> Что ты выучил за неделю</div>
+                <ul>
+                    <li><b>Переменная</b> — именованная коробочка для данных.</li>
+                    <li>У каждого значения есть <b>тип</b>: <span class="mono">int</span>, <span
+                            class="mono">String</span>, <span class="mono">bool</span>.
+                    </li>
+                    <li><span class="mono">=</span> — это «присвоить», а не «равно».</li>
+                </ul>
+            </div>
+            <div class="task">
+                <div class="h">🎯 Мини-проект недели</div>
+                <ol>
+                    <li>В одном файле заведите <span class="mono">score</span> и <span class="mono">nick</span>.</li>
+                    <li>Прибавьте 15 к очкам.</li>
+                    <li>Напечатайте оба значения в консоль.</li>
+                </ol>
+                <p class="together">Неделя 2 закрыта, когда консоль показала имя и число. Дальше — неделя 3, лама Лу и
+                    функции. Не раньше.</p>
+            </div>
+        </article>
+    </section>
+
+    <!-- DAYS_EXT_START (сгенерировано tools/gen_book_days.py) -->
+    <hr class="divide">
+    <section class="chapter" id="days3to6">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#alpaca"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Недели 3–6 · страницы-дни</div>
+                <h2>Дни 15–42: продолжаем по вечерам</h2>
+                <div class="ch-companion">по картинке — тема дня</div>
+            </div>
+        </div>
+        <div class="scene">
+            <div class="scene-frame"><img src="assets/img/week03.jpg" alt="Обложка недели 3">
+                <div class="scene-topic"><small>Неделя 3</small>Лама Лу</div>
+            </div>
+        </div>
+        <p class="week-lead">Неделя 3. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня.
+            Не листаем вперёд.</p>
+        <article class="day-page" id="d015">
+            <div class="day-kicker">День 15 · из 200 · тема: функция-приветствие</div>
+            <h3>Волшебная машина-функция</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day015.jpg" alt="лама Лу плетёт машину: слева вход, справа — ответ">
+                    <div class="scene-topic"><small>Тема дня</small>функция-приветствие</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> лама Лу плетёт машину: слева вход, справа — ответ.</p>
+            </div>
+            <div class="prose"><p class="say">«Действие с именем — это функция, — сказала Лу. — Позови сколько
+                хочешь».</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Открой course/week03_functions/day015.dart</li>
+                    <li>Напиши функцию String привет(String имя) { return 'Привет, $имя!'; }</li>
+                    <li>Позови привет('Марьям') и напечатай результат.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d016">День 16 →</a></div>
+        </article>
+        <article class="day-page" id="d016">
+            <div class="day-kicker">День 16 · из 200 · тема: функция площади</div>
+            <h3>Функция считает площадь</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day016.jpg" alt="машина берёт два числа и выдаёт одно">
+                    <div class="scene-topic"><small>Тема дня</small>функция площади</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> машина берёт два числа и выдаёт одно.</p>
+            </div>
+            <div class="prose"><p class="say">Функция берёт вход и возвращает ответ через return.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Напиши int площадь(int a, int b) => a * b;</li>
+                    <li>Позови площадь(3, 4) и напечатай 12.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d017">День 17 →</a></div>
+        </article>
+        <article class="day-page" id="d017">
+            <div class="day-kicker">День 17 · из 200 · тема: функция суммы</div>
+            <h3>Складываем в функции</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day017.jpg" alt="две цифры входят, сумма выходит">
+                    <div class="scene-topic"><small>Тема дня</small>функция суммы</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> две цифры входят, сумма выходит.</p>
+            </div>
+            <div class="prose"><p class="say">Один раз придумал функцию — пользуешься везде.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Напиши int сумма(int a, int b) => a + b;</li>
+                    <li>Проверь на нескольких числах.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d018">День 18 →</a></div>
+        </article>
+        <article class="day-page" id="d018">
+            <div class="day-kicker">День 18 · из 200 · тема: читаем настоящую функцию</div>
+            <h3>Настоящая функция очков</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day018.jpg" alt="светящийся свиток формулы очков из игры">
+                    <div class="scene-topic"><small>Тема дня</small>читаем настоящую функцию</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> светящийся свиток формулы очков из игры.</p>
+            </div>
+            <div class="prose"><p class="say">Это функция из нашей игры — она считает очки за ход.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Открой lib/core/scoring.dart и найди scoreForMove.</li>
+                    <li>Прочитай её построчно, ничего не меняя.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d019">День 19 →</a></div>
+        </article>
+        <article class="day-page" id="d019">
+            <div class="day-kicker">День 19 · из 200 · тема: зовём функцию игры</div>
+            <h3>Пробуем очки на числах</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day019.jpg" alt="линии превращаются в летящие очки">
+                    <div class="scene-topic"><small>Тема дня</small>зовём функцию игры</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> линии превращаются в летящие очки.</p>
+            </div>
+            <div class="prose"><p class="say">Позови функцию с разными числами и сравни ответы.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Позови scoreForMove(1, 0, false) — сколько вышло?</li>
+                    <li>Позови scoreForMove(2, 3, false) — сравни.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d020">День 20 →</a></div>
+        </article>
+        <article class="day-page" id="d020">
+            <div class="day-kicker">День 20 · из 200 · тема: своя формула</div>
+            <h3>Своя формула очков</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day020.jpg" alt="Марьям и Лу собирают свою машину очков">
+                    <div class="scene-topic"><small>Тема дня</small>своя формула</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> Марьям и Лу собирают свою машину очков.</p>
+            </div>
+            <div class="prose"><p class="say">Собери функцию по образцу — теперь своими руками.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Напиши int очки(int линии, int комбо) по формуле из книги.</li>
+                    <li>Проверь: очки(2, 3) должно дать 26.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d021">День 21 →</a></div>
+        </article>
+        <article class="day-page" id="d021">
+            <div class="day-kicker">День 21 · из 200 · тема: мини-проект недели</div>
+            <h3>🎯 Машина очков готова</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day021.jpg" alt="готовая машина-функция сияет, все радуются">
+                    <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> готовая машина-функция сияет, все радуются.</p>
+            </div>
+            <div class="prose"><p class="say">Неделю функций закрыли. Функция — твой первый инструмент.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Доведи функцию очки(...) до рабочего вида.</li>
+                    <li>Позови её три раза с разными входами и напечатай.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d022">День 22 →</a></div>
+        </article>
+        <div class="scene">
+            <div class="scene-frame"><img src="assets/img/week04.jpg" alt="Обложка недели 4">
+                <div class="scene-topic"><small>Неделя 4</small>Альпака Аля</div>
+            </div>
+        </div>
+        <p class="week-lead">Неделя 4. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня.
+            Не листаем вперёд.</p>
+        <article class="day-page" id="d022">
+            <div class="day-kicker">День 22 · из 200 · тема: развилка if</div>
+            <h3>Развилка: если…</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day022.jpg" alt="альпака Аля на развилке с двумя стрелками да/нет">
+                    <div class="scene-topic"><small>Тема дня</small>развилка if</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> альпака Аля на развилке с двумя стрелками да/нет.</p>
+            </div>
+            <div class="prose"><p class="say">«if — это выбор: пойти сюда или туда», — прыгнула Аля.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Открой course/week04_if/day022.dart</li>
+                    <li>Напиши: if (score > best) best = score;</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d023">День 23 →</a></div>
+        </article>
+        <article class="day-page" id="d023">
+            <div class="day-kicker">День 23 · из 200 · тема: чётное число</div>
+            <h3>Чётное или нет</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day023.jpg" alt="число делится на два — загорается зелёным">
+                    <div class="scene-topic"><small>Тема дня</small>чётное число</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> число делится на два — загорается зелёным.</p>
+            </div>
+            <div class="prose"><p class="say">Условие проверяет — и решает, что делать дальше.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Проверь: if (n % 2 == 0) print('чётное');</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d024">День 24 →</a></div>
+        </article>
+        <article class="day-page" id="d024">
+            <div class="day-kicker">День 24 · из 200 · тема: три ветки</div>
+            <h3>Если / иначе / иначе</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day024.jpg" alt="три двери, светится одна">
+                    <div class="scene-topic"><small>Тема дня</small>три ветки</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> три двери, светится одна.</p>
+            </div>
+            <div class="prose"><p class="say">if / else if / else — три пути на выбор.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Сделай три ветки по значению числа (мало/средне/много).</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d025">День 25 →</a></div>
+        </article>
+        <article class="day-page" id="d025">
+            <div class="day-kicker">День 25 · из 200 · тема: знак сравнения</div>
+            <h3>Больше, меньше, равно</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day025.jpg" alt="большой светящийся знак > над двумя числами">
+                    <div class="scene-topic"><small>Тема дня</small>знак сравнения</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> большой светящийся знак > над двумя числами.</p>
+            </div>
+            <div class="prose"><p class="say">Сравнил два числа — напечатал знак.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Сравни a и b, напечатай >, < или =.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d026">День 26 →</a></div>
+        </article>
+        <article class="day-page" id="d026">
+            <div class="day-kicker">День 26 · из 200 · тема: закрепляем if</div>
+            <h3>Тренируем развилки</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day026.jpg" alt="Аля жонглирует условиями">
+                    <div class="scene-topic"><small>Тема дня</small>закрепляем if</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> Аля жонглирует условиями.</p>
+            </div>
+            <div class="prose"><p class="say">Условие — сердце любой логики.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Придумай своё условие и проверь его в коде.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d027">День 27 →</a></div>
+        </article>
+        <article class="day-page" id="d027">
+            <div class="day-kicker">День 27 · из 200 · тема: готовим игру</div>
+            <h3>К игре «Угадай число»</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day027.jpg" alt="загадочная коробка с числом внутри">
+                    <div class="scene-topic"><small>Тема дня</small>готовим игру</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> загадочная коробка с числом внутри.</p>
+            </div>
+            <div class="prose"><p class="say">Соберём маленькую игру на условиях.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Заведи задуманное число и переменную-догадку.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d028">День 28 →</a></div>
+        </article>
+        <article class="day-page" id="d028">
+            <div class="day-kicker">День 28 · из 200 · тема: мини-проект недели</div>
+            <h3>🎯 Угадай число</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day028.jpg" alt="радостная игра с подсказками «больше/меньше»">
+                    <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> радостная игра с подсказками «больше/меньше».</p>
+            </div>
+            <div class="prose"><p class="say">Условия ожили в настоящей маленькой игре.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Сделай игру: подсказки «больше/меньше», пока не угадал.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d029">День 29 →</a></div>
+        </article>
+        <div class="scene">
+            <div class="scene-frame"><img src="assets/img/week05.jpg" alt="Обложка недели 5">
+                <div class="scene-topic"><small>Неделя 5</small>Альпака Аля</div>
+            </div>
+        </div>
+        <p class="week-lead">Неделя 5. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня.
+            Не листаем вперёд.</p>
+        <article class="day-page" id="d029">
+            <div class="day-kicker">День 29 · из 200 · тема: карусель for</div>
+            <h3>Карусель, что повторяет</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day029.jpg" alt="Аля крутит светящуюся карусель со счётчиком">
+                    <div class="scene-topic"><small>Тема дня</small>карусель for</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> Аля крутит светящуюся карусель со счётчиком.</p>
+            </div>
+            <div class="prose"><p class="say">«for — повтори много раз, меняя счётчик», — сказала Аля.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Открой course/week05_for/day029.dart</li>
+                    <li>Напечатай числа от 0 до 8 циклом for.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d030">День 30 →</a></div>
+        </article>
+        <article class="day-page" id="d030">
+            <div class="day-kicker">День 30 · из 200 · тема: сетка 9×9</div>
+            <h3>Обходим всю доску</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day030.jpg" alt="стрелки обходят клетки 9×9 одну за другой">
+                    <div class="scene-topic"><small>Тема дня</small>сетка 9×9</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> стрелки обходят клетки 9×9 одну за другой.</p>
+            </div>
+            <div class="prose"><p class="say">Вложенный for обходит всю сетку сам.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Вложенным for пройди 9×9 (81 клетку).</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d031">День 31 →</a></div>
+        </article>
+        <article class="day-page" id="d031">
+            <div class="day-kicker">День 31 · из 200 · тема: сумма чисел</div>
+            <h3>Складываем много</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day031.jpg" alt="числа один за другим падают в копилку">
+                    <div class="scene-topic"><small>Тема дня</small>сумма чисел</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> числа один за другим падают в копилку.</p>
+            </div>
+            <div class="prose"><p class="say">Цикл не устаёт — хоть сто, хоть сто тысяч.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Посчитай сумму чисел от 1 до 100.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d032">День 32 →</a></div>
+        </article>
+        <article class="day-page" id="d032">
+            <div class="day-kicker">День 32 · из 200 · тема: таблица умножения</div>
+            <h3>Таблица на 5</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day032.jpg" alt="светящаяся таблица умножения строится сама">
+                    <div class="scene-topic"><small>Тема дня</small>таблица умножения</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> светящаяся таблица умножения строится сама.</p>
+            </div>
+            <div class="prose"><p class="say">Повторяем действие — рождается таблица.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Напечатай таблицу умножения на 5 циклом.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d033">День 33 →</a></div>
+        </article>
+        <article class="day-page" id="d033">
+            <div class="day-kicker">День 33 · из 200 · тема: закрепляем for</div>
+            <h3>Тренируем карусель</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day033.jpg" alt="разноцветные повторы кружатся">
+                    <div class="scene-topic"><small>Тема дня</small>закрепляем for</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> разноцветные повторы кружатся.</p>
+            </div>
+            <div class="prose"><p class="say">for — самый частый инструмент программиста.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Напечатай свою последовательность циклом.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d034">День 34 →</a></div>
+        </article>
+        <article class="day-page" id="d034">
+            <div class="day-kicker">День 34 · из 200 · тема: готовим узор</div>
+            <h3>К узору из звёздочек</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day034.jpg" alt="первые звёздочки складываются в ряд">
+                    <div class="scene-topic"><small>Тема дня</small>готовим узор</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> первые звёздочки складываются в ряд.</p>
+            </div>
+            <div class="prose"><p class="say">Из циклов можно строить картинки из символов.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Напечатай строку из N звёздочек ★.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d035">День 35 →</a></div>
+        </article>
+        <article class="day-page" id="d035">
+            <div class="day-kicker">День 35 · из 200 · тема: мини-проект недели</div>
+            <h3>🎯 Пирамидка из звёзд</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day035.jpg" alt="яркая пирамидка ★ построена ряд за рядом">
+                    <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> яркая пирамидка ★ построена ряд за рядом.</p>
+            </div>
+            <div class="prose"><p class="say">Циклы нарисовали целую пирамидку.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Построй пирамидку ★ вложенным for (1,2,3… звезды).</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d036">День 36 →</a></div>
+        </article>
+        <div class="scene">
+            <div class="scene-frame"><img src="assets/img/week06.jpg" alt="Обложка недели 6">
+                <div class="scene-topic"><small>Неделя 6</small>Котики</div>
+            </div>
+        </div>
+        <p class="week-lead">Неделя 6. Семь вечеров по одной странице. Сначала смотрим картинку — по ней ясна тема дня.
+            Не листаем вперёд.</p>
+        <article class="day-page" id="d036">
+            <div class="day-kicker">День 36 · из 200 · тема: список</div>
+            <h3>Много в одной коробке</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day036.jpg" alt="котики раскладывают предметы в нумерованный ряд с нуля">
+                    <div class="scene-topic"><small>Тема дня</small>список</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> котики раскладывают предметы в нумерованный ряд с нуля.</p>
+            </div>
+            <div class="prose"><p class="say">«Один — переменная, а много — список», — мурлыкнули котики.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Открой course/week06_lists/day036.dart</li>
+                    <li>Заведи List
+                        <String> games = ['A','B','C']; и напечатай.
+                    </li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d037">День 37 →</a></div>
+        </article>
+        <article class="day-page" id="d037">
+            <div class="day-kicker">День 37 · из 200 · тема: добавить и убрать</div>
+            <h3>Добавляем и удаляем</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day037.jpg" alt="в список кладут новый элемент, другой убирают">
+                    <div class="scene-topic"><small>Тема дня</small>добавить и убрать</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> в список кладут новый элемент, другой убирают.</p>
+            </div>
+            <div class="prose"><p class="say">Список умеет расти и уменьшаться.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>.add('D') добавит, .remove('A') уберёт — проверь.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d038">День 38 →</a></div>
+        </article>
+        <article class="day-page" id="d038">
+            <div class="day-kicker">День 38 · из 200 · тема: обходим список</div>
+            <h3>Идём по списку</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day038.jpg" alt="стрелка идёт по элементам по порядку">
+                    <div class="scene-topic"><small>Тема дня</small>обходим список</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> стрелка идёт по элементам по порядку.</p>
+            </div>
+            <div class="prose"><p class="say">for-in проходит список от начала до конца.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Пройди список циклом for (final g in games).</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d039">День 39 →</a></div>
+        </article>
+        <article class="day-page" id="d039">
+            <div class="day-kicker">День 39 · из 200 · тема: ищем в списке</div>
+            <h3>Самое длинное слово</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day039.jpg" alt="среди карточек светится самая длинная">
+                    <div class="scene-topic"><small>Тема дня</small>ищем в списке</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> среди карточек светится самая длинная.</p>
+            </div>
+            <div class="prose"><p class="say">В списке можно искать по правилу.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Найди самое длинное слово в списке.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d040">День 40 →</a></div>
+        </article>
+        <article class="day-page" id="d040">
+            <div class="day-kicker">День 40 · из 200 · тема: закрепляем списки</div>
+            <h3>Тренируем списки</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day040.jpg" alt="котики играют со списком-клубком">
+                    <div class="scene-topic"><small>Тема дня</small>закрепляем списки</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> котики играют со списком-клубком.</p>
+            </div>
+            <div class="prose"><p class="say">Списки — основа доски и руки фигур.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Сделай список чисел и посчитай их сумму.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d041">День 41 →</a></div>
+        </article>
+        <article class="day-page" id="d041">
+            <div class="day-kicker">День 41 · из 200 · тема: готовим руку</div>
+            <h3>К руке из фигур</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day041.jpg" alt="рука с тремя фигурками-тетромино">
+                    <div class="scene-topic"><small>Тема дня</small>готовим руку</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> рука с тремя фигурками-тетромино.</p>
+            </div>
+            <div class="prose"><p class="say">Рука игрока — это тоже список фигур.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Заведи список из трёх фигур (строками).</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d042">День 42 →</a></div>
+        </article>
+        <article class="day-page" id="d042">
+            <div class="day-kicker">День 42 · из 200 · тема: мини-проект недели</div>
+            <h3>🎯 Рука фигур</h3>
+            <div class="scene">
+                <div class="scene-frame">
+                    <img src="assets/img/day042.jpg" alt="аккуратная рука фигур в лапке котика">
+                    <div class="scene-topic"><small>Тема дня</small>мини-проект недели</div>
+                </div>
+                <p class="pic-read"><b>Что видно:</b> аккуратная рука фигур в лапке котика.</p>
+            </div>
+            <div class="prose"><p class="say">Списками мы собрали руку игрока.</p></div>
+            <div class="task">
+                <div class="h">🎯 Задание дня — вместе с папой</div>
+                <ol>
+                    <li>Сделай список-руку: добавь, убери, покажи фигуры.</li>
+                </ol>
+                <p class="together">Не спешим: одна маленькая победа за вечер — уже отлично.</p>
+            </div>
+            <div class="day-next"><a href="#d043">День 43 →</a></div>
+        </article>
+        <h2 style="margin-top:36px">Недели 7–29: обложки курса</h2>
+        <p class="week-lead">Дальше день-картинки ещё рисуются — а обложки недель уже готовы. Каждую можно раскрыть в
+            свою неделю страниц-дней по образцу выше.</p>
+        <div class="weeks-gallery">
+            <figure><img src="assets/img/week07.jpg" alt="Неделя 7: Классы">
+                <figcaption>Неделя 7<br><small>Классы</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week08.jpg" alt="Неделя 8: Доска 9×9">
+                <figcaption>Неделя 8<br><small>Доска 9×9</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week09.jpg" alt="Неделя 9: Честная случайность">
+                <figcaption>Неделя 9<br><small>Честная случайность</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week10.jpg" alt="Неделя 10: Мешок фигур">
+                <figcaption>Неделя 10<br><small>Мешок фигур</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week11.jpg" alt="Неделя 11: Фигуры-тетромино">
+                <figcaption>Неделя 11<br><small>Фигуры-тетромино</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week12.jpg" alt="Неделя 12: Повороты">
+                <figcaption>Неделя 12<br><small>Повороты</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week13.jpg" alt="Неделя 13: Закон «сюда можно?»">
+                <figcaption>Неделя 13<br><small>Закон «сюда можно?»</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week14.jpg" alt="Неделя 14: Постановка и очистка">
+                <figcaption>Неделя 14<br><small>Постановка и очистка</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week15.jpg" alt="Неделя 15: Счёт и комбо">
+                <figcaption>Неделя 15<br><small>Счёт и комбо</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week16.jpg" alt="Неделя 16: Перебор ходов">
+                <figcaption>Неделя 16<br><small>Перебор ходов</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week17.jpg" alt="Неделя 17: Оценка хода">
+                <figcaption>Неделя 17<br><small>Оценка хода</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week18.jpg" alt="Неделя 18: Бот целиком">
+                <figcaption>Неделя 18<br><small>Бот целиком</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week19.jpg" alt="Неделя 19: Первый экран">
+                <figcaption>Неделя 19<br><small>Первый экран</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week20.jpg" alt="Неделя 20: Доска виджетами">
+                <figcaption>Неделя 20<br><small>Доска виджетами</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week21.jpg" alt="Неделя 21: Ввод (тап)">
+                <figcaption>Неделя 21<br><small>Ввод (тап)</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week22.jpg" alt="Неделя 22: Сервер и WebSocket">
+                <figcaption>Неделя 22<br><small>Сервер и WebSocket</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week23.jpg" alt="Неделя 23: Два игрока">
+                <figcaption>Неделя 23<br><small>Два игрока</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week24.jpg" alt="Неделя 24: Рейтинг ELO">
+                <figcaption>Неделя 24<br><small>Рейтинг ELO</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week25.jpg" alt="Неделя 25: Тесты">
+                <figcaption>Неделя 25<br><small>Тесты</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week26.jpg" alt="Неделя 26: Красный → зелёный">
+                <figcaption>Неделя 26<br><small>Красный → зелёный</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week27.jpg" alt="Неделя 27: Git — машина времени">
+                <figcaption>Неделя 27<br><small>Git — машина времени</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week28.jpg" alt="Неделя 28: Баги и сборка">
+                <figcaption>Неделя 28<br><small>Баги и сборка</small></figcaption>
+            </figure>
+            <figure><img src="assets/img/week29.jpg" alt="Неделя 29: Финал 🎉">
+                <figcaption>Неделя 29<br><small>Финал 🎉</small></figcaption>
+            </figure>
+        </div>
+    </section>
+    <!-- DAYS_EXT_END -->
+
+    <hr class="divide">
+
+    <!-- ═══ CH 5 ═══ -->
+    <section class="chapter" id="c5">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#catP"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 02 · Данные-2 · 🎨 image-promt/day036–056</div>
+                <h2>Котики и сетка 9×9</h2>
+                <div class="ch-companion">спутники главы — два котика</div>
+            </div>
+        </div>
+        <div class="scene">
+            <svg viewBox="0 0 460 180" role="img" aria-label="Котики раскладывают клетки в сетку 9 на 9">
+                <rect width="460" height="180" rx="16" fill="var(--card)"/>
+                <use href="#catP" x="20" y="60" width="72" height="72"/>
+                <use href="#catR" x="368" y="60" width="72" height="72"/>
+                <g transform="translate(160,20)">
+                    <rect width="140" height="140" rx="10" fill="var(--magic-wash)" stroke="var(--line)"/>
+                    <g stroke="var(--line)">
+                        <path d="M46 4V136M92 4V136M4 46H136M4 92H136" stroke-width="2"/>
+                        <path d="M17 4V136M31 4V136M63 4V136M77 4V136M109 4V136M123 4V136M4 17H136M4 31H136M4 63H136M4 77H136M4 109H136M4 123H136"
+                              stroke-width=".5" opacity=".6"/>
+                    </g>
+                    <rect x="6" y="6" width="10" height="10" rx="3" fill="var(--tO)"/>
+                    <rect x="20" y="6" width="10" height="10" rx="3" fill="var(--tO)"/>
+                    <rect x="96" y="48" width="10" height="10" rx="3" fill="var(--tI)"/>
+                </g>
+            </svg>
+        </div>
+        <div class="prose">
+            <p class="say">Два котика катали клубок из клеток. «Мы — <b>Котики</b>, — мурлыкнули они хором. — Одна
+                коробочка хранит одно. А если нужно много — берут <span class="word">список</span>. А доска — это список
+                <em>списков</em>: строки, а в каждой строке — клетки».</p>
+            <p>Каждая клетка знает про себя две вещи: <em>занята ли она</em> и <em>чья она</em> (какого игрока). Котики
+                слепили это в маленькую коробочку <span class="mono">Cell</span>, а потом собрали из клеток целую доску
+                9×9 — совсем пустую, как в начале партии.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tT)"></span> заклинание Котиков <span
+                    class="file">lib/core/board.dart</span></div>
+            <pre><code><span class="key">class</span> Cell {
+  <span class="key">final</span> <span class="key">bool</span> filled;   <span class="cmt">// клетка занята?</span>
+  <span class="key">final</span> <span class="key">int</span>? owner;    <span class="cmt">// чья она (0 или 1), либо ничья — null</span>
+  Cell({<span class="key">this</span>.filled = <span class="key">false</span>, <span class="key">this</span>.owner});
+}
+
+<span class="cmt">// Доска — это список списков клеток (строки × столбцы).</span>
+<span class="key">typedef</span> Board = List&lt;List&lt;Cell&gt;&gt;;
+
+<span class="cmt">// Пустая доска 9×9: девять строк, в каждой девять пустых клеток.</span>
+Board emptyBoard() =&gt; [
+  <span class="key">for</span> (<span class="key">int</span> r = <span class="num">0</span>; r &lt; <span
+                        class="num">9</span>; r++)
+    [<span class="key">for</span> (<span class="key">int</span> c = <span class="num">0</span>; c &lt; <span
+                        class="num">9</span>; c++) Cell()],
+];
+</code></pre>
+            <div class="spell-cap">Чтобы узнать клетку в строке <b>r</b> и столбце <b>c</b>, пишем <b class="mono">board[r][c]</b>.
+                Первый номер — этаж, второй — квартира.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Список</b> <span class="mono">List</span> хранит много значений по порядку, по номерам (с нуля!).
+                </li>
+                <li><b>class</b> — своя коробочка из нескольких полей (у <span class="mono">Cell</span> их два).</li>
+                <li>Сетку удобно хранить как список списков: <span class="mono">board[r][c]</span>.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 6 ═══ -->
+    <section class="chapter" id="c6">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#llama"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 03 · Честная случайность · 🎨 image-promt/day057–070</div>
+                <h2>Предсказуемое волшебство</h2>
+                <div class="ch-companion">снова лама Лу — она любит числа</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«Игре нужна случайность, — сказала Лу, — какая фигурка выпадет следующей. Но есть секрет:
+                наша случайность <em>честная и предсказуемая</em>. Если начать с одного и того же <span class="word">зерна</span>
+                (seed) — выпадет ровно та же цепочка. Тогда игру можно точно повторить, сравнить на двух устройствах и
+                поймать жуликов».</p>
+            <p>Это волшебство называют <span class="word">генератор псевдослучайных чисел</span>. Наш зовётся <em>mulberry32</em>.
+                Он берёт число-зерно и каждым вызовом превращает его в новое, вроде бы «случайное», но всегда одинаковое
+                для одного зерна.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tI)"></span> заклинание честной случайности
+                <span class="file">lib/core/rng.dart</span></div>
+            <pre><code><span class="key">class</span> Mulberry32 {
+  <span class="key">int</span> _state;
+  Mulberry32(<span class="key">int</span> seed) : _state = seed &amp; <span class="num">0xFFFFFFFF</span>;  <span
+                        class="cmt">// зерно</span>
+
+  <span class="cmt">// Каждый вызов возвращает число от 0 до 1 — но по строгой формуле.</span>
+  <span class="key">double</span> next() {
+    _state = (_state + <span class="num">0x6D2B79F5</span>) &amp; <span class="num">0xFFFFFFFF</span>;
+    <span class="key">int</span> t = _state;
+    t = (t ^ (t &gt;&gt;&gt; <span class="num">15</span>)) * (<span class="num">1</span> | t);
+    t = ((t + (t ^ (t &gt;&gt;&gt; <span class="num">7</span>)) * (<span class="num">61</span> | t)) ^ t) &amp; <span
+                        class="num">0xFFFFFFFF</span>;
+    <span class="key">return</span> ((t ^ (t &gt;&gt;&gt; <span class="num">14</span>)) &amp; <span class="num">0xFFFFFFFF</span>) / <span
+                        class="num">4294967296</span>;
+  }
+}
+</code></pre>
+            <div class="spell-cap">Два игрока с одним зерном увидят <b>одну и ту же</b> последовательность фигур.
+                Волшебство, которое можно повторить, — самое надёжное.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Зерно (seed)</b> задаёт всю цепочку «случайных» чисел.</li>
+                <li>Одинаковое зерно → одинаковый результат. Это называют <b>детерминизмом</b>.</li>
+                <li>В игре это даёт честность: повтор партии, сравнение, защита от обмана.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 7 ═══ -->
+    <section class="chapter" id="c7">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#alpaca"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 04 · Формы · 🎨 image-promt/day071–085</div>
+                <h2>Семь фигур-тетромино</h2>
+                <div class="ch-companion">Аля раскладывает фигурки</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«В игре семь фигурок, — Аля разложила их веером. — Их зовут буквами, на которые они похожи:
+                <b>I, O, T, S, Z, J, L</b>. Каждая — это просто <em>список клеточек</em>, которые она занимает».</p>
+            <p>Фигурку удобно описать как набор координат: «сдвинься на столько-то вправо и вниз от угла». Тогда фигурку
+                можно поворачивать и переносить — а компьютер знает, какие клетки она накроет.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> заклинание форм <span
+                    class="file">lib/core/pieces.dart</span></div>
+            <pre><code><span class="cmt">// Coord — одна клеточка фигуры: сдвиг по строке (r) и столбцу (c).</span>
+<span class="key">class</span> Coord { <span class="key">final</span> <span class="key">int</span> r, c; Coord(<span
+                        class="key">this</span>.r, <span class="key">this</span>.c); }
+
+<span class="cmt">// Фигура T: три клетки в ряд и одна сверху по центру.</span>
+<span class="key">final</span> tPiece = [
+  Coord(<span class="num">0</span>, <span class="num">1</span>),           <span class="cmt">//   ▢        верхняя клетка</span>
+  Coord(<span class="num">1</span>, <span class="num">0</span>), Coord(<span class="num">1</span>, <span
+                        class="num">1</span>), Coord(<span class="num">1</span>, <span class="num">2</span>),  <span
+                        class="cmt">// ▢▢▢  нижний ряд</span>
+];
+</code></pre>
+            <div class="spell-cap">Форма — это данные, а не картинка. Из координат мы потом и нарисуем фигуру, и
+                проверим, поместится ли она.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li>Сложную форму можно описать простыми <b>координатами</b>.</li>
+                <li>Данные важнее картинки: из данных родится и картинка, и логика.</li>
+                <li>Семь фигур <span class="mono">I O T S Z J L</span> — весь «алфавит» тетромино.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 8 ═══ -->
+    <section class="chapter" id="c8">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#pony"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 05 · Проверки · 🎨 image-promt/day086–092</div>
+                <h2>Закон мира: «сюда можно?»</h2>
+                <div class="ch-companion">По следит за порядком</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«Каждый мир держится на законах, — строго сказал По. — Наш закон: фигуру можно ставить,
+                только если <em>все</em> её клетки попадают на доску и <em>ни одна</em> не наезжает на занятую. Проверим
+                — и разрешим либо откажем».</p>
+            <p>Марьям взяла оранжевую фигурку, поднесла к углу — и сама увидела: одна клетка вылезает за край. «Значит,
+                нельзя!» — сказала она. По кивнул: «Именно это и решает функция ниже. Она обходит клетки фигуры и, чуть
+                что не так, сразу говорит "нет"».</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> закон постановки <span
+                    class="file">lib/core/board.dart</span></div>
+            <pre><code><span class="cmt">// Можно ли поставить фигуру cells с углом в (r, c)?</span>
+<span class="key">bool</span> canPlace(Board board, List&lt;Coord&gt; cells, <span class="key">int</span> r, <span
+                        class="key">int</span> c) {
+  <span class="key">for</span> (<span class="key">final</span> cell <span class="key">in</span> cells) {
+    <span class="key">final</span> rr = r + cell.r, cc = c + cell.c;
+    <span class="key">if</span> (rr &lt; <span class="num">0</span> || rr &gt;= <span
+                        class="num">9</span> || cc &lt; <span class="num">0</span> || cc &gt;= <span
+                        class="num">9</span>) <span class="key">return</span> <span class="key">false</span>; <span
+                        class="cmt">// за краем</span>
+    <span class="key">if</span> (board[rr][cc].filled) <span class="key">return</span> <span class="key">false</span>;                <span
+                        class="cmt">// клетка занята</span>
+  }
+  <span class="key">return</span> <span class="key">true</span>; <span class="cmt">// все клетки прошли проверку — ставить можно!</span>
+}
+</code></pre>
+            <div class="spell-cap">Здесь встретилось всё сразу: <b>функция</b>, <b>цикл for</b>, <b>if</b>,
+                <b>список</b> и <b>доска</b>. Ты уже умеешь читать настоящий игровой код.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li>Функция может вернуть <span class="mono">true</span>/<span class="mono">false</span> — «да» или
+                    «нет».
+                </li>
+                <li>«Ранний выход»: нашли нарушение — сразу <span class="mono">return false</span>, дальше не проверяем.
+                </li>
+                <li>Правила игры — это просто аккуратные проверки.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 9 ═══ -->
+    <section class="chapter" id="c9">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#catR"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 06 · Правила и счёт · 🎨 image-promt/day093–105</div>
+                <h2>Линии гаснут, очки летят</h2>
+                <div class="ch-companion">котики считают очки</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">Котики завозились: «Самое вкусное! Когда ряд, столбик или квадрат 3×3 заполнен целиком — он
+                <em>гаснет</em>, освобождая место. А очки за это получает тот, чей ход всё завершил».</p>
+            <p>Сначала мы находим все полные линии, потом очищаем их, потом зовём формулу Лу из главы 02 — и добавляем
+                очки игроку. Всё, что ты выучил, сходится в один красивый ход.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tZ)"></span> ход целиком <span
+                    class="file">lib/core/board.dart + scoring.dart</span></div>
+            <pre><code><span class="cmt">// Найти номера полностью заполненных строк.</span>
+List&lt;<span class="key">int</span>&gt; fullRows(Board board) {
+  <span class="key">final</span> rows = &lt;<span class="key">int</span>&gt;[];
+  <span class="key">for</span> (<span class="key">int</span> r = <span class="num">0</span>; r &lt; <span
+                        class="num">9</span>; r++) {
+    <span class="key">if</span> (board[r].every((cell) =&gt; cell.filled)) rows.add(r); <span class="cmt">// вся строка занята</span>
+  }
+  <span class="key">return</span> rows;
+}
+
+<span class="cmt">// После постановки: очистить линии и начислить очки ходившему.</span>
+<span class="key">int</span> cleared = fullRows(board).length + fullCols(board).length;
+player.score += scoreForMove(cleared, player.combo, isPerfect);
+</code></pre>
+            <div class="spell-cap">Обрати внимание: мы <b>переиспользуем</b> <b class="mono">scoreForMove</b> из главы
+                02. Хорошо написанная функция служит много раз.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><span class="mono">.every(...)</span> — «все ли элементы подходят?» короткая проверка списка.</li>
+                <li>Большое действие складывается из маленьких, уже знакомых.</li>
+                <li>Правила + счёт = сердце игры. И оно у нас уже бьётся.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 10 ═══ -->
+    <section class="chapter" id="c10">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#catP"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 07 · Искусственный ум · 🎨 image-promt/day106–125</div>
+                <h2>Котёнок, который научился думать</h2>
+                <div class="ch-companion">фиолетовый котик учится «думать»</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«А если рядом нет второго человека?» — спросила Марьям. Фиолетовый котик прищурился: «Тогда
+                играет <b>бот</b> — котёнок с искусственным умом. Он не колдует: он просто <em>перебирает все ходы</em>,
+                каждому ставит оценку и выбирает лучший».</p>
+            <p>Это и есть большой секрет «умных» программ: они пробуют много вариантов и выбирают тот, что по нашим
+                правилам лучше. Чем умнее бот — тем дальше он заглядывает и тем хитрее считает оценку.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tT)"></span> ум бота <span class="file">lib/core/bot.dart</span>
+            </div>
+            <pre><code>CandidateMove? chooseBotMove(Board board, List&lt;Piece&gt; hand) {
+  <span class="key">final</span> moves = enumerateMoves(board, hand);   <span class="cmt">// все возможные ходы</span>
+  <span class="key">if</span> (moves.isEmpty) <span class="key">return</span> <span class="key">null</span>;            <span
+                        class="cmt">// ходов нет — пас</span>
+
+  <span class="cmt">// Оценить каждый ход и поставить лучший вперёд.</span>
+  moves.sort((a, b) =&gt; scoreOf(b) - scoreOf(a));
+  <span class="key">return</span> moves.first;                          <span class="cmt">// самый выгодный ход</span>
+}
+</code></pre>
+            <div class="spell-cap">«Умно» — не значит «магия». Это <b>перебрать</b> варианты и <b>выбрать</b> лучший по
+                честной оценке. У нас есть три бота: полегче, средний и хитрый.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Бот</b> = перебор ходов + оценка + выбор лучшего.</li>
+                <li><span class="mono">sort</span> раскладывает список по порядку — тут от лучшего к худшему.</li>
+                <li>Искусственный ум — это чёткие правила, а не волшебство.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 11 ═══ -->
+    <section class="chapter" id="c11">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#maryam"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 08 · Фронтенд · 🎨 image-promt/day126–145</div>
+                <h2>Лицо игры</h2>
+                <div class="ch-companion">теперь ведёт сама Марьям</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">До сих пор всё было «под капотом»: числа, списки, правила. Но игрок ничего этого не видит —
+                он видит <em>картинку</em>. То, что человек видит и трогает, зовётся <span class="word">фронтенд</span>.
+                Марьям взяла кисть из света: «Давайте нарисуем доску!»</p>
+            <p>Во Flutter картинку строят из кирпичиков — <span class="word">виджетов</span>. Виджет — это «нарисуй вот
+                такой кусочек». Мы просто пробегаем по доске и для каждой клетки рисуем квадратик: пустой — светлый,
+                занятый — цветной, под своего игрока.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--magic)"></span> рисуем доску <span
+                    class="file">lib/ui/widgets/board_view.dart</span></div>
+            <pre><code>Widget build(BuildContext context) {
+  <span class="key">return</span> GridView.count(
+    crossAxisCount: <span class="num">9</span>,                <span class="cmt">// 9 клеток в ряд</span>
+    children: [
+      <span class="key">for</span> (<span class="key">final</span> row <span class="key">in</span> board)
+        <span class="key">for</span> (<span class="key">final</span> cell <span class="key">in</span> row)
+          Container(
+            color: cell.filled
+                ? colorFor(cell.owner)    <span class="cmt">// занята — цвет игрока</span>
+                : emptyColor,             <span class="cmt">// пусто — светлый фон</span>
+          ),
+    ],
+  );
+}
+</code></pre>
+            <div class="spell-cap">Тот же цикл <b>for</b> из главы 03 — только теперь он не считает, а <b>рисует</b>.
+                Данные и картинка встретились.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Фронтенд</b> — то, что видит и трогает человек.</li>
+                <li>Во <b>Flutter</b> экран собирают из <b>виджетов</b>, как из кубиков.</li>
+                <li>Картинка рождается из данных: пробежались по доске — нарисовали клетки.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 12 ═══ -->
+    <section class="chapter" id="c12">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#llama"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 09 · Бэкенд · 🎨 image-promt/day146–165</div>
+                <h2>Двое через океан</h2>
+                <div class="ch-companion">Лу протягивает нить связи</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«А если два человека — на разных концах Земли?» — Марьям представила подружку в другой
+                стране. Лу улыбнулась: «Тогда нужен <span class="word">сервер</span> — умный посредник, который живёт в
+                интернете и передаёт ходы туда-сюда. Всё, что не на экране, а "на той стороне", зовут <span
+                        class="word">бэкенд</span>».</p>
+            <p>Наш сервер написан на <span class="word">TypeScript</span>. Он слушает игроков по «телефонной линии»
+                <span class="word">WebSocket</span>: пришёл ход — проверил, применил, разослал обоим. А ещё он считает
+                <span class="word">рейтинг ELO</span>: побеждаешь сильного — рейтинг растёт сильнее.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tI)"></span> сервер слушает ходы <span
+                    class="file">server/index.ts + room.ts</span></div>
+            <pre><code>wss.on(<span class="str">"connection"</span>, (ws) =&gt; {          <span class="cmt">// подключился игрок</span>
+  ws.on(<span class="str">"message"</span>, (data) =&gt; {            <span class="cmt">// пришло сообщение</span>
+    <span class="key">const</span> msg = JSON.parse(String(data));
+    <span class="key">if</span> (msg.type === <span class="str">"move"</span>) handleMove(ws, msg); <span class="cmt">// это ход — обработать</span>
+  });
+});
+
+<span class="cmt">// Рейтинг ELO: насколько сдвинуть рейтинг после партии.</span>
+<span class="key">const</span> expected = <span class="num">1</span> / (<span class="num">1</span> + Math.pow(<span
+                        class="num">10</span>, (b.elo - a.elo) / <span class="num">400</span>));
+<span class="key">const</span> newA = Math.round(a.elo + <span class="num">24</span> * (score - expected));
+</code></pre>
+            <div class="spell-cap">Главное правило бэкенда: <b>сервер — судья</b>. Он не верит игрокам на слово и всё
+                проверяет сам — чтобы никто не смошенничал.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Бэкенд</b> — часть программы «на той стороне», в интернете.</li>
+                <li><b>Сервер</b> передаёт ходы между игроками и остаётся честным судьёй.</li>
+                <li><b>WebSocket</b> — живая двусторонняя связь; <b>ELO</b> — справедливый рейтинг.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH TESTS ═══ -->
+    <section class="chapter" id="ctest">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#alpaca"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 10 · Качество · 🎨 image-promt/day166–172</div>
+                <h2>Зверята-контролёры: тесты</h2>
+                <div class="ch-companion">Аля надевает жилетку контролёра</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«Игра большая, — вздохнула Марьям, — а вдруг я что-то поменяю и случайно сломаю?» Аля
+                улыбнулась и надела оранжевую жилетку: «Для этого есть <span class="word">тесты</span>. Тест — это
+                крошечная программа, которая проверяет: <em>даёт ли игра правильный ответ?</em> Написал раз — и потом
+                хоть каждую минуту проверяй всю игру за секунду».</p>
+            <p>Тест устроен просто: «сделай вот так — и я <span class="mono">жду</span> вот такой ответ». Если ответ
+                совпал — тест <b>зелёный</b>, всё хорошо. Если нет — тест <b>красный</b>, и ты сразу знаешь: что-то
+                сломалось, чини прямо сейчас, пока не забыл.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> проверки-контролёры <span
+                    class="file">test/…_test.dart</span></div>
+            <pre><code>test(<span class="str">'одна линия без серии даёт 10 очков'</span>, () {
+  <span class="key">final</span> s = scoreForMove(<span class="num">1</span>, <span class="num">0</span>, <span
+                        class="key">false</span>);
+  expect(s, <span class="num">10</span>);        <span class="cmt">// ждём РОВНО 10 — иначе тест красный</span>
+});
+
+test(<span class="str">'одно зерно — одна и та же цепочка фигур'</span>, () {
+  <span class="key">final</span> a = Bag(<span class="num">4242</span>);
+  <span class="key">final</span> b = Bag(<span class="num">4242</span>);
+  expect(a.draw().type, b.draw().type);   <span class="cmt">// должны совпасть (детерминизм!)</span>
+});
+</code></pre>
+            <div class="spell-cap"><b class="mono">expect(что_получили, что_ждали)</b> — сердце теста. В нашей игре
+                таких проверок больше <b>пятисот</b>, и все они зелёные. Это как армия зверят, что днём и ночью стерегут
+                игру.
+            </div>
+        </div>
+        <div class="task">
+            <div class="h">🍎 Задание дня</div>
+            <ol>
+                <li>Прочитай оба теста вслух — как приказ контролёру: «сделай… жду…».</li>
+                <li>Придумай на бумаге ещё один тест для <span class="mono">scoreForMove</span>: например, «две линии с
+                    серией 3 → жду 26».
+                </li>
+                <li>Подумай: почему хорошо, что тест <em>красный</em>, а не «молча сломался»?</li>
+            </ol>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Тест</b> — маленькая программа-проверка: «сделай так — жду такой ответ».</li>
+                <li><span class="mono">expect(...)</span> сравнивает полученное с ожидаемым.</li>
+                <li>Зелёные тесты = спокойствие; можно смело менять код — контролёры поймают ошибку.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH BUGS ═══ -->
+    <section class="chapter" id="cbug">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#catR"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 11 · Отладка · 🎨 image-promt/day173–178</div>
+                <h2>Охота на баги</h2>
+                <div class="ch-companion">котики становятся детективами</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">Котики нацепили крошечные шляпы детективов. «В любой большой программе прячутся <span
+                    class="word">баги</span> — маленькие ошибки-жучки, — сказали они. — Это не стыдно! Багов не боятся,
+                на них <em>охотятся</em>. Нашёл, понял, починил — и обязательно поставил тест, чтобы жучок не вернулся».
+            </p>
+            <p>Расскажем про двух настоящих жучков, которых мы поймали в этой самой игре.</p>
+
+            <p><b>Жучок №1 — «Счёт, который забывал себя».</b> Когда интернет на секундочку моргал, игрок
+                переподключался, и сервер снова говорил «здравствуй». А код по ошибке на каждое «здравствуй»
+                <em>обнулял</em> набранные за матч очки-достижения. Обидно! Детективы поняли: сбрасывать надо не на
+                «здравствуй», а только если начался <em>по-настоящему новый матч</em> — у каждого матча есть свой номер
+                <span class="mono">matchId</span>.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tZ)"></span> починка жучка №1 <span
+                    class="file">lib/online/online_game_notifier.dart</span></div>
+            <pre><code><span class="cmt">// БЫЛО (жучок): сбрасывали счётчики на КАЖДОЕ "здравствуй" —</span>
+<span class="cmt">// даже когда матч тот же, просто моргнул интернет.</span>
+resetMatchAcc: <span class="key">true</span>,
+
+<span class="cmt">// СТАЛО: сбрасываем ТОЛЬКО если это другой матч (по его номеру).</span>
+<span class="key">final</span> freshMatch = game.matchId != _accMatchId;
+resetMatchAcc: freshMatch,   <span class="cmt">// тот же матч после обрыва — счёт цел!</span>
+</code></pre>
+            <div class="spell-cap">Один жучок — а обидел бы каждого, у кого моргает интернет. Теперь его сторожит новый
+                тест: «переподключение НЕ обнуляет счёт».
+            </div>
+        </div>
+        <div class="prose">
+            <p><b>Жучок №2 — «Задания, застрявшие во вчера».</b> Каждый день игроку дают новые задания. Но программа
+                вычисляла «какой сегодня день» <em>один раз</em> при запуске и больше не проверяла. Если приложение не
+                закрывали, то после полуночи оно застревало на <em>вчерашних</em> заданиях. Детективы добавили привычку:
+                <em>перед каждым действием тихо спросить — а день ещё тот же?</em></p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tT)"></span> починка жучка №2 <span
+                    class="file">lib/daily/daily_controller.dart</span></div>
+            <pre><code><span class="cmt">// Перед каждым действием проверяем: не наступил ли новый день?</span>
+<span class="key">void</span> refreshDay() {
+  <span class="key">final</span> today = _todayKey();
+  <span class="key">if</span> (state.dayKey != today) {        <span class="cmt">// день сменился!</span>
+    state = DailyState.fresh(today);   <span class="cmt">// выдаём свежие задания</span>
+  }
+}
+</code></pre>
+            <div class="spell-cap">Тот же жучок жил ещё в двух местах (недельные и сезонные задания) — детективы поймали
+                всех троих одним приёмом. Ошибки любят прятаться семьями.
+            </div>
+        </div>
+        <div class="task">
+            <div class="h">🍎 Задание дня</div>
+            <ol>
+                <li>Расскажи своими словами, что делал каждый жучок и почему это плохо.</li>
+                <li>Правило детектива: «починил баг — <span class="mono">добавь тест</span>». Зачем? (Подсказка: чтобы
+                    жучок не вернулся незаметно.)
+                </li>
+                <li>Вспомни свою ошибку в жизни. Как «тест» (проверка) помог бы не повторить её?</li>
+            </ol>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Баг</b> — маленькая ошибка в коде. Их не стыдятся, а находят и чинят.</li>
+                <li><b>Отладка</b> — это как детектив: найти, понять причину, починить.</li>
+                <li>Золотое правило: <b>починил → поставь тест</b>, чтобы ошибка не вернулась.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH SERVER-FORTRESS (бонус) ═══ -->
+    <section class="chapter" id="cserver">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#llama"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Бонус-глава · Крепость · 🎨 сервер-крепость</div>
+                <h2>Как мы сделали сервер несокрушимым</h2>
+                <div class="ch-companion">лама Лу укрепляет крепость</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">Лу привела Марьям к башне-серверу. «Помнишь, сервер — это <em>судья</em> для двух игроков. А
+                судья должен быть надёжнее всех. К нам приходил злой критик и кричал, что наша крепость — картонная. Мы
+                проверили каждый камень. Кое-где и правда были щели — и мы их <b>заделали</b>. Пойдём, покажу трёх самых
+                опасных жучков-великанов».</p>
+
+            <p><b>Великан №1 — «Одно словечко роняло всю башню».</b> Оказалось: если прислать серверу пустышку-сообщение
+                <span class="mono">null</span>, он спотыкался и <em>падал целиком</em> — вместе со всеми игроками разом.
+                Лу нахмурилась: «Судья не имеет права падать от кривого письма». Теперь сервер сначала смотрит, что
+                письмо вообще письмо, а уж потом читает. И на самый крайний случай поставили «последнюю линию обороны».
+            </p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tI)"></span> щит от кривых писем <span
+                    class="file">server/room.ts + index.ts</span></div>
+            <pre><code><span class="cmt">// Проверяем письмо ДО того, как его читать:</span>
+<span class="key">if</span> (msg === <span class="key">null</span> || <span class="key">typeof</span> msg !== <span
+                        class="str">"object"</span>) <span class="key">return</span>; <span
+                        class="cmt">// не падаем</span>
+
+<span class="cmt">// Последняя линия обороны: одна ошибка не роняет всю башню.</span>
+process.on(<span class="str">"uncaughtException"</span>, (err) =&gt; console.error(err));
+</code></pre>
+            <div class="spell-cap">Раньше <b>любой</b> мог уронить сервер одним сообщением. Теперь — нет. И это стерегут
+                <b>первые серверные тесты</b> (их не было вовсе!).
+            </div>
+        </div>
+        <div class="prose">
+            <p><b>Великан №2 — «Рейтинг, который забывался».</b> Сервер копил рейтинг игроков в памяти и записывал на
+                диск с ленцой. При перезапуске или внезапном падении <em>последние результаты пропадали</em>. Лу
+                покачала головой: «Соревнование без надёжного рейтинга — это не соревнование». Мы научили сервер
+                сохранять рейтинг <em>перед выключением</em>, <em>каждую минуту на всякий случай</em>, и <em>бережно
+                    прятать</em> файл, если он вдруг испортился.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> рейтинг не теряется <span
+                    class="file">server/index.ts + leaderboard.ts</span></div>
+            <pre><code>process.on(<span class="str">"SIGTERM"</span>, () =&gt; leaderboard.flushNow()); <span
+                    class="cmt">// перед штатным выключением</span>
+
+setInterval(() =&gt; leaderboard.flushNow(), <span class="num">60_000</span>);  <span class="cmt">// и раз в минуту — на случай</span>
+                                                <span class="cmt">// внезапного падения</span>
+</code></pre>
+            <div class="spell-cap">Теперь рейтинг переживает и штатную остановку, и жёсткий краш, и порчу файла. Три
+                щита вместо одной щели.
+            </div>
+        </div>
+        <div class="prose">
+            <p><b>Великан №3 — «Мёртвые телефоны».</b> Когда у игрока пропадала связь, его «телефон» иногда оставался
+                «как бы поднятым» — и он не мог вернуться в игру. Лу придумала <span class="word">сердцебиение</span>
+                (heartbeat): сервер раз в полминуты спрашивает «ты живой?» и мягко кладёт трубку тем, кто молчит. Тогда
+                игрок сразу может переподключиться. А сопернику мы теперь вежливо говорим: <em>«он вернулся!»</em> —
+                чтобы не висел баннер «соперник вышел».</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> сердцебиение сервера <span
+                    class="file">server/index.ts</span></div>
+            <pre><code><span class="cmt">// Каждые 30 секунд: «ты живой?» — и отключаем молчунов.</span>
+setInterval(() =&gt; {
+  <span class="key">for</span> (<span class="key">const</span> ws <span class="key">of</span> clients) {
+    <span class="key">if</span> (!alive.get(ws)) ws.terminate();  <span class="cmt">// молчит — кладём трубку</span>
+    <span class="key">else</span> { alive.set(ws, <span class="key">false</span>); ws.ping(); } <span class="cmt">// пинг «ты живой?»</span>
+  }
+}, <span class="num">30_000</span>);
+</code></pre>
+            <div class="spell-cap">Мёртвые соединения больше не держат место. Обрыв связи — не конец: игрок вернётся, а
+                соперник это увидит.
+            </div>
+        </div>
+        <div class="task">
+            <div class="h">🍎 Задание дня</div>
+            <ol>
+                <li>Объясни, почему <b>судья-сервер</b> должен быть надёжнее обычного игрока.</li>
+                <li>Мы спасли рейтинг <b>тремя</b> способами. Назови их и скажи, от чего каждый.</li>
+                <li>Что такое «сердцебиение» и зачем оно? Придумай, где ещё в жизни полезна проверка «ты живой?».</li>
+            </ol>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Сервер-судья</b> обязан быть устойчивым: кривой ввод не должен его ронять.</li>
+                <li>Важные данные защищают <b>несколькими</b> щитами (перед выключением + периодически + бэкап).</li>
+                <li><b>Heartbeat</b> находит мёртвые соединения; критику отвечают не обидой, а <b>проверенными фиксами и
+                    тестами</b>.
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH GIT ═══ -->
+    <section class="chapter" id="cgit">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#pony"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 12 · Машина времени · 🎨 image-promt/day179–185</div>
+                <h2>Git: как не потерять свою работу</h2>
+                <div class="ch-companion">По хранит все снимки истории</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«А что, если я всё поломаю и не смогу вернуть, как было?» — испугалась Марьям. По подкатил
+                волшебный сундук: «Для этого есть <span class="word">Git</span> — машина времени для кода. Каждый раз,
+                когда что-то получилось, ты делаешь <span class="word">коммит</span> — снимок-фотографию всего проекта с
+                подписью. Захотел вернуться в прошлое — открыл нужный снимок. Ничего не пропадает».</p>
+            <p>Каждый коммит — как сохранёнка в игре: «здесь у меня всё работало». А ещё Git умеет отправлять код в
+                <span class="word">облако</span> (сайт <b>GitHub</b>) — чтобы он не жил только на твоём компьютере и
+                чтобы можно было работать вместе с друзьями.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tO)"></span> заклинания машины времени
+                <span class="file">терминал · git</span></div>
+            <pre><code>git init                     <span class="cmt"># создать сундук истории в проекте</span>
+git add .                    <span class="cmt"># положить в сундук все изменения</span>
+git commit -m <span class="str">"сделал доску 9x9"</span>  <span class="cmt"># снимок с подписью — что сделал</span>
+
+git log                      <span class="cmt"># посмотреть всю историю снимков</span>
+git checkout &lt;снимок&gt;         <span class="cmt"># вернуться в прошлое (осторожно!)</span>
+git push                     <span class="cmt"># отправить снимки в облако GitHub</span>
+</code></pre>
+            <div class="spell-cap">Подпись у коммита — важная: «<b>что</b> ты сделал». У нашей игры за одну только эту
+                книгу набралось больше <b>пятидесяти</b> таких снимков-коммитов.
+            </div>
+        </div>
+        <div class="task">
+            <div class="h">🍎 Задание дня</div>
+            <ol>
+                <li>Заведи первый в жизни репозиторий: <span class="mono">git init</span> в папке с игрой.</li>
+                <li>Сделай три коммита с честными подписями: что менял — то и напиши.</li>
+                <li>Посмотри <span class="mono">git log</span> — это твоя личная летопись. Гордись ею!</li>
+            </ol>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Git</b> — машина времени: сохраняет снимки (<b>коммиты</b>) всего проекта.</li>
+                <li>Хорошая подпись коммита говорит, <em>что</em> ты сделал — будущему себе спасибо.</li>
+                <li><b>GitHub</b> — облако для кода: не потеряешь и сможешь работать вместе.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 15 ═══ -->
+    <section class="chapter" id="c13">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#alpaca"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 13 · Кросс-платформа · 🎨 image-promt/day186–195</div>
+                <h2>Один код — четыре мира</h2>
+                <div class="ch-companion">Аля собирает игру для всех</div>
+            </div>
+        </div>
+        <div class="prose">
+            <p class="say">«А на чём будут играть?» — спросила Марьям. Аля подмигнула: «В том и чудо Flutter: мы пишем
+                <em>один</em> код, а собрать его можно сразу для многих устройств. Это называют <span class="word">кросс-платформенностью</span>».
+            </p>
+            <p>Одной командой игра превращается в сайт для браузера, в приложение для телефона Android, для iPhone и для
+                компьютера Mac. Один труд — четыре мира.</p>
+        </div>
+        <div class="spell">
+            <div class="spell-top"><span class="dot" style="background:var(--tS)"></span> собрать для всех <span
+                    class="file">терминал</span></div>
+            <pre><code>flutter build web      <span class="cmt"># игра в браузере</span>
+flutter build apk      <span class="cmt"># приложение для Android</span>
+flutter build ios      <span class="cmt"># приложение для iPhone</span>
+flutter build macos    <span class="cmt"># программа для Mac</span>
+</code></pre>
+            <div class="spell-cap">Четыре мира — из одной кодовой базы. Ты <b>фронтенд</b>-разработчик (лицо игры), <b>бэкенд</b>-разработчик
+                (сервер) и делаешь это <b>кросс-платформенно</b>.
+            </div>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Что ты выучил</div>
+            <ul>
+                <li><b>Кросс-платформа</b> — один код, много устройств.</li>
+                <li>Команда <span class="mono">flutter build</span> «печёт» готовое приложение.</li>
+                <li>Ты соединила три роли: фронтенд + бэкенд + сборка под все платформы.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ CH 14 · EPILOGUE ═══ -->
+    <section class="chapter" id="c14">
+        <div class="ch-head">
+            <div class="ch-badge">
+                <svg>
+                    <use href="#maryam"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ch-num">Глава 14 · Эпилог · 🎨 image-promt/day196–200</div>
+                <h2>Игра готова</h2></div>
+        </div>
+        <div class="scene">
+            <svg viewBox="0 0 460 170" role="img" aria-label="Марьям и друзья радуются готовой игре">
+                <rect width="460" height="170" rx="16" fill="var(--card)"/>
+                <g transform="translate(180,26)">
+                    <rect width="100" height="100" rx="14" fill="#151019"/>
+                    <g>
+                        <rect x="14" y="18" width="16" height="16" rx="4" fill="var(--tO)"/>
+                        <rect x="14" y="40" width="16" height="16" rx="4" fill="var(--tO)"/>
+                        <rect x="14" y="62" width="16" height="16" rx="4" fill="var(--tO)"/>
+                        <rect x="36" y="62" width="16" height="16" rx="4" fill="var(--tO)"/>
+                        <rect x="58" y="40" width="16" height="16" rx="4" fill="var(--tI)"/>
+                        <rect x="58" y="62" width="16" height="16" rx="4" fill="var(--tI)"/>
+                        <rect x="36" y="84" width="16" height="12" rx="4" fill="var(--tI)"/>
+                    </g>
+                </g>
+                <use href="#maryam" x="96" y="70" width="80" height="80"/>
+                <use href="#pony" x="284" y="80" width="76" height="76"/>
+                <use href="#catP" x="372" y="96" width="54" height="54"/>
+                <use href="#llama" x="30" y="70" width="70" height="80"/>
+                <use href="#alpaca" x="358" y="34" width="56" height="56"/>
+            </svg>
+        </div>
+        <div class="prose">
+            <p>И вот всё сошлось. Коробочки По хранили данные. Функции Лу считали очки. Развилки и карусели Али вели
+                логику. Котики держали доску и правила. Честная случайность выдавала фигуры. Бот научился думать,
+                виджеты нарисовали лицо, а сервер соединил игроков через океан. Марьям смотрела на экран — и на нём
+                светилась <b>настоящая игра</b>, та самая, из которой она когда-то выпала. Только теперь она знала про
+                неё <em>всё</em>. Потому что построила её сама.</p>
+            <p class="say">«Ты пришла сюда игроком, — сказал По, — а уходишь <b>разработчиком</b>. Ты умеешь и лицо игры
+                (фронтенд), и её сердце на сервере (бэкенд), и собрать всё это сразу для четырёх миров». Марьям
+                улыбнулась. Фиолетовый блок снова засветился — пора домой. Но теперь она уносила с собой самое главное:
+                <em>всё вокруг кто-то придумал и записал. А значит — и она может</em>.</p>
+            <p style="text-align:center; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--magic-ink); font-size:22px; margin-top:26px;">
+                Конец — и начало.</p>
+        </div>
+        <div class="learn">
+            <div class="h"><span class="star">★</span> Кем ты стала за эту книгу</div>
+            <ul>
+                <li>Знаешь <b>переменные, функции, if/for, списки и классы</b> — азбуку любого языка.</li>
+                <li>Понимаешь <b>детерминизм</b>, игровую логику, счёт и простой <b>ИИ</b>.</li>
+                <li>Умеешь <b>фронтенд</b> (Flutter-виджеты) и <b>бэкенд</b> (сервер, WebSocket, ELO).</li>
+                <li>Собираешь одно приложение под <b>web, Android, iPhone и Mac</b>.</li>
+            </ul>
+        </div>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ 200-DAY PLAN ═══ -->
+    <section class="plan" id="plan">
+        <h2>📅 Карта курса: 29 недель, каждая — с мини-проектом</h2>
+        <p>200 дней по 3 часа = ~29 недель. Каждая неделя заканчивается маленьким <b>🎯 мини-проектом</b> — чтобы новое
+            сразу пощупать руками. Не гонись, повторять и отставать — можно.</p>
+        <div class="plan-scroll">
+            <table>
+                <tr>
+                    <td>Нед. 1 · д1–7</td>
+                    <td>Подготовка</td>
+                    <td>🎯 запустить приложение и поменять текст на «Привет, я Марьям!»</td>
+                </tr>
+                <tr>
+                    <td>Нед. 2 · д8–14</td>
+                    <td>Переменные (По)</td>
+                    <td>🎯 коробочки <span class="mono">score</span> и <span class="mono">nick</span>, вывести их в
+                        консоль
+                    </td>
+                </tr>
+                <tr>
+                    <td>Нед. 3 · д15–21</td>
+                    <td>Функции (Лу)</td>
+                    <td>🎯 функции <span class="mono">приветствие(имя)</span> и <span class="mono">площадь(a,b)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Нед. 4 · д22–28</td>
+                    <td>Условие if (Аля)</td>
+                    <td>🎯 игра «Угадай число» с подсказками «больше / меньше»</td>
+                </tr>
+                <tr>
+                    <td>Нед. 5 · д29–35</td>
+                    <td>Цикл for (Аля)</td>
+                    <td>🎯 таблица умножения и пирамидка из звёздочек ★</td>
+                </tr>
+                <tr>
+                    <td>Нед. 6 · д36–42</td>
+                    <td>Списки</td>
+                    <td>🎯 список любимых игр: добавить, удалить, найти самую длинную</td>
+                </tr>
+                <tr>
+                    <td>Нед. 7 · д43–49</td>
+                    <td>Классы</td>
+                    <td>🎯 класс <span class="mono">Котик</span> (имя, цвет) — создать троих</td>
+                </tr>
+                <tr>
+                    <td>Нед. 8 · д50–56</td>
+                    <td>Доска 9×9</td>
+                    <td>🎯 собрать <span class="mono">emptyBoard()</span> и напечатать доску точками</td>
+                </tr>
+                <tr>
+                    <td>Нед. 9 · д57–63</td>
+                    <td>Случайность</td>
+                    <td>🎯 «кубик» на mulberry32; показать: одно зерно = одна цепочка</td>
+                </tr>
+                <tr>
+                    <td>Нед. 10 · д64–70</td>
+                    <td>Детерминизм</td>
+                    <td>🎯 мешок <span class="mono">Bag(seed)</span>: два мешка выдают одно и то же</td>
+                </tr>
+                <tr>
+                    <td>Нед. 11 · д71–77</td>
+                    <td>Фигуры</td>
+                    <td>🎯 описать все 7 тетромино списками координат</td>
+                </tr>
+                <tr>
+                    <td>Нед. 12 · д78–85</td>
+                    <td>Повороты фигур</td>
+                    <td>🎯 функция поворота фигуры на 90°</td>
+                </tr>
+                <tr>
+                    <td>Нед. 13 · д86–92</td>
+                    <td>Закон «сюда можно?»</td>
+                    <td>🎯 <span class="mono">canPlace</span>: печатать «да / нет» для разных мест</td>
+                </tr>
+                <tr>
+                    <td>Нед. 14 · д93–99</td>
+                    <td>Постановка и очистка</td>
+                    <td>🎯 поставить фигуру и стереть полностью заполненную строку</td>
+                </tr>
+                <tr>
+                    <td>Нед. 15 · д100–105</td>
+                    <td>Счёт и комбо</td>
+                    <td>🎯 посчитать очки за ход по формуле, добавить серию-комбо</td>
+                </tr>
+                <tr>
+                    <td>Нед. 16 · д106–112</td>
+                    <td>Перебор ходов</td>
+                    <td>🎯 вывести все возможные ходы для одной фигуры</td>
+                </tr>
+                <tr>
+                    <td>Нед. 17 · д113–119</td>
+                    <td>Оценка хода</td>
+                    <td>🎯 «оценка» = сколько линий закроет; выбрать лучший</td>
+                </tr>
+                <tr>
+                    <td>Нед. 18 · д120–125</td>
+                    <td>Бот целиком</td>
+                    <td>🎯 бот играет сам с собой — вывести, кто победил</td>
+                </tr>
+                <tr>
+                    <td>Нед. 19 · д126–132</td>
+                    <td>Первый экран (Flutter)</td>
+                    <td>🎯 экран с заголовком и кнопкой «Играть»</td>
+                </tr>
+                <tr>
+                    <td>Нед. 20 · д133–139</td>
+                    <td>Доска виджетами</td>
+                    <td>🎯 <span class="mono">GridView</span> 9×9 с цветными клетками</td>
+                </tr>
+                <tr>
+                    <td>Нед. 21 · д140–145</td>
+                    <td>Ввод (тап)</td>
+                    <td>🎯 тап красит клетку; выбор фигуры из руки</td>
+                </tr>
+                <tr>
+                    <td>Нед. 22 · д146–152</td>
+                    <td>Сервер, WebSocket</td>
+                    <td>🎯 крошечный сервер: на «привет» отвечает «привет»</td>
+                </tr>
+                <tr>
+                    <td>Нед. 23 · д153–159</td>
+                    <td>Два игрока</td>
+                    <td>🎯 передать ход одного игрока другому через сервер</td>
+                </tr>
+                <tr>
+                    <td>Нед. 24 · д160–165</td>
+                    <td>Рейтинг ELO</td>
+                    <td>🎯 посчитать новый рейтинг после победы и поражения</td>
+                </tr>
+                <tr>
+                    <td>Нед. 25 · д166–172</td>
+                    <td>Тесты</td>
+                    <td>🎯 написать 5 своих тестов — и сделать все зелёными</td>
+                </tr>
+                <tr>
+                    <td>Нед. 26 · д173–178</td>
+                    <td>Красный → зелёный</td>
+                    <td>🎯 нарочно сломать код, увидеть красный тест, починить</td>
+                </tr>
+                <tr>
+                    <td>Нед. 27 · д179–185</td>
+                    <td>Git (машина времени)</td>
+                    <td>🎯 первый репозиторий: <span class="mono">init</span>, 3 коммита, <span
+                            class="mono">git log</span></td>
+                </tr>
+                <tr>
+                    <td>Нед. 28 · д186–195</td>
+                    <td>Баги + сборка</td>
+                    <td>🎯 найти и починить баг; собрать под web и Android</td>
+                </tr>
+                <tr>
+                    <td>Нед. 29 · д196–200</td>
+                    <td>Финал 🎉</td>
+                    <td>🎯 своя версия игры — показать друзьям и близким</td>
+                </tr>
+            </table>
+        </div>
+        <p style="margin-top:12px">Пройдёшь эти 29 недель — и ты <b>кросс-платформенный фронтенд- и
+            бэкенд-разработчик</b>. Как Марьям. 🐴🦙🦥🐱</p>
+    </section>
+
+    <hr class="divide">
+
+    <!-- ═══ БОНУС: ПРОМПТЫ ДЛЯ ИЛЛЮСТРАЦИЙ ═══ -->
+    <section class="prompts" id="prompts">
+        <h2>🎨 Бонус-задание: промпты для иллюстраций</h2>
+        <p>Картинки в этой книге можно перерисовать своими — например, с помощью нейросети, которая рисует по описанию.
+            Такое описание называют <b>промпт</b>. Написать хороший промпт — тоже навык (и его любят разработчики).
+            Научимся!</p>
+
+        <div class="recipe">
+            <div class="h">🧪 Рецепт промпта — пять частей</div>
+            <span class="part">1 · КТО/ЧТО</span>
+            <span class="part">2 · СТИЛЬ</span>
+            <span class="part">3 · ЦВЕТА</span>
+            <span class="part">4 · НАСТРОЕНИЕ</span>
+            <span class="part">5 · ФОРМАТ</span>
+            <p style="margin:10px 0 0; font-size:14.5px; color:var(--muted)">Чем точнее опишешь каждую часть — тем ближе
+                картинка к задумке. Нейросети лучше понимают английский, поэтому промпты ниже — на нём (рядом — что
+                это).</p>
+        </div>
+
+        <p style="font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--ink); margin-top:18px">Общий стиль
+            книги (добавляй к каждому промпту):</p>
+        <div class="cmdline" style="white-space:pre-wrap">children's book illustration, flat vector, soft rounded
+            shapes, thick
+            soft outlines, cozy and friendly, dark navy background #0E1116 with
+            glowing tetromino blocks in orange #E0913E, cyan #2FB6D2, purple
+            #9B5DE0, green #43AE68, warm magical storybook mood, simple, cute
+        </div>
+
+        <div class="prompt-card">
+            <div class="pc-top">
+                <svg>
+                    <use href="#maryam"/>
+                </svg>
+                Марьям — героиня
+            </div>
+            <pre>a cute 8-year-old girl named Maryam, two dark braided buns,
+big warm curious eyes, soft purple dress, happy brave smile,
++ [общий стиль]</pre>
+        </div>
+        <div class="prompt-card">
+            <div class="pc-top">
+                <svg>
+                    <use href="#pony"/>
+                </svg>
+                Пони По — переменные
+            </div>
+            <pre>a small friendly cartoon pony, warm orange body, red-pink mane
+and tail, big gentle eyes, round and tiny, cheerful,
++ [общий стиль]</pre>
+        </div>
+        <div class="prompt-card">
+            <div class="pc-top">
+                <svg>
+                    <use href="#llama"/>
+                </svg>
+                Лама Лу — функции
+            </div>
+            <pre>a tall calm cartoon llama, soft cyan wool, long graceful neck,
+small ears, wise kind eyes, gentle smile,
++ [общий стиль]</pre>
+        </div>
+        <div class="prompt-card">
+            <div class="pc-top">
+                <svg>
+                    <use href="#alpaca"/>
+                </svg>
+                Альпака Аля — логика
+            </div>
+            <pre>a fluffy round cartoon alpaca, mint green wool, big fluffy
+cheeks, tiny ears, bright cheerful eyes, bouncy pose,
++ [общий стиль]</pre>
+        </div>
+        <div class="prompt-card">
+            <div class="pc-top">
+                <svg>
+                    <use href="#catP"/>
+                </svg>
+                <svg>
+                    <use href="#catR"/>
+                </svg>
+                Котики — доска и счёт
+            </div>
+            <pre>two tiny cute cartoon cats sitting together, one soft purple
+and one warm red, big round eyes, playful, tiny detective hats,
++ [общий стиль]</pre>
+        </div>
+        <div class="prompt-card">
+            <div class="pc-top">
+                <svg>
+                    <use href="#portal"/>
+                </svg>
+                Обложка — портал в Мир Кода
+            </div>
+            <pre>Maryam stepping through a glowing violet portal made of floating
+code blocks, her friends around her — orange pony, cyan llama,
+green alpaca, two small cats, colorful tetromino blocks floating
+in the air, magical Code World, wide cover composition,
++ [общий стиль]</pre>
+        </div>
+        <div class="prompt-card">
+            <div class="pc-top">
+                <svg>
+                    <use href="#maryam"/>
+                </svg>
+                Сцена — доска 9×9
+            </div>
+            <pre>the two cute cats arranging glowing blocks into a neat 9x9 grid
+game board, Maryam watching with wonder, a few orange and cyan
+tetromino pieces placed on the grid,
++ [общий стиль]</pre>
+        </div>
+
+        <div class="task" style="margin-top:18px">
+            <div class="h">🍎 Твоё задание про промпты</div>
+            <ol>
+                <li>Возьми рецепт из пяти частей и напиши <b>свой промпт</b> для нового героя книги — например, для
+                    мудрой Совы-Базы-Данных или робота-Сервера.
+                </li>
+                <li>Сгенерируй картинку, посмотри — что вышло не так? Уточни промпт (добавь деталей) и попробуй снова.
+                    Это как отладка, только для картинок!
+                </li>
+                <li>Собери «стайл-гайд»: один общий стиль + короткое описание каждого героя. Тогда все картинки будут
+                    как одна семья.
+                </li>
+            </ol>
+        </div>
+        <p style="margin-bottom:0; color:var(--muted); font-size:14.5px">💡 Секрет: хороший промпт — как хорошая функция
+            из главы 02. Точный вход → предсказуемый результат. Правишь по чуть-чуть — как код.</p>
+    </section>
+
+    <div class="tetro-rule"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+    <footer>
+        <div class="big">Марьям в Мире Кода</div>
+        учебник-курс · 15 глав + бонус · 29 недель · настоящий проект на GitHub<br>
+        итог курса — НАША игра BlockDuel, собранная и понятая ребёнком целиком
+        <br><a class="backtop" href="#c1">↑ к началу</a>
+    </footer>
+</div><!-- /.wrap -->
+    <!-- переплёт по центру разворота (со стежками) -->
+    <div class="binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <!-- загнутый уголок страницы -->
+    <div class="curl" aria-hidden="true"></div>
+    <!-- переворачивающийся лист (анимация) -->
+    <div class="leaf" id="leaf" aria-hidden="true"></div>
+</div><!-- /.book-clip -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Читалка: постраничное перелистывание (режим книги).
+     Контент раскладывается в вертикальные CSS-колонки фиксированной
+     высоты; каждая колонка = страница. Листаем, сдвигая .wrap через
+     CSS-переменную --pg (одна страница = ширина колонки + межстраничный
+     зазор). Ссылки-якоря (оглавление, day-nav) перехватываются и
+     переводят на нужную страницу. Печать использует @media print (поток).
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Оркестратор заставки: снег, полёт книги с полки и раскрытие.
+     Клик по книге → measure центра → летит в центр экрана (scale) →
+     обложка распахивается и книга вырастает на весь экран → показываем
+     читалку. Esc / «пропустить» / no-JS — сразу к чтению.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<script defer src="js/reader.js"></script>
+<script defer src="js/intro.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>
