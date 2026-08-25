@@ -2,7 +2,7 @@
   "name": "Марьям в Мире Кода",
   "short_name": "Марьям",
   "description": "Детская книга-учебник: собери настоящую игру за 200 дней.",
-  "start_url": "./index.html",
+  "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
