@@ -1,9 +1,12 @@
-День 006 · Неделя 1: Подготовка / Карта папок
-Тип: информативная иллюстрация дня   ·   Герои: maryam
-Тема по картинке: три двери — правила, картинка, проверки
+День 006 · Неделя 1: Подготовка / Портал
+Тип: иллюстрация дня   ·   Герои: maryam
 
-Что иллюстрируем: синяя дверь (книга+шестерня = lib/core), жёлтая (кисть = lib/ui), зелёная (галочка+лупа = test). Сразу ясно: «сегодня карта проекта».
+Что иллюстрируем (кратко): looking around the magical Code World with wide eyes
 
-─── ГОТОВЫЙ ПРОМПТ ───
+─── ГОТОВЫЙ ПРОМПТ (англ. — вставь в генератор изображений) ───
 
-flat vector children's book illustration, soft rounded shapes, thick soft outlines, cozy friendly mood, dark navy Code World. Three doors: left with a rule-book and gears, middle with a paintbrush and a little screen, right with a huge green checkmark and a magnifying glass. Maryam stands in the middle pointing. No text. The picture must read as “today we explore rules, pictures, and tests.”
+flat vector children's book illustration, soft rounded shapes, thick soft outlines, cozy friendly mood, dark navy background #0E1116, glowing tetromino blocks in orange #E0913E, cyan #2FB6D2, purple #9B5DE0 and green #43AE68, warm magical Code World, cute, simple, centered square composition. Characters: Maryam, a cute 8-year-old girl with fair light skin, light-brown hair in two buns with a soft curl framing her face, big warm curious eyes, a little taller, soft purple dress. Scene: looking around the magical Code World with wide eyes.
+
+─── ПОДСКАЗКА ───
+Правь по чуть-чуть, как код: не нравится поза/цвет — добавь деталь и
+сгенерируй снова. Держи единый стиль, чтобы все картинки были «одной семьёй».

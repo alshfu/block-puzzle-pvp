@@ -26,7 +26,7 @@ STYLE = ("flat vector children's book illustration, soft rounded shapes, thick "
          "centered square composition")
 
 CHARS = {
-    "maryam": "Maryam, a cute 8-year-old girl with two dark braided buns, big warm curious eyes, soft purple dress",
+    "maryam": "Maryam, a cute 8-year-old girl with fair light skin, light-brown hair in two buns with a soft curl framing her face, big warm curious eyes, a little taller, soft purple dress",
     "pony": "By the pony, a small friendly pony with warm orange body and red-pink mane, big gentle eyes",
     "llama": "Lu the llama, a tall calm cyan llama with a long graceful neck and wise kind eyes",
     "alpaca": "Alya the alpaca, a fluffy round mint-green alpaca with big fluffy cheeks, cheerful",
